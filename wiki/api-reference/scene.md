@@ -5,7 +5,7 @@ Complete API documentation for the Scene class.
 
 ## Class: Scene
 
-Main container for all drawable objects.
+Main container for all drawable objects. Scene inherits from **Surface**, giving it the same builder methods as Cell and CellGroup.
 
 ### Constructor
 
@@ -38,49 +38,70 @@ Scene.with_grid(cols, rows, cell_size, background=None)
 - `entities: list[Entity]` - All entities
 - `connections: list[Connection]` - All connections
 
+Position properties (inherited from Surface):
+
+- `center: Point` - Center of the canvas
+- `top_left: Point` - Top-left corner
+- `top_right: Point` - Top-right corner
+- `bottom_left: Point` - Bottom-left corner
+- `bottom_right: Point` - Bottom-right corner
+- `bounds: tuple` - (x, y, width, height)
+
 ![Scene Properties](./_images/scene/example4-properties.svg)
 
-### Methods
+---
 
-#### add()
+## Builder Methods (Surface Protocol)
+
+Scene inherits all builder methods from Surface. Named positions, relative coordinates, and `along=`/`t=` work at the scene level — the same API you use inside cells.
+
+```python
+scene = Scene(400, 300, background="#0f172a")
+
+# Scene-level curve with along= positioning
+curve = scene.add_curve(start="left", end="right", curvature=0.4, color="#334155", width=2)
+
+# Place dots along the curve — works at scene level!
+scene.add_dot(along=curve, t=0.25, radius=12, color="#f43f5e")
+scene.add_dot(along=curve, t=0.50, radius=12, color="#22c55e")
+scene.add_dot(along=curve, t=0.75, radius=12, color="#3b82f6")
+```
+
+![Scene Builder Methods](./_images/scene/example5-scene-builders.svg)
+
+| Method | Description |
+|---|---|
+| `add_dot(at=, along=, t=, radius=, color=)` | Add a dot |
+| `add_line(start=, end=, width=, color=)` | Add a line |
+| `add_curve(start=, end=, curvature=, width=, color=)` | Add a curve |
+| `add_text(content, at=, font_size=, color=)` | Add text |
+| `add_rect(at=, width=, height=, fill=)` | Add a rectangle |
+| `add_ellipse(at=, rx=, ry=, fill=)` | Add an ellipse |
+| `add_polygon(vertices, fill=)` | Add a polygon |
+| `add_fill(color=)` | Fill the entire scene |
+| `add_border(color=, width=)` | Border around the scene |
+| `add_diagonal(...)` | Add a diagonal line |
+
+---
+
+## Methods
+
+### add()
 
 ```python
 def add(self, *objects: Entity | Connection | Grid) -> Entity | Connection | Grid
 ```
 
-Add entities, connections, or grids to the scene. Can add multiple objects at once.
+Add pre-constructed entities, connections, or grids to the scene. For convenience, prefer the builder methods above.
 
 **Parameters**:
 - `*objects`: One or more Entity, Connection, or Grid objects
 
 **Returns**: The last added object (for method chaining)
 
-**Example**:
-```python
-from pyfreeform import Scene, Dot, Line, Connection
-
-scene = Scene(400, 400)
-
-# Add single entity
-dot1 = Dot(100, 100, radius=10, color="red")
-scene.add(dot1)
-
-# Add multiple entities at once
-dot2 = Dot(300, 300, radius=10, color="blue")
-line = Line(100, 100, 300, 300, color="gray")
-scene.add(dot2, line)
-
-# Add connection
-conn = Connection(start=dot1, end=dot2)
-scene.add(conn)
-
-# Method chaining
-scene.add(Dot(200, 200, radius=5))
-```
-
 ![Add Connection Example](./_images/scene/example6-add-connection.svg)
 
-#### remove()
+### remove()
 
 ```python
 def remove(self, obj: Entity | Connection | Grid) -> bool
@@ -88,21 +109,9 @@ def remove(self, obj: Entity | Connection | Grid) -> bool
 
 Remove an object from the scene.
 
-**Parameters**:
-- `obj`: The entity, connection, or grid to remove
-
 **Returns**: True if object was found and removed, False otherwise
 
-**Example**:
-```python
-dot = Dot(100, 100, radius=10)
-scene.add(dot)
-
-# Later, remove it
-was_removed = scene.remove(dot)
-```
-
-#### clear()
+### clear()
 
 ```python
 def clear(self) -> None
@@ -110,12 +119,7 @@ def clear(self) -> None
 
 Remove all objects from the scene (entities, connections, and grids).
 
-**Example**:
-```python
-scene.clear()  # Empty scene
-```
-
-#### save()
+### save()
 
 ```python
 def save(self, path: str) -> None
@@ -123,15 +127,7 @@ def save(self, path: str) -> None
 
 Save the scene as an SVG file.
 
-**Parameters**:
-- `path`: File path (e.g., "artwork.svg")
-
-**Example**:
-```python
-scene.save("my_art.svg")
-```
-
-#### to_svg()
+### to_svg()
 
 ```python
 def to_svg(self) -> str
@@ -139,31 +135,43 @@ def to_svg(self) -> str
 
 Generate SVG markup as a string (without saving to file).
 
-**Returns**: Complete SVG document as string
-
-**Example**:
-```python
-svg_content = scene.to_svg()
-print(svg_content)  # View raw SVG
-```
-
-#### Iteration Support
-
-Scenes support standard Python iteration and length:
+### Iteration Support
 
 ```python
-# Iterate over all entities
 for entity in scene:
     print(entity)
 
-# Count entities
 num_entities = len(scene)
 ```
 
-![Add Entity Example](./_images/scene/example5-add-entity.svg)
+---
+
+## Complete Example
+
+Grid-based art with scene-level overlays:
+
+```python
+scene = Scene.with_grid(cols=15, rows=10, cell_size=20, background="#1a1a2e")
+
+# Cell-level art
+for cell in scene.grid:
+    cell.add_dot(color=colors.primary, radius=2)
+
+# Scene-level overlay — same builder API!
+scene.add_text("Scene API Demo", at=(0.5, 0.12), font_size=18, color="#ffd23f")
+
+curve = scene.add_curve(start="bottom_left", end="bottom_right",
+                        curvature=-0.3, color="#4ecca3", width=2)
+for i in range(5):
+    scene.add_dot(along=curve, t=(i + 0.5) / 5, radius=4, color="#ffd23f")
+```
 
 ![Complete Scene](./_images/scene/example7-complete.svg)
 
+---
+
 ## See Also
 - [Scenes Guide](../fundamentals/01-scenes.md)
+- [Surface Protocol](../advanced-concepts/07-surface-protocol.md) - The unifying abstraction
 - [Grid API](grid.md)
+- [CellGroup](../advanced-concepts/07-surface-protocol.md#cell-merging-with-gridmerge)

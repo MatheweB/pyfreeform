@@ -259,10 +259,69 @@ def example11_properties():
 
 
 # =============================================================================
+# merge() - Cell Merging
+# =============================================================================
+
+def example12_merge():
+    """grid.merge() - Merge cells into a virtual surface"""
+    scene = Scene.with_grid(cols=10, rows=8, cell_size=40, background="#0f172a")
+    colors = Palette.ocean()
+
+    # Show all cells
+    for cell in scene.grid:
+        cell.add_border(color="#1e293b", width=0.5)
+
+    # Merge a 3x4 region into a single surface
+    group = scene.grid.merge(row_start=2, row_end=5, col_start=3, col_end=7)
+    group.add_fill(color=colors.primary, opacity=0.3)
+    group.add_border(color=colors.accent, width=2)
+    group.add_text("Merged Region", at="center", font_size=14, color="white")
+
+    scene.save(OUTPUT_DIR / "example12-merge.svg")
+
+
+def example13_merge_row():
+    """grid.merge_row() - Merge a full row into a header"""
+    scene = Scene.with_grid(cols=12, rows=8, cell_size=35, background="#0f172a")
+    colors = Palette.midnight()
+
+    # Regular cells
+    for cell in scene.grid:
+        if cell.row > 1:
+            cell.add_dot(radius=4, color=colors.primary, opacity=0.5)
+
+    # Merge top two rows into a header
+    header = scene.grid.merge(row_start=0, row_end=2)
+    header.add_fill(color="#1e293b")
+    header.add_text("Title Bar", at="center", font_size=16, color=colors.accent)
+
+    scene.save(OUTPUT_DIR / "example13-merge-row.svg")
+
+
+def example14_merge_col():
+    """grid.merge_col() - Merge a full column into a sidebar"""
+    scene = Scene.with_grid(cols=12, rows=8, cell_size=35, background="#0f172a")
+    colors = Palette.ocean()
+
+    # Regular cells
+    for cell in scene.grid:
+        if cell.col > 1:
+            cell.add_dot(radius=3, color=colors.primary, opacity=0.4)
+
+    # Merge left two columns into a sidebar
+    sidebar = scene.grid.merge(col_start=0, col_end=2)
+    sidebar.add_fill(color="#1e293b")
+    sidebar.add_text("Sidebar", at="center", font_size=12, color=colors.accent,
+                     rotation=-90)
+
+    scene.save(OUTPUT_DIR / "example14-merge-col.svg")
+
+
+# =============================================================================
 # Complete Example: Combined Selections
 # =============================================================================
 
-def example12_combined():
+def example15_combined():
     """Combine multiple grid selection methods"""
     scene = Scene.with_grid(cols=15, rows=12, cell_size=30, background="#1a1a2e")
     colors = Palette.ocean()
@@ -288,7 +347,7 @@ def example12_combined():
     for cell in corners:
         cell.add_polygon(shapes.star(5), fill="#ffd23f", z_index=15)
 
-    scene.save(OUTPUT_DIR / "example12-combined.svg")
+    scene.save(OUTPUT_DIR / "example15-combined.svg")
 
 
 # =============================================================================
@@ -307,7 +366,10 @@ GENERATORS = {
     "example9-row-by-row": example9_row_by_row,
     "example10-distance-pattern": example10_distance_pattern,
     "example11-properties": example11_properties,
-    "example12-combined": example12_combined,
+    "example12-merge": example12_merge,
+    "example13-merge-row": example13_merge_row,
+    "example14-merge-col": example14_merge_col,
+    "example15-combined": example15_combined,
 }
 
 

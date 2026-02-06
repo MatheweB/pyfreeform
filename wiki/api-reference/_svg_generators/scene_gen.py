@@ -5,7 +5,7 @@ SVG Generator for: api-reference/scene.md
 Generates visual examples demonstrating Scene API methods and properties.
 """
 
-from pyfreeform import Scene, Palette, Dot, Line, Connection
+from pyfreeform import Scene, Palette, Dot, Line, Connection, CellGroup
 from pathlib import Path
 from PIL import Image, ImageDraw
 import tempfile
@@ -44,17 +44,13 @@ TEST_IMAGE = create_test_image()
 # =============================================================================
 
 def example1_constructor():
-    """Scene(width, height, background) - Basic constructor"""
+    """Scene(width, height, background) - Basic constructor with builder methods"""
     scene = Scene(width=400, height=300, background="#1a1a2e")
 
-    # Add a few elements to show it's a scene
-    dot1 = Dot(100, 100, radius=15, color="#4ecca3")
-    dot2 = Dot(300, 200, radius=15, color="#ee4266")
-    line = Line(100, 100, 300, 200, color="#ffd23f", width=2)
-
-    scene.add(line)
-    scene.add(dot1)
-    scene.add(dot2)
+    # Scene is a Surface — use builder methods directly!
+    scene.add_line(start=(0.25, 0.33), end=(0.75, 0.67), color="#ffd23f", width=2)
+    scene.add_dot(at=(0.25, 0.33), radius=15, color="#4ecca3", z_index=1)
+    scene.add_dot(at=(0.75, 0.67), radius=15, color="#ee4266", z_index=1)
 
     scene.save(OUTPUT_DIR / "example1-constructor.svg")
 
@@ -100,45 +96,19 @@ def example3_with_grid():
 # =============================================================================
 
 def example4_properties():
-    """Scene properties - width, height, background"""
+    """Scene properties - width, height, background — using scene builders"""
     scene = Scene(width=500, height=400, background="#f0f9ff")
 
-    # Visual indicators of dimensions
-    from pyfreeform import Text, Rect
-
-    # Border showing dimensions
-    border = Rect(
-        x=10, y=10,
-        width=scene.width - 20,
-        height=scene.height - 20,
-        fill=None,
-        stroke="#3b82f6",
-        stroke_width=2
+    # Scene builder methods — no manual coordinate math!
+    scene.add_border(color="#3b82f6", width=2)
+    scene.add_text(
+        f"width = {scene.width}",
+        at=(0.5, 0.07), font_size=16, color="#3b82f6"
     )
-
-    # Labels
-    width_label = Text(
-        x=scene.width // 2,
-        y=30,
-        content=f"width = {scene.width}",
-        font_size=16,
-        color="#3b82f6",
-        text_anchor="middle"
+    scene.add_text(
+        f"height = {scene.height}",
+        at=(0.06, 0.5), font_size=16, color="#3b82f6", rotation=-90
     )
-
-    height_label = Text(
-        x=30,
-        y=scene.height // 2,
-        content=f"height = {scene.height}",
-        font_size=16,
-        color="#3b82f6",
-        rotation=-90,
-        text_anchor="middle"
-    )
-
-    scene.add(border)
-    scene.add(width_label)
-    scene.add(height_label)
 
     scene.save(OUTPUT_DIR / "example4-properties.svg")
 
@@ -147,21 +117,27 @@ def example4_properties():
 # Methods: add_entity
 # =============================================================================
 
-def example5_add_entity():
-    """scene.add() - Add entities to scene"""
-    scene = Scene(width=400, height=300, background="white")
+def example5_scene_builders():
+    """Scene builder methods — same API as cells"""
+    scene = Scene(width=400, height=300, background="#0f172a")
 
-    # Create entities
-    dot1 = Dot(100, 150, radius=20, color="#ee4266")
-    dot2 = Dot(300, 150, radius=20, color="#4ecca3")
-    line = Line(100, 150, 300, 150, color="#cccccc", width=2)
+    # Scene-level curve with along= positioning
+    curve = scene.add_curve(
+        start="left", end="right",
+        curvature=0.4, color="#334155", width=2
+    )
 
-    # Add to scene
-    scene.add(line)   # Add line first (behind dots)
-    scene.add(dot1)
-    scene.add(dot2)
+    # Place dots along the curve — works at scene level!
+    colors = ["#f43f5e", "#f97316", "#eab308", "#22c55e", "#3b82f6", "#8b5cf6"]
+    for i, color in enumerate(colors):
+        t = (i + 0.5) / len(colors)
+        scene.add_dot(along=curve, t=t, radius=12, color=color, z_index=1)
 
-    scene.save(OUTPUT_DIR / "example5-add-entity.svg")
+    # Labels at named positions
+    scene.add_text("scene.add_dot(along=curve, t=...)",
+                   at=(0.5, 0.15), font_size=13, color="#94a3b8")
+
+    scene.save(OUTPUT_DIR / "example5-scene-builders.svg")
 
 
 # =============================================================================
@@ -198,26 +174,26 @@ def example6_add_connection():
 # =============================================================================
 
 def example7_complete():
-    """Complete scene - Grid with additional entities"""
+    """Complete scene - Grid with scene-level overlay using builders"""
     scene = Scene.with_grid(cols=15, rows=10, cell_size=20, background="#1a1a2e")
     colors = Palette.midnight()
 
     # Grid-based elements
     for cell in scene.grid:
-        if cell.brightness > 0.5:  # Note: will be 0 without image
-            cell.add_dot(color=colors.primary, radius=4)
+        cell.add_dot(color=colors.primary, radius=2)
 
-    # Freeform overlay
-    from pyfreeform import Text
-    title = Text(
-        x=scene.width // 2,
-        y=25,
-        content="Scene API Demo",
-        font_size=18,
-        color=colors.accent,
-        text_anchor="middle"
+    # Scene-level overlay — same builder API as cells!
+    scene.add_text("Scene API Demo", at=(0.5, 0.12),
+                   font_size=18, color=colors.accent)
+
+    # Decorative scene-level curve
+    curve = scene.add_curve(
+        start="bottom_left", end="bottom_right",
+        curvature=-0.3, color=colors.secondary, width=2
     )
-    scene.add(title)
+    for i in range(5):
+        scene.add_dot(along=curve, t=(i + 0.5) / 5,
+                      radius=4, color=colors.accent, z_index=1)
 
     scene.save(OUTPUT_DIR / "example7-complete.svg")
 
@@ -231,7 +207,7 @@ GENERATORS = {
     "example2-from-image": example2_from_image,
     "example3-with-grid": example3_with_grid,
     "example4-properties": example4_properties,
-    "example5-add-entity": example5_add_entity,
+    "example5-scene-builders": example5_scene_builders,
     "example6-add-connection": example6_add_connection,
     "example7-complete": example7_complete,
 }

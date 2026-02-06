@@ -143,18 +143,14 @@ scene = Scene(width=800, height=600)
 
 **Example:**
 ```python
-from pyfreeform import Scene, Dot, Line
+from pyfreeform import Scene
 
 scene = Scene(width=800, height=600, background="white")
 
-# Add entities directly
-dot1 = Dot(100, 100, radius=20, color="red")
-dot2 = Dot(300, 200, radius=20, color="blue")
-line = Line(100, 100, 300, 200, color="gray")
-
-scene.add(dot1)
-scene.add(dot2)
-scene.add(line)
+# Scene is a Surface — same builder API as cells!
+scene.add_line(start=(0.125, 0.17), end=(0.375, 0.33), color="gray", width=2)
+scene.add_dot(at=(0.125, 0.17), radius=20, color="red", z_index=1)
+scene.add_dot(at=(0.375, 0.33), radius=20, color="blue", z_index=1)
 
 scene.save("freeform.svg")
 ```
@@ -235,7 +231,7 @@ These lists are automatically populated when you add entities using cell methods
 
 ## Adding Content
 
-### Using Cell Methods (Recommended)
+### Using Cell Methods (Recommended for Grid Art)
 
 When working with grids, use cell builder methods:
 
@@ -246,20 +242,35 @@ for cell in scene.grid:
     cell.add_curve(curvature=0.5)
 ```
 
-This is the easiest and most intuitive approach.
+This is the easiest and most intuitive approach for grid-based art.
+
+### Scene Builder Methods
+
+The scene itself has the same builder API as cells — named positions, relative coordinates, and `along=`/`t=` all work:
+
+```python
+# Named positions work on the full canvas
+scene.add_dot(at="center", radius=20, color="coral")
+scene.add_line(start="top_left", end="bottom_right", color="gray")
+
+# along= works at scene level for cross-cell entities
+curve = scene.add_curve(start="left", end="right", curvature=0.3, color="blue")
+scene.add_dot(along=curve, t=0.5, radius=8, color="red")
+
+# Scene-level text and borders
+scene.add_text("My Art", at=(0.5, 0.05), font_size=20, color="white")
+scene.add_border(color="white", width=2)
+```
 
 ### Direct Entity Addition
 
-For non-grid artwork or precise positioning:
+For precise absolute positioning, you can still construct entities manually:
 
 ```python
 from pyfreeform import Dot, Line
 
-# Create entities
 dot = Dot(x=100, y=200, radius=10, color="coral")
 line = Line(x1=0, y1=0, x2=800, y2=600)
-
-# Add to scene
 scene.add(dot)
 scene.add(line)
 ```
@@ -302,7 +313,7 @@ This:
 ### Get SVG String
 
 ```python
-svg_content = scene.svg()
+svg_content = scene.to_svg()
 print(svg_content)  # Raw SVG XML
 ```
 
@@ -410,16 +421,9 @@ scene = Scene.from_image("photo.jpg", grid_size=30)
 for cell in scene.grid:
     cell.add_dot(color=cell.color)
 
-# Add freeform elements
-from pyfreeform import Text
-title = Text(
-    x=scene.width // 2,
-    y=30,
-    content="My Artwork",
-    font_size=24,
-    color="white"
-)
-scene.add(title)
+# Scene builder methods — no manual coordinate math!
+scene.add_text("My Artwork", at=(0.5, 0.1), font_size=24, color="white")
+scene.add_border(color="white", width=3)
 
 scene.save("mixed.svg")
 ```

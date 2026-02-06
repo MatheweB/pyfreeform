@@ -58,12 +58,17 @@ scene = Scene.with_grid(cols=30, rows=30, cell_size=12)
 #### Manually
 ```python
 scene = Scene(width=800, height=600, background="white")
+
+# Scene is a Surface — use builder methods directly!
+scene.add_dot(at=(0.5, 0.5), radius=50, color="#f59e0b")
+scene.add_ellipse(at=(0.75, 0.33), rx=80, ry=40, fill="#10b981")
+scene.add_line(start=(0.125, 0.17), end=(0.875, 0.83), color="#ef4444", width=3)
 ```
 
 ![Scene manual](./_images/02-core-concepts/03-scene-manual.svg)
 
-- Complete control
-- Add grids or entities manually
+- Complete control — same builder API as cells
+- Named positions and relative coordinates work at scene level
 - Good for freeform compositions
 
 ---
@@ -283,25 +288,27 @@ This example:
 PyFreeform uses several coordinate systems:
 
 ### Absolute (Pixels)
-Used by Scene and Entity positions:
+Used by Entity positions:
 - Origin (0, 0) is top-left
 - Positive x goes right
 - Positive y goes down
 - Example: `entity.move_to(100, 200)`
 
 ### Relative (0-1)
-Used within cells for positioning:
-- (0, 0) is cell's top-left
-- (1, 1) is cell's bottom-right
-- (0.5, 0.5) is cell's center
+Used within any Surface (cells, scene, merged groups):
+- (0, 0) is surface's top-left
+- (1, 1) is surface's bottom-right
+- (0.5, 0.5) is surface's center
 - Example: `cell.add_dot(at=(0.75, 0.25))`
+- Example: `scene.add_dot(at="center")`
 
 ### Parametric (0-1)
-Used for positioning along paths:
+Used for positioning along paths — works on any Surface:
 - 0 = start of path
 - 1 = end of path
 - 0.5 = midpoint
 - Example: `cell.add_dot(along=curve, t=0.5)`
+- Example: `scene.add_dot(along=curve, t=0.5)` — works at scene level too!
 
 ![Coordinate systems](./_images/02-core-concepts/07-coordinate-systems.svg)
 
@@ -309,12 +316,12 @@ Used for positioning along paths:
 
 ## Key Takeaways
 
-!!! note "Remember These Four Concepts"
-    1. **Scene** is your canvas - it contains everything
-    2. **Grid** provides organization - optional but powerful
-    3. **Cell** is a workspace - position, data, and builders
-    4. **Entity** is what you draw - dots, lines, curves, etc.
-    5. Everything flows from top to bottom: Scene → Grid → Cell → Entity
+!!! note "Remember These Concepts"
+    1. **Scene** is your canvas — it contains everything
+    2. **Grid** provides organization — optional but powerful
+    3. **Cell** is a workspace — position, data, and builders
+    4. **Entity** is what you draw — dots, lines, curves, etc.
+    5. **Surface** is the unifying idea — Scene, Cell, and CellGroup all share the same builder API (`add_dot`, `add_line`, `add_curve`, etc.)
 
     Understanding these concepts makes everything else in PyFreeform intuitive!
 

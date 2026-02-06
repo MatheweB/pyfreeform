@@ -74,15 +74,13 @@ def example_02_scene_with_grid():
 
 
 def example_03_scene_manual():
-    """Method 3: Create scene manually"""
+    """Method 3: Create scene manually — using scene builder methods"""
     scene = Scene(width=800, height=600, background="white")
 
-    # Add some entities manually to show freeform composition
-    from pyfreeform import Dot, Line, Ellipse
-
-    scene.add(Dot(400, 300, radius=50, color="#f59e0b"))
-    scene.add(Ellipse(600, 200, rx=80, ry=40, fill="#10b981"))
-    scene.add(Line(100, 100, 700, 500, color="#ef4444", width=3))
+    # Scene is a Surface — use builder methods directly!
+    scene.add_dot(at=(0.5, 0.5), radius=50, color="#f59e0b")
+    scene.add_ellipse(at=(0.75, 0.33), rx=80, ry=40, fill="#10b981")
+    scene.add_line(start=(0.125, 0.17), end=(0.875, 0.83), color="#ef4444", width=3)
 
     scene.save(OUTPUT_DIR / "03-scene-manual.svg")
 
@@ -178,9 +176,8 @@ def example_07_coordinate_systems():
     """Demonstrate the different coordinate systems"""
     scene = Scene.with_grid(cols=5, rows=5, cell_size=60)
 
-    # Absolute positioning (pixels)
-    from pyfreeform import Dot
-    scene.add(Dot(150, 150, radius=8, color="#dc2626"))
+    # Scene-level positioning (named positions work on the whole canvas)
+    scene.add_dot(at="center", radius=8, color="#dc2626")
 
     # Relative positioning within cells
     center_cell = scene.grid[2, 2]

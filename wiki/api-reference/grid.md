@@ -11,6 +11,7 @@ Grids organize cells into rows and columns, providing:
 - **Simple iteration**: `for cell in grid`
 - **Index access**: `grid[row, col]`
 - **Selection methods**: `grid.where()`, `grid.border()`, `grid.checkerboard()`
+- **Cell merging**: `grid.merge()`, `grid.merge_row()`, `grid.merge_col()`
 - **Neighbor relationships**: Automatic connection between adjacent cells
 
 ![Grid Structure](./_images/grid/example1-simple-iteration.svg)
@@ -271,7 +272,87 @@ for cell in grid:
 
 ![Grid Properties](./_images/grid/example11-properties.svg)
 
-![Combined Selections Example](./_images/grid/example12-combined.svg)
+---
+
+## Cell Merging
+
+Merge any rectangular region of cells into a single **CellGroup** surface. The returned group has all the same builder methods as cells (`add_dot`, `add_line`, `add_curve`, etc.) and averaged data properties.
+
+### merge()
+
+```python
+def merge(self, row_start=0, row_end=None, col_start=0, col_end=None) -> CellGroup
+```
+
+Merge a rectangular region of cells into a virtual surface.
+
+**Parameters**:
+- `row_start`: Starting row (inclusive, default 0)
+- `row_end`: Ending row (exclusive, default all rows)
+- `col_start`: Starting column (inclusive, default 0)
+- `col_end`: Ending column (exclusive, default all columns)
+
+**Example**:
+```python
+# Merge a 3x4 block
+group = grid.merge(row_start=2, row_end=5, col_start=3, col_end=7)
+group.add_fill(color="#3b82f6", opacity=0.3)
+group.add_border(color="#60a5fa", width=2)
+group.add_text("Merged Region", at="center", font_size=14, color="white")
+```
+
+![Merge Example](./_images/grid/example12-merge.svg)
+
+### merge_row()
+
+```python
+def merge_row(self, index: int) -> CellGroup
+```
+
+Merge an entire row into a single virtual surface. Shortcut for `merge(row_start=index, row_end=index+1)`.
+
+**Example**:
+```python
+# Create a title bar from the top two rows
+header = grid.merge(row_start=0, row_end=2)
+header.add_fill(color="#1e293b")
+header.add_text("Title Bar", at="center", font_size=16, color="white")
+```
+
+![Merge Row Example](./_images/grid/example13-merge-row.svg)
+
+### merge_col()
+
+```python
+def merge_col(self, index: int) -> CellGroup
+```
+
+Merge an entire column into a single virtual surface. Shortcut for `merge(col_start=index, col_end=index+1)`.
+
+**Example**:
+```python
+sidebar = grid.merge_col(0)
+sidebar.add_fill(color="#1e293b")
+sidebar.add_text("Sidebar", at="center", font_size=12, color="white", rotation=-90)
+```
+
+![Merge Column Example](./_images/grid/example14-merge-col.svg)
+
+### CellGroup Properties
+
+| Property | Type | Description |
+|---|---|---|
+| `brightness` | `float` | Average brightness across constituent cells |
+| `color` | `str` | Average color as hex string |
+| `rgb` | `tuple[int,int,int]` | Average RGB |
+| `alpha` | `float` | Average alpha |
+| `cells` | `list[Cell]` | The constituent Cell objects |
+
+---
+
+## Combined Example
+
+![Combined Selections Example](./_images/grid/example15-combined.svg)
 
 ---
 
@@ -279,6 +360,7 @@ for cell in grid:
 
 - 📖 [Cell API](cell.md) - Individual cell operations
 - 📖 [Scene API](scene.md) - Grid creation methods
+- 📖 [Surface Protocol](../advanced-concepts/07-surface-protocol.md) - CellGroup, merge, and the Surface abstraction
 - 📖 [Grid Selections Guide](../advanced-concepts/06-grid-selections.md)
 - 🎯 [Grid Patterns Example](../examples/beginner/grid-patterns.md)
 

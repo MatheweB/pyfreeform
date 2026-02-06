@@ -11,7 +11,7 @@ Corresponds to sections:
 - Common Patterns (3 patterns)
 """
 
-from pyfreeform import Scene, Palette, Dot, Line, Text, Grid, Rect
+from pyfreeform import Scene, Palette, Grid
 from pathlib import Path
 from PIL import Image, ImageDraw
 import tempfile
@@ -184,15 +184,12 @@ def method3_step1_blank_canvas():
 
 
 def method3_step2_add_dots():
-    """Manual scene - Add individual dots"""
+    """Manual scene - Add dots using scene builder methods"""
     scene = Scene(width=800, height=600, background="white")
 
-    # Add a few dots
-    dot1 = Dot(100, 100, radius=20, color="red")
-    dot2 = Dot(300, 200, radius=20, color="blue")
-
-    scene.add(dot1)
-    scene.add(dot2)
+    # Scene is a Surface — add dots directly!
+    scene.add_dot(at=(0.125, 0.17), radius=20, color="red")
+    scene.add_dot(at=(0.375, 0.33), radius=20, color="blue")
 
     scene.save(OUTPUT_DIR / "method3-step2-add-dots.svg")
 
@@ -201,13 +198,10 @@ def method3_step3_add_line():
     """Manual scene - Add line connecting dots"""
     scene = Scene(width=800, height=600, background="white")
 
-    dot1 = Dot(100, 100, radius=20, color="red")
-    dot2 = Dot(300, 200, radius=20, color="blue")
-    line = Line(100, 100, 300, 200, color="gray", width=2)
-
-    scene.add(line)  # Add line first (lower z-index)
-    scene.add(dot1)
-    scene.add(dot2)
+    # Builder methods — no manual coordinate math needed
+    scene.add_line(start=(0.125, 0.17), end=(0.375, 0.33), color="gray", width=2)
+    scene.add_dot(at=(0.125, 0.17), radius=20, color="red", z_index=1)
+    scene.add_dot(at=(0.375, 0.33), radius=20, color="blue", z_index=1)
 
     scene.save(OUTPUT_DIR / "method3-step3-add-line.svg")
 
@@ -216,19 +210,12 @@ def method3_step4_complete():
     """Manual scene - Complete freeform composition"""
     scene = Scene(width=800, height=600, background="white")
 
-    # Multiple elements
-    dot1 = Dot(100, 100, radius=20, color="red")
-    dot2 = Dot(300, 200, radius=20, color="blue")
-    dot3 = Dot(500, 150, radius=20, color="green")
-
-    line1 = Line(100, 100, 300, 200, color="gray", width=2)
-    line2 = Line(300, 200, 500, 150, color="gray", width=2)
-
-    scene.add(line1)
-    scene.add(line2)
-    scene.add(dot1)
-    scene.add(dot2)
-    scene.add(dot3)
+    # Scene builder methods — same API as cells!
+    scene.add_line(start=(0.125, 0.17), end=(0.375, 0.33), color="gray", width=2)
+    scene.add_line(start=(0.375, 0.33), end=(0.625, 0.25), color="gray", width=2)
+    scene.add_dot(at=(0.125, 0.17), radius=20, color="red", z_index=1)
+    scene.add_dot(at=(0.375, 0.33), radius=20, color="blue", z_index=1)
+    scene.add_dot(at=(0.625, 0.25), radius=20, color="green", z_index=1)
 
     scene.save(OUTPUT_DIR / "method3-step4-complete.svg")
 
@@ -389,56 +376,30 @@ def pattern3_step1_image_base():
 
 
 def pattern3_step2_add_title():
-    """Pattern 3 - Add freeform text element"""
+    """Pattern 3 - Add title using scene builder methods"""
     scene = Scene.from_image(TEST_IMAGE, grid_size=30)
 
     # Add grid-based elements
     for cell in scene.grid:
         cell.add_dot(color=cell.color, radius=4)
 
-    # Add freeform element
-    title = Text(
-        x=scene.width // 2,
-        y=30,
-        content="My Artwork",
-        font_size=24,
-        color="white",
-        text_anchor="middle"
-    )
-    scene.add(title)
+    # Scene is a Surface — add text directly with named positions!
+    scene.add_text("My Artwork", at=(0.5, 0.1), font_size=24, color="white")
 
     scene.save(OUTPUT_DIR / "pattern3-step2-add-title.svg")
 
 
 def pattern3_step3_add_border():
-    """Pattern 3 - Add decorative border"""
+    """Pattern 3 - Add decorative border using scene builder"""
     scene = Scene.from_image(TEST_IMAGE, grid_size=30)
 
     # Add grid-based elements
     for cell in scene.grid:
         cell.add_dot(color=cell.color, radius=4)
 
-    # Add freeform elements
-    title = Text(
-        x=scene.width // 2,
-        y=30,
-        content="My Artwork",
-        font_size=24,
-        color="white",
-        text_anchor="middle"
-    )
-    scene.add(title)
-
-    # Add border
-    border = Rect(
-        x=10, y=10,
-        width=scene.width - 20,
-        height=scene.height - 20,
-        fill=None,
-        stroke="white",
-        stroke_width=3
-    )
-    scene.add(border)
+    # Scene builder methods — no manual coordinate math
+    scene.add_text("My Artwork", at=(0.5, 0.1), font_size=24, color="white")
+    scene.add_border(color="white", width=3)
 
     scene.save(OUTPUT_DIR / "pattern3-step3-add-border.svg")
 

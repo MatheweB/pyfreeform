@@ -105,6 +105,7 @@ nav:
     - Transforms: advanced-concepts/04-transforms.md
     - Fit to Cell: advanced-concepts/05-fit-to-cell.md
     - Grid Selections: advanced-concepts/06-grid-selections.md
+    - Surface Protocol: advanced-concepts/07-surface-protocol.md
   - Parametric Art:
     - What is Parametric?: parametric-art/01-what-is-parametric.md
     - Positioning Along Paths: parametric-art/02-positioning-along-paths.md
