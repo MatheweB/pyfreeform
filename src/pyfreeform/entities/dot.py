@@ -38,20 +38,23 @@ class Dot(Entity):
         radius: float = DEFAULT_RADIUS,
         color: str | tuple[int, int, int] = DEFAULT_COLOR,
         z_index: int = 0,
+        opacity: float = 1.0,
     ) -> None:
         """
         Create a dot at the specified position.
-        
+
         Args:
             x: Horizontal position.
             y: Vertical position.
             radius: Radius of the dot in pixels.
             color: Fill color (name, hex, or RGB tuple).
             z_index: Layer ordering (higher = on top).
+            opacity: Opacity (0.0 transparent to 1.0 opaque).
         """
         super().__init__(x, y, z_index)
         self.radius = float(radius)
         self._color = Color(color)
+        self.opacity = float(opacity)
     
     @property
     def color(self) -> str:
@@ -103,10 +106,14 @@ class Dot(Entity):
     
     def to_svg(self) -> str:
         """Render to SVG circle element."""
-        return (
+        parts = [
             f'<circle cx="{self.x}" cy="{self.y}" '
-            f'r="{self.radius}" fill="{self.color}" />'
-        )
+            f'r="{self.radius}" fill="{self.color}"'
+        ]
+        if self.opacity < 1.0:
+            parts.append(f' opacity="{self.opacity}"')
+        parts.append(' />')
+        return ''.join(parts)
     
     def __repr__(self) -> str:
         return f"Dot({self.x}, {self.y}, radius={self.radius}, color={self.color!r})"

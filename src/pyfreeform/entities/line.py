@@ -50,6 +50,7 @@ class Line(Entity):
         cap: str = DEFAULT_CAP,
         start_cap: str | None = None,
         end_cap: str | None = None,
+        opacity: float = 1.0,
     ) -> None:
         """
         Create a line from (x1, y1) to (x2, y2).
@@ -63,6 +64,7 @@ class Line(Entity):
             cap: Cap style for both ends ("round", "square", "butt", or "arrow").
             start_cap: Override cap for start end only.
             end_cap: Override cap for end end only.
+            opacity: Opacity (0.0 transparent to 1.0 opaque).
         """
         super().__init__(x1, y1, z_index)
         self._end_offset = Point(x2 - x1, y2 - y1)
@@ -71,6 +73,7 @@ class Line(Entity):
         self.cap = cap
         self.start_cap = start_cap
         self.end_cap = end_cap
+        self.opacity = float(opacity)
 
     @classmethod
     def from_points(
@@ -83,6 +86,7 @@ class Line(Entity):
         cap: str = DEFAULT_CAP,
         start_cap: str | None = None,
         end_cap: str | None = None,
+        opacity: float = 1.0,
     ) -> Line:
         """
         Create a line from two points.
@@ -96,6 +100,7 @@ class Line(Entity):
             cap: Cap style for both ends.
             start_cap: Override cap for start end only.
             end_cap: Override cap for end end only.
+            opacity: Opacity (0.0 transparent to 1.0 opaque).
 
         Returns:
             A new Line entity.
@@ -105,7 +110,7 @@ class Line(Entity):
         if isinstance(end, tuple):
             end = Point(*end)
         return cls(start.x, start.y, end.x, end.y, width, color, z_index, cap,
-                   start_cap, end_cap)
+                   start_cap, end_cap, opacity)
 
     @property
     def start(self) -> Point:
@@ -342,6 +347,9 @@ class Line(Entity):
             from ..config.caps import make_marker_id
             mid = make_marker_id(ec, self.color, size)
             parts.append(f' marker-end="url(#{mid})"')
+
+        if self.opacity < 1.0:
+            parts.append(f' opacity="{self.opacity}"')
 
         parts.append(" />")
         return "".join(parts)

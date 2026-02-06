@@ -167,6 +167,10 @@ Rectangle with rounded corners.
 
 ![Rounded Rectangle Example](./_images/utilities/example6-rounded-rect.svg)
 
+![Shape Sizes Example](./_images/utilities/example10-shape-sizes.svg)
+
+![All Shapes Gallery](./_images/utilities/example11-all-shapes.svg)
+
 ---
 
 ## Point Class
@@ -393,10 +397,6 @@ rotated = end.rotated(math.pi / 4, center)
 dist = start.distance_to(end)
 quarter = start.lerp(end, 0.25)
 ```
-
-![Shape Sizes Example](./_images/utilities/example10-shape-sizes.svg)
-
-![All Shapes Gallery](./_images/utilities/example11-all-shapes.svg)
 
 ---
 

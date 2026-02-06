@@ -63,6 +63,7 @@ class Text(Entity):
         baseline: str = DEFAULT_BASELINE,
         rotation: float = 0,
         z_index: int = 0,
+        opacity: float = 1.0,
     ) -> None:
         """
         Create text at the specified position.
@@ -100,6 +101,7 @@ class Text(Entity):
         self.text_anchor = text_anchor
         self.baseline = baseline
         self.rotation = float(rotation)
+        self.opacity = float(opacity)
 
     @property
     def color(self) -> str:
@@ -233,6 +235,8 @@ class Text(Entity):
             .replace("'", "&apos;")
         )
 
+        opacity_attr = f' opacity="{self.opacity}"' if self.opacity < 1.0 else ''
+
         return (
             f'<text x="{self.x}" y="{self.y}" '
             f'font-size="{self.font_size}" '
@@ -242,6 +246,7 @@ class Text(Entity):
             f'fill="{self.color}" '
             f'text-anchor="{self.text_anchor}" '
             f'dominant-baseline="{self.baseline}"'
+            f'{opacity_attr}'
             f'{transform}>'
             f'{escaped_content}'
             f'</text>'

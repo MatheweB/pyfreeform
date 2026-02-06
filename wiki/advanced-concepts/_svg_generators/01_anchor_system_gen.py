@@ -94,16 +94,7 @@ def anchors_rectangle():
     cell = scene.grid[0, 0]
 
     # Create a rectangle entity
-    from pyfreeform.entities import Rect
-    rect = Rect(
-        x=cell.center.x - 30,  # width/2
-        y=cell.center.y - 20,  # height/2
-        width=60,
-        height=40,
-        fill="#3b82f6",
-        stroke=None
-    )
-    scene.add(rect)
+    rect = cell.add_rect(width=60, height=40, fill="#3b82f6")
 
     # Show corner anchors
     corners = ["top_left", "top_right", "bottom_left", "bottom_right"]
@@ -132,7 +123,7 @@ def anchors_polygon():
 
     # Create a hexagon
     from pyfreeform import shapes
-    poly = cell.add_polygon(shapes.hexagon( size=40), fill="#3b82f6")
+    poly = cell.add_polygon(shapes.hexagon(size=0.7), fill="#3b82f6")
 
     # Show vertex anchors
     colors = ["#ef4444", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899", "#14b8a6"]
@@ -177,20 +168,14 @@ def using_anchors_get():
 
     # Cell 1: Rectangle with center anchor
     cell1 = scene.grid[0, 0]
-    from pyfreeform import Rect
-    rect = Rect(cell1.center.x - 25.0, cell1.center.y - 15.0, 50, 30, fill="#3b82f6")
-    rect.cell = cell1
-    cell1._entities.append(rect)
+    rect = cell1.add_rect(width=50, height=30, fill="#3b82f6")
     center = rect.anchor("center")
     cell1.add_dot(at=center, radius=5, color="#ef4444")
     cell1.add_text("center", at=(0.5, 0.8), font_size=9, color="#1f2937")
 
     # Cell 2: Rectangle with top_left anchor
     cell2 = scene.grid[0, 1]
-    from pyfreeform import Rect
-    rect2 = Rect(cell2.center.x - 25.0, cell2.center.y - 15.0, 50, 30, fill="#3b82f6")
-    rect2.cell = cell2
-    cell2._entities.append(rect2)
+    rect2 = cell2.add_rect(width=50, height=30, fill="#3b82f6")
     top_left = rect2.anchor("top_left")
     cell2.add_dot(at=top_left, radius=5, color="#10b981")
     cell2.add_text("top_left", at=(0.5, 0.8), font_size=9, color="#1f2937")
@@ -233,17 +218,11 @@ def why_anchors_named_refs():
     cell2 = scene.grid[0, 1]
 
     # Without anchors (manual calculation - shown as complex)
-    from pyfreeform import Rect
-    rect1 = Rect(cell1.center.x - 20.0, cell1.center.y - 15.0, 40, 30, fill="#ef4444")
-    rect1.cell = cell1
-    cell1._entities.append(rect1)
+    rect1 = cell1.add_rect(width=40, height=30, fill="#ef4444")
     cell1.add_text("Manual calc", at=(0.5, 0.8), font_size=8, color="#1f2937")
 
     # With anchors (simple)
-    from pyfreeform import Rect
-    rect2 = Rect(cell2.center.x - 20.0, cell2.center.y - 15.0, 40, 30, fill="#10b981")
-    rect2.cell = cell2
-    cell2._entities.append(rect2)
+    rect2 = cell2.add_rect(width=40, height=30, fill="#10b981")
     point = rect2.anchor("bottom_right")
     cell2.add_dot(at=point, radius=4, color="#3b82f6")
     cell2.add_text("anchor('bottom_right')", at=(0.5, 0.8), font_size=8, color="#1f2937")
@@ -290,32 +269,21 @@ def why_anchors_transform_aware():
 
     # Normal rectangle
     cell1 = scene.grid[0, 0]
-    from pyfreeform import Rect
-    rect1 = Rect(cell1.center.x - 20.0, cell1.center.y - 12.5, 40, 25, fill="#3b82f6")
-    rect1.cell = cell1
-    cell1._entities.append(rect1)
+    rect1 = cell1.add_rect(width=40, height=25, fill="#3b82f6")
     for anchor in ["top_left", "top_right", "bottom_left", "bottom_right"]:
         cell1.add_dot(at=rect1.anchor(anchor), radius=3, color="#ef4444")
     cell1.add_text("Normal", at=(0.5, 0.85), font_size=8, color="#1f2937")
 
     # Rotated rectangle
     cell2 = scene.grid[0, 1]
-    from pyfreeform import Rect
-    rect2 = Rect(cell2.center.x - 20.0, cell2.center.y - 12.5, 40, 25, fill="#3b82f6")
-    rect2.cell = cell2
-    cell2._entities.append(rect2)
-    rect2.rotate(30)
+    rect2 = cell2.add_rect(width=40, height=25, rotation=30, fill="#3b82f6")
     for anchor in ["top_left", "top_right", "bottom_left", "bottom_right"]:
         cell2.add_dot(at=rect2.anchor(anchor), radius=3, color="#ef4444")
     cell2.add_text("Rotated", at=(0.5, 0.85), font_size=8, color="#1f2937")
 
     # Scaled & rotated rectangle
     cell3 = scene.grid[0, 2]
-    from pyfreeform import Rect
-    rect3 = Rect(cell3.center.x - 20.0, cell3.center.y - 12.5, 40, 25, fill="#3b82f6")
-    rect3.cell = cell3
-    cell3._entities.append(rect3)
-    rect3.scale(1.2).rotate(45)
+    rect3 = cell3.add_rect(width=48, height=30, rotation=45, fill="#3b82f6")
     for anchor in ["top_left", "top_right", "bottom_left", "bottom_right"]:
         cell3.add_dot(at=rect3.anchor(anchor), radius=3, color="#ef4444")
     cell3.add_text("Scaled+Rotated", at=(0.5, 0.85), font_size=8, color="#1f2937")
@@ -357,10 +325,7 @@ def example_dynamic_connections():
     cell2 = scene.grid[0, 1]
 
     # Create a rectangle and dot
-    from pyfreeform import Rect
-    rect = Rect(cell1.center.x - 20.0, cell1.center.y - 15.0, 40, 30, fill="#3b82f6")
-    rect.cell = cell1
-    cell1._entities.append(rect)
+    rect = cell1.add_rect(width=40, height=30, fill="#3b82f6")
     dot = cell2.add_dot(radius=8, color="#10b981")
 
     # Connect them
@@ -405,10 +370,7 @@ def example_all_entity_types():
 
     # Rectangle
     cell = scene.grid[1, 0]
-    from pyfreeform import Rect
-    rect = Rect(cell.center.x - 17.5, cell.center.y - 12.5, 35, 25, fill="#3b82f6")
-    rect.cell = cell
-    cell._entities.append(rect)
+    rect = cell.add_rect(width=35, height=25, fill="#3b82f6")
     for anchor in ["top_left", "top_right", "bottom_left", "bottom_right", "center"]:
         cell.add_dot(at=rect.anchor(anchor), radius=2, color="#ef4444")
     cell.add_text("Rectangle", at=(0.5, 0.9), font_size=8, color="#1f2937")
@@ -416,7 +378,7 @@ def example_all_entity_types():
     # Polygon
     cell = scene.grid[1, 1]
     from pyfreeform import shapes
-    poly = cell.add_polygon(shapes.triangle( size=30), fill="#3b82f6")
+    poly = cell.add_polygon(shapes.triangle(size=0.7), fill="#3b82f6")
     for i in range(3):
         cell.add_dot(at=poly.anchor(f"v{i}"), radius=2, color="#ef4444")
     cell.add_dot(at=poly.anchor("center"), radius=2, color="#10b981")

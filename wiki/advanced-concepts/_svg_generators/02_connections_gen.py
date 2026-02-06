@@ -75,10 +75,7 @@ def what_is_connection_labeled():
     cell2 = scene.grid[0, 1]
 
     # Create rectangle and ellipse
-    from pyfreeform import Rect
-    rect = Rect(cell1.center.x - 20.0, cell1.center.y - 15.0, 40, 30, fill="#ef4444")
-    rect.cell = cell1
-    cell1._entities.append(rect)
+    rect = cell1.add_rect(width=40, height=30, fill="#ef4444")
     ellipse = cell2.add_ellipse(rx=20, ry=15, fill="#3b82f6")
 
     # Create connection
@@ -406,10 +403,7 @@ def pattern_different_anchors():
 
     # Center cell
     center = scene.grid[1, 1]
-    from pyfreeform import Rect
-    center_rect = Rect(center.center.x - 20.0, center.center.y - 20.0, 40, 40, fill="#ef4444")
-    center_rect.cell = center
-    center._entities.append(center_rect)
+    center_rect = center.add_rect(width=40, height=40, fill="#ef4444")
 
     # Corner cells with different anchor connections
     anchors = [
@@ -420,10 +414,7 @@ def pattern_different_anchors():
     ]
 
     for cell, start_anch, end_anch in anchors:
-        from pyfreeform import Rect
-        rect = Rect(cell.center.x - 15.0, cell.center.y - 15.0, 30, 30, fill="#3b82f6")
-        rect.cell = cell
-        cell._entities.append(rect)
+        rect = cell.add_rect(width=30, height=30, fill="#3b82f6")
         conn = Connection(
             rect,
             center_rect,

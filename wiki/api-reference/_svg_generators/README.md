@@ -32,7 +32,7 @@ The generators revealed several API differences that need correction:
 ### Missing/Different Methods
 - `cell.add_cross()` - does not exist
 - `cell.add_x()` - does not exist
-- `cell.add_rect()` - does not exist
+- `cell.add_rect()` - creates a custom-sized rectangle (at= positions center)
 - `grid.corners()` - does not exist
 - `grid.checkerboard(offset=...)` - different parameter name
 

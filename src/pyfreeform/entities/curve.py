@@ -60,6 +60,7 @@ class Curve(Entity):
         cap: str = DEFAULT_CAP,
         start_cap: str | None = None,
         end_cap: str | None = None,
+        opacity: float = 1.0,
     ) -> None:
         """
         Create a curve from (x1, y1) to (x2, y2).
@@ -78,6 +79,7 @@ class Curve(Entity):
             cap: Cap style for both ends ("round", "square", "butt", or "arrow").
             start_cap: Override cap for start end only.
             end_cap: Override cap for end end only.
+            opacity: Opacity (0.0 transparent to 1.0 opaque).
         """
         super().__init__(x1, y1, z_index)
         self._end = Point(x2, y2)
@@ -87,6 +89,7 @@ class Curve(Entity):
         self.cap = cap
         self.start_cap = start_cap
         self.end_cap = end_cap
+        self.opacity = float(opacity)
         self._control: Point | None = None  # Calculated lazily
 
     @classmethod
@@ -101,6 +104,7 @@ class Curve(Entity):
         cap: str = DEFAULT_CAP,
         start_cap: str | None = None,
         end_cap: str | None = None,
+        opacity: float = 1.0,
     ) -> Curve:
         """Create a curve from two points."""
         if isinstance(start, tuple):
@@ -108,7 +112,7 @@ class Curve(Entity):
         if isinstance(end, tuple):
             end = Point(*end)
         return cls(start.x, start.y, end.x, end.y, curvature, width, color, z_index,
-                   cap, start_cap, end_cap)
+                   cap, start_cap, end_cap, opacity)
 
     @property
     def start(self) -> Point:
@@ -295,6 +299,9 @@ class Curve(Entity):
             from ..config.caps import make_marker_id
             mid = make_marker_id(ec, self.color, size)
             parts.append(f' marker-end="url(#{mid})"')
+
+        if self.opacity < 1.0:
+            parts.append(f' opacity="{self.opacity}"')
 
         parts.append(" />")
         return "".join(parts)

@@ -42,22 +42,13 @@ def fill_vs_stroke():
     cells = list(scene.grid)
 
     # Fill only
-    rect1 = Rect(cells[0].center.x, cells[0].center.y, 60, 40, fill="#3b82f6")
-    rect1.cell = cells[0]
-    cells[0]._entities.append(rect1)
-    scene.add(rect1)
+    cells[0].add_rect(width=60, height=40, fill="#3b82f6")
 
     # Stroke only
-    rect2 = Rect(cells[1].center.x, cells[1].center.y, 60, 40, fill="none", stroke="#ef4444", stroke_width=2)
-    rect2.cell = cells[1]
-    cells[1]._entities.append(rect2)
-    scene.add(rect2)
+    cells[1].add_rect(width=60, height=40, fill=None, stroke="#ef4444", stroke_width=2)
 
     # Both
-    rect3 = Rect(cells[2].center.x, cells[2].center.y, 60, 40, fill="#d1fae5", stroke="#10b981", stroke_width=2)
-    rect3.cell = cells[2]
-    cells[2]._entities.append(rect3)
-    scene.add(rect3)
+    cells[2].add_rect(width=60, height=40, fill="#d1fae5", stroke="#10b981", stroke_width=2)
 
     for cell in scene.grid:
         cell.add_border(color="#e0e0e0", width=0.5)

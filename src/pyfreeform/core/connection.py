@@ -154,6 +154,15 @@ class Connection:
         """Resolved cap for the end end."""
         return self._style.get("end_cap") or self.cap
 
+    @property
+    def opacity(self) -> float:
+        """Opacity (0.0 transparent to 1.0 opaque)."""
+        return self._style.get("opacity", 1.0)
+
+    @opacity.setter
+    def opacity(self, value: float) -> None:
+        self._style["opacity"] = value
+
     def point_at(self, t: float) -> Point:
         """
         Get a point along the connection.
@@ -215,6 +224,9 @@ class Connection:
         if has_marker_end:
             mid = make_marker_id(ec, self.color, size)
             parts.append(f' marker-end="url(#{mid})"')
+
+        if self.opacity < 1.0:
+            parts.append(f' opacity="{self.opacity}"')
 
         parts.append(" />")
         return "".join(parts)

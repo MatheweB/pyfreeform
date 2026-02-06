@@ -60,12 +60,11 @@ def wave_path_visual():
     # Draw wave with dots
     for i in range(60):
         t = i / 59
-        point = wave.point_at(t)
-        cell.add_dot(at=point, radius=2, color="#3b82f6")
+        cell.add_dot(along=wave, t=t, radius=2, color="#3b82f6")
 
     # Show start and end
-    cell.add_dot(at=wave.start, radius=5, color="#10b981", z_index=1)
-    cell.add_dot(at=wave.end, radius=5, color="#ef4444", z_index=1)
+    cell.add_dot(at=cell.absolute_to_relative(wave.start), radius=5, color="#10b981", z_index=1)
+    cell.add_dot(at=cell.absolute_to_relative(wave.end), radius=5, color="#ef4444", z_index=1)
 
     scene.save(OUTPUT_DIR / "01-wave-path-visual.svg")
 
@@ -88,7 +87,7 @@ def wave_parameters():
 
         for j in range(40):
             t = j / 39
-            cell.add_dot(at=wave.point_at(t), radius=1.5, color="#3b82f6")
+            cell.add_dot(along=wave, t=t, radius=1.5, color="#3b82f6")
 
     # Frequency variations
     for i, freq in enumerate([1, 2, 3]):
@@ -104,7 +103,7 @@ def wave_parameters():
 
         for j in range(40):
             t = j / 39
-            cell.add_dot(at=wave.point_at(t), radius=1.5, color="#10b981")
+            cell.add_dot(along=wave, t=t, radius=1.5, color="#10b981")
 
     scene.save(OUTPUT_DIR / "02-wave-parameters.svg")
 
@@ -126,13 +125,12 @@ def using_wave_with_along():
     # Draw wave path (faint)
     for i in range(60):
         t = i / 59
-        cell.add_dot(at=wave.point_at(t), radius=1, color="#cbd5e1")
+        cell.add_dot(along=wave, t=t, radius=1, color="#cbd5e1")
 
     # Add dots along wave
     for i in range(11):
         t = i / 10
-        point = wave.point_at(t)
-        cell.add_dot(at=point, radius=5, color="#3b82f6", z_index=1)
+        cell.add_dot(along=wave, t=t, radius=5, color="#3b82f6", z_index=1)
 
     scene.save(OUTPUT_DIR / "03-using-wave-with-along.svg")
 
@@ -190,15 +188,14 @@ def point_at_method_detail():
     # Draw wave
     for i in range(60):
         t = i / 59
-        cell.add_dot(at=wave.point_at(t), radius=1.5, color="#cbd5e1")
+        cell.add_dot(along=wave, t=t, radius=1.5, color="#cbd5e1")
 
     # Show specific t values
     t_values = [0.0, 0.25, 0.5, 0.75, 1.0]
     colors = ["#10b981", "#3b82f6", "#f59e0b", "#8b5cf6", "#ef4444"]
 
     for t, color in zip(t_values, colors):
-        point = wave.point_at(t)
-        cell.add_dot(at=point, radius=5, color=color, z_index=1)
+        cell.add_dot(along=wave, t=t, radius=5, color=color, z_index=1)
 
     scene.save(OUTPUT_DIR / "05-point-at-method-detail.svg")
 
@@ -256,7 +253,7 @@ def custom_path_variations():
     )
     for i in range(40):
         t = i / 39
-        cell1.add_dot(at=wave.point_at(t), radius=1.5, color="#3b82f6")
+        cell1.add_dot(along=wave, t=t, radius=1.5, color="#3b82f6")
 
     # Spiral
     cell2 = scene.grid[0, 1]
@@ -264,7 +261,7 @@ def custom_path_variations():
     spiral = Spiral(cell2.center, start_r=5, end_r=50, turns=2)
     for i in range(40):
         t = i / 39
-        cell2.add_dot(at=spiral.point_at(t), radius=1.5, color="#10b981")
+        cell2.add_dot(along=spiral, t=t, radius=1.5, color="#10b981")
 
     # Zigzag
     cell3 = scene.grid[0, 2]
@@ -277,7 +274,7 @@ def custom_path_variations():
     )
     for i in range(40):
         t = i / 39
-        cell3.add_dot(at=zigzag.point_at(t), radius=1.5, color="#f59e0b")
+        cell3.add_dot(along=zigzag, t=t, radius=1.5, color="#f59e0b")
 
     scene.save(OUTPUT_DIR / "06-custom-path-variations.svg")
 
@@ -304,7 +301,7 @@ def practical_usage_example():
     for i in range(20):
         t = i / 19
         size = 2 + abs(math.sin(t * math.pi)) * 6
-        cell.add_dot(at=wave.point_at(t), radius=size, color="#3b82f6")
+        cell.add_dot(along=wave, t=t, radius=size, color="#3b82f6")
 
     scene.save(OUTPUT_DIR / "07-practical-usage-example.svg")
 

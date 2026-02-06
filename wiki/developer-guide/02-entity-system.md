@@ -73,6 +73,31 @@ All built-in entities follow the same inheritance pattern from the base `Entity`
 
 ![Entity inheritance pattern showing how built-in types extend the base class](./_images/02-entity-system/07-entity-inheritance-pattern.svg)
 
+## Opacity
+
+Every entity supports an `opacity` parameter (0.0 transparent to 1.0 opaque). Shape entities (Rect, Ellipse, Polygon) additionally support `fill_opacity` and `stroke_opacity` for independent control over fill and stroke transparency.
+
+```python
+# Simple opacity — affects the whole entity
+cell.add_dot(radius=10, color="coral", opacity=0.5)
+cell.add_line(start="left", end="right", color="navy", opacity=0.3)
+cell.add_text("Ghost", font_size=14, color="black", opacity=0.4)
+
+# Shape opacity — one value controls both fill and stroke
+cell.add_ellipse(rx=20, ry=15, fill="blue", stroke="black", opacity=0.6)
+
+# Independent fill/stroke opacity — override when needed
+cell.add_rect(
+    width=40, height=30,
+    fill="red", stroke="black", stroke_width=2,
+    opacity=1.0,            # default
+    fill_opacity=0.4,       # translucent fill
+    stroke_opacity=1.0,     # solid border
+)
+```
+
+![Opacity across entity types: overlapping translucent shapes](./_images/02-entity-system/08-opacity-showcase.svg)
+
 ## See Also
 - [Creating Entities](03-creating-entities.md)
 - [Entities](../fundamentals/03-entities.md)

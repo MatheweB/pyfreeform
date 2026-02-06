@@ -37,8 +37,7 @@ def what_is_pathable_concept():
     # Show points along the path
     colors = ["#ef4444", "#f59e0b", "#10b981", "#8b5cf6", "#ec4899"]
     for i, t in enumerate([0.0, 0.25, 0.5, 0.75, 1.0]):
-        point = line.point_at(t)
-        cell.add_dot(at=point, radius=4, color=colors[i])
+        cell.add_dot(along=line, t=t, radius=4, color=colors[i])
         cell.add_text(f"t={t:.2f}", at=(t, 0.2), font_size=7, color="#1f2937")
 
     scene.save(OUTPUT_DIR / "01-what-is-pathable-concept.svg")
@@ -52,21 +51,21 @@ def what_is_pathable_interface():
     cell1 = scene.grid[0, 0]
     line = cell1.add_line(start="left", end="right", color="#3b82f6", width=2)
     for t in [0.0, 0.5, 1.0]:
-        cell1.add_dot(at=line.point_at(t), radius=3, color="#ef4444")
+        cell1.add_dot(along=line, t=t, radius=3, color="#ef4444")
     cell1.add_text("Line", at=(0.5, 0.85), font_size=9, color="#1f2937")
 
     # Curve
     cell2 = scene.grid[0, 1]
     curve = cell2.add_curve(start="left", end="right", curvature=0.4, color="#3b82f6", width=2)
     for t in [0.0, 0.5, 1.0]:
-        cell2.add_dot(at=curve.point_at(t), radius=3, color="#ef4444")
+        cell2.add_dot(along=curve, t=t, radius=3, color="#ef4444")
     cell2.add_text("Curve", at=(0.5, 0.85), font_size=9, color="#1f2937")
 
     # Ellipse
     cell3 = scene.grid[0, 2]
     ellipse = cell3.add_ellipse(rx=35, ry=25, fill="#3b82f6")
     for t in [0.0, 0.5, 1.0]:
-        cell3.add_dot(at=ellipse.point_at(t), radius=3, color="#ef4444")
+        cell3.add_dot(along=ellipse, t=t, radius=3, color="#ef4444")
     cell3.add_text("Ellipse", at=(0.5, 0.85), font_size=9, color="#1f2937")
 
     scene.save(OUTPUT_DIR / "02-what-is-pathable-interface.svg")
@@ -88,9 +87,8 @@ def builtin_line():
     # Show points along line
     for i in range(11):
         t = i / 10
-        point = line.point_at(t)
         size = 2 + (1 - abs(t - 0.5) * 2) * 3
-        cell.add_dot(at=point, radius=size, color="#ef4444")
+        cell.add_dot(along=line, t=t, radius=size, color="#ef4444")
 
     cell.add_text("Line: Linear Interpolation", at=(0.5, 0.85), font_size=10, color="#1f2937")
 
@@ -109,9 +107,8 @@ def builtin_curve():
     # Show points along curve
     for i in range(11):
         t = i / 10
-        point = curve.point_at(t)
         size = 2 + (1 - abs(t - 0.5) * 2) * 3
-        cell.add_dot(at=point, radius=size, color="#10b981")
+        cell.add_dot(along=curve, t=t, radius=size, color="#10b981")
 
     cell.add_text("Curve: Bézier Parametric", at=(0.5, 0.85), font_size=10, color="#1f2937")
 
@@ -130,8 +127,7 @@ def builtin_ellipse():
     # Show points around perimeter
     for i in range(16):
         t = i / 16
-        point = ellipse.point_at(t)
-        cell.add_dot(at=point, radius=3, color="#f59e0b")
+        cell.add_dot(along=ellipse, t=t, radius=3, color="#f59e0b")
 
     cell.add_text("Ellipse: Perimeter Position", at=(0.5, 0.85), font_size=10, color="#1f2937")
 
@@ -229,9 +225,8 @@ def custom_spiral():
     # Draw points along spiral
     for i in range(50):
         t = i / 49
-        point = spiral.point_at(t)
         size = 1 + t * 3
-        cell.add_dot(at=point, radius=size, color="#8b5cf6")
+        cell.add_dot(along=spiral, t=t, radius=size, color="#8b5cf6")
 
     cell.add_text("Custom Spiral", at=(0.5, 0.9), font_size=10, color="#1f2937")
 
@@ -267,8 +262,7 @@ def custom_wave():
     # Draw points along wave
     for i in range(60):
         t = i / 59
-        point = wave.point_at(t)
-        cell.add_dot(at=point, radius=2, color="#10b981")
+        cell.add_dot(along=wave, t=t, radius=2, color="#10b981")
 
     cell.add_text("Custom Wave", at=(0.5, 0.9), font_size=10, color="#1f2937")
 
@@ -306,8 +300,7 @@ def custom_heart():
     # Draw points along heart
     for i in range(60):
         t = i / 60
-        point = heart.point_at(t)
-        cell.add_dot(at=point, radius=2.5, color="#ef4444")
+        cell.add_dot(along=heart, t=t, radius=2.5, color="#ef4444")
 
     cell.add_text("Custom Heart", at=(0.5, 0.9), font_size=10, color="#1f2937")
 
@@ -341,8 +334,7 @@ def custom_lissajous():
     # Draw points along curve
     for i in range(100):
         t = i / 100
-        point = lissajous.point_at(t)
-        cell.add_dot(at=point, radius=1.5, color="#3b82f6")
+        cell.add_dot(along=lissajous, t=t, radius=1.5, color="#3b82f6")
 
     cell.add_text("Lissajous Curve", at=(0.5, 0.9), font_size=10, color="#1f2937")
 
@@ -358,7 +350,7 @@ def custom_paths_comparison():
     spiral = Spiral(cell1.center, start_r=2, end_r=35, turns=2)
     for i in range(30):
         t = i / 29
-        cell1.add_dot(at=spiral.point_at(t), radius=1.5, color="#8b5cf6")
+        cell1.add_dot(along=spiral, t=t, radius=1.5, color="#8b5cf6")
     cell1.add_text("Spiral", at=(0.5, 0.9), font_size=8, color="#1f2937")
 
     # Wave
@@ -368,7 +360,7 @@ def custom_paths_comparison():
     wave = Wave(left, right, amplitude=15, frequency=2)
     for i in range(40):
         t = i / 39
-        cell2.add_dot(at=wave.point_at(t), radius=1.5, color="#10b981")
+        cell2.add_dot(along=wave, t=t, radius=1.5, color="#10b981")
     cell2.add_text("Wave", at=(0.5, 0.9), font_size=8, color="#1f2937")
 
     # Heart
@@ -376,7 +368,7 @@ def custom_paths_comparison():
     heart = Heart(cell3.center, size=30)
     for i in range(40):
         t = i / 40
-        cell3.add_dot(at=heart.point_at(t), radius=1.5, color="#ef4444")
+        cell3.add_dot(along=heart, t=t, radius=1.5, color="#ef4444")
     cell3.add_text("Heart", at=(0.5, 0.9), font_size=8, color="#1f2937")
 
     # Lissajous
@@ -384,7 +376,7 @@ def custom_paths_comparison():
     lissajous = Lissajous(cell4.center, size=35, a=3, b=2, delta=math.pi / 4)
     for i in range(60):
         t = i / 60
-        cell4.add_dot(at=lissajous.point_at(t), radius=1.5, color="#3b82f6")
+        cell4.add_dot(along=lissajous, t=t, radius=1.5, color="#3b82f6")
     cell4.add_text("Lissajous", at=(0.5, 0.9), font_size=8, color="#1f2937")
 
     scene.save(OUTPUT_DIR / "12-custom-paths-comparison.svg")
@@ -426,7 +418,7 @@ def practical_example_distribution():
     for i in range(12):
         t = i / 11
         size = 1.5 + t * 2
-        cell4.add_dot(at=spiral.point_at(t), radius=size, color="#8b5cf6")
+        cell4.add_dot(along=spiral, t=t, radius=size, color="#8b5cf6")
     cell4.add_text("Spiral", at=(0.5, 0.85), font_size=8, color="#1f2937")
 
     scene.save(OUTPUT_DIR / "13-practical-example-distribution.svg")

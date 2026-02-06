@@ -35,14 +35,7 @@ def rotation_basic():
     for i, angle in enumerate(angles):
         cell = scene.grid[0, i]
 
-        from pyfreeform import Rect
-
-        rect = Rect(cell.center.x - 20.0, cell.center.y - 12.5, 40, 25, fill="#3b82f6")
-
-        rect.cell = cell
-
-        cell._entities.append(rect)
-        rect.rotate(angle)
+        rect = cell.add_rect(width=40, height=25, rotation=angle, fill="#3b82f6")
 
         # Show center point
         cell.add_dot(at=rect.anchor("center"), radius=2, color="#ef4444", z_index=5)
@@ -60,7 +53,7 @@ def rotation_progressive():
         angle = i * 30
         cell = scene.grid[0, i]
 
-        poly = cell.add_polygon(shapes.hexagon( size=25), fill="#10b981")
+        poly = cell.add_polygon(shapes.hexagon(size=0.7), fill="#10b981")
         poly.rotate(angle)
 
         cell.add_text(f"{angle}°", at=(0.5, 0.85), font_size=7, color="#1f2937")
@@ -74,20 +67,13 @@ def rotation_custom_origin():
 
     # Rotate around center (default)
     cell1 = scene.grid[0, 0]
-    from pyfreeform import Rect
-    rect1 = Rect(cell1.center.x - 20.0, cell1.center.y - 12.5, 40, 25, fill="#3b82f6")
-    rect1.cell = cell1
-    cell1._entities.append(rect1)
-    rect1.rotate(30)
+    rect1 = cell1.add_rect(width=40, height=25, rotation=30, fill="#3b82f6")
     cell1.add_dot(at=cell1.center, radius=3, color="#ef4444", z_index=5)
     cell1.add_text("Center origin", at=(0.5, 0.85), font_size=7, color="#1f2937")
 
     # Rotate around top-left
     cell2 = scene.grid[0, 1]
-    from pyfreeform import Rect
-    rect2 = Rect(cell2.center.x - 20.0, cell2.center.y - 12.5, 40, 25, fill="#3b82f6")
-    rect2.cell = cell2
-    cell2._entities.append(rect2)
+    rect2 = cell2.add_rect(width=40, height=25, fill="#3b82f6")
     origin = rect2.anchor("top_left")
     cell2.add_dot(at=origin, radius=3, color="#ef4444", z_index=5)
     rect2.rotate(30, origin=origin)
@@ -95,10 +81,7 @@ def rotation_custom_origin():
 
     # Rotate around bottom-right
     cell3 = scene.grid[0, 2]
-    from pyfreeform import Rect
-    rect3 = Rect(cell3.center.x - 20.0, cell3.center.y - 12.5, 40, 25, fill="#3b82f6")
-    rect3.cell = cell3
-    cell3._entities.append(rect3)
+    rect3 = cell3.add_rect(width=40, height=25, fill="#3b82f6")
     origin3 = rect3.anchor("bottom_right")
     cell3.add_dot(at=origin3, radius=3, color="#ef4444", z_index=5)
     rect3.rotate(30, origin=origin3)
@@ -116,11 +99,7 @@ def rotation_full_circle():
     # Create rotated rectangles in circle
     for i in range(12):
         angle = i * 30
-        from pyfreeform import Rect
-        rect = Rect(cell.center.x - 15.0, cell.center.y - 5.0, 30, 10, fill="#3b82f6")
-        rect.cell = cell
-        cell._entities.append(rect)
-        rect.rotate(angle)
+        cell.add_rect(width=30, height=10, rotation=angle, fill="#3b82f6")
 
     scene.save(OUTPUT_DIR / "04-rotation-full-circle.svg")
 
@@ -157,7 +136,7 @@ def scaling_progressive():
     colors = ["#ef4444", "#f59e0b", "#10b981", "#3b82f6", "#8b5cf6", "#ec4899"]
 
     for scale, color in zip(scales, colors):
-        poly = cell.add_polygon(shapes.hexagon( size=20), fill=color)
+        poly = cell.add_polygon(shapes.hexagon(size=0.5), fill=color)
         poly.scale(scale)
 
     scene.save(OUTPUT_DIR / "06-scaling-progressive.svg")
@@ -169,44 +148,26 @@ def scaling_custom_origin():
 
     # Scale from center (default)
     cell1 = scene.grid[0, 0]
-    from pyfreeform import Rect
-    rect1 = Rect(cell1.center.x - 15.0, cell1.center.y - 10.0, 30, 20, fill="#3b82f6")
-    rect1.cell = cell1
-    cell1._entities.append(rect1)
-    from pyfreeform import Rect
-    rect2 = Rect(cell1.center.x - 15.0, cell1.center.y - 10.0, 30, 20, fill="#3b82f6")
-    rect2.cell = cell1
-    cell1._entities.append(rect2)
+    cell1.add_rect(width=30, height=20, fill="#3b82f6")
+    rect2 = cell1.add_rect(width=30, height=20, fill="#3b82f6")
     rect2.scale(1.5)
     cell1.add_dot(at=cell1.center, radius=2, color="#ef4444", z_index=5)
     cell1.add_text("Center origin", at=(0.5, 0.85), font_size=7, color="#1f2937")
 
     # Scale from top-left
     cell2 = scene.grid[0, 1]
-    from pyfreeform import Rect
-    rect3 = Rect(cell2.center.x - 15.0, cell2.center.y - 10.0, 30, 20, fill="#10b981")
-    rect3.cell = cell2
-    cell2._entities.append(rect3)
+    rect3 = cell2.add_rect(width=30, height=20, fill="#10b981")
     origin = rect3.anchor("top_left")
-    from pyfreeform import Rect
-    rect4 = Rect(cell2.center.x - 15.0, cell2.center.y - 10.0, 30, 20, fill="#10b981")
-    rect4.cell = cell2
-    cell2._entities.append(rect4)
+    rect4 = cell2.add_rect(width=30, height=20, fill="#10b981")
     rect4.scale(1.5, origin=origin)
     cell2.add_dot(at=origin, radius=2, color="#ef4444", z_index=5)
     cell2.add_text("Top-left origin", at=(0.5, 0.85), font_size=7, color="#1f2937")
 
     # Scale from bottom-right
     cell3 = scene.grid[0, 2]
-    from pyfreeform import Rect
-    rect5 = Rect(cell3.center.x - 15.0, cell3.center.y - 10.0, 30, 20, fill="#f59e0b")
-    rect5.cell = cell3
-    cell3._entities.append(rect5)
+    rect5 = cell3.add_rect(width=30, height=20, fill="#f59e0b")
     origin3 = rect5.anchor("bottom_right")
-    from pyfreeform import Rect
-    rect6 = Rect(cell3.center.x - 15.0, cell3.center.y - 10.0, 30, 20, fill="#f59e0b")
-    rect6.cell = cell3
-    cell3._entities.append(rect6)
+    rect6 = cell3.add_rect(width=30, height=20, fill="#f59e0b")
     rect6.scale(1.5, origin=origin3)
     cell3.add_dot(at=origin3, radius=2, color="#ef4444", z_index=5)
     cell3.add_text("Bottom-right origin", at=(0.5, 0.85), font_size=7, color="#1f2937")
@@ -293,37 +254,25 @@ def chaining_basic():
 
     # Just rotate
     cell1 = scene.grid[0, 0]
-    from pyfreeform import Rect
-    rect1 = Rect(cell1.center.x - 17.5, cell1.center.y - 10.0, 35, 20, fill="#3b82f6")
-    rect1.cell = cell1
-    cell1._entities.append(rect1)
+    rect1 = cell1.add_rect(width=35, height=20, fill="#3b82f6")
     rect1.rotate(30)
     cell1.add_text("rotate(30)", at=(0.5, 0.85), font_size=7, color="#1f2937")
 
     # Rotate + scale
     cell2 = scene.grid[0, 1]
-    from pyfreeform import Rect
-    rect2 = Rect(cell2.center.x - 17.5, cell2.center.y - 10.0, 35, 20, fill="#10b981")
-    rect2.cell = cell2
-    cell2._entities.append(rect2)
+    rect2 = cell2.add_rect(width=35, height=20, fill="#10b981")
     rect2.rotate(30).scale(1.3)
     cell2.add_text("rotate + scale", at=(0.5, 0.85), font_size=7, color="#1f2937")
 
     # Rotate + scale + translate
     cell3 = scene.grid[0, 2]
-    from pyfreeform import Rect
-    rect3 = Rect(cell3.center.x - 17.5, cell3.center.y - 10.0, 35, 20, fill="#f59e0b")
-    rect3.cell = cell3
-    cell3._entities.append(rect3)
+    rect3 = cell3.add_rect(width=35, height=20, fill="#f59e0b")
     rect3.rotate(30).scale(1.3).move_by(0, 5)
     cell3.add_text("rotate + scale + move", at=(0.5, 0.85), font_size=6, color="#1f2937")
 
     # Complex chain
     cell4 = scene.grid[0, 3]
-    from pyfreeform import Rect
-    rect4 = Rect(cell4.center.x - 17.5, cell4.center.y - 10.0, 35, 20, fill="#ef4444")
-    rect4.cell = cell4
-    cell4._entities.append(rect4)
+    rect4 = cell4.add_rect(width=35, height=20, fill="#ef4444")
     rect4.scale(0.8).rotate(45).move_by(10, -5)
     cell4.add_text("scale + rotate + move", at=(0.5, 0.85), font_size=6, color="#1f2937")
 
@@ -339,7 +288,7 @@ def chaining_complex():
     # Create a pattern with chained transformations
     for i in range(8):
         angle = i * 45
-        poly = cell.add_polygon(shapes.triangle( size=15), fill="#3b82f6")
+        poly = cell.add_polygon(shapes.triangle(size=0.3), fill="#3b82f6")
         scale = 0.5 + i * 0.1
         poly.rotate(angle).scale(scale).move_by(0, -i * 3)
 
@@ -364,7 +313,7 @@ def example_distance_based_rotation():
 
         rotation = distance * 10
 
-        poly = cell.add_polygon(shapes.hexagon( size=6), fill="#3b82f6")
+        poly = cell.add_polygon(shapes.hexagon(size=0.6), fill="#3b82f6")
         poly.rotate(rotation)
 
     scene.save(OUTPUT_DIR / "13-example-distance-based-rotation.svg")
@@ -376,15 +325,7 @@ def example_wave_rotation():
 
     for cell in scene.grid:
         angle = math.sin(cell.col / scene.grid.cols * math.pi * 4) * 45
-
-        from pyfreeform import Rect
-
-        rect = Rect(cell.center.x - 6.0, cell.center.y - 4.0, 12, 8, fill="#10b981")
-
-        rect.cell = cell
-
-        cell._entities.append(rect)
-        rect.rotate(angle)
+        cell.add_rect(width=12, height=8, rotation=angle, fill="#10b981")
 
     scene.save(OUTPUT_DIR / "14-example-wave-rotation.svg")
 
@@ -426,7 +367,7 @@ def example_combined_transforms():
         rotation = distance * 15
         scale = 0.3 + (1 - distance / max_dist) * 0.7
 
-        poly = cell.add_polygon(shapes.square( size=7), fill="#8b5cf6")
+        poly = cell.add_polygon(shapes.square(size=0.7), fill="#8b5cf6")
         poly.rotate(rotation).scale(scale)
 
     scene.save(OUTPUT_DIR / "16-example-combined-transforms.svg")
@@ -438,36 +379,36 @@ def example_transform_comparison():
 
     # Original
     cell1 = scene.grid[0, 0]
-    cell1.add_polygon(shapes.hexagon( size=25), fill="#3b82f6")
+    cell1.add_polygon(shapes.hexagon(size=0.7), fill="#3b82f6")
     cell1.add_text("Original", at=(0.5, 0.85), font_size=8, color="#1f2937")
 
     # Rotated
     cell2 = scene.grid[0, 1]
-    poly2 = cell2.add_polygon(shapes.hexagon( size=25), fill="#10b981")
+    poly2 = cell2.add_polygon(shapes.hexagon(size=0.7), fill="#10b981")
     poly2.rotate(45)
     cell2.add_text("Rotated", at=(0.5, 0.85), font_size=8, color="#1f2937")
 
     # Scaled
     cell3 = scene.grid[0, 2]
-    poly3 = cell3.add_polygon(shapes.hexagon( size=25), fill="#f59e0b")
+    poly3 = cell3.add_polygon(shapes.hexagon(size=0.7), fill="#f59e0b")
     poly3.scale(1.3)
     cell3.add_text("Scaled", at=(0.5, 0.85), font_size=8, color="#1f2937")
 
     # Rotated + Scaled
     cell4 = scene.grid[1, 0]
-    poly4 = cell4.add_polygon(shapes.hexagon( size=25), fill="#ef4444")
+    poly4 = cell4.add_polygon(shapes.hexagon(size=0.7), fill="#ef4444")
     poly4.rotate(45).scale(1.3)
     cell4.add_text("Rotate + Scale", at=(0.5, 0.85), font_size=8, color="#1f2937")
 
     # Translated
     cell5 = scene.grid[1, 1]
-    poly5 = cell5.add_polygon(shapes.hexagon( size=25), fill="#8b5cf6")
+    poly5 = cell5.add_polygon(shapes.hexagon(size=0.7), fill="#8b5cf6")
     poly5.move_by(dx=10, dy=-8)
     cell5.add_text("Translated", at=(0.5, 0.85), font_size=8, color="#1f2937")
 
     # All combined
     cell6 = scene.grid[1, 2]
-    poly6 = cell6.add_polygon(shapes.hexagon( size=25), fill="#ec4899")
+    poly6 = cell6.add_polygon(shapes.hexagon(size=0.7), fill="#ec4899")
     poly6.rotate(30).scale(1.2).move_by(dx=8, dy=-6)
     cell6.add_text("Combined", at=(0.5, 0.85), font_size=8, color="#1f2937")
 

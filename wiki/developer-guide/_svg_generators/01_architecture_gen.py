@@ -33,7 +33,7 @@ def design_pattern_entity_component():
     cells[1].add_line(start="top_left", end="bottom_right", width=3, color="#10b981")
     cells[2].add_curve(start="left", end="right", curvature=0.5, width=2, color="#8b5cf6")
     cells[3].add_ellipse(rx=15, ry=15, fill="#f59e0b")
-    cells[4].add_polygon(shapes.hexagon(size=18), fill="#3b82f6")
+    cells[4].add_polygon(shapes.hexagon(size=0.7), fill="#3b82f6")
 
     # Add borders
     for cell in cells:
@@ -155,7 +155,7 @@ def architecture_layering():
     cells[2].add_dot(radius=8, color="#10b981")
 
     # Layer 4: Entities (show variety)
-    cells[3].add_polygon(shapes.star(points=5, size=20), fill="#3b82f6")
+    cells[3].add_polygon(shapes.star(points=5, size=0.7), fill="#3b82f6")
 
     # Layer 5: SVG output (final composition)
     cells[4].add_curve(start="left", end="right", curvature=0.5, width=3, color="#8b5cf6")

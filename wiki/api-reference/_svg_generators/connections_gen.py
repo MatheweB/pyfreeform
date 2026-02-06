@@ -76,14 +76,10 @@ def example3_anchors():
     cells = list(scene.grid)
 
     # Create rectangles in each cell
-    from pyfreeform import Rect
     rects = []
     for cell in cells:
-        rect = Rect(cell.center.x - 40, cell.center.y - 30, 80, 60,
-                     fill=colors.primary, stroke=colors.accent, stroke_width=2)
-        rect.cell = cell
-        cell._entities.append(rect)
-        scene.add(rect)
+        rect = cell.add_rect(width=80, height=60,
+                              fill=colors.primary, stroke=colors.accent, stroke_width=2)
         rects.append(rect)
 
     # Get the rectangles

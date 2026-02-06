@@ -63,6 +63,9 @@ class Ellipse(Entity):
         stroke: str | tuple[int, int, int] | None = DEFAULT_STROKE,
         stroke_width: float = DEFAULT_STROKE_WIDTH,
         z_index: int = 0,
+        opacity: float = 1.0,
+        fill_opacity: float | None = None,
+        stroke_opacity: float | None = None,
     ) -> None:
         """
         Create an ellipse at the specified center position.
@@ -77,12 +80,18 @@ class Ellipse(Entity):
             stroke: Stroke color (None for no stroke).
             stroke_width: Stroke width in pixels.
             z_index: Layer ordering (higher = on top).
+            opacity: Opacity for both fill and stroke (0.0-1.0).
+            fill_opacity: Override opacity for fill only (None = use opacity).
+            stroke_opacity: Override opacity for stroke only (None = use opacity).
         """
         super().__init__(x, y, z_index)
         self.rx = float(rx)
         self.ry = float(ry)
         self.rotation = float(rotation)
         self.stroke_width = float(stroke_width)
+        self.opacity = float(opacity)
+        self.fill_opacity = fill_opacity
+        self.stroke_opacity = stroke_opacity
 
         self._fill = Color(fill) if fill is not None else None
         self._stroke = Color(stroke) if stroke is not None else None
@@ -98,6 +107,9 @@ class Ellipse(Entity):
         stroke: str | tuple[int, int, int] | None = DEFAULT_STROKE,
         stroke_width: float = DEFAULT_STROKE_WIDTH,
         z_index: int = 0,
+        opacity: float = 1.0,
+        fill_opacity: float | None = None,
+        stroke_opacity: float | None = None,
     ) -> Ellipse:
         """
         Create an ellipse at a specific center point.
@@ -111,13 +123,17 @@ class Ellipse(Entity):
             stroke: Stroke color.
             stroke_width: Stroke width.
             z_index: Layer ordering.
+            opacity: Opacity for both fill and stroke.
+            fill_opacity: Override opacity for fill only.
+            stroke_opacity: Override opacity for stroke only.
 
         Returns:
             A new Ellipse entity.
         """
         if isinstance(center, tuple):
             center = Point(*center)
-        return cls(center.x, center.y, rx, ry, rotation, fill, stroke, stroke_width, z_index)
+        return cls(center.x, center.y, rx, ry, rotation, fill, stroke, stroke_width,
+                   z_index, opacity, fill_opacity, stroke_opacity)
 
     @property
     def fill(self) -> str | None:
@@ -322,6 +338,14 @@ class Ellipse(Entity):
         # Stroke
         if self.stroke:
             parts.append(f' stroke="{self.stroke}" stroke-width="{self.stroke_width}"')
+
+        # Opacity
+        eff_fill_opacity = self.fill_opacity if self.fill_opacity is not None else self.opacity
+        eff_stroke_opacity = self.stroke_opacity if self.stroke_opacity is not None else self.opacity
+        if eff_fill_opacity < 1.0:
+            parts.append(f' fill-opacity="{eff_fill_opacity}"')
+        if eff_stroke_opacity < 1.0:
+            parts.append(f' stroke-opacity="{eff_stroke_opacity}"')
 
         # Rotation (use SVG transform)
         if self.rotation != 0:

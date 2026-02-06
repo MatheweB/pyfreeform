@@ -59,10 +59,7 @@ def what_is_fit_steps():
     cell2.add_border(color="#d1d5db", width=1)
     ellipse2 = cell2.add_ellipse(rx=60, ry=40, rotation=30, fill="#3b82f6")
     # Draw bounding box concept (simplified)
-    from pyfreeform import Rect
-    bbox_rect = Rect(cell2.center.x - 37.5, cell2.center.y - 32.5, 75, 65, fill="#f59e0b")
-    bbox_rect.cell = cell2
-    cell2._entities.append(bbox_rect)
+    bbox_rect = cell2.add_rect(width=75, height=65, fill="#f59e0b")
     cell2.add_text("2. Calc bbox", at=(0.5, 0.9), font_size=7, color="#1f2937")
 
     # Step 3: Scale to fit
@@ -127,11 +124,7 @@ def usage_different_shapes():
     # Rectangle
     cell2 = scene.grid[0, 1]
     cell2.add_border(color="#d1d5db", width=1)
-    from pyfreeform import Rect
-    rect = Rect(cell2.center.x - 50, cell2.center.y - 30, 100, 60, fill="#10b981")
-    rect.cell = cell2
-    cell2._entities.append(rect)
-    scene.add(rect)
+    rect = cell2.add_rect(width=100, height=60, fill="#10b981")
     rect.fit_to_cell(0.85)
     cell2.add_text("Rectangle", at=(0.5, 0.9), font_size=7, color="#1f2937")
 
@@ -355,11 +348,7 @@ def works_for_all_comparison():
     # Rectangle
     cell3 = scene.grid[0, 2]
     cell3.add_border(color="#d1d5db", width=1)
-    from pyfreeform import Rect
-    rect = Rect(cell3.center.x - 50, cell3.center.y - 35, 100, 70, fill="#10b981")
-    rect.cell = cell3
-    cell3._entities.append(rect)
-    scene.add(rect)
+    rect = cell3.add_rect(width=100, height=70, fill="#10b981")
     rect.fit_to_cell(0.8)
     cell3.add_text("Rectangle", at=(0.5, 0.9), font_size=7, color="#1f2937")
 

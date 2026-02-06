@@ -32,7 +32,7 @@ def development_workflow():
 
     # Each stage with different visual
     # 1. Clone
-    cells[0].add_polygon(shapes.square(size=30), fill="#3b82f6")
+    cells[0].add_polygon(shapes.square(size=0.7), fill="#3b82f6")
     cells[0].add_border(color="#3b82f6", width=2)
 
     # 2. Install
@@ -40,15 +40,15 @@ def development_workflow():
     cells[1].add_border(color="#10b981", width=2)
 
     # 3. Changes
-    cells[2].add_polygon(shapes.triangle(size=35), fill="#f59e0b")
+    cells[2].add_polygon(shapes.triangle(size=0.7), fill="#f59e0b")
     cells[2].add_border(color="#f59e0b", width=2)
 
     # 4. Tests
-    cells[3].add_polygon(shapes.hexagon(size=18), fill="#8b5cf6")
+    cells[3].add_polygon(shapes.hexagon(size=0.7), fill="#8b5cf6")
     cells[3].add_border(color="#8b5cf6", width=2)
 
     # 5. Format
-    cells[4].add_polygon(shapes.star(points=5, size=18), fill="#ec4899")
+    cells[4].add_polygon(shapes.star(points=5, size=0.7), fill="#ec4899")
     cells[4].add_border(color="#ec4899", width=2)
 
     # 6. PR
@@ -74,13 +74,13 @@ def code_quality_tools():
     cells[0].add_border(color="#e5e7eb", width=1)
 
     # MyPy - Type Checking
-    cells[1].add_polygon(shapes.hexagon(size=30), fill="#3b82f6", stroke="#3b82f6", stroke_width=2)
-    cells[1].add_polygon(shapes.hexagon(size=12), fill="#3b82f6")
+    cells[1].add_polygon(shapes.hexagon(size=0.7), fill="#3b82f6", stroke="#3b82f6", stroke_width=2)
+    cells[1].add_polygon(shapes.hexagon(size=0.4), fill="#3b82f6")
     cells[1].add_border(color="#e5e7eb", width=1)
 
     # Pytest - Testing
-    cells[2].add_polygon(shapes.triangle(size=50), fill="#10b981", stroke="#10b981", stroke_width=2)
-    cells[2].add_polygon(shapes.triangle(size=20), fill="#10b981")
+    cells[2].add_polygon(shapes.triangle(size=0.7), fill="#10b981", stroke="#10b981", stroke_width=2)
+    cells[2].add_polygon(shapes.triangle(size=0.4), fill="#10b981")
     cells[2].add_border(color="#e5e7eb", width=1)
 
     scene.save(OUTPUT_DIR / "02-code-quality-tools.svg")
@@ -112,13 +112,13 @@ def contribution_areas():
         if area["shape"] == "dot":
             cell.add_dot(radius=20, color=area["color"])
         elif area["shape"] == "triangle":
-            cell.add_polygon(shapes.triangle(size=40), fill=area["color"])
+            cell.add_polygon(shapes.triangle(size=0.7), fill=area["color"])
         elif area["shape"] == "hexagon":
-            cell.add_polygon(shapes.hexagon(size=22), fill=area["color"])
+            cell.add_polygon(shapes.hexagon(size=0.7), fill=area["color"])
         elif area["shape"] == "star":
-            cell.add_polygon(shapes.star(points=5, size=22), fill=area["color"])
+            cell.add_polygon(shapes.star(points=5, size=0.7), fill=area["color"])
         elif area["shape"] == "square":
-            cell.add_polygon(shapes.square(size=40), fill=area["color"])
+            cell.add_polygon(shapes.square(size=0.7), fill=area["color"])
         elif area["shape"] == "ellipse":
             cell.add_ellipse(rx=22, ry=22, fill=area["color"])
 
@@ -166,18 +166,18 @@ def testing_pyramid():
 
     # Create pyramid shape
     # Top row: 1 cell (integration)
-    scene.grid[0, 1].add_polygon(shapes.triangle(size=35), fill="#3b82f6")
+    scene.grid[0, 1].add_polygon(shapes.triangle(size=0.7), fill="#3b82f6")
     scene.grid[0, 1].add_border(color="#e5e7eb", width=1)
 
     # Middle row: 2 cells (component)
-    scene.grid[1, 0].add_polygon(shapes.square(size=35), fill="#10b981")
-    scene.grid[1, 1].add_polygon(shapes.square(size=35), fill="#10b981")
+    scene.grid[1, 0].add_polygon(shapes.square(size=0.7), fill="#10b981")
+    scene.grid[1, 1].add_polygon(shapes.square(size=0.7), fill="#10b981")
     scene.grid[1, 0].add_border(color="#e5e7eb", width=1)
     scene.grid[1, 1].add_border(color="#e5e7eb", width=1)
 
     # Bottom row: 3 cells (unit)
     for col in range(3):
-        scene.grid[2, col].add_polygon(shapes.square(size=35), fill="#f59e0b")
+        scene.grid[2, col].add_polygon(shapes.square(size=0.7), fill="#f59e0b")
         scene.grid[2, col].add_border(color="#e5e7eb", width=1)
 
     # Other cells empty with borders
@@ -229,14 +229,14 @@ def code_style_guidelines():
     scene.background = "#ffffff"
 
     # Good examples (left column)
-    scene.grid[0, 0].add_polygon(shapes.hexagon(size=25), fill="#10b981", stroke="#10b981", stroke_width=2)
-    scene.grid[1, 0].add_polygon(shapes.star(points=5, size=25), fill="#10b981", stroke="#10b981", stroke_width=2)
+    scene.grid[0, 0].add_polygon(shapes.hexagon(size=0.7), fill="#10b981", stroke="#10b981", stroke_width=2)
+    scene.grid[1, 0].add_polygon(shapes.star(points=5, size=0.7), fill="#10b981", stroke="#10b981", stroke_width=2)
     scene.grid[2, 0].add_ellipse(rx=25, ry=25, fill="#10b981", stroke="#10b981", stroke_width=2)
 
     # Bad examples (right column) - less structured
-    scene.grid[0, 1].add_polygon(shapes.triangle(size=40), fill="#ef4444", stroke="#ef4444", stroke_width=1)
+    scene.grid[0, 1].add_polygon(shapes.triangle(size=0.7), fill="#ef4444", stroke="#ef4444", stroke_width=1)
     scene.grid[1, 1].add_dot(radius=20, color="#ef4444")
-    scene.grid[2, 1].add_polygon(shapes.square(size=35), fill="#ef4444", stroke="#ef4444", stroke_width=1)
+    scene.grid[2, 1].add_polygon(shapes.square(size=0.7), fill="#ef4444", stroke="#ef4444", stroke_width=1)
 
     # Borders
     for cell in scene.grid:

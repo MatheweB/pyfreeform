@@ -44,33 +44,42 @@ class Polygon(Entity):
         stroke: str | tuple[int, int, int] | None = None,
         stroke_width: float = 1,
         z_index: int = 0,
+        opacity: float = 1.0,
+        fill_opacity: float | None = None,
+        stroke_opacity: float | None = None,
     ) -> None:
         """
         Create a polygon from vertices.
-        
+
         Args:
             vertices: List of points (at least 3).
             fill: Fill color (None for transparent).
             stroke: Stroke color (None for no stroke).
             stroke_width: Stroke width in pixels.
             z_index: Layer ordering (higher = on top).
+            opacity: Opacity for both fill and stroke (0.0-1.0).
+            fill_opacity: Override opacity for fill only (None = use opacity).
+            stroke_opacity: Override opacity for stroke only (None = use opacity).
         """
         if len(vertices) < 3:
             raise ValueError("Polygon requires at least 3 vertices")
-        
+
         # Convert to Points
         self._vertices = [
             Point(*v) if isinstance(v, tuple) else v
             for v in vertices
         ]
-        
+
         # Position is centroid
         centroid = self._calculate_centroid()
         super().__init__(centroid.x, centroid.y, z_index)
-        
+
         self._fill = Color(fill) if fill else None
         self._stroke = Color(stroke) if stroke else None
         self.stroke_width = float(stroke_width)
+        self.opacity = float(opacity)
+        self.fill_opacity = fill_opacity
+        self.stroke_opacity = stroke_opacity
     
     def _calculate_centroid(self) -> Point:
         """Calculate the centroid (center of mass) of the polygon."""
@@ -211,7 +220,15 @@ class Polygon(Entity):
         
         if self._stroke:
             parts.append(f' stroke="{self.stroke}" stroke-width="{self.stroke_width}"')
-        
+
+        # Opacity
+        eff_fill_opacity = self.fill_opacity if self.fill_opacity is not None else self.opacity
+        eff_stroke_opacity = self.stroke_opacity if self.stroke_opacity is not None else self.opacity
+        if eff_fill_opacity < 1.0:
+            parts.append(f' fill-opacity="{eff_fill_opacity}"')
+        if eff_stroke_opacity < 1.0:
+            parts.append(f' stroke-opacity="{eff_stroke_opacity}"')
+
         parts.append(' />')
         return ''.join(parts)
     

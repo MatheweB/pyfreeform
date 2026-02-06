@@ -192,14 +192,7 @@ The second version is self-documenting - anyone reading the code immediately und
 Anchors account for transformations. If you rotate a rectangle, its corner anchors rotate with it:
 
 ```python
-from pyfreeform import Rect
-rect = Rect(
-    x=cell.center.x - 25,
-    y=cell.center.y - 15,
-    width=50, height=30, fill="lightgray"
-)
-scene.add(rect)
-rect.rotate(45)  # Rotated 45 degrees
+rect = cell.add_rect(width=50, height=30, rotation=45, fill="lightgray")
 
 # All anchors respect the rotation
 top_left = rect.anchor("top_left")  # Actual top-left in rotated frame
@@ -232,10 +225,7 @@ print(line.anchor("start"))  # Shifted by (50, 50)
 Rotated entities have rotated anchors:
 
 ```python
-from pyfreeform import Rect
-rect = Rect(x=100, y=100, width=50, height=30, fill="lightgray")
-scene.add(rect)
-rect.rotate(90)
+rect = cell.add_rect(width=50, height=30, rotation=90, fill="lightgray")
 
 # The "right" anchor is actually at the visual top after 90° rotation
 right = rect.anchor("right")
@@ -246,8 +236,9 @@ right = rect.anchor("right")
 Scaled entities have appropriately scaled anchor positions:
 
 ```python
-# Note: PyFreeform may not directly support entity scaling,
-# but if it does, anchors would scale accordingly
+rect = cell.add_rect(width=50, height=30, fill="lightgray")
+rect.scale(1.5)  # Anchors move outward with the scaled dimensions
+top_right = rect.anchor("top_right")
 ```
 
 ## Practical Use Cases
@@ -284,10 +275,7 @@ Combine multiple entities precisely using anchors:
 
 ```python
 # Create a flag: tall rectangle as pole
-from pyfreeform import Rect
-cx, cy = cell.center.x, cell.center.y
-pole = Rect(cx - 2, cy - 40, 5, 80, fill="brown")
-scene.add(pole)
+pole = cell.add_rect(width=5, height=80, fill="brown")
 pole_top = pole.anchor("top")
 
 # Position flag triangle at top of pole
@@ -347,9 +335,7 @@ cell.add_dot(at=midpoint, radius=4, color="orange")
 Add visual elements at entity corners:
 
 ```python
-from pyfreeform import Rect
-rect = Rect(x=50, y=50, width=80, height=60, stroke="black", stroke_width=1)
-scene.add(rect)
+rect = cell.add_rect(width=80, height=60, fill=None, stroke="black", stroke_width=1)
 
 # Add dots at all four corners
 for anchor_name in ["top_left", "top_right", "bottom_left", "bottom_right"]:
@@ -362,9 +348,7 @@ for anchor_name in ["top_left", "top_right", "bottom_left", "bottom_right"]:
 Place entities at the midpoints of rectangle edges:
 
 ```python
-from pyfreeform import Rect
-rect = Rect(x=50, y=50, width=80, height=60, stroke="black", stroke_width=1)
-scene.add(rect)
+rect = cell.add_rect(width=80, height=60, fill=None, stroke="black", stroke_width=1)
 
 # Add dots at edge midpoints
 for anchor_name in ["top", "bottom", "left", "right"]:

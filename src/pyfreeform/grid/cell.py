@@ -271,14 +271,20 @@ class Cell:
     def relative_to_absolute(self, pos: Position) -> Point:
         """
         Convert relative position to absolute pixels.
-        
+
         Args:
             pos: Either a (rx, ry) tuple where 0-1 maps to cell bounds,
-                 or a named position like "center", "top_left", etc.
-        
+                a named position like "center", "top_left", etc.,
+                or a Point (already absolute — passed through unchanged).
+
         Returns:
             Absolute pixel position as Point.
         """
+        # Point objects are already absolute pixel coordinates
+        # (e.g. from entity.anchor() or path.point_at())
+        if isinstance(pos, Point):
+            return pos
+
         if isinstance(pos, str):
             if pos not in NAMED_POSITIONS:
                 raise ValueError(
@@ -286,7 +292,7 @@ class Cell:
                     f"Available: {list(NAMED_POSITIONS.keys())}"
                 )
             pos = NAMED_POSITIONS[pos]
-        
+
         rx, ry = pos
         return Point(
             self._x + rx * self._width,
@@ -320,6 +326,7 @@ class Cell:
         radius: float = 5,
         color: str = "black",
         z_index: int = 0,
+        opacity: float = 1.0,
         style: DotStyle | None = None,
     ) -> Dot:
         """
@@ -365,14 +372,16 @@ class Cell:
             radius = style.radius
             color = style.color
             z_index = style.z_index
-        
+            opacity = style.opacity
+
         # Determine position
         if along is not None and t is not None:
             position = along.point_at(t)
         else:
             position = self.relative_to_absolute(at)
-        
-        dot = Dot(position.x, position.y, radius=radius, color=color, z_index=z_index)
+
+        dot = Dot(position.x, position.y, radius=radius, color=color, z_index=z_index,
+                  opacity=opacity)
         dot.cell = self
         self._entities.append(dot)
         return dot
@@ -388,6 +397,7 @@ class Cell:
         cap: str = "round",
         start_cap: str | None = None,
         end_cap: str | None = None,
+        opacity: float = 1.0,
         style: LineStyle | None = None,
     ) -> Line:
         """
@@ -420,6 +430,7 @@ class Cell:
             cap = style.cap
             start_cap = style.start_cap
             end_cap = style.end_cap
+            opacity = style.opacity
 
         start_pos = self.relative_to_absolute(start)
         end_pos = self.relative_to_absolute(end)
@@ -427,7 +438,7 @@ class Cell:
         line = Line.from_points(
             start_pos, end_pos,
             width=width, color=color, z_index=z_index, cap=cap,
-            start_cap=start_cap, end_cap=end_cap,
+            start_cap=start_cap, end_cap=end_cap, opacity=opacity,
         )
         line.cell = self
         self._entities.append(line)
@@ -444,6 +455,7 @@ class Cell:
         cap: str = "round",
         start_cap: str | None = None,
         end_cap: str | None = None,
+        opacity: float = 1.0,
         style: LineStyle | None = None,
     ) -> Line:
         """
@@ -474,7 +486,7 @@ class Cell:
         return self.add_line(
             start=start, end=end,
             width=width, color=color, z_index=z_index, cap=cap,
-            start_cap=start_cap, end_cap=end_cap, style=style,
+            start_cap=start_cap, end_cap=end_cap, opacity=opacity, style=style,
         )
 
     def add_curve(
@@ -489,6 +501,7 @@ class Cell:
         cap: str = "round",
         start_cap: str | None = None,
         end_cap: str | None = None,
+        opacity: float = 1.0,
         style: LineStyle | None = None,
     ) -> Curve:
         """
@@ -503,8 +516,8 @@ class Cell:
         Args:
             start: Starting position within cell
             end: Ending position within cell
-            curvature: How much the curve bows (-1 to 1, 0 = straight)
-                       Positive = bows left, Negative = bows right
+            curvature:  How much the curve bows (-1 to 1, 0 = straight)
+                        Positive = bows left, Negative = bows right
             width: Stroke width in pixels
             color: Stroke color
             z_index: Layer order
@@ -530,6 +543,7 @@ class Cell:
             cap = style.cap
             start_cap = style.start_cap
             end_cap = style.end_cap
+            opacity = style.opacity
 
         start_pos = self.relative_to_absolute(start)
         end_pos = self.relative_to_absolute(end)
@@ -538,7 +552,7 @@ class Cell:
             start_pos, end_pos,
             curvature=curvature,
             width=width, color=color, z_index=z_index, cap=cap,
-            start_cap=start_cap, end_cap=end_cap,
+            start_cap=start_cap, end_cap=end_cap, opacity=opacity,
         )
         curve.cell = self
         self._entities.append(curve)
@@ -555,6 +569,9 @@ class Cell:
         stroke: str | None = None,
         stroke_width: float = 1,
         z_index: int = 0,
+        opacity: float = 1.0,
+        fill_opacity: float | None = None,
+        stroke_opacity: float | None = None,
         style: ShapeStyle | None = None,
     ) -> Ellipse:
         """
@@ -596,6 +613,9 @@ class Cell:
             stroke = style.stroke
             stroke_width = style.stroke_width
             z_index = style.z_index
+            opacity = style.opacity
+            fill_opacity = style.fill_opacity
+            stroke_opacity = style.stroke_opacity
 
         position = self.relative_to_absolute(at)
 
@@ -609,7 +629,8 @@ class Cell:
             position.x, position.y,
             rx=rx, ry=ry, rotation=rotation,
             fill=fill, stroke=stroke, stroke_width=stroke_width,
-            z_index=z_index,
+            z_index=z_index, opacity=opacity,
+            fill_opacity=fill_opacity, stroke_opacity=stroke_opacity,
         )
         ellipse.cell = self
         self._entities.append(ellipse)
@@ -623,6 +644,9 @@ class Cell:
         stroke: str | None = None,
         stroke_width: float = 1,
         z_index: int = 0,
+        opacity: float = 1.0,
+        fill_opacity: float | None = None,
+        stroke_opacity: float | None = None,
         rotation: float = 0,
         style: ShapeStyle | None = None,
     ) -> Polygon:
@@ -633,8 +657,8 @@ class Cell:
         (0,0) is top-left and (1,1) is bottom-right of the cell.
 
         Args:
-            vertices: List of (x, y) tuples in relative coordinates.
-                      Use shape helpers like hexagon(), star() for common shapes.
+            vertices:   List of (x, y) tuples in relative coordinates.
+                        Use shape helpers like hexagon(), star() for common shapes.
             fill: Fill color (None for transparent)
             stroke: Stroke color (None for no stroke)
             stroke_width: Stroke width in pixels
@@ -661,6 +685,9 @@ class Cell:
             stroke = style.stroke
             stroke_width = style.stroke_width
             z_index = style.z_index
+            opacity = style.opacity
+            fill_opacity = style.fill_opacity
+            stroke_opacity = style.stroke_opacity
 
         # Convert relative vertices to absolute
         absolute_vertices = [self.relative_to_absolute(v) for v in vertices]
@@ -671,6 +698,9 @@ class Cell:
             stroke=stroke,
             stroke_width=stroke_width,
             z_index=z_index,
+            opacity=opacity,
+            fill_opacity=fill_opacity,
+            stroke_opacity=stroke_opacity,
         )
 
         if rotation != 0:
@@ -694,6 +724,7 @@ class Cell:
         baseline: str = "middle",
         rotation: float = 0,
         z_index: int = 0,
+        opacity: float = 1.0,
         style: TextStyle | None = None,
     ) -> Text:
         """
@@ -736,6 +767,7 @@ class Cell:
             baseline = style.baseline
             rotation = style.rotation
             z_index = style.z_index
+            opacity = style.opacity
 
         position = self.relative_to_absolute(at)
 
@@ -755,11 +787,92 @@ class Cell:
             baseline=baseline,
             rotation=rotation,
             z_index=z_index,
+            opacity=opacity,
         )
         text.cell = self
         self._entities.append(text)
         return text
-    
+
+    def add_rect(
+        self,
+        *,
+        at: Position = "center",
+        width: float | None = None,
+        height: float | None = None,
+        rotation: float = 0,
+        fill: str | None = "black",
+        stroke: str | None = None,
+        stroke_width: float = 1,
+        opacity: float = 1.0,
+        fill_opacity: float | None = None,
+        stroke_opacity: float | None = None,
+        z_index: int = 0,
+        style: ShapeStyle | None = None,
+    ) -> Rect:
+        """
+        Add a rectangle to this cell.
+
+        The ``at`` parameter specifies where the CENTER of the rectangle
+        will be placed within the cell, consistent with add_ellipse().
+
+        For full-cell fills use add_fill(). For cell borders use add_border().
+
+        Args:
+            at: Position of rectangle center within cell.
+            width: Rectangle width in pixels (default: 60% of cell width).
+            height: Rectangle height in pixels (default: 60% of cell height).
+            rotation: Rotation in degrees (counterclockwise).
+            fill: Fill color (None for transparent).
+            stroke: Stroke color (None for no stroke).
+            stroke_width: Stroke width in pixels.
+            opacity: Opacity for both fill and stroke (0.0-1.0).
+            fill_opacity: Override opacity for fill only.
+            stroke_opacity: Override opacity for stroke only.
+            z_index: Layer order (higher = on top).
+            style: ShapeStyle object (overrides fill/stroke/stroke_width/z_index/opacity).
+
+        Returns:
+            The created Rect entity.
+
+        Examples:
+            >>> rect = cell.add_rect(fill="coral")
+            >>> rect = cell.add_rect(width=30, height=20, rotation=45)
+            >>> rect = cell.add_rect(fill=None, stroke="navy", stroke_width=2)
+        """
+        from ..entities.rect import Rect
+
+        if style:
+            fill = style.color
+            stroke = style.stroke
+            stroke_width = style.stroke_width
+            z_index = style.z_index
+            opacity = style.opacity
+            fill_opacity = style.fill_opacity
+            stroke_opacity = style.stroke_opacity
+
+        center = self.relative_to_absolute(at)
+
+        # Auto-scale to cell if not specified
+        if width is None:
+            width = self._width * 0.6
+        if height is None:
+            height = self._height * 0.6
+
+        # Compute top-left from center position
+        top_left_x = center.x - width / 2
+        top_left_y = center.y - height / 2
+
+        rect = Rect(
+            top_left_x, top_left_y,
+            width=width, height=height,
+            fill=fill, stroke=stroke, stroke_width=stroke_width,
+            rotation=rotation, opacity=opacity, z_index=z_index,
+            fill_opacity=fill_opacity, stroke_opacity=stroke_opacity,
+        )
+        rect.cell = self
+        self._entities.append(rect)
+        return rect
+
     def add_fill(
         self,
         *,
@@ -805,33 +918,37 @@ class Cell:
         color: str = "#cccccc",
         width: float = 0.5,
         z_index: int = 0,
+        opacity: float = 1.0,
         style: BorderStyle | None = None,
     ) -> Rect:
         """
         Add a border around this cell.
-        
+
         Args:
             color: Stroke color
             width: Stroke width
             z_index: Layer order
+            opacity: Opacity (0.0 transparent to 1.0 opaque)
             style: BorderStyle object
-        
+
         Returns:
             The created Rect entity.
-        
+
         Example:
             >>> cell.add_border(color=palette.grid)
         """
         from ..entities.rect import Rect
-        
+
         if style:
             color = style.color
             width = style.width
             z_index = style.z_index
-        
+            opacity = style.opacity
+
         rect = Rect(
             self._x, self._y, self._width, self._height,
-            fill=None, stroke=color, stroke_width=width, z_index=z_index
+            fill=None, stroke=color, stroke_width=width, z_index=z_index,
+            opacity=opacity,
         )
         rect.cell = self
         self._entities.append(rect)

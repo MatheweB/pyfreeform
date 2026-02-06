@@ -136,7 +136,7 @@ def example_05_linestyle_cap_options():
         y = 100 + i * 100
 
         # Draw thick line to show cap style - note: pyfreeform Line doesn't expose cap directly
-        scene.add(Line(x1=100, y1=y, x2=600, y2=y, color=color, width=15))
+        scene.add(Line(x1=100, y1=y, x2=600, y2=y, color=color, width=15, cap=cap))
 
         # Add guide dots to show endpoints
         scene.add(Dot(x=100, y=y, radius=3, color="#95a5a6"))
