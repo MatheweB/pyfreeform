@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Iterator, Callable
 
 from ..core.point import Point
 from .cell import Cell
+from .cell_group import CellGroup
 
 if TYPE_CHECKING:
     from ..image import Image, Layer
@@ -68,6 +69,7 @@ class Grid:
         
         # Create cells
         self._cells: list[list[Cell]] = []
+        self._cell_groups: list[CellGroup] = []
         for row in range(rows):
             row_cells = []
             for col in range(cols):
@@ -299,16 +301,21 @@ class Grid:
     # --- Utility methods ---
     
     def all_entities(self) -> list:
-        """Get all entities in all cells."""
+        """Get all entities in all cells and cell groups."""
         entities = []
         for cell in self:
             entities.extend(cell.entities)
+        for group in self._cell_groups:
+            entities.extend(group.entities)
         return entities
-    
+
     def clear(self) -> None:
-        """Clear all entities from all cells."""
+        """Clear all entities from all cells and cell groups."""
         for cell in self:
             cell.clear()
+        for group in self._cell_groups:
+            group.clear()
+        self._cell_groups.clear()
     
     # =========================================================================
     # ROW AND COLUMN ACCESS
@@ -443,6 +450,81 @@ class Grid:
             if on_border:
                 yield cell
     
+    # =========================================================================
+    # CELL MERGING
+    # =========================================================================
+
+    def merge(
+        self,
+        row_start: int = 0,
+        row_end: int | None = None,
+        col_start: int = 0,
+        col_end: int | None = None,
+    ) -> CellGroup:
+        """
+        Merge a rectangular region of cells into a single virtual surface.
+
+        The returned CellGroup acts like a single large cell — it has all
+        the same builder methods (add_dot, add_line, add_curve, etc.) and
+        averaged data properties (brightness, color, rgb).
+
+        Args:
+            row_start: Starting row (inclusive, default 0).
+            row_end: Ending row (exclusive, default all rows).
+            col_start: Starting column (inclusive, default 0).
+            col_end: Ending column (exclusive, default all columns).
+
+        Returns:
+            A CellGroup spanning the selected region.
+
+        Example:
+            >>> header = grid.merge(row_start=0, row_end=2)
+            >>> header.add_fill(color="#333")
+            >>> header.add_text("Title", font_size=16, color="white")
+        """
+        cells = list(self.region(row_start, row_end, col_start, col_end))
+        if not cells:
+            raise ValueError(
+                f"No cells in region rows [{row_start}:{row_end}], "
+                f"cols [{col_start}:{col_end}]"
+            )
+        group = CellGroup(cells, grid=self)
+        self._cell_groups.append(group)
+        return group
+
+    def merge_row(self, index: int) -> CellGroup:
+        """
+        Merge an entire row into a single virtual surface.
+
+        Args:
+            index: Row index (0-based).
+
+        Returns:
+            A CellGroup spanning the full row.
+
+        Example:
+            >>> top = grid.merge_row(0)
+            >>> top.add_fill(color="navy")
+            >>> top.add_text("Header", font_size=14, color="white")
+        """
+        return self.merge(row_start=index, row_end=index + 1)
+
+    def merge_col(self, index: int) -> CellGroup:
+        """
+        Merge an entire column into a single virtual surface.
+
+        Args:
+            index: Column index (0-based).
+
+        Returns:
+            A CellGroup spanning the full column.
+
+        Example:
+            >>> sidebar = grid.merge_col(0)
+            >>> sidebar.add_fill(color="gray")
+        """
+        return self.merge(col_start=index, col_end=index + 1)
+
     # =========================================================================
     # PATTERN SELECTION
     # =========================================================================

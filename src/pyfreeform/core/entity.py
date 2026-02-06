@@ -9,7 +9,7 @@ from weakref import WeakSet
 from .point import Point
 
 if TYPE_CHECKING:
-    from ..grid.cell import Cell
+    from .surface import Surface
     from .connection import Connection
 
 
@@ -42,7 +42,7 @@ class Entity(ABC):
             z_index: Layer ordering (higher = on top). Default 0.
         """
         self._position = Point(x, y)
-        self._cell: Cell | None = None
+        self._cell: Surface | None = None
         self._connections: WeakSet[Connection] = WeakSet()
         self._data: dict[str, Any] = {}
         self._z_index = z_index
@@ -79,13 +79,13 @@ class Entity(ABC):
         return self._position.y
     
     @property
-    def cell(self) -> Cell | None:
-        """The cell containing this entity, if any."""
+    def cell(self) -> Surface | None:
+        """The surface (Cell, Scene, or CellGroup) containing this entity, if any."""
         return self._cell
-    
+
     @cell.setter
-    def cell(self, value: Cell | None) -> None:
-        """Set the containing cell."""
+    def cell(self, value: Surface | None) -> None:
+        """Set the containing surface."""
         self._cell = value
     
     @property

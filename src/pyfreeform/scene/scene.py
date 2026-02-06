@@ -8,13 +8,14 @@ from typing import Iterator, TYPE_CHECKING
 from ..color import Color
 from ..core.connection import Connection
 from ..core.entity import Entity
+from ..core.surface import Surface
 from ..grid.grid import Grid
 
 if TYPE_CHECKING:
     from ..image import Image
 
 
-class Scene:
+class Scene(Surface):
     """
     The main container for all drawable objects in PyFreeform.
     
@@ -61,10 +62,12 @@ class Scene:
             height: Scene height in pixels.
             background: Background color (None for transparent).
         """
+        self._x = 0.0
+        self._y = 0.0
         self._width = int(width)
         self._height = int(height)
         self._background = Color(background) if background else None
-        
+
         self._entities: list[Entity] = []
         self._connections: list[Connection] = []
         self._grids: list[Grid] = []

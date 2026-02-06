@@ -29,9 +29,13 @@ from .entities.polygon import (
     rounded_rect,
 )
 
+# Core (Surface protocol)
+from .core.surface import Surface
+
 # Grid
 from .grid.grid import Grid
 from .grid.cell import Cell
+from .grid.cell_group import CellGroup
 
 # Scene
 from .scene.scene import Scene
@@ -143,9 +147,12 @@ __all__ = [
     "squircle",
     "rounded_rect",
     "shapes",
+    # Core (Surface protocol)
+    "Surface",
     # Grid
     "Grid",
     "Cell",
+    "CellGroup",
     # Scene
     "Scene",
     # Image
