@@ -184,20 +184,36 @@ class Polygon(Entity):
         self._position = centroid
         return self
     
-    def translate(self, dx: float, dy: float) -> Polygon:
+    def move_by(self, dx: float = 0, dy: float = 0) -> Polygon:
         """
-        Move the polygon by an offset.
-        
+        Move the polygon by an offset, updating vertices.
+
+        Overrides Entity.move_by to also translate vertex data so that
+        bounds() stays consistent with the entity position.
+
         Args:
             dx: Horizontal offset.
             dy: Vertical offset.
-        
+
         Returns:
             self, for method chaining.
         """
         self._vertices = [Point(v.x + dx, v.y + dy) for v in self._vertices]
         self._position = Point(self._position.x + dx, self._position.y + dy)
         return self
+
+    def translate(self, dx: float, dy: float) -> Polygon:
+        """
+        Move the polygon by an offset (alias for move_by).
+
+        Args:
+            dx: Horizontal offset.
+            dy: Vertical offset.
+
+        Returns:
+            self, for method chaining.
+        """
+        return self.move_by(dx, dy)
     
     def bounds(self) -> tuple[float, float, float, float]:
         """Get bounding box."""

@@ -233,3 +233,164 @@ def test_fit_to_cell_brightness_based_scaling():
     # Bright cell should have larger ellipse
     assert ellipse2.rx > ellipse1.rx
     assert ellipse2.ry > ellipse1.ry
+
+
+# =========================================================================
+# Tests for fit_to_cell(at=) — position-aware mode
+# =========================================================================
+
+
+def test_fit_to_cell_at_center_same_as_default():
+    """at=(0.5, 0.5) should behave same as default centering."""
+    scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
+    cell = scene.grid[0, 0]
+
+    # Two identical dots — one default, one with at=center
+    dot_default = cell.add_dot(radius=200, color="red")
+    dot_default.fit_to_cell(0.8)
+    r_default = dot_default.radius
+    x_default, y_default = dot_default.x, dot_default.y
+
+    scene2 = Scene.with_grid(cols=1, rows=1, cell_size=100)
+    cell2 = scene2.grid[0, 0]
+    dot_at = cell2.add_dot(radius=200, color="red")
+    dot_at.fit_to_cell(0.8, at=(0.5, 0.5))
+
+    assert abs(dot_at.radius - r_default) < 0.1
+    assert abs(dot_at.x - x_default) < 0.1
+    assert abs(dot_at.y - y_default) < 0.1
+
+
+def test_fit_to_cell_at_corner_no_overflow():
+    """at=(0.25, 0.25) should constrain to nearest-edge quadrant."""
+    scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
+    cell = scene.grid[0, 0]
+
+    dot = cell.add_dot(radius=999, color="blue")
+    dot.fit_to_cell(1.0, at=(0.25, 0.25))
+
+    # Entity must not overflow any cell edge
+    min_x, min_y, max_x, max_y = dot.bounds()
+    assert min_x >= cell.x - 0.1
+    assert min_y >= cell.y - 0.1
+    assert max_x <= cell.x + cell.width + 0.1
+    assert max_y <= cell.y + cell.height + 0.1
+
+    # Should be positioned at (0.25, 0.25) of cell
+    expected_x = cell.x + cell.width * 0.25
+    expected_y = cell.y + cell.height * 0.25
+    assert abs(dot.x - expected_x) < 1.0
+    assert abs(dot.y - expected_y) < 1.0
+
+
+def test_fit_to_cell_at_corner_smaller_than_center():
+    """Entity at corner should be smaller than entity at center (same scale)."""
+    scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
+    cell = scene.grid[0, 0]
+
+    dot_center = cell.add_dot(radius=999, color="red")
+    dot_center.fit_to_cell(1.0, at=(0.5, 0.5))
+
+    scene2 = Scene.with_grid(cols=1, rows=1, cell_size=100)
+    cell2 = scene2.grid[0, 0]
+    dot_corner = cell2.add_dot(radius=999, color="blue")
+    dot_corner.fit_to_cell(1.0, at=(0.25, 0.25))
+
+    # Corner has less available space → smaller radius
+    assert dot_corner.radius < dot_center.radius
+
+
+def test_fit_to_cell_at_rejects_strings():
+    """Named positions should be rejected with helpful error."""
+    scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
+    cell = scene.grid[0, 0]
+    dot = cell.add_dot(radius=10, color="red")
+
+    with pytest.raises(TypeError, match="only accepts"):
+        dot.fit_to_cell(0.8, at="top_left")
+
+
+def test_fit_to_cell_at_rejects_edge_zero():
+    """Values at 0.0 should be rejected."""
+    scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
+    cell = scene.grid[0, 0]
+    dot = cell.add_dot(radius=10, color="red")
+
+    with pytest.raises(ValueError, match="inside the cell"):
+        dot.fit_to_cell(0.8, at=(0.0, 0.5))
+
+
+def test_fit_to_cell_at_rejects_edge_one():
+    """Values at 1.0 should be rejected."""
+    scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
+    cell = scene.grid[0, 0]
+    dot = cell.add_dot(radius=10, color="red")
+
+    with pytest.raises(ValueError, match="inside the cell"):
+        dot.fit_to_cell(0.8, at=(0.5, 1.0))
+
+
+def test_fit_to_cell_at_with_polygon():
+    """Position-aware fit with oversized polygon."""
+    scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
+    cell = scene.grid[0, 0]
+
+    # Large polygon that exceeds cell
+    polygon = cell.add_polygon(
+        vertices=[(0, 0), (1, 0), (1, 1), (0, 1)],
+        fill="green",
+    )
+    polygon.fit_to_cell(0.8, at=(0.75, 0.75))
+
+    # Must not overflow
+    min_x, min_y, max_x, max_y = polygon.bounds()
+    assert min_x >= cell.x - 0.1
+    assert min_y >= cell.y - 0.1
+    assert max_x <= cell.x + cell.width + 0.1
+    assert max_y <= cell.y + cell.height + 0.1
+
+    # Center should be near the target position
+    cx = (min_x + max_x) / 2
+    cy = (min_y + max_y) / 2
+    expected_x = cell.x + cell.width * 0.75
+    expected_y = cell.y + cell.height * 0.75
+    assert abs(cx - expected_x) < 1.0
+    assert abs(cy - expected_y) < 1.0
+
+
+def test_fit_to_cell_at_with_ellipse():
+    """Position-aware fit with oversized ellipse."""
+    scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
+    cell = scene.grid[0, 0]
+
+    ellipse = cell.add_ellipse(rx=200, ry=150)
+    ellipse.fit_to_cell(0.9, at=(0.3, 0.7))
+
+    min_x, min_y, max_x, max_y = ellipse.bounds()
+    assert min_x >= cell.x - 0.5
+    assert min_y >= cell.y - 0.5
+    assert max_x <= cell.x + cell.width + 0.5
+    assert max_y <= cell.y + cell.height + 0.5
+
+
+def test_fit_to_cell_at_method_chaining():
+    """fit_to_cell(at=) should support method chaining."""
+    scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
+    cell = scene.grid[0, 0]
+
+    result = cell.add_dot(radius=200).fit_to_cell(0.8, at=(0.5, 0.5))
+    assert result is not None
+
+
+def test_fit_to_cell_backward_compat_no_at():
+    """Existing calls without at= must work identically."""
+    scene = Scene.with_grid(cols=2, rows=2, cell_size=20)
+    cell = scene.grid[0, 0]
+
+    dot = cell.add_dot(radius=50, color="red")
+    dot.fit_to_cell(1.0)
+
+    assert dot.radius <= 10.0
+    assert dot.radius > 9.9
+    assert abs(dot.x - (cell.x + cell.width / 2)) < 0.1
+    assert abs(dot.y - (cell.y + cell.height / 2)) < 0.1

@@ -312,7 +312,13 @@ class Entity(ABC):
         """
         pass
 
-    def fit_to_cell(self, scale: float = 1.0, recenter: bool = True) -> Entity:
+    def fit_to_cell(
+        self,
+        scale: float = 1.0,
+        recenter: bool = True,
+        *,
+        at: tuple[float, float] | None = None,
+    ) -> Entity:
         """
         Automatically scale and position entity to fit within its cell bounds.
 
@@ -320,20 +326,32 @@ class Entity(ABC):
         the entity's actual bounding box.
 
         Args:
-            scale: Percentage of cell to fill (0.0-1.0).
-                   1.0 = fill entire cell, 0.85 = use 85% of cell.
+            scale: Percentage of available space to fill (0.0-1.0).
+                   1.0 = fill entire available area, 0.85 = use 85%.
             recenter: If True, center entity in cell after scaling.
                       If False, maintain current position.
+                      Ignored when ``at`` is provided.
+            at: Optional cell-relative position (rx, ry) where both values
+                are in (0.0, 1.0) exclusive. When provided, the entity is
+                positioned at this point and the available space is
+                constrained by the nearest cell edges, so the entity never
+                overflows.  At (0.5, 0.5) the full cell is available (same
+                as the default).  At (0.25, 0.25) only the top-left
+                quadrant is usable.
 
         Returns:
             self, for method chaining
 
         Raises:
             ValueError: If entity has no cell or scale is out of range
+            TypeError: If ``at`` is a string (named anchors sit on cell
+                       edges where available space is 0)
 
         Example:
             >>> ellipse = cell.add_ellipse(rx=100, ry=60, rotation=45)
             >>> ellipse.fit_to_cell(0.85)  # Auto-constrain to 85% of cell
+            >>> dot = cell.add_dot(radius=200)
+            >>> dot.fit_to_cell(1.0, at=(0.25, 0.25))  # Fit in top-left quadrant
         """
         # Validation
         if self._cell is None:
@@ -342,16 +360,74 @@ class Entity(ABC):
         if not (0.0 < scale <= 1.0):
             raise ValueError(f"scale must be between 0.0 and 1.0, got {scale}")
 
+        cell = self._cell
+
+        if at is not None:
+            # --- Position-aware mode ---
+            if isinstance(at, str):
+                raise TypeError(
+                    f"fit_to_cell(at=) only accepts (rx, ry) tuples, not '{at}'. "
+                    f"Named positions are at cell edges where available space is 0."
+                )
+            rx, ry = at
+            if not (0.0 < rx < 1.0 and 0.0 < ry < 1.0):
+                raise ValueError(
+                    f"at=({rx}, {ry}) must be inside the cell (0.0-1.0 exclusive). "
+                    f"Values at edges leave no room for the entity."
+                )
+
+            # Target position in absolute coordinates
+            target = cell.relative_to_absolute(at)
+            cell_x, cell_y = cell.x, cell.y
+            cell_w, cell_h = cell.width, cell.height
+
+            # Available space = constrained by nearest edge in each direction
+            dist_left = target.x - cell_x
+            dist_right = (cell_x + cell_w) - target.x
+            dist_top = target.y - cell_y
+            dist_bottom = (cell_y + cell_h) - target.y
+
+            available_w = min(dist_left, dist_right) * 2 * scale
+            available_h = min(dist_top, dist_bottom) * 2 * scale
+
+            # Get entity's current bounding box
+            e_min_x, e_min_y, e_max_x, e_max_y = self.bounds()
+            entity_w = e_max_x - e_min_x
+            entity_h = e_max_y - e_min_y
+
+            # Calculate scale factors
+            scale_x = available_w / entity_w if entity_w > 0 else 1.0
+            scale_y = available_h / entity_h if entity_h > 0 else 1.0
+            factor = min(scale_x, scale_y, 1.0)  # Don't scale up
+
+            # Scale around entity center if needed
+            entity_center = Point(
+                (e_min_x + e_max_x) / 2,
+                (e_min_y + e_max_y) / 2,
+            )
+            if factor < 0.999:
+                self.scale(factor, origin=entity_center)
+
+            # Move to target position
+            new_bounds = self.bounds()
+            new_cx = (new_bounds[0] + new_bounds[2]) / 2
+            new_cy = (new_bounds[1] + new_bounds[3]) / 2
+            self.move_by(target.x - new_cx, target.y - new_cy)
+
+            return self
+
+        # --- Default mode (at=None) ---
+
         # Get entity's current bounding box
         entity_min_x, entity_min_y, entity_max_x, entity_max_y = self.bounds()
         entity_width = entity_max_x - entity_min_x
         entity_height = entity_max_y - entity_min_y
 
         # Get cell bounds
-        cell_x = self._cell.x
-        cell_y = self._cell.y
-        cell_width = self._cell.width
-        cell_height = self._cell.height
+        cell_x = cell.x
+        cell_y = cell.y
+        cell_width = cell.width
+        cell_height = cell.height
 
         # Calculate available space (with scale factor)
         available_width = cell_width * scale

@@ -88,6 +88,44 @@ text.fit_to_cell(0.8)
 
 ![Complex example of fit_to_cell with various entity types and transforms](./_images/05-fit-to-cell/14-works-for-all-complex.svg)
 
+## Position-Aware Fitting
+
+Place entities at specific positions within a cell **and** guarantee they never overflow:
+
+```python
+entity.fit_to_cell(scale, at=(rx, ry))
+```
+
+The `at` parameter accepts a cell-relative position. Available space is automatically constrained by the nearest cell edge — so a shape at `(0.25, 0.25)` only gets the top-left quadrant, while `(0.5, 0.5)` gets the full cell.
+
+![Position-aware fitting: same entity at different cell positions](./_images/05-fit-to-cell/15-position-aware-concept.svg)
+
+```python
+# Place a huge dot in the top-left quadrant — it shrinks to fit
+dot = cell.add_dot(radius=9999, color="blue")
+dot.fit_to_cell(0.9, at=(0.25, 0.25))
+
+# Same call at center uses the full cell
+dot = cell.add_dot(radius=9999, color="blue")
+dot.fit_to_cell(0.9, at=(0.5, 0.5))
+```
+
+### Orbiting Dots
+
+Combine `at=` with a bit of math for a fun orbital effect:
+
+```python
+import math
+for cell in scene.grid:
+    angle = math.atan2(dy, dx)
+    rx = 0.5 + math.cos(angle) * 0.18
+    ry = 0.5 + math.sin(angle) * 0.18
+    dot = cell.add_dot(radius=100, color=color)
+    dot.fit_to_cell(scale, at=(rx, ry))
+```
+
+![Orbiting dots: position-aware fitting creates a swirling pattern](./_images/05-fit-to-cell/16-position-aware-orbit.svg)
+
 ## See Also
 - [Ellipses Example](../examples/advanced/ellipses.md)
 - [Transforms](04-transforms.md)

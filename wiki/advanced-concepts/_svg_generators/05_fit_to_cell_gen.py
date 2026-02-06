@@ -399,6 +399,81 @@ def works_for_all_complex():
     scene.save(OUTPUT_DIR / "14-works-for-all-complex.svg")
 
 # =============================================================================
+# SECTION: Position-Aware Fitting (at= parameter)
+# =============================================================================
+
+def position_aware_concept():
+    """Concept of position-aware fitting with at="""
+    scene = Scene.with_grid(cols=4, rows=1, cell_size=100)
+    scene.background = "#f8f9fa"
+
+    positions = [
+        ((0.5, 0.5), "Center"),
+        ((0.25, 0.25), "Top-Left"),
+        ((0.75, 0.25), "Top-Right"),
+        ((0.25, 0.75), "Bot-Left"),
+    ]
+
+    for i, (pos, label) in enumerate(positions):
+        cell = scene.grid[0, i]
+        cell.add_border(color="#d1d5db", width=1)
+
+        # Crosshair showing target position
+        cell.add_dot(at=pos, radius=2, color="#94a3b8")
+
+        # Large dot fitted to position
+        dot = cell.add_dot(radius=200, color="#3b82f6")
+        dot.fit_to_cell(0.9, at=pos)
+
+        cell.add_text(label, at=(0.5, 0.93), font_size=7, color="#1f2937")
+
+    scene.save(OUTPUT_DIR / "15-position-aware-concept.svg")
+
+
+def position_aware_orbit():
+    """Fun example: shapes orbiting within cells"""
+    import math
+
+    scene = Scene.with_grid(cols=12, rows=12, cell_size=28)
+    scene.background = "#0f172a"
+
+    center_row = scene.grid.rows / 2
+    center_col = scene.grid.cols / 2
+
+    colors = ["#f472b6", "#a78bfa", "#60a5fa", "#34d399", "#fbbf24", "#fb923c"]
+
+    for cell in scene.grid:
+        dx = cell.col - center_col + 0.5
+        dy = cell.row - center_row + 0.5
+        distance = (dx * dx + dy * dy) ** 0.5
+        max_dist = (center_row ** 2 + center_col ** 2) ** 0.5
+
+        # Angle from center
+        angle = math.atan2(dy, dx)
+
+        # Orbit: position within cell traces a circle based on angle from grid center
+        orbit_r = 0.18
+        rx = 0.5 + math.cos(angle + distance * 0.8) * orbit_r
+        ry = 0.5 + math.sin(angle + distance * 0.8) * orbit_r
+
+        # Clamp to safe range
+        rx = max(0.12, min(0.88, rx))
+        ry = max(0.12, min(0.88, ry))
+
+        # Color cycles with distance
+        color = colors[int(distance) % len(colors)]
+
+        # Scale shrinks toward edges
+        t = min(distance / (max_dist * 0.7), 1.0)
+        scale = 0.5 + (1 - t) * 0.5
+
+        dot = cell.add_dot(radius=100, color=color)
+        dot.fit_to_cell(scale, at=(rx, ry))
+
+    scene.save(OUTPUT_DIR / "16-position-aware-orbit.svg")
+
+
+# =============================================================================
 # Generator Registry
 # =============================================================================
 
@@ -428,6 +503,10 @@ GENERATORS = {
     # Works for all entities
     "13-works-for-all-comparison": works_for_all_comparison,
     "14-works-for-all-complex": works_for_all_complex,
+
+    # Position-aware fitting
+    "15-position-aware-concept": position_aware_concept,
+    "16-position-aware-orbit": position_aware_orbit,
 }
 
 def generate_all():
