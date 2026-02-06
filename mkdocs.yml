@@ -1,0 +1,163 @@
+site_name: PyFreeform
+site_description: A minimalist, art-focused Python library for creating beautiful generative artwork
+site_url: https://pyfreeform.github.io/pyfreeform/
+repo_url: https://github.com/pyfreeform/pyfreeform
+repo_name: pyfreeform/pyfreeform
+
+docs_dir: wiki
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Inter
+    code: JetBrains Mono
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - toc.follow
+
+plugins:
+  - search
+  - glightbox:
+      touchNavigation: true
+      loop: false
+      effect: zoom
+      slide_effect: slide
+      width: 100%
+      height: auto
+      zoomable: true
+      draggable: true
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.mark
+  - pymdownx.keys
+  - attr_list
+  - md_in_html
+  - def_list
+  - footnotes
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 3
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting-started/00-installation.md
+    - Your First Artwork: getting-started/01-your-first-artwork.md
+    - Core Concepts: getting-started/02-core-concepts.md
+    - Image to Art: getting-started/03-image-to-art.md
+  - Fundamentals:
+    - Scenes: fundamentals/01-scenes.md
+    - Grids & Cells: fundamentals/02-grids-and-cells.md
+    - Entities: fundamentals/03-entities.md
+    - Styling: fundamentals/04-styling.md
+    - Layering: fundamentals/05-layering.md
+  - Entities:
+    - Overview: entities/README.md
+    - Dots: entities/01-dots.md
+    - Lines: entities/02-lines.md
+    - Curves: entities/03-curves.md
+    - Ellipses: entities/04-ellipses.md
+    - Polygons: entities/05-polygons.md
+    - Text: entities/06-text.md
+    - Rectangles: entities/07-rectangles.md
+  - Advanced Concepts:
+    - Overview: advanced-concepts/README.md
+    - Anchor System: advanced-concepts/01-anchor-system.md
+    - Connections: advanced-concepts/02-connections.md
+    - Pathable Protocol: advanced-concepts/03-pathable-protocol.md
+    - Transforms: advanced-concepts/04-transforms.md
+    - Fit to Cell: advanced-concepts/05-fit-to-cell.md
+    - Grid Selections: advanced-concepts/06-grid-selections.md
+  - Parametric Art:
+    - What is Parametric?: parametric-art/01-what-is-parametric.md
+    - Positioning Along Paths: parametric-art/02-positioning-along-paths.md
+    - Bezier Mathematics: parametric-art/03-bezier-mathematics.md
+    - Ellipse Mathematics: parametric-art/04-ellipse-mathematics.md
+    - Custom Paths: parametric-art/05-custom-paths.md
+    - Mathematical Reference: parametric-art/06-mathematical-reference.md
+  - Recipes:
+    - Dot Art from Images: recipes/01-dot-art-from-images.md
+    - Halftone Effects: recipes/02-halftone-effects.md
+    - Flowing Curves: recipes/03-flowing-curves.md
+    - Geometric Patterns: recipes/04-geometric-patterns.md
+    - Connected Networks: recipes/05-connected-networks.md
+    - Rotating Shapes: recipes/06-rotating-shapes.md
+    - Text Art: recipes/07-text-art.md
+  - Examples:
+    - Gallery: examples/index.md
+    - Beginner:
+      - Quick Start: examples/beginner/quick-start.md
+      - Custom Dots: examples/beginner/custom-dots.md
+      - Diagonal Lines: examples/beginner/diagonal-lines.md
+      - Grid Patterns: examples/beginner/grid-patterns.md
+      - Polygon Gallery: examples/beginner/polygon-gallery.md
+    - Intermediate:
+      - Connections: examples/intermediate/connections.md
+      - Curves: examples/intermediate/curves.md
+      - Transforms: examples/intermediate/transforms.md
+      - Groups: examples/intermediate/groups.md
+      - Text: examples/intermediate/text.md
+    - Advanced:
+      - Multi-Layer: examples/advanced/multi-layer.md
+      - Showcase: examples/advanced/showcase.md
+      - Ellipses: examples/advanced/ellipses.md
+      - Parametric Paths: examples/advanced/parametric-paths.md
+      - Custom Paths: examples/advanced/custom-paths.md
+  - Color & Style:
+    - Color System: color-and-style/01-color-system.md
+    - Palettes: color-and-style/02-palettes.md
+    - Style Objects: color-and-style/03-style-objects.md
+    - Creating Palettes: color-and-style/04-creating-palettes.md
+  - Developer Guide:
+    - Architecture: developer-guide/01-architecture.md
+    - Entity System: developer-guide/02-entity-system.md
+    - Creating Entities: developer-guide/03-creating-entities.md
+    - Pathable Protocol: developer-guide/04-pathable-protocol.md
+    - Image Processing: developer-guide/05-image-processing.md
+    - Contributing: developer-guide/06-contributing.md
+  - API Reference:
+    - Scene: api-reference/scene.md
+    - Grid: api-reference/grid.md
+    - Cell: api-reference/cell.md
+    - Entities: api-reference/entities.md
+    - Connections: api-reference/connections.md
+    - Pathable: api-reference/pathable.md
+    - Transforms: api-reference/transforms.md
+    - Utilities: api-reference/utilities.md

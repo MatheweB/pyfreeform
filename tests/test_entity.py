@@ -1,0 +1,235 @@
+"""Tests for Entity base class methods, particularly fit_to_cell()."""
+
+import pytest
+import sys
+from pathlib import Path
+
+# Add src to path
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+
+from pyfreeform import Scene
+from pyfreeform.core.point import Point
+from pyfreeform.entities.dot import Dot
+
+
+def test_fit_to_cell_dot():
+    """Test fit_to_cell() with a Dot entity."""
+    scene = Scene.with_grid(cols=2, rows=2, cell_size=20)
+    cell = scene.grid[0, 0]
+
+    # Create a large dot
+    dot = cell.add_dot(radius=50, color="red")  # Way too big
+
+    # Fit to cell (100% = should shrink to radius 10)
+    dot.fit_to_cell(1.0)
+
+    # Should be scaled down to fit
+    assert dot.radius <= 10.0
+    assert dot.radius > 9.9  # Close to 10
+
+    # Should be centered in cell
+    assert abs(dot.x - (cell.x + cell.width / 2)) < 0.1
+    assert abs(dot.y - (cell.y + cell.height / 2)) < 0.1
+
+
+def test_fit_to_cell_ellipse_rotated():
+    """Test fit_to_cell() with a rotated Ellipse."""
+    scene = Scene.with_grid(cols=2, rows=2, cell_size=20)
+    cell = scene.grid[0, 0]
+
+    # Create ellipse with rotation
+    ellipse = cell.add_ellipse(rx=50, ry=30, rotation=45)
+
+    # Fit to 80% of cell
+    ellipse.fit_to_cell(0.8)
+
+    # Check bounds fit within cell (with small tolerance for rotation sampling)
+    min_x, min_y, max_x, max_y = ellipse.bounds()
+    tolerance = 0.5  # Small tolerance for rotation approximation
+    assert min_x >= cell.x - tolerance
+    assert min_y >= cell.y - tolerance
+    assert max_x <= cell.x + cell.width + tolerance
+    assert max_y <= cell.y + cell.height + tolerance
+
+
+def test_fit_to_cell_text():
+    """Test fit_to_cell() with Text entity."""
+    scene = Scene.with_grid(cols=2, rows=2, cell_size=20)
+    cell = scene.grid[0, 0]
+
+    # Create large text
+    text = cell.add_text("Hello", font_size=100)
+
+    # Fit to cell
+    text.fit_to_cell(0.9)
+
+    # Should be smaller
+    assert text.font_size < 100
+
+    # Bounds should fit within cell (with tolerance for text approximation)
+    min_x, min_y, max_x, max_y = text.bounds()
+    tolerance = 2  # Larger tolerance for text approximation
+    assert min_x >= cell.x - tolerance
+    assert max_x <= cell.x + cell.width + tolerance
+
+
+def test_fit_to_cell_polygon():
+    """Test fit_to_cell() with a Polygon entity."""
+    scene = Scene.with_grid(cols=2, rows=2, cell_size=20)
+    cell = scene.grid[0, 0]
+
+    # Create a large polygon (square)
+    vertices = [(0, 0), (1, 0), (1, 1), (0, 1)]
+    polygon = cell.add_polygon(vertices=vertices, fill="blue")
+
+    # Fit to 90% of cell
+    polygon.fit_to_cell(0.9)
+
+    # Check bounds fit within cell
+    min_x, min_y, max_x, max_y = polygon.bounds()
+    assert min_x >= cell.x
+    assert min_y >= cell.y
+    assert max_x <= cell.x + cell.width
+    assert max_y <= cell.y + cell.height
+
+
+def test_fit_to_cell_no_cell():
+    """Test that fit_to_cell() raises error when entity has no cell."""
+    # Create standalone dot (not in a cell)
+    dot = Dot(x=50, y=50, radius=10)
+
+    with pytest.raises(ValueError, match="entity has no cell"):
+        dot.fit_to_cell(0.8)
+
+
+def test_fit_to_cell_invalid_scale_zero():
+    """Test that fit_to_cell() rejects scale of 0.0."""
+    scene = Scene.with_grid(cols=2, rows=2, cell_size=20)
+    cell = scene.grid[0, 0]
+    dot = cell.add_dot(radius=5)
+
+    with pytest.raises(ValueError, match="scale must be between"):
+        dot.fit_to_cell(0.0)  # Too small
+
+
+def test_fit_to_cell_invalid_scale_too_large():
+    """Test that fit_to_cell() rejects scale > 1.0."""
+    scene = Scene.with_grid(cols=2, rows=2, cell_size=20)
+    cell = scene.grid[0, 0]
+    dot = cell.add_dot(radius=5)
+
+    with pytest.raises(ValueError, match="scale must be between"):
+        dot.fit_to_cell(1.5)  # Too large
+
+
+def test_fit_to_cell_no_recenter():
+    """Test fit_to_cell(recenter=False) maintains relative position."""
+    scene = Scene.with_grid(cols=2, rows=2, cell_size=20)
+    cell = scene.grid[0, 0]
+
+    # Create dot at specific position (top-left quadrant)
+    dot = cell.add_dot(at=(0.25, 0.25), radius=50)
+    original_x, original_y = dot.x, dot.y
+
+    # Fit without recentering
+    dot.fit_to_cell(0.8, recenter=False)
+
+    # Position should stay roughly the same (small changes from scaling)
+    assert abs(dot.x - original_x) < 1.0
+    assert abs(dot.y - original_y) < 1.0
+
+
+def test_fit_to_cell_with_recenter():
+    """Test fit_to_cell(recenter=True) centers entity in cell."""
+    scene = Scene.with_grid(cols=2, rows=2, cell_size=20)
+    cell = scene.grid[0, 0]
+
+    # Create dot at off-center position
+    dot = cell.add_dot(at=(0.25, 0.25), radius=50)
+
+    # Fit with recentering (default)
+    dot.fit_to_cell(0.8, recenter=True)
+
+    # Should be centered
+    cell_center_x = cell.x + cell.width / 2
+    cell_center_y = cell.y + cell.height / 2
+    assert abs(dot.x - cell_center_x) < 0.1
+    assert abs(dot.y - cell_center_y) < 0.1
+
+
+def test_fit_to_cell_method_chaining():
+    """Test that fit_to_cell() supports method chaining."""
+    scene = Scene.with_grid(cols=2, rows=2, cell_size=20)
+    cell = scene.grid[0, 0]
+
+    # Should support chaining
+    ellipse = cell.add_ellipse(rx=50, ry=30).fit_to_cell(0.8)
+
+    assert ellipse is not None
+    # Check it's the same type as a fresh ellipse
+    fresh_ellipse = cell.add_ellipse(rx=1, ry=1)
+    assert type(ellipse) == type(fresh_ellipse)
+
+
+def test_fit_to_cell_already_fits():
+    """Test that fit_to_cell() handles entities that already fit."""
+    scene = Scene.with_grid(cols=2, rows=2, cell_size=20)
+    cell = scene.grid[0, 0]
+
+    # Create small dot that already fits
+    dot = cell.add_dot(radius=3, color="blue")
+    original_radius = dot.radius
+
+    # Fit to cell (should not scale up, only down)
+    dot.fit_to_cell(1.0)
+
+    # Radius should stay roughly the same (not scaled up)
+    assert abs(dot.radius - original_radius) < 0.1
+
+
+def test_fit_to_cell_different_scales():
+    """Test fit_to_cell() with different scale values."""
+    scene = Scene.with_grid(cols=3, rows=1, cell_size=20)
+
+    # Create three identical large dots
+    dot1 = scene.grid[0, 0].add_dot(radius=50)
+    dot2 = scene.grid[0, 1].add_dot(radius=50)
+    dot3 = scene.grid[0, 2].add_dot(radius=50)
+
+    # Fit to different scales
+    dot1.fit_to_cell(1.0)  # 100% of cell
+    dot2.fit_to_cell(0.5)  # 50% of cell
+    dot3.fit_to_cell(0.1)  # 10% of cell
+
+    # Verify scaling relationship
+    assert dot1.radius > dot2.radius > dot3.radius
+    assert abs(dot1.radius - 10.0) < 0.1  # Full cell radius
+    assert abs(dot2.radius - 5.0) < 0.1   # Half cell radius
+    assert abs(dot3.radius - 1.0) < 0.1   # 10% cell radius
+
+
+def test_fit_to_cell_brightness_based_scaling():
+    """Test the pattern from Example 14: brightness-based scaling."""
+    scene = Scene.with_grid(cols=2, rows=1, cell_size=20)
+
+    # Simulate different brightness values
+    cell1 = scene.grid[0, 0]
+    cell2 = scene.grid[0, 1]
+
+    # Create ellipses
+    ellipse1 = cell1.add_ellipse(rx=100, ry=60, rotation=0)
+    ellipse2 = cell2.add_ellipse(rx=100, ry=60, rotation=0)
+
+    # Simulate brightness-based scaling: 30% to 100%
+    brightness1 = 0.0  # Dark -> 30% scale
+    brightness2 = 1.0  # Bright -> 100% scale
+
+    scale1 = 0.3 + brightness1 * 0.7
+    scale2 = 0.3 + brightness2 * 0.7
+
+    ellipse1.fit_to_cell(scale1)
+    ellipse2.fit_to_cell(scale2)
+
+    # Bright cell should have larger ellipse
+    assert ellipse2.rx > ellipse1.rx
+    assert ellipse2.ry > ellipse1.ry
