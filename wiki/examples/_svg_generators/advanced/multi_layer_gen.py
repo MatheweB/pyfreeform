@@ -1,132 +1,176 @@
+#!/usr/bin/env python3
 """
-SVG Generator for Multi-Layer Composition Example
-Demonstrates strategic z-index management and layering
+SVG Generator for: examples/advanced/multi-layer
+
+Demonstrates strategic z-index management and layering.
 """
 
 import math
+from pyfreeform import Scene, Palette, Dot, Line, Ellipse, Connection
+from pathlib import Path
 
-def generate_svg(output_path: str, number: int) -> None:
-    """Generate multi-layer composition SVG."""
+
+OUTPUT_DIR = Path(__file__).parent.parent.parent / "_images" / "multi-layer"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def example_01_layered_composition():
+    """Five-layer composition with grid, ellipses, connections, nodes, highlights."""
+    colors = Palette.midnight()
     grid_size = 25
-    cell_size = 16
-    width = grid_size * cell_size
-    height = grid_size * cell_size
+    scene = Scene.with_grid(
+        cols=grid_size, rows=grid_size, cell_size=16,
+        background="#0d1117",
+    )
 
-    # Midnight palette
-    background = "#0d1117"
-    grid_color = "#1a1a2e"
-    primary = "#4ecca3"
-    secondary = "#374151"
-    accent = "#ee4266"
-    line_color = "#64ffda"
+    # Layer 1 (z=0): Grid borders
+    for cell in scene.grid:
+        cell.add_border(color="#1a1a2e", width=0.5, opacity=0.3)
 
-    svg_lines = [
-        f'<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg">',
-        f'  <rect width="{width}" height="{height}" fill="{background}"/>',
-        ''
-    ]
+    # Layer 2 (z=5): Background ellipses every 5 cells
+    for cell in scene.grid:
+        if cell.row % 5 == 2 and cell.col % 5 == 2:
+            cell.add_ellipse(rx=32, ry=24, fill="#374151", opacity=0.2, z_index=5)
 
-    # Layer 1: Grid structure (z=0)
-    svg_lines.append('  <!-- Layer 1: Grid background -->')
-    for row in range(grid_size):
-        for col in range(grid_size):
-            x = col * cell_size
-            y = row * cell_size
-            svg_lines.append(
-                f'  <rect x="{x}" y="{y}" width="{cell_size}" height="{cell_size}" '
-                f'fill="none" stroke="{grid_color}" stroke-width="0.5" opacity="0.3"/>'
+    # Layers 3-5: Network nodes + connections + highlights
+    center = grid_size / 2
+    max_dist = math.sqrt(center**2 + center**2)
+    bright_cells = []
+
+    for cell in scene.grid:
+        dist = math.sqrt((cell.col - center) ** 2 + (cell.row - center) ** 2)
+        brightness = 1 - (dist / max_dist)
+
+        if brightness > 0.5:
+            radius = 2 + brightness * 4
+            dot = cell.add_dot(
+                color=colors.primary, radius=radius, z_index=20,
             )
+            bright_cells.append((dot, cell.row, cell.col, radius))
 
-    # Layer 2: Large background ellipses (z=5)
-    svg_lines.append('')
-    svg_lines.append('  <!-- Layer 2: Background shapes -->')
-    for row in range(0, grid_size, 5):
-        for col in range(0, grid_size, 5):
-            cx = col * cell_size + 2.5 * cell_size
-            cy = row * cell_size + 2.5 * cell_size
-            svg_lines.append(
-                f'  <ellipse cx="{cx}" cy="{cy}" rx="{cell_size*2}" ry="{cell_size*1.5}" '
-                f'fill="{secondary}" opacity="0.2"/>'
-            )
-
-    # Layer 3: Network connections (z=10)
-    svg_lines.append('')
-    svg_lines.append('  <!-- Layer 3: Connection lines -->')
-
-    # Create network nodes
-    nodes = []
-    for row in range(grid_size):
-        for col in range(grid_size):
-            # Radial brightness pattern
-            center = grid_size / 2
-            distance = math.sqrt((col - center)**2 + (row - center)**2)
-            max_dist = math.sqrt(center**2 + center**2)
-            brightness = 1 - (distance / max_dist)
-
-            if brightness > 0.5:
-                x = col * cell_size + cell_size / 2
-                y = row * cell_size + cell_size / 2
-                radius = 2 + brightness * 4
-                nodes.append((x, y, radius, row, col))
-
-    # Draw connections
-    for i, (x1, y1, r1, row1, col1) in enumerate(nodes):
-        for x2, y2, r2, row2, col2 in nodes[i+1:i+3]:
-            dr = row1 - row2
-            dc = col1 - col2
-            dist = math.sqrt(dr*dr + dc*dc)
-            if dist < 4:
-                opacity = (1 - dist / 4) * 0.5
-                svg_lines.append(
-                    f'  <line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
-                    f'stroke="{line_color}" stroke-width="0.5" opacity="{opacity:.2f}"/>'
+            # Layer 5 (z=30): Highlights on brightest nodes
+            if radius > 5:
+                cell.add_dot(
+                    color="white", radius=radius * 0.3, opacity=0.8, z_index=30,
                 )
 
-    # Layer 4: Main nodes (z=20)
-    svg_lines.append('')
-    svg_lines.append('  <!-- Layer 4: Main nodes -->')
-    for x, y, radius, row, col in nodes:
-        svg_lines.append(
-            f'  <circle cx="{x}" cy="{y}" r="{radius:.1f}" fill="{primary}"/>'
-        )
+    # Layer 3 (z=10): Connections between nearby bright nodes
+    for i, (dot1, r1, c1, _) in enumerate(bright_cells):
+        for dot2, r2, c2, _ in bright_cells[i + 1 : i + 3]:
+            dr, dc = r1 - r2, c1 - c2
+            dist = math.sqrt(dr * dr + dc * dc)
+            if dist < 4:
+                opacity = (1 - dist / 4) * 0.5
+                conn = Connection(
+                    dot1, dot2,
+                    start_anchor="center", end_anchor="center",
+                    style={"width": 0.5, "color": "#64ffda", "opacity": opacity},
+                )
+                scene.add(conn)
 
-    # Layer 5: Highlights (z=30)
-    svg_lines.append('')
-    svg_lines.append('  <!-- Layer 5: Highlights -->')
-    for x, y, radius, row, col in nodes:
-        if radius > 5:  # Only bright nodes
-            svg_lines.append(
-                f'  <circle cx="{x}" cy="{y}" r="{radius*0.3:.1f}" '
-                f'fill="white" opacity="0.8"/>'
+    scene.save(OUTPUT_DIR / "01_layered_composition.svg")
+
+
+def example_02_depth_effect():
+    """Overlapping layers create depth: large faint shapes behind small bright ones."""
+    colors = Palette.ocean()
+    grid_size = 20
+    scene = Scene.with_grid(
+        cols=grid_size, rows=grid_size, cell_size=20,
+        background=colors.background,
+    )
+
+    center = grid_size / 2
+    max_dist = math.sqrt(center**2 + center**2)
+
+    for cell in scene.grid:
+        dist = math.sqrt((cell.col - center) ** 2 + (cell.row - center) ** 2)
+        brightness = 1 - (dist / max_dist)
+
+        # Background layer: large faint ellipses
+        if brightness > 0.3:
+            cell.add_ellipse(
+                rx=12, ry=12, fill=colors.primary, opacity=0.1, z_index=0,
             )
 
-    svg_lines.append('</svg>')
+        # Middle layer: medium dots
+        if brightness > 0.5:
+            cell.add_dot(
+                color=colors.secondary, radius=3 + brightness * 3, z_index=10,
+            )
 
-    with open(output_path, 'w') as f:
-        f.write('\n'.join(svg_lines))
+        # Top layer: small bright highlights
+        if brightness > 0.7:
+            cell.add_dot(
+                color=colors.accent, radius=2, z_index=20,
+            )
+
+    scene.save(OUTPUT_DIR / "02_depth_effect.svg")
 
 
-if __name__ == '__main__':
+def example_03_complex_layering():
+    """Multiple entity types layered with precise z-index control."""
+    colors = Palette.midnight()
+    grid_size = 20
+    scene = Scene.with_grid(
+        cols=grid_size, rows=grid_size, cell_size=20,
+        background="#0d1117",
+    )
+
+    for cell in scene.grid:
+        # z=0: Faint grid borders
+        cell.add_border(color="#1a1a2e", width=0.3, opacity=0.2)
+
+        # z=5: Checkerboard fills
+        if (cell.row + cell.col) % 2 == 0:
+            cell.add_fill(color=colors.primary, opacity=0.05, z_index=5)
+
+        # z=10: Diagonal lines on every 3rd cell
+        if (cell.row + cell.col) % 3 == 0:
+            cell.add_diagonal(
+                start="bottom_left", end="top_right",
+                color=colors.line, width=0.5, opacity=0.3, z_index=10,
+            )
+
+        # z=20: Dots on every 4th cell
+        if (cell.row + cell.col) % 4 == 0:
+            cell.add_dot(color=colors.secondary, radius=3, z_index=20)
+
+    scene.save(OUTPUT_DIR / "03_complex_layering.svg")
+
+
+GENERATORS = {
+    "01_layered_composition": example_01_layered_composition,
+    "02_depth_effect": example_02_depth_effect,
+    "03_complex_layering": example_03_complex_layering,
+}
+
+
+def generate_all():
+    """Generate all SVG images for this document"""
+    print(f"Generating {len(GENERATORS)} SVGs for multi-layer examples...")
+
+    for name, func in GENERATORS.items():
+        try:
+            func()
+            print(f"  ✓ {name}.svg")
+        except Exception as e:
+            print(f"  ✗ {name}.svg - ERROR: {e}")
+
+    print(f"Complete! Generated to {OUTPUT_DIR}/")
+
+
+if __name__ == "__main__":
     import sys
-    import os
 
     if len(sys.argv) > 1:
-        output_dir = sys.argv[1]
+        name = sys.argv[1]
+        if name in GENERATORS:
+            GENERATORS[name]()
+            print(f"Generated {name}.svg")
+        else:
+            print(f"Unknown generator: {name}")
+            for key in sorted(GENERATORS.keys()):
+                print(f"  - {key}")
     else:
-        output_dir = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-            '_images', 'multi-layer'
-        )
-
-    os.makedirs(output_dir, exist_ok=True)
-
-    examples = [
-        '01_layered_composition.svg',
-        '02_depth_effect.svg',
-        '03_complex_layering.svg'
-    ]
-
-    for idx, filename in enumerate(examples, 1):
-        output_path = os.path.join(output_dir, filename)
-        generate_svg(output_path, idx)
-        print(f"Generated: {output_path}")
+        generate_all()

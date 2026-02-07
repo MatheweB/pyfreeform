@@ -1,154 +1,150 @@
+#!/usr/bin/env python3
 """
-SVG Generator for Showcase Example
-Integrates multiple PyFreeform features: curves, transforms, connections, text
+SVG Generator for: examples/advanced/showcase
+
+Integrates multiple PyFreeform features: curves, transforms, connections,
+text, parametric positioning, and layering.
 """
 
 import math
+from pyfreeform import Scene, Palette, Dot, Text, Connection, shapes
+from pyfreeform.core.point import Point
+from pathlib import Path
 
-def generate_svg(output_path: str, number: int) -> None:
-    """Generate comprehensive showcase SVG."""
-    width = 500
-    height = 400
 
-    # Midnight palette
-    background = "#0d1117"
-    grid_color = "#1f2937"
-    primary = "#4ecca3"
-    secondary = "#ee4266"
-    accent = "#ffd23f"
-    line_color = "#64ffda"
-    text_color = "#6b7280"
+OUTPUT_DIR = Path(__file__).parent.parent.parent / "_images" / "showcase"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    svg_lines = [
-        f'<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg">',
-        f'  <rect width="{width}" height="{height}" fill="{background}"/>',
-        ''
-    ]
 
-    # Feature 1: Grid pattern background
-    svg_lines.append('  <!-- Grid pattern background -->')
-    svg_lines.append('  <g opacity="0.2">')
-    for i in range(0, width, 50):
-        svg_lines.append(
-            f'    <line x1="{i}" y1="0" x2="{i}" y2="{height}" '
-            f'stroke="{grid_color}" stroke-width="0.5"/>'
-        )
-    for i in range(0, height, 50):
-        svg_lines.append(
-            f'    <line x1="0" y1="{i}" x2="{width}" y2="{i}" '
-            f'stroke="{grid_color}" stroke-width="0.5"/>'
-        )
-    svg_lines.append('  </g>')
+def example_01_comprehensive():
+    """Comprehensive showcase: grid, curves, parametric dots, polygons, text."""
+    colors = Palette.midnight()
+    scene = Scene(width=500, height=400, background="#0d1117")
 
-    # Feature 2: Curved paths
-    svg_lines.append('')
-    svg_lines.append('  <!-- Curved paths -->')
+    # Title (z=30)
+    scene.add(Text(
+        250, 30, "Feature Showcase",
+        font_size=28, color=colors.primary, text_anchor="middle", bold=True,
+        z_index=30,
+    ))
 
-    # Draw flowing curves
+    # Flowing curves with parametric dots (z=10)
     for start_y in [100, 200, 300]:
-        # Control point for curve
-        svg_lines.append(
-            f'  <path d="M 50,{start_y} Q 150,{start_y-40} 250,{start_y} '
-            f'Q 350,{start_y+40} 450,{start_y}" '
-            f'stroke="{primary}" stroke-width="2" fill="none" opacity="0.6"/>'
+        curve = scene.add_curve(
+            start=Point(50, start_y), end=Point(450, start_y),
+            curvature=-0.15, color=colors.primary, width=2, opacity=0.6,
+            z_index=10,
         )
-
-        # Dots along curves
-        for t in [0.0, 0.25, 0.5, 0.75, 1.0]:
-            # Quadratic Bezier calculation
-            p0 = (50, start_y)
-            p1 = (150, start_y - 40)
-            p2 = (250, start_y)
-
-            if t <= 0.5:
-                t_local = t * 2
-                x = (1-t_local)**2 * p0[0] + 2*(1-t_local)*t_local * p1[0] + t_local**2 * p2[0]
-                y = (1-t_local)**2 * p0[1] + 2*(1-t_local)*t_local * p1[1] + t_local**2 * p2[1]
-            else:
-                t_local = (t - 0.5) * 2
-                p0_2 = (250, start_y)
-                p1_2 = (350, start_y + 40)
-                p2_2 = (450, start_y)
-                x = (1-t_local)**2 * p0_2[0] + 2*(1-t_local)*t_local * p1_2[0] + t_local**2 * p2_2[0]
-                y = (1-t_local)**2 * p0_2[1] + 2*(1-t_local)*t_local * p1_2[1] + t_local**2 * p2_2[1]
-
+        for i, t in enumerate([0.0, 0.25, 0.5, 0.75, 1.0]):
             radius = 4 + t * 4
-            color = secondary if int(t * 10) % 2 == 0 else accent
-            svg_lines.append(
-                f'  <circle cx="{x:.1f}" cy="{y:.1f}" r="{radius:.1f}" fill="{color}"/>'
+            color = colors.secondary if i % 2 == 0 else colors.accent
+            scene.add_dot(along=curve, t=t, radius=radius, color=color, z_index=15)
+
+    # Rotating hexagons at bottom (z=20)
+    hex_positions = [
+        (100, 360, 45, colors.primary),
+        (250, 360, -30, colors.secondary),
+        (400, 360, 15, colors.accent),
+    ]
+    for x, y, angle, color in hex_positions:
+        # Compute hexagon vertices at absolute position
+        verts = []
+        angle_rad = math.radians(angle)
+        for i in range(6):
+            a = i * math.pi / 3 + angle_rad
+            verts.append(Point(x + 15 * math.cos(a), y + 15 * math.sin(a)))
+        from pyfreeform import Polygon
+        scene.add(Polygon(verts, fill=color, opacity=0.8, z_index=20))
+
+    # Legend (z=30)
+    scene.add(Text(
+        20, 390, "Parametric Paths | Transforms | Layering | Typography",
+        font_size=10, color="#6b7280", font_family="monospace", z_index=30,
+    ))
+
+    scene.save(OUTPUT_DIR / "01_comprehensive.svg")
+
+
+def example_02_all_features():
+    """Grid-based showcase combining cell builders and scene builders."""
+    colors = Palette.midnight()
+    scene = Scene.with_grid(
+        cols=20, rows=15, cell_size=20, background="#0d1117",
+    )
+    color_cycle = [colors.primary, colors.secondary, colors.accent, "#64ffda"]
+
+    # Cell-level: rotating shapes + parametric dots
+    for cell in scene.grid:
+        # Checkerboard fill (z=0)
+        if (cell.row + cell.col) % 2 == 0:
+            cell.add_fill(color=colors.primary, opacity=0.03)
+
+        # Curves with dots in every 3rd cell (z=5)
+        if cell.row % 3 == 1 and cell.col % 3 == 1:
+            curve = cell.add_curve(
+                start="bottom_left", end="top_right",
+                curvature=0.4, color=colors.line, width=0.5, opacity=0.3,
+                z_index=5,
+            )
+            t = ((cell.row + cell.col) % 10) / 10
+            cell.add_dot(
+                along=curve, t=t, radius=2,
+                color=color_cycle[(cell.row + cell.col) % 4],
+                z_index=10,
             )
 
-    # Feature 3: Rotating polygons
-    svg_lines.append('')
-    svg_lines.append('  <!-- Rotating polygons -->')
+        # Stars in corners (z=15)
+        if cell.row < 3 and cell.col < 3:
+            angle = (cell.row + cell.col) * 30
+            cell.add_polygon(
+                shapes.star(5, size=0.6), fill=colors.accent,
+                rotation=angle, opacity=0.6, z_index=15,
+            )
 
-    polygon_positions = [
-        (100, 350, 45, primary),
-        (250, 350, -30, secondary),
-        (400, 350, 15, accent),
-    ]
-
-    for cx, cy, angle, color in polygon_positions:
-        # Hexagon
-        points = []
-        for i in range(6):
-            a = i * math.pi / 3
-            x = 15 * math.cos(a)
-            y = 15 * math.sin(a)
-            points.append(f"{x:.1f},{y:.1f}")
-
-        svg_lines.append(
-            f'  <g transform="translate({cx},{cy}) rotate({angle})">'
-        )
-        svg_lines.append(
-            f'    <polygon points="{" ".join(points)}" fill="{color}" opacity="0.8"/>'
-        )
-        svg_lines.append('  </g>')
-
-    # Feature 4: Title
-    svg_lines.append('')
-    svg_lines.append('  <!-- Title -->')
-    svg_lines.append(
-        f'  <text x="250" y="30" font-size="28" fill="{primary}" '
-        f'font-family="sans-serif" text-anchor="middle" font-weight="bold">'
-        'Feature Showcase'
-        '</text>'
+    # Scene-level overlay text
+    scene.add_text(
+        "PyFreeform Feature Showcase", at=(0.5, 0.06),
+        font_size=16, color=colors.accent, z_index=30,
+    )
+    scene.add_text(
+        "Grid + Curves + Shapes + Parametric Positioning", at=(0.5, 0.95),
+        font_size=9, color="#6b7280", font_family="monospace", z_index=30,
     )
 
-    # Feature 5: Legend
-    svg_lines.append(
-        f'  <text x="20" y="380" font-size="10" fill="{text_color}" '
-        f'font-family="monospace">'
-        'Parametric Paths | Transforms | Layering | Typography'
-        '</text>'
-    )
-
-    svg_lines.append('</svg>')
-
-    with open(output_path, 'w') as f:
-        f.write('\n'.join(svg_lines))
+    scene.save(OUTPUT_DIR / "02_all_features.svg")
 
 
-if __name__ == '__main__':
+GENERATORS = {
+    "01_comprehensive": example_01_comprehensive,
+    "02_all_features": example_02_all_features,
+}
+
+
+def generate_all():
+    """Generate all SVG images for this document"""
+    print(f"Generating {len(GENERATORS)} SVGs for showcase examples...")
+
+    for name, func in GENERATORS.items():
+        try:
+            func()
+            print(f"  ✓ {name}.svg")
+        except Exception as e:
+            print(f"  ✗ {name}.svg - ERROR: {e}")
+
+    print(f"Complete! Generated to {OUTPUT_DIR}/")
+
+
+if __name__ == "__main__":
     import sys
-    import os
 
     if len(sys.argv) > 1:
-        output_dir = sys.argv[1]
+        name = sys.argv[1]
+        if name in GENERATORS:
+            GENERATORS[name]()
+            print(f"Generated {name}.svg")
+        else:
+            print(f"Unknown generator: {name}")
+            for key in sorted(GENERATORS.keys()):
+                print(f"  - {key}")
     else:
-        output_dir = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-            '_images', 'showcase'
-        )
-
-    os.makedirs(output_dir, exist_ok=True)
-
-    examples = [
-        '01_comprehensive.svg',
-        '02_all_features.svg',
-    ]
-
-    for idx, filename in enumerate(examples, 1):
-        output_path = os.path.join(output_dir, filename)
-        generate_svg(output_path, idx)
-        print(f"Generated: {output_path}")
+        generate_all()

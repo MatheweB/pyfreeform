@@ -158,9 +158,9 @@ def example6_add_connection():
     scene.add(dot3)
 
     # Create connections
-    conn1 = Connection(dot1, dot2, "center", "center", style={"width": 2, "color": "#888888"})
-    conn2 = Connection(dot2, dot3, "center", "center", style={"width": 2, "color": "#888888"})
-    conn3 = Connection(dot1, dot3, "center", "center", style={"width": 2, "color": "#888888"})
+    conn1 = Connection(dot1, dot2, start_anchor="center", end_anchor="center", style={"width": 2, "color": "#888888"})
+    conn2 = Connection(dot2, dot3, start_anchor="center", end_anchor="center", style={"width": 2, "color": "#888888"})
+    conn3 = Connection(dot1, dot3, start_anchor="center", end_anchor="center", style={"width": 2, "color": "#888888"})
 
     scene.add(conn1)
     scene.add(conn2)

@@ -6,19 +6,26 @@ Generates visual examples showing:
 - The along= pattern for lines, curves, ellipses
 - Data-driven positioning using brightness
 - Multiple points along paths
+- Along= for all entity types
+- Tangent alignment (align=True)
+- TextPath (text warped along paths)
+- Lines and curves along paths
 
 Corresponds to sections:
 - The Pattern
 - Works With All Pathables
 - Data-Driven Positioning
 - Multiple Points
+- Along= for All Entities
+- Tangent Alignment
+- Text Along Paths
+- Lines and Curves Along Paths
 """
 
-from pyfreeform import Scene, Palette, Dot, Line, Text, Point
+from pyfreeform import Scene, Text, Point
 from pathlib import Path
 from PIL import Image, ImageDraw
 import tempfile
-import math
 
 
 # Paths
@@ -54,29 +61,29 @@ TEST_IMAGE = create_gradient_image()
 def example_01_basic_pattern_line():
     """
     Show the basic pattern: path = cell.add_line(...); cell.add_dot(along=path, t=0.5)
-    Step by step visualization
+    Uses the actual along= API to position the dot.
     """
     scene = Scene(width=400, height=200, background="#f8f9fa")
 
-    # Draw a line (like it would be in a cell)
-    start_x, start_y = 50, 100
-    end_x, end_y = 350, 100
+    # Draw a line across the scene
+    line = scene.add_line(
+        start=Point(50, 100), end=Point(350, 100),
+        color="#64748b", width=3,
+    )
 
-    scene.add(Line(start_x, start_y, end_x, end_y, color="#64748b", width=3))
-
-    # Add dot at t=0.5
-    t = 0.5
-    dot_x = start_x + (end_x - start_x) * t
-    dot_y = start_y + (end_y - start_y) * t
-
-    scene.add(Dot(dot_x, dot_y, radius=8, color="#ef4444"))
+    # Add dot at t=0.5 using along=
+    scene.add_dot(along=line, t=0.5, radius=8, color="#ef4444")
 
     # Code annotation
-    scene.add(Text(200, 30, "path = cell.add_line(start='left', end='right')", font_size=11, color="#333", text_anchor="middle", font_family="monospace"))
-    scene.add(Text(200, 50, "cell.add_dot(along=path, t=0.5, radius=3)", font_size=11, color="#ef4444", text_anchor="middle", font_family="monospace"))
+    scene.add(Text(200, 30, "path = cell.add_line(start='left', end='right')",
+                   font_size=11, color="#333", text_anchor="middle", font_family="monospace"))
+    scene.add(Text(200, 50, "cell.add_dot(along=path, t=0.5, radius=3)",
+                   font_size=11, color="#ef4444", text_anchor="middle", font_family="monospace"))
 
-    # Label
-    scene.add(Text(dot_x, dot_y + 30, "t=0.5 (midpoint)", font_size=13, color="#ef4444", text_anchor="middle"))
+    # Label at dot position
+    pt = line.point_at(0.5)
+    scene.add(Text(pt.x, pt.y + 30, "t=0.5 (midpoint)",
+                   font_size=13, color="#ef4444", text_anchor="middle"))
 
     scene.save(OUTPUT_DIR / "01-basic-pattern-line.svg")
 
@@ -87,196 +94,167 @@ def example_01_basic_pattern_line():
 
 def example_02_along_line():
     """
-    Show dot positioned along a line using brightness
+    Show dot positioned along a line at different brightness values.
+    Uses along= for each dot.
     """
     scene = Scene(width=400, height=200, background="white")
 
-    # Simulate a cell with a line
-    start_x, start_y = 50, 100
-    end_x, end_y = 350, 100
-
-    scene.add(Line(start_x, start_y, end_x, end_y, color="#94a3b8", width=2.5))
+    # Create the line
+    line = scene.add_line(
+        start=Point(50, 100), end=Point(350, 100),
+        color="#94a3b8", width=2.5,
+    )
 
     # Show several positions based on different "brightness" values
     brightness_values = [0.2, 0.5, 0.8]
     colors = ["#3b82f6", "#8b5cf6", "#ec4899"]
 
     for brightness, color in zip(brightness_values, colors):
-        x = start_x + (end_x - start_x) * brightness
-        y = start_y + (end_y - start_y) * brightness
+        scene.add_dot(along=line, t=brightness, radius=7, color=color)
 
-        scene.add(Dot(x, y, radius=7, color=color))
-        scene.add(Text(x, y - 25, f"brightness={brightness}", font_size=11, color=color, text_anchor="middle"))
+        pt = line.point_at(brightness)
+        scene.add(Text(pt.x, pt.y - 25, f"brightness={brightness}",
+                       font_size=11, color=color, text_anchor="middle"))
 
     # Title
-    scene.add(Text(200, 20, "Line: Linear Interpolation", font_size=15, color="#333", text_anchor="middle"))
-    scene.add(Text(200, 180, "along=line, t=cell.brightness", font_size=11, color="#666", text_anchor="middle", font_family="monospace"))
+    scene.add(Text(200, 20, "Line: Linear Interpolation",
+                   font_size=15, color="#333", text_anchor="middle"))
+    scene.add(Text(200, 180, "along=line, t=cell.brightness",
+                   font_size=11, color="#666", text_anchor="middle", font_family="monospace"))
 
     scene.save(OUTPUT_DIR / "02-along-line.svg")
 
 
 def example_03_along_curve():
     """
-    Show dot positioned along a curve using brightness
+    Show dot positioned along a curve at different brightness values.
+    Uses a Curve entity instead of manually computing Bézier segments.
     """
     scene = Scene(width=400, height=250, background="white")
 
-    # Create curve
-    start = Point(50, 200)
-    end = Point(350, 200)
-    control = Point(200, 50)
+    # Create the curve using the Curve entity (bowing upward)
+    curve = scene.add_curve(
+        start=Point(50, 200), end=Point(350, 200),
+        curvature=-1.0,  # Negative = bows upward in SVG
+        color="#94a3b8", width=2.5,
+    )
 
-    # Draw curve
-    points = []
-    for i in range(101):
-        t = i / 100
-        x = (1-t)**2 * start.x + 2*(1-t)*t * control.x + t**2 * end.x
-        y = (1-t)**2 * start.y + 2*(1-t)*t * control.y + t**2 * end.y
-        points.append(Point(x, y))
-
-    for i in range(len(points) - 1):
-        scene.add(Line(
-            points[i].x, points[i].y,
-            points[i+1].x, points[i+1].y,
-            color="#94a3b8", width=2.5
-        ))
-
-    # Show positions
+    # Show positions along the curve
     brightness_values = [0.2, 0.5, 0.8]
     colors = ["#3b82f6", "#8b5cf6", "#ec4899"]
 
     for brightness, color in zip(brightness_values, colors):
-        t = brightness
-        x = (1-t)**2 * start.x + 2*(1-t)*t * control.x + t**2 * end.x
-        y = (1-t)**2 * start.y + 2*(1-t)*t * control.y + t**2 * end.y
+        scene.add_dot(along=curve, t=brightness, radius=7, color=color)
 
-        scene.add(Dot(x, y, radius=7, color=color))
-        scene.add(Text(x, y - 25, f"brightness={brightness}", font_size=11, color=color, text_anchor="middle"))
+        pt = curve.point_at(brightness)
+        scene.add(Text(pt.x, pt.y - 25, f"brightness={brightness}",
+                       font_size=11, color=color, text_anchor="middle"))
 
     # Title
-    scene.add(Text(200, 20, "Curve: Bézier Parametric", font_size=15, color="#333", text_anchor="middle"))
-    scene.add(Text(200, 235, "along=curve, t=cell.brightness", font_size=11, color="#666", text_anchor="middle", font_family="monospace"))
+    scene.add(Text(200, 20, "Curve: Bézier Parametric",
+                   font_size=15, color="#333", text_anchor="middle"))
+    scene.add(Text(200, 235, "along=curve, t=cell.brightness",
+                   font_size=11, color="#666", text_anchor="middle", font_family="monospace"))
 
     scene.save(OUTPUT_DIR / "03-along-curve.svg")
 
 
 def example_04_along_ellipse():
     """
-    Show dot positioned along an ellipse using brightness
+    Show dot positioned along an ellipse at different brightness values.
+    Uses an Ellipse entity instead of manually computing line segments.
     """
     scene = Scene(width=400, height=300, background="white")
 
-    # Draw ellipse
-    cx, cy = 200, 150
-    rx, ry = 150, 100
+    # Create the ellipse (stroke-only, no fill)
+    ellipse = scene.add_ellipse(
+        at=Point(200, 150), rx=150, ry=100,
+        fill=None, stroke="#94a3b8", stroke_width=2.5,
+    )
 
-    points = []
-    for i in range(101):
-        t = i / 100
-        angle = 2 * math.pi * t
-        x = cx + rx * math.cos(angle)
-        y = cy + ry * math.sin(angle)
-        points.append(Point(x, y))
-
-    for i in range(len(points) - 1):
-        scene.add(Line(
-            points[i].x, points[i].y,
-            points[i+1].x, points[i+1].y,
-            color="#94a3b8", width=2.5
-        ))
-
-    # Show positions
+    # Show positions around the ellipse
     brightness_values = [0.25, 0.5, 0.75]
     colors = ["#3b82f6", "#8b5cf6", "#ec4899"]
 
     for brightness, color in zip(brightness_values, colors):
-        t = brightness
-        angle = 2 * math.pi * t
-        x = cx + rx * math.cos(angle)
-        y = cy + ry * math.sin(angle)
+        scene.add_dot(along=ellipse, t=brightness, radius=7, color=color)
 
-        scene.add(Dot(x, y, radius=7, color=color))
-
-        # Label outside
-        label_x = cx + (rx + 15) * math.cos(angle)
-        label_y = cy + (ry + 15) * math.sin(angle)
-        scene.add(Text(label_x, label_y, f"b={brightness}", font_size=11, color=color, text_anchor="middle"))
+        # Label outside the ellipse
+        pt = ellipse.point_at(brightness)
+        # Push the label outward from center
+        dx = pt.x - 200
+        dy = pt.y - 150
+        import math
+        dist = math.sqrt(dx * dx + dy * dy) if (dx or dy) else 1
+        label_x = pt.x + dx / dist * 15
+        label_y = pt.y + dy / dist * 15
+        scene.add(Text(label_x, label_y, f"b={brightness}",
+                       font_size=11, color=color, text_anchor="middle"))
 
     # Title
-    scene.add(Text(200, 20, "Ellipse: Around Perimeter", font_size=15, color="#333", text_anchor="middle"))
-    scene.add(Text(200, 285, "along=ellipse, t=cell.brightness", font_size=11, color="#666", text_anchor="middle", font_family="monospace"))
+    scene.add(Text(200, 20, "Ellipse: Around Perimeter",
+                   font_size=15, color="#333", text_anchor="middle"))
+    scene.add(Text(200, 285, "along=ellipse, t=cell.brightness",
+                   font_size=11, color="#666", text_anchor="middle", font_family="monospace"))
 
     scene.save(OUTPUT_DIR / "04-along-ellipse.svg")
 
 
 def example_05_comparison_all_three():
     """
-    Show all three path types side by side with same t values
+    Show all three path types side by side with same t values.
+    Uses actual Line, Curve, and Ellipse entities with along= for dots.
     """
     scene = Scene(width=600, height=500, background="white")
 
     # Title
-    scene.add(Text(300, 25, "All Pathables: Same Interface", font_size=18, color="#333", text_anchor="middle", font_weight="bold"))
+    scene.add(Text(300, 25, "All Pathables: Same Interface",
+                   font_size=18, color="#333", text_anchor="middle", font_weight="bold"))
 
-    # Line section
+    # --- Line section ---
     y_offset = 80
-    scene.add(Text(100, y_offset, "Line", font_size=14, color="#666", font_weight="bold"))
-    start_x, start_y = 150, y_offset + 20
-    end_x, end_y = 450, y_offset + 20
-    scene.add(Line(start_x, start_y, end_x, end_y, color="#cbd5e1", width=2))
+    scene.add(Text(100, y_offset, "Line",
+                   font_size=14, color="#666", font_weight="bold"))
+
+    line = scene.add_line(
+        start=Point(150, y_offset + 20), end=Point(450, y_offset + 20),
+        color="#cbd5e1", width=2,
+    )
 
     for t in [0.25, 0.5, 0.75]:
-        x = start_x + (end_x - start_x) * t
-        y = start_y
-        scene.add(Dot(x, y, radius=5, color="#3b82f6"))
+        scene.add_dot(along=line, t=t, radius=5, color="#3b82f6")
 
-    # Curve section
+    # --- Curve section ---
     y_offset = 200
-    scene.add(Text(100, y_offset, "Curve", font_size=14, color="#666", font_weight="bold"))
-    start = Point(150, y_offset + 80)
-    end = Point(450, y_offset + 80)
-    control = Point(300, y_offset + 20)
+    scene.add(Text(100, y_offset, "Curve",
+                   font_size=14, color="#666", font_weight="bold"))
 
-    points = []
-    for i in range(101):
-        t = i / 100
-        x = (1-t)**2 * start.x + 2*(1-t)*t * control.x + t**2 * end.x
-        y = (1-t)**2 * start.y + 2*(1-t)*t * control.y + t**2 * end.y
-        points.append(Point(x, y))
+    curve = scene.add_curve(
+        start=Point(150, y_offset + 80), end=Point(450, y_offset + 80),
+        curvature=-0.75,  # Bows upward
+        color="#cbd5e1", width=2,
+    )
 
-    for i in range(len(points) - 1):
-        scene.add(Line(points[i].x, points[i].y, points[i+1].x, points[i+1].y, color="#cbd5e1", width=2))
+    for t in [0.25, 0.5, 0.75]:
+        scene.add_dot(along=curve, t=t, radius=5, color="#3b82f6")
 
-    for t_val in [0.25, 0.5, 0.75]:
-        x = (1-t_val)**2 * start.x + 2*(1-t_val)*t_val * control.x + t_val**2 * end.x
-        y = (1-t_val)**2 * start.y + 2*(1-t_val)*t_val * control.y + t_val**2 * end.y
-        scene.add(Dot(x, y, radius=5, color="#3b82f6"))
-
-    # Ellipse section
+    # --- Ellipse section ---
     y_offset = 360
-    scene.add(Text(100, y_offset, "Ellipse", font_size=14, color="#666", font_weight="bold"))
-    cx, cy = 300, y_offset + 50
-    rx, ry = 120, 40
+    scene.add(Text(100, y_offset, "Ellipse",
+                   font_size=14, color="#666", font_weight="bold"))
 
-    points = []
-    for i in range(101):
-        t = i / 100
-        angle = 2 * math.pi * t
-        x = cx + rx * math.cos(angle)
-        y = cy + ry * math.sin(angle)
-        points.append(Point(x, y))
+    ellipse = scene.add_ellipse(
+        at=Point(300, y_offset + 50), rx=120, ry=40,
+        fill=None, stroke="#cbd5e1", stroke_width=2,
+    )
 
-    for i in range(len(points) - 1):
-        scene.add(Line(points[i].x, points[i].y, points[i+1].x, points[i+1].y, color="#cbd5e1", width=2))
-
-    for t_val in [0.25, 0.5, 0.75]:
-        angle = 2 * math.pi * t_val
-        x = cx + rx * math.cos(angle)
-        y = cy + ry * math.sin(angle)
-        scene.add(Dot(x, y, radius=5, color="#3b82f6"))
+    for t in [0.25, 0.5, 0.75]:
+        scene.add_dot(along=ellipse, t=t, radius=5, color="#3b82f6")
 
     # Bottom note
-    scene.add(Text(300, 475, "Same code works for all: cell.add_dot(along=path, t=value)", font_size=12, color="#666", text_anchor="middle", font_family="monospace"))
+    scene.add(Text(300, 475,
+                   "Same code works for all: cell.add_dot(along=path, t=value)",
+                   font_size=12, color="#666", text_anchor="middle", font_family="monospace"))
 
     scene.save(OUTPUT_DIR / "05-comparison-all-three.svg")
 
@@ -306,40 +284,37 @@ def example_06_data_driven_step2():
 
     for cell in scene.grid:
         # Add diagonal line
-        cell.add_diagonal(start="bottom_left", end="top_right", color="#cbd5e1", width=1.5)
+        cell.add_diagonal(start="bottom_left", end="top_right",
+                          color="#cbd5e1", width=1.5)
 
     scene.save(OUTPUT_DIR / "06-data-driven-step2-lines.svg")
 
 
 def example_06_data_driven_step3():
     """
-    Add dots along diagonals based on brightness
-    Creates smooth, organic distribution
+    Add dots along diagonals based on brightness.
+    Uses along= and t=cell.brightness for smooth, organic distribution.
     """
     scene = Scene.from_image(TEST_IMAGE, grid_size=20, cell_size=15)
 
     for cell in scene.grid:
-        line = cell.add_diagonal(start="bottom_left", end="top_right", color="#cbd5e1", width=1)
+        line = cell.add_diagonal(start="bottom_left", end="top_right",
+                                 color="#cbd5e1", width=1)
 
-        # Dot position based on brightness
-        t = cell.brightness
-        # Calculate position along diagonal
-        x = cell.x + cell.width * t
-        y = (cell.y + cell.height) - cell.height * t
-
-        cell.add_dot(at=Point(x, y), radius=3, color="#3b82f6")
+        # Dot position driven by brightness using along=
+        cell.add_dot(along=line, t=cell.brightness, radius=3, color="#3b82f6")
 
     scene.save(OUTPUT_DIR / "06-data-driven-step3-positioned.svg")
 
 
 def example_07_brightness_distribution():
     """
-    Show how brightness affects position more clearly
-    Single row with varying brightness
+    Show how brightness affects position more clearly.
+    Single row with varying brightness, using along= for each dot.
     """
     scene = Scene(width=600, height=150, background="white")
 
-    # Create 10 cells with increasing brightness
+    # Create 10 "cells" with increasing brightness
     for i in range(10):
         brightness = i / 9  # 0 to 1
 
@@ -347,20 +322,21 @@ def example_07_brightness_distribution():
         x = 50 + i * 50
         y = 50
 
-        # Draw diagonal line
-        scene.add(Line(x, y + 50, x + 40, y, color="#cbd5e1", width=2))
+        # Draw diagonal line and position dot along it
+        line = scene.add_line(
+            start=Point(x, y + 50), end=Point(x + 40, y),
+            color="#cbd5e1", width=2,
+        )
 
-        # Position dot based on brightness
-        dot_x = x + 40 * brightness
-        dot_y = y + 50 - 50 * brightness
-
-        scene.add(Dot(dot_x, dot_y, radius=4, color="#3b82f6"))
+        scene.add_dot(along=line, t=brightness, radius=4, color="#3b82f6")
 
         # Label brightness
-        scene.add(Text(x + 20, y + 70, f"{brightness:.1f}", font_size=10, color="#666", text_anchor="middle"))
+        scene.add(Text(x + 20, y + 70, f"{brightness:.1f}",
+                       font_size=10, color="#666", text_anchor="middle"))
 
     # Title
-    scene.add(Text(300, 20, "Brightness Controls Position", font_size=15, color="#333", text_anchor="middle"))
+    scene.add(Text(300, 20, "Brightness Controls Position",
+                   font_size=15, color="#333", text_anchor="middle"))
 
     scene.save(OUTPUT_DIR / "07-brightness-distribution.svg")
 
@@ -371,156 +347,108 @@ def example_07_brightness_distribution():
 
 def example_08_multiple_points_step1():
     """
-    Show a curve (before adding multiple points)
+    Show a curve (before adding multiple points).
+    Uses a Curve entity instead of manually computing line segments.
     """
     scene = Scene(width=500, height=250, background="white")
 
-    # Create curve
-    start = Point(50, 200)
-    end = Point(450, 200)
-    control = Point(250, 50)
-
-    # Draw curve
-    points = []
-    for i in range(101):
-        t = i / 100
-        x = (1-t)**2 * start.x + 2*(1-t)*t * control.x + t**2 * end.x
-        y = (1-t)**2 * start.y + 2*(1-t)*t * control.y + t**2 * end.y
-        points.append(Point(x, y))
-
-    for i in range(len(points) - 1):
-        scene.add(Line(
-            points[i].x, points[i].y,
-            points[i+1].x, points[i+1].y,
-            color="#94a3b8", width=3
-        ))
+    # Create a single Curve entity
+    scene.add_curve(
+        start=Point(50, 200), end=Point(450, 200),
+        curvature=-0.75,  # Bows upward
+        color="#94a3b8", width=3,
+    )
 
     # Title
-    scene.add(Text(250, 20, "Step 1: Create the curve", font_size=15, color="#333", text_anchor="middle"))
+    scene.add(Text(250, 20, "Step 1: Create the curve",
+                   font_size=15, color="#333", text_anchor="middle"))
 
     scene.save(OUTPUT_DIR / "08-multiple-points-step1.svg")
 
 
 def example_08_multiple_points_step2():
     """
-    Add 5 evenly spaced points along the curve
+    Add 5 evenly spaced points along the curve using along=.
     """
     scene = Scene(width=500, height=250, background="white")
 
-    # Create curve
-    start = Point(50, 200)
-    end = Point(450, 200)
-    control = Point(250, 50)
+    # Create the curve
+    curve = scene.add_curve(
+        start=Point(50, 200), end=Point(450, 200),
+        curvature=-0.75,
+        color="#94a3b8", width=3,
+    )
 
-    # Draw curve
-    points = []
-    for i in range(101):
-        t = i / 100
-        x = (1-t)**2 * start.x + 2*(1-t)*t * control.x + t**2 * end.x
-        y = (1-t)**2 * start.y + 2*(1-t)*t * control.y + t**2 * end.y
-        points.append(Point(x, y))
-
-    for i in range(len(points) - 1):
-        scene.add(Line(
-            points[i].x, points[i].y,
-            points[i+1].x, points[i+1].y,
-            color="#94a3b8", width=3
-        ))
-
-    # Add 5 dots
+    # Add 5 dots along the curve using along=
     for i in range(5):
         t = i / 4  # 0, 0.25, 0.5, 0.75, 1.0
-        x = (1-t)**2 * start.x + 2*(1-t)*t * control.x + t**2 * end.x
-        y = (1-t)**2 * start.y + 2*(1-t)*t * control.y + t**2 * end.y
+        scene.add_dot(along=curve, t=t, radius=6, color="#ef4444")
 
-        scene.add(Dot(x, y, radius=6, color="#ef4444"))
-        scene.add(Text(x, y - 20, f"t={t:.2f}", font_size=10, color="#ef4444", text_anchor="middle"))
+        pt = curve.point_at(t)
+        scene.add(Text(pt.x, pt.y - 20, f"t={t:.2f}",
+                       font_size=10, color="#ef4444", text_anchor="middle"))
 
     # Title
-    scene.add(Text(250, 20, "Step 2: Add 5 evenly-spaced dots", font_size=15, color="#333", text_anchor="middle"))
+    scene.add(Text(250, 20, "Step 2: Add 5 evenly-spaced dots",
+                   font_size=15, color="#333", text_anchor="middle"))
 
     scene.save(OUTPUT_DIR / "08-multiple-points-step2.svg")
 
 
 def example_09_many_points():
     """
-    Show many points along a curve (creates a dotted effect)
+    Show many points along a curve (creates a dotted effect).
+    Uses along= for all 20 dots.
     """
     scene = Scene(width=500, height=250, background="white")
 
-    # Create curve
-    start = Point(50, 200)
-    end = Point(450, 200)
-    control = Point(250, 50)
+    # Create the curve (lighter)
+    curve = scene.add_curve(
+        start=Point(50, 200), end=Point(450, 200),
+        curvature=-0.75,
+        color="#e5e7eb", width=2,
+    )
 
-    # Draw curve (lighter)
-    points = []
-    for i in range(101):
-        t = i / 100
-        x = (1-t)**2 * start.x + 2*(1-t)*t * control.x + t**2 * end.x
-        y = (1-t)**2 * start.y + 2*(1-t)*t * control.y + t**2 * end.y
-        points.append(Point(x, y))
-
-    for i in range(len(points) - 1):
-        scene.add(Line(
-            points[i].x, points[i].y,
-            points[i+1].x, points[i+1].y,
-            color="#e5e7eb", width=2
-        ))
-
-    # Add many dots (20)
+    # Add many dots (20) along the curve
     for i in range(20):
         t = i / 19
-        x = (1-t)**2 * start.x + 2*(1-t)*t * control.x + t**2 * end.x
-        y = (1-t)**2 * start.y + 2*(1-t)*t * control.y + t**2 * end.y
-
-        scene.add(Dot(x, y, radius=4, color="#3b82f6"))
+        scene.add_dot(along=curve, t=t, radius=4, color="#3b82f6")
 
     # Title
-    scene.add(Text(250, 20, "Multiple Points: for i in range(20)", font_size=15, color="#333", text_anchor="middle"))
+    scene.add(Text(250, 20, "Multiple Points: for i in range(20)",
+                   font_size=15, color="#333", text_anchor="middle"))
 
     scene.save(OUTPUT_DIR / "09-many-points.svg")
 
 
 def example_10_code_example():
     """
-    Visualize the actual code example from the documentation
+    Visualize the actual code example from the documentation.
+    Uses the proper API: add_curve + add_dot(along=...).
     """
     scene = Scene(width=550, height=280, background="#f8f9fa")
 
-    # Create curve
-    start = Point(50, 230)
-    end = Point(500, 230)
-    control = Point(275, 80)
+    # Create the curve
+    curve = scene.add_curve(
+        start=Point(50, 230), end=Point(500, 230),
+        curvature=-0.67,
+        color="#64748b", width=2.5,
+    )
 
-    # Draw curve
-    points = []
-    for i in range(101):
-        t = i / 100
-        x = (1-t)**2 * start.x + 2*(1-t)*t * control.x + t**2 * end.x
-        y = (1-t)**2 * start.y + 2*(1-t)*t * control.y + t**2 * end.y
-        points.append(Point(x, y))
-
-    for i in range(len(points) - 1):
-        scene.add(Line(
-            points[i].x, points[i].y,
-            points[i+1].x, points[i+1].y,
-            color="#64748b", width=2.5
-        ))
-
-    # Add 5 dots
+    # Add 5 dots along the curve
     for i in range(5):
         t = i / 4
-        x = (1-t)**2 * start.x + 2*(1-t)*t * control.x + t**2 * end.x
-        y = (1-t)**2 * start.y + 2*(1-t)*t * control.y + t**2 * end.y
+        scene.add_dot(along=curve, t=t, radius=5, color="#ef4444")
 
-        scene.add(Dot(x, y, radius=5, color="#ef4444"))
-
-    # Code
-    scene.add(Text(275, 25, "curve = cell.add_curve(curvature=0.5)", font_size=11, color="#333", text_anchor="middle", font_family="monospace"))
-    scene.add(Text(275, 45, "for i in range(5):", font_size=11, color="#333", text_anchor="middle", font_family="monospace"))
-    scene.add(Text(275, 65, "    t = i / 4  # 0, 0.25, 0.5, 0.75, 1.0", font_size=11, color="#666", text_anchor="middle", font_family="monospace"))
-    scene.add(Text(275, 85, "    cell.add_dot(along=curve, t=t, radius=2)", font_size=11, color="#ef4444", text_anchor="middle", font_family="monospace"))
+    # Code annotations
+    scene.add(Text(275, 25, "curve = cell.add_curve(curvature=0.5)",
+                   font_size=11, color="#333", text_anchor="middle", font_family="monospace"))
+    scene.add(Text(275, 45, "for i in range(5):",
+                   font_size=11, color="#333", text_anchor="middle", font_family="monospace"))
+    scene.add(Text(275, 65, "    t = i / 4  # 0, 0.25, 0.5, 0.75, 1.0",
+                   font_size=11, color="#666", text_anchor="middle", font_family="monospace"))
+    scene.add(Text(275, 85, "    cell.add_dot(along=curve, t=t, radius=2)",
+                   font_size=11, color="#ef4444", text_anchor="middle", font_family="monospace"))
 
     scene.save(OUTPUT_DIR / "10-code-example.svg")
 
@@ -535,8 +463,6 @@ def example_11_along_all_entities():
     Demonstrates that dots, text, rects, ellipses, polygons, and lines can
     all use the along= parameter.
     """
-    from pyfreeform import shapes
-
     scene = Scene(width=600, height=300, background="white")
 
     # Draw a big curve across the scene

@@ -1,98 +1,158 @@
+#!/usr/bin/env python3
 """
-SVG Generator for Connections Example
-Demonstrates network visualization with distance-based connections
+SVG Generator for: examples/intermediate/connections
+
+Demonstrates network visualization with distance-based connections.
 """
 
 import math
+from pyfreeform import Scene, Palette, Dot, Line, Connection
+from pathlib import Path
 
-def generate_svg(output_path: str, number: int) -> None:
-    """Generate connections example SVG."""
+
+OUTPUT_DIR = Path(__file__).parent.parent.parent / "_images" / "connections"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def example_01_network():
+    """Network of dots connected by proximity."""
+    colors = Palette.midnight()
     grid_size = 30
-    cell_size = 15
-    width = grid_size * cell_size
-    height = grid_size * cell_size
+    scene = Scene.with_grid(
+        cols=grid_size, rows=grid_size, cell_size=15, background=colors.background
+    )
 
-    # Midnight palette
-    background = "#1a1a2e"
-    line_color = "#4ecca3"
-    primary = "#ee4266"
+    # Collect bright cells and their dots
+    dot_entries = []
+    for cell in scene.grid:
+        center = grid_size / 2
+        distance = math.sqrt((cell.col - center) ** 2 + (cell.row - center) ** 2)
+        brightness = (math.sin(distance * 0.5) + 1) / 2
 
-    svg_lines = [
-        f'<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg">',
-        f'  <rect width="{width}" height="{height}" fill="{background}"/>',
-        ''
-    ]
+        if brightness > 0.4:
+            radius = 2 + brightness * 3
+            dot = cell.add_dot(color=colors.secondary, radius=radius, z_index=1)
+            dot_entries.append((dot, cell.row, cell.col))
 
-    # Generate dots (nodes) with synthetic brightness
+    # Connect nearby dots
     max_distance = 3
-    dots = []
-
-    for row in range(grid_size):
-        for col in range(grid_size):
-            # Calculate brightness
-            center_x = grid_size / 2
-            center_y = grid_size / 2
-            distance = math.sqrt((col - center_x)**2 + (row - center_y)**2)
-            max_dist = math.sqrt(center_x**2 + center_y**2)
-            brightness = (math.sin(distance * 0.5) + 1) / 2
-
-            # Only create dots for bright cells
-            if brightness > 0.4:
-                x = col * cell_size + cell_size / 2
-                y = row * cell_size + cell_size / 2
-                radius = 2 + brightness * 3
-                dots.append((x, y, radius, row, col, brightness))
-
-    # Draw connections first (behind dots)
-    for i, (x1, y1, r1, row1, col1, b1) in enumerate(dots):
-        for x2, y2, r2, row2, col2, b2 in dots[i+1:i+4]:  # Connect to next 3
-            # Calculate distance in grid cells
-            dr = row1 - row2
-            dc = col1 - col2
-            distance = math.sqrt(dr*dr + dc*dc)
-
-            if distance <= max_distance:
-                # Fade opacity with distance
-                opacity = (1 - distance / max_distance) * 0.5
-
-                svg_lines.append(
-                    f'  <line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" '
-                    f'stroke="{line_color}" stroke-width="0.5" opacity="{opacity:.2f}"/>'
+    for i, (dot1, r1, c1) in enumerate(dot_entries):
+        for dot2, r2, c2 in dot_entries[i + 1 : i + 4]:
+            dr, dc = r1 - r2, c1 - c2
+            dist = math.sqrt(dr * dr + dc * dc)
+            if dist <= max_distance:
+                opacity = (1 - dist / max_distance) * 0.5
+                conn = Connection(
+                    dot1, dot2,
+                    start_anchor="center", end_anchor="center",
+                    style={"width": 0.5, "color": colors.primary, "opacity": opacity},
                 )
+                scene.add(conn)
 
-    # Draw dots on top
-    for x, y, radius, row, col, brightness in dots:
-        svg_lines.append(
-            f'  <circle cx="{x}" cy="{y}" r="{radius:.1f}" fill="{primary}"/>'
+    scene.save(OUTPUT_DIR / "01_network.svg")
+
+
+def example_02_distance_fade():
+    """Connections fade with distance — radial brightness pattern."""
+    colors = Palette.ocean()
+    grid_size = 25
+    scene = Scene.with_grid(
+        cols=grid_size, rows=grid_size, cell_size=15, background=colors.background
+    )
+
+    center = grid_size / 2
+    max_dist = math.sqrt(center**2 + center**2)
+    dot_entries = []
+
+    for cell in scene.grid:
+        dist = math.sqrt((cell.col - center) ** 2 + (cell.row - center) ** 2)
+        brightness = 1 - (dist / max_dist)
+
+        if brightness > 0.4:
+            dot = cell.add_dot(
+                color=colors.primary, radius=2 + brightness * 4, z_index=1
+            )
+            dot_entries.append((dot, cell.row, cell.col))
+
+    for i, (dot1, r1, c1) in enumerate(dot_entries):
+        for dot2, r2, c2 in dot_entries[i + 1 : i + 3]:
+            dr, dc = r1 - r2, c1 - c2
+            dist = math.sqrt(dr * dr + dc * dc)
+            if dist < 4:
+                opacity = (1 - dist / 4) * 0.4
+                conn = Connection(
+                    dot1, dot2,
+                    start_anchor="center", end_anchor="center",
+                    style={"width": 0.5, "color": colors.line, "opacity": opacity},
+                )
+                scene.add(conn)
+
+    scene.save(OUTPUT_DIR / "02_distance_fade.svg")
+
+
+def example_03_hub_spoke():
+    """Hub-and-spoke pattern: center dot connects to ring dots."""
+    colors = Palette.midnight()
+    scene = Scene(width=300, height=300, background=colors.background)
+
+    # Center hub
+    hub = Dot(150, 150, radius=10, color=colors.accent)
+    scene.add(hub)
+
+    # Spoke dots in a ring
+    spoke_dots = []
+    for i in range(12):
+        angle = i * (2 * math.pi / 12)
+        x = 150 + 100 * math.cos(angle)
+        y = 150 + 100 * math.sin(angle)
+        dot = Dot(x, y, radius=5, color=colors.primary)
+        scene.add(dot)
+        spoke_dots.append(dot)
+
+    # Connect hub to each spoke
+    for dot in spoke_dots:
+        conn = Connection(
+            hub, dot,
+            start_anchor="center", end_anchor="center",
+            style={"width": 1, "color": colors.line, "opacity": 0.5},
         )
+        scene.add(conn)
 
-    svg_lines.append('</svg>')
-
-    with open(output_path, 'w') as f:
-        f.write('\n'.join(svg_lines))
+    scene.save(OUTPUT_DIR / "03_hub_spoke.svg")
 
 
-if __name__ == '__main__':
+GENERATORS = {
+    "01_network": example_01_network,
+    "02_distance_fade": example_02_distance_fade,
+    "03_hub_spoke": example_03_hub_spoke,
+}
+
+
+def generate_all():
+    """Generate all SVG images for this document"""
+    print(f"Generating {len(GENERATORS)} SVGs for connections examples...")
+
+    for name, func in GENERATORS.items():
+        try:
+            func()
+            print(f"  ✓ {name}.svg")
+        except Exception as e:
+            print(f"  ✗ {name}.svg - ERROR: {e}")
+
+    print(f"Complete! Generated to {OUTPUT_DIR}/")
+
+
+if __name__ == "__main__":
     import sys
-    import os
 
     if len(sys.argv) > 1:
-        output_dir = sys.argv[1]
+        name = sys.argv[1]
+        if name in GENERATORS:
+            GENERATORS[name]()
+            print(f"Generated {name}.svg")
+        else:
+            print(f"Unknown generator: {name}")
+            for key in sorted(GENERATORS.keys()):
+                print(f"  - {key}")
     else:
-        output_dir = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-            '_images', 'connections'
-        )
-
-    os.makedirs(output_dir, exist_ok=True)
-
-    examples = [
-        '01_network.svg',
-        '02_distance_fade.svg',
-        '03_hub_spoke.svg'
-    ]
-
-    for idx, filename in enumerate(examples, 1):
-        output_path = os.path.join(output_dir, filename)
-        generate_svg(output_path, idx)
-        print(f"Generated: {output_path}")
+        generate_all()

@@ -1,82 +1,111 @@
+#!/usr/bin/env python3
 """
-SVG Generator for Custom Dots Example
-Demonstrates palettes and brightness-based sizing
+SVG Generator for: examples/beginner/custom-dots
+
+Demonstrates palettes and brightness-based sizing.
 """
 
-def generate_svg(output_path: str, number: int) -> None:
-    """Generate custom dots example SVG."""
-    import math
-
-    grid_size = 40
-    cell_size = 10
-    width = grid_size * cell_size
-    height = grid_size * cell_size
-
-    # Midnight palette colors
-    background = "#1a1a2e"
-    primary = "#4ecca3"
-    secondary = "#ee4266"
-    accent = "#ffd23f"
-
-    svg_lines = [
-        f'<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg">',
-        f'  <rect width="{width}" height="{height}" fill="{background}"/>',
-        ''
-    ]
-
-    # Generate dots with brightness-based sizing and color tiers
-    for row in range(grid_size):
-        for col in range(grid_size):
-            x = col * cell_size + cell_size / 2
-            y = row * cell_size + cell_size / 2
-
-            # Create wave pattern brightness
-            brightness = (math.sin(col * 0.3) + math.cos(row * 0.3) + 2) / 4
-
-            # Three brightness tiers
-            if brightness > 0.6:
-                # Large primary color dots
-                size = 5 + brightness * 5  # 5-10px
-                color = primary
-            elif brightness > 0.3:
-                # Medium secondary color dots
-                size = 3 + brightness * 4  # 3-7px
-                color = secondary
-            else:
-                # Small accent dots
-                size = 2
-                color = accent
-
-            svg_lines.append(f'  <circle cx="{x}" cy="{y}" r="{size:.1f}" fill="{color}"/>')
-
-    svg_lines.append('</svg>')
-
-    with open(output_path, 'w') as f:
-        f.write('\n'.join(svg_lines))
+import math
+from pyfreeform import Scene, Palette
+from pathlib import Path
 
 
-if __name__ == '__main__':
+OUTPUT_DIR = Path(__file__).parent.parent.parent / "_images" / "custom-dots"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def _wave_brightness(col, row, freq_x=0.3, freq_y=0.3):
+    """Compute wave-based brightness for a cell position."""
+    return (math.sin(col * freq_x) + math.cos(row * freq_y) + 2) / 4
+
+
+def example_01_brightness_tiers():
+    """Wave pattern with three brightness tiers using midnight palette."""
+    colors = Palette.midnight()
+    scene = Scene.with_grid(
+        cols=40, rows=40, cell_size=10, background=colors.background
+    )
+
+    for cell in scene.grid:
+        brightness = _wave_brightness(cell.col, cell.row)
+
+        if brightness > 0.6:
+            cell.add_dot(color=colors.primary, radius=5 + brightness * 5)
+        elif brightness > 0.3:
+            cell.add_dot(color=colors.secondary, radius=3 + brightness * 4)
+        else:
+            cell.add_dot(color=colors.accent, radius=2)
+
+    scene.save(OUTPUT_DIR / "01_brightness_tiers.svg")
+
+
+def example_02_palette_variation():
+    """Same wave pattern with ocean palette for comparison."""
+    colors = Palette.ocean()
+    scene = Scene.with_grid(
+        cols=40, rows=40, cell_size=10, background=colors.background
+    )
+
+    for cell in scene.grid:
+        brightness = _wave_brightness(cell.col, cell.row)
+
+        if brightness > 0.6:
+            cell.add_dot(color=colors.primary, radius=5 + brightness * 5)
+        elif brightness > 0.3:
+            cell.add_dot(color=colors.secondary, radius=3 + brightness * 4)
+        else:
+            cell.add_dot(color=colors.accent, radius=2)
+
+    scene.save(OUTPUT_DIR / "02_palette_variation.svg")
+
+
+def example_03_size_scaling():
+    """Brightness directly controls dot size, single color."""
+    colors = Palette.midnight()
+    scene = Scene.with_grid(
+        cols=40, rows=40, cell_size=10, background=colors.background
+    )
+
+    for cell in scene.grid:
+        brightness = _wave_brightness(cell.col, cell.row, 0.2, 0.2)
+        radius = 1 + brightness * 8
+        cell.add_dot(color=colors.primary, radius=radius)
+
+    scene.save(OUTPUT_DIR / "03_size_scaling.svg")
+
+
+GENERATORS = {
+    "01_brightness_tiers": example_01_brightness_tiers,
+    "02_palette_variation": example_02_palette_variation,
+    "03_size_scaling": example_03_size_scaling,
+}
+
+
+def generate_all():
+    """Generate all SVG images for this document"""
+    print(f"Generating {len(GENERATORS)} SVGs for custom-dots examples...")
+
+    for name, func in GENERATORS.items():
+        try:
+            func()
+            print(f"  ✓ {name}.svg")
+        except Exception as e:
+            print(f"  ✗ {name}.svg - ERROR: {e}")
+
+    print(f"Complete! Generated to {OUTPUT_DIR}/")
+
+
+if __name__ == "__main__":
     import sys
-    import os
 
     if len(sys.argv) > 1:
-        output_dir = sys.argv[1]
+        name = sys.argv[1]
+        if name in GENERATORS:
+            GENERATORS[name]()
+            print(f"Generated {name}.svg")
+        else:
+            print(f"Unknown generator: {name}")
+            for key in sorted(GENERATORS.keys()):
+                print(f"  - {key}")
     else:
-        output_dir = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-            '_images', 'custom-dots'
-        )
-
-    os.makedirs(output_dir, exist_ok=True)
-
-    # Generate examples
-    examples = [
-        '01_brightness_tiers.svg',
-        '02_palette_variation.svg',
-        '03_size_scaling.svg'
-    ]
-
-    for idx, filename in enumerate(examples, 1):
-        output_path = os.path.join(output_dir, filename)
-        generate_svg(output_path, idx)
-        print(f"Generated: {output_path}")
+        generate_all()

@@ -1,102 +1,111 @@
+#!/usr/bin/env python3
 """
-SVG Generator for Curves Example
-Demonstrates quadratic Bezier curves with parametric positioning
+SVG Generator for: examples/intermediate/curves
+
+Demonstrates quadratic Bezier curves with parametric positioning.
 """
 
 import math
-
-def quadratic_bezier_point(t, p0, p1, p2):
-    """Calculate point on quadratic Bezier curve at parameter t."""
-    x = (1-t)**2 * p0[0] + 2*(1-t)*t * p1[0] + t**2 * p2[0]
-    y = (1-t)**2 * p0[1] + 2*(1-t)*t * p1[1] + t**2 * p2[1]
-    return (x, y)
-
-def generate_svg(output_path: str, number: int) -> None:
-    """Generate curves example SVG."""
-    grid_size = 30
-    cell_size = 20
-    width = grid_size * cell_size
-    height = grid_size * cell_size
-
-    # Ocean palette
-    background = "#1a1a2e"
-    line_color = "#4ecca3"
-    accent = "#ee4266"
-
-    svg_lines = [
-        f'<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg">',
-        f'  <rect width="{width}" height="{height}" fill="{background}"/>',
-        ''
-    ]
-
-    # Generate curves with dots positioned along them
-    for row in range(grid_size):
-        for col in range(grid_size):
-            x = col * cell_size
-            y = row * cell_size
-
-            # Calculate brightness (sine wave pattern)
-            brightness = (math.sin(col * 0.15) * math.cos(row * 0.15) + 1) / 2
-
-            # Only draw in medium brightness range
-            if 0.3 < brightness < 0.7:
-                # Curve from bottom-left to top-right
-                p0 = (x, y + cell_size)  # start (bottom-left)
-                p2 = (x + cell_size, y)  # end (top-right)
-
-                # Control point for curvature=0.5
-                curvature = 0.5
-                mid_x = (p0[0] + p2[0]) / 2
-                mid_y = (p0[1] + p2[1]) / 2
-                perp_x = -(p2[1] - p0[1])
-                perp_y = (p2[0] - p0[0])
-                length = math.sqrt(perp_x**2 + perp_y**2)
-                if length > 0:
-                    perp_x /= length
-                    perp_y /= length
-                offset = cell_size * curvature
-                p1 = (mid_x + perp_x * offset, mid_y + perp_y * offset)
-
-                # Draw curve
-                svg_lines.append(
-                    f'  <path d="M {p0[0]},{p0[1]} Q {p1[0]},{p1[1]} {p2[0]},{p2[1]}" '
-                    f'stroke="{line_color}" stroke-width="1" fill="none" opacity="0.5"/>'
-                )
-
-                # Position dot along curve based on brightness
-                dot_pos = quadratic_bezier_point(brightness, p0, p1, p2)
-                svg_lines.append(
-                    f'  <circle cx="{dot_pos[0]:.1f}" cy="{dot_pos[1]:.1f}" '
-                    f'r="2" fill="{accent}"/>'
-                )
-
-    svg_lines.append('</svg>')
-
-    with open(output_path, 'w') as f:
-        f.write('\n'.join(svg_lines))
+from pyfreeform import Scene, Palette
+from pathlib import Path
 
 
-if __name__ == '__main__':
+OUTPUT_DIR = Path(__file__).parent.parent.parent / "_images" / "curves"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def example_01_flowing_curves():
+    """Curves in each cell with dots positioned along them by brightness."""
+    colors = Palette.midnight()
+    scene = Scene.with_grid(
+        cols=30, rows=30, cell_size=20, background=colors.background
+    )
+
+    for cell in scene.grid:
+        brightness = (math.sin(cell.col * 0.15) * math.cos(cell.row * 0.15) + 1) / 2
+
+        if 0.3 < brightness < 0.7:
+            curve = cell.add_curve(
+                start="bottom_left", end="top_right",
+                curvature=0.5, color=colors.primary, width=1, opacity=0.5,
+            )
+            cell.add_dot(along=curve, t=brightness, radius=2, color=colors.secondary)
+
+    scene.save(OUTPUT_DIR / "01_flowing_curves.svg")
+
+
+def example_02_varying_curvature():
+    """Curvature varies based on cell position."""
+    colors = Palette.ocean()
+    scene = Scene.with_grid(
+        cols=20, rows=20, cell_size=25, background=colors.background
+    )
+
+    for cell in scene.grid:
+        # Curvature ranges from -0.8 to 0.8 across the grid
+        curvature = (cell.col / 20 - 0.5) * 1.6
+
+        curve = cell.add_curve(
+            start="bottom_left", end="top_right",
+            curvature=curvature, color=colors.primary, width=1, opacity=0.5,
+        )
+        t = cell.row / 20
+        cell.add_dot(along=curve, t=t, radius=2, color=colors.accent)
+
+    scene.save(OUTPUT_DIR / "02_varying_curvature.svg")
+
+
+def example_03_multiple_dots():
+    """Multiple dots distributed along each curve."""
+    colors = Palette.midnight()
+    scene = Scene.with_grid(
+        cols=15, rows=15, cell_size=30, background=colors.background
+    )
+
+    for cell in scene.grid:
+        curve = cell.add_curve(
+            start="bottom_left", end="top_right",
+            curvature=0.5, color=colors.line, width=0.5, opacity=0.3,
+        )
+        for i in range(5):
+            t = (i + 0.5) / 5
+            cell.add_dot(along=curve, t=t, radius=2, color=colors.secondary)
+
+    scene.save(OUTPUT_DIR / "03_multiple_dots.svg")
+
+
+GENERATORS = {
+    "01_flowing_curves": example_01_flowing_curves,
+    "02_varying_curvature": example_02_varying_curvature,
+    "03_multiple_dots": example_03_multiple_dots,
+}
+
+
+def generate_all():
+    """Generate all SVG images for this document"""
+    print(f"Generating {len(GENERATORS)} SVGs for curves examples...")
+
+    for name, func in GENERATORS.items():
+        try:
+            func()
+            print(f"  ✓ {name}.svg")
+        except Exception as e:
+            print(f"  ✗ {name}.svg - ERROR: {e}")
+
+    print(f"Complete! Generated to {OUTPUT_DIR}/")
+
+
+if __name__ == "__main__":
     import sys
-    import os
 
     if len(sys.argv) > 1:
-        output_dir = sys.argv[1]
+        name = sys.argv[1]
+        if name in GENERATORS:
+            GENERATORS[name]()
+            print(f"Generated {name}.svg")
+        else:
+            print(f"Unknown generator: {name}")
+            for key in sorted(GENERATORS.keys()):
+                print(f"  - {key}")
     else:
-        output_dir = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-            '_images', 'curves'
-        )
-
-    os.makedirs(output_dir, exist_ok=True)
-
-    examples = [
-        '01_flowing_curves.svg',
-        '02_varying_curvature.svg',
-        '03_multiple_dots.svg'
-    ]
-
-    for idx, filename in enumerate(examples, 1):
-        output_path = os.path.join(output_dir, filename)
-        generate_svg(output_path, idx)
-        print(f"Generated: {output_path}")
+        generate_all()

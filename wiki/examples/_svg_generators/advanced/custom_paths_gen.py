@@ -1,235 +1,222 @@
+#!/usr/bin/env python3
 """
-SVG Generator for Custom Paths Example
-Demonstrates custom parametric paths: spirals, waves, Lissajous curves
+SVG Generator for: examples/advanced/custom-paths
+
+Demonstrates custom parametric paths using the Pathable protocol:
+spirals, waves, and Lissajous curves.
 """
 
 import math
+from pyfreeform import Scene, Palette, Dot, Line, Text
+from pyfreeform.core.point import Point
+from pathlib import Path
 
-def spiral_point(t, cx, cy, max_radius, turns):
-    """Calculate point on Archimedean spiral."""
-    angle = t * turns * 2 * math.pi
-    radius = t * max_radius
-    x = cx + radius * math.cos(angle)
-    y = cy + radius * math.sin(angle)
-    return (x, y)
 
-def wave_point(t, start_x, start_y, end_x, end_y, amplitude, frequency):
-    """Calculate point on sinusoidal wave."""
-    x = start_x + t * (end_x - start_x)
-    baseline_y = start_y + t * (end_y - start_y)
-    wave_offset = amplitude * math.sin(t * frequency * 2 * math.pi)
-    y = baseline_y + wave_offset
-    return (x, y)
+OUTPUT_DIR = Path(__file__).parent.parent.parent / "_images" / "custom-paths"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-def lissajous_point(t, cx, cy, size, a, b, delta):
-    """Calculate point on Lissajous curve."""
-    angle = t * 2 * math.pi
-    x = cx + size * math.sin(a * angle + delta)
-    y = cy + size * math.sin(b * angle)
-    return (x, y)
 
-def generate_svg(output_path: str, number: int) -> None:
-    """Generate custom paths SVG."""
-    width = 450
-    height = 300
+# =============================================================================
+# Custom Pathable classes — any object with point_at(t) works with along=
+# =============================================================================
 
-    # Midnight palette
-    background = "#1a1a2e"
-    spiral_color = "#4ecca3"
-    spiral_dots = "#ee4266"
-    wave_color = "#ffd23f"
-    wave_dots = "#64ffda"
-    liss_color = "#ee4266"
-    liss_dots = "#ffd23f"
-    text_color = "#a0a0a0"
 
-    svg_lines = [
-        f'<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg">',
-        f'  <rect width="{width}" height="{height}" fill="{background}"/>',
-        ''
-    ]
+class Spiral:
+    """Archimedean spiral: radius grows linearly with t."""
 
-    # Section 1: Archimedean Spiral
-    svg_lines.append('  <!-- Archimedean Spiral -->')
-    svg_lines.append('  <g>')
+    def __init__(self, cx, cy, max_radius, turns):
+        self.cx = cx
+        self.cy = cy
+        self.max_radius = max_radius
+        self.turns = turns
 
-    cx, cy = 75, 75
-    max_radius = 50
-    turns = 3
+    def point_at(self, t):
+        angle = t * self.turns * 2 * math.pi
+        radius = t * self.max_radius
+        return Point(
+            self.cx + radius * math.cos(angle),
+            self.cy + radius * math.sin(angle),
+        )
 
-    # Draw spiral path
-    path_points = []
-    for i in range(100):
-        t = i / 99
-        x, y = spiral_point(t, cx, cy, max_radius, turns)
-        if i == 0:
-            path_points.append(f"M {x:.1f},{y:.1f}")
-        else:
-            path_points.append(f"L {x:.1f},{y:.1f}")
 
-    svg_lines.append(
-        f'    <path d="{" ".join(path_points)}" '
-        f'stroke="{spiral_color}" stroke-width="0.5" fill="none" opacity="0.3"/>'
-    )
+class Wave:
+    """Sinusoidal wave between two endpoints."""
 
-    # Draw dots along spiral
-    for i in range(0, 20):
+    def __init__(self, start_x, start_y, end_x, end_y, amplitude, frequency):
+        self.start_x = start_x
+        self.start_y = start_y
+        self.end_x = end_x
+        self.end_y = end_y
+        self.amplitude = amplitude
+        self.frequency = frequency
+
+    def point_at(self, t):
+        x = self.start_x + t * (self.end_x - self.start_x)
+        baseline_y = self.start_y + t * (self.end_y - self.start_y)
+        wave_offset = self.amplitude * math.sin(t * self.frequency * 2 * math.pi)
+        return Point(x, baseline_y + wave_offset)
+
+
+class Lissajous:
+    """Lissajous curve (parametric figure)."""
+
+    def __init__(self, cx, cy, size, a, b, delta):
+        self.cx = cx
+        self.cy = cy
+        self.size = size
+        self.a = a
+        self.b = b
+        self.delta = delta
+
+    def point_at(self, t):
+        angle = t * 2 * math.pi
+        return Point(
+            self.cx + self.size * math.sin(self.a * angle + self.delta),
+            self.cy + self.size * math.sin(self.b * angle),
+        )
+
+
+def _draw_path_trace(scene, path, n_segments, color, width=0.5, opacity=0.3):
+    """Draw a path as a series of line segments (for custom pathables)."""
+    for i in range(n_segments):
+        p1 = path.point_at(i / n_segments)
+        p2 = path.point_at((i + 1) / n_segments)
+        scene.add(Line(p1.x, p1.y, p2.x, p2.y, color=color, width=width, opacity=opacity))
+
+
+def example_01_spirals():
+    """Archimedean spiral with dots along the path."""
+    colors = Palette.midnight()
+    scene = Scene(width=250, height=250, background=colors.background)
+
+    spiral = Spiral(125, 125, 80, 3)
+    _draw_path_trace(scene, spiral, 100, colors.primary)
+
+    for i in range(20):
         t = i / 19
-        x, y = spiral_point(t, cx, cy, max_radius, turns)
-        svg_lines.append(
-            f'    <circle cx="{x:.1f}" cy="{y:.1f}" r="1.5" fill="{spiral_dots}"/>'
-        )
+        pt = spiral.point_at(t)
+        scene.add(Dot(pt.x, pt.y, radius=2, color=colors.secondary))
 
-    svg_lines.append(
-        f'    <text x="{cx}" y="140" font-size="11" fill="{text_color}" '
-        f'text-anchor="middle">Archimedean Spiral</text>'
-    )
-    svg_lines.append('  </g>')
+    scene.add(Text(125, 230, "Archimedean Spiral", font_size=11, color=colors.line, text_anchor="middle"))
 
-    # Section 2: Sinusoidal Wave
-    svg_lines.append('')
-    svg_lines.append('  <!-- Sinusoidal Wave -->')
-    svg_lines.append('  <g>')
+    scene.save(OUTPUT_DIR / "01_spirals.svg")
 
-    start_x, start_y = 140, 75
-    end_x, end_y = 290, 75
-    amplitude = 30
-    frequency = 3
 
-    # Draw wave path
-    path_points = []
-    for i in range(100):
-        t = i / 99
-        x, y = wave_point(t, start_x, start_y, end_x, end_y, amplitude, frequency)
-        if i == 0:
-            path_points.append(f"M {x:.1f},{y:.1f}")
-        else:
-            path_points.append(f"L {x:.1f},{y:.1f}")
+def example_02_waves():
+    """Sinusoidal wave with evenly distributed dots."""
+    colors = Palette.midnight()
+    scene = Scene(width=300, height=200, background=colors.background)
 
-    svg_lines.append(
-        f'    <path d="{" ".join(path_points)}" '
-        f'stroke="{wave_color}" stroke-width="0.5" fill="none" opacity="0.3"/>'
-    )
+    wave = Wave(30, 100, 270, 100, 40, 3)
+    _draw_path_trace(scene, wave, 100, colors.accent)
 
-    # Draw dots along wave
-    for i in range(0, 25):
+    for i in range(25):
         t = i / 24
-        x, y = wave_point(t, start_x, start_y, end_x, end_y, amplitude, frequency)
-        svg_lines.append(
-            f'    <circle cx="{x:.1f}" cy="{y:.1f}" r="1.5" fill="{wave_dots}"/>'
-        )
+        pt = wave.point_at(t)
+        scene.add(Dot(pt.x, pt.y, radius=2, color="#64ffda"))
 
-    center_x = (start_x + end_x) / 2
-    svg_lines.append(
-        f'    <text x="{center_x}" y="140" font-size="11" fill="{text_color}" '
-        f'text-anchor="middle">Sinusoidal Wave</text>'
-    )
-    svg_lines.append('  </g>')
+    scene.add(Text(150, 180, "Sinusoidal Wave", font_size=11, color=colors.line, text_anchor="middle"))
 
-    # Section 3: Lissajous Curve
-    svg_lines.append('')
-    svg_lines.append('  <!-- Lissajous Curve -->')
-    svg_lines.append('  <g>')
+    scene.save(OUTPUT_DIR / "02_waves.svg")
 
-    cx, cy = 370, 75
-    size = 40
-    a, b = 3, 2
-    delta = math.pi / 2
 
-    # Draw Lissajous path
-    path_points = []
-    for i in range(100):
-        t = i / 99
-        x, y = lissajous_point(t, cx, cy, size, a, b, delta)
-        if i == 0:
-            path_points.append(f"M {x:.1f},{y:.1f}")
-        else:
-            path_points.append(f"L {x:.1f},{y:.1f}")
+def example_03_lissajous():
+    """Lissajous curve (3:2) with dense dot sampling."""
+    colors = Palette.midnight()
+    scene = Scene(width=250, height=250, background=colors.background)
 
-    svg_lines.append(
-        f'    <path d="{" ".join(path_points)}" '
-        f'stroke="{liss_color}" stroke-width="0.5" fill="none" opacity="0.3"/>'
-    )
+    liss = Lissajous(125, 110, 60, 3, 2, math.pi / 2)
+    _draw_path_trace(scene, liss, 100, colors.secondary)
 
-    # Draw dots along Lissajous
-    for i in range(0, 50):
+    for i in range(50):
         t = i / 49
-        x, y = lissajous_point(t, cx, cy, size, a, b, delta)
-        svg_lines.append(
-            f'    <circle cx="{x:.1f}" cy="{y:.1f}" r="1.5" fill="{liss_dots}"/>'
-        )
+        pt = liss.point_at(t)
+        scene.add(Dot(pt.x, pt.y, radius=1.5, color=colors.accent))
 
-    svg_lines.append(
-        f'    <text x="{cx}" y="140" font-size="11" fill="{text_color}" '
-        f'text-anchor="middle">Lissajous (3:2)</text>'
-    )
-    svg_lines.append('  </g>')
+    scene.add(Text(125, 210, "Lissajous (3:2)", font_size=11, color=colors.line, text_anchor="middle"))
 
-    # Bottom section: More examples in grid
-    svg_lines.append('')
-    svg_lines.append('  <!-- Grid of variations -->')
+    scene.save(OUTPUT_DIR / "03_lissajous.svg")
 
-    y_base = 180
-    examples_data = [
-        # (cx, cy, type, params)
-        (75, y_base, 'spiral', {'turns': 2, 'max_radius': 30}),
-        (150, y_base, 'wave', {'amplitude': 20, 'frequency': 2}),
-        (225, y_base, 'lissajous', {'a': 5, 'b': 4, 'delta': 0, 'size': 30}),
-        (300, y_base, 'spiral', {'turns': 4, 'max_radius': 30}),
-        (375, y_base, 'wave', {'amplitude': 25, 'frequency': 4}),
+
+def example_04_all_paths():
+    """All three custom path types side by side with variations below."""
+    colors = Palette.midnight()
+    scene = Scene(width=450, height=300, background=colors.background)
+
+    # Top row: main examples
+    spiral = Spiral(75, 75, 50, 3)
+    _draw_path_trace(scene, spiral, 100, colors.primary)
+    for i in range(20):
+        pt = spiral.point_at(i / 19)
+        scene.add(Dot(pt.x, pt.y, radius=1.5, color=colors.secondary))
+    scene.add(Text(75, 140, "Spiral", font_size=11, color=colors.line, text_anchor="middle"))
+
+    wave = Wave(140, 75, 290, 75, 30, 3)
+    _draw_path_trace(scene, wave, 100, colors.accent)
+    for i in range(25):
+        pt = wave.point_at(i / 24)
+        scene.add(Dot(pt.x, pt.y, radius=1.5, color="#64ffda"))
+    scene.add(Text(215, 140, "Wave", font_size=11, color=colors.line, text_anchor="middle"))
+
+    liss = Lissajous(370, 75, 40, 3, 2, math.pi / 2)
+    _draw_path_trace(scene, liss, 100, colors.secondary)
+    for i in range(50):
+        pt = liss.point_at(i / 49)
+        scene.add(Dot(pt.x, pt.y, radius=1.5, color=colors.accent))
+    scene.add(Text(370, 140, "Lissajous", font_size=11, color=colors.line, text_anchor="middle"))
+
+    # Bottom row: variations
+    variations = [
+        Spiral(75, 210, 30, 2),
+        Wave(125, 210, 175, 210, 20, 2),
+        Lissajous(225, 210, 30, 5, 4, 0),
+        Spiral(300, 210, 30, 4),
+        Wave(350, 210, 400, 210, 25, 4),
     ]
+    dot_colors = [colors.secondary, "#64ffda", colors.accent, colors.secondary, "#64ffda"]
+    n_dots = [15, 20, 30, 15, 20]
 
-    for cx, cy, path_type, params in examples_data:
-        if path_type == 'spiral':
-            for i in range(15):
-                t = i / 14
-                x, y = spiral_point(t, cx, cy, params['max_radius'], params['turns'])
-                svg_lines.append(
-                    f'    <circle cx="{x:.1f}" cy="{y:.1f}" r="1" fill="{spiral_dots}" opacity="0.7"/>'
-                )
-        elif path_type == 'wave':
-            for i in range(20):
-                t = i / 19
-                x, y = wave_point(t, cx - 25, cy, cx + 25, cy, params['amplitude'], params['frequency'])
-                svg_lines.append(
-                    f'    <circle cx="{x:.1f}" cy="{y:.1f}" r="1" fill="{wave_dots}" opacity="0.7"/>'
-                )
-        elif path_type == 'lissajous':
-            for i in range(30):
-                t = i / 29
-                x, y = lissajous_point(t, cx, cy, params['size'], params['a'], params['b'], params['delta'])
-                svg_lines.append(
-                    f'    <circle cx="{x:.1f}" cy="{y:.1f}" r="1" fill="{liss_dots}" opacity="0.7"/>'
-                )
+    for path, color, n in zip(variations, dot_colors, n_dots):
+        for i in range(n):
+            pt = path.point_at(i / (n - 1))
+            scene.add(Dot(pt.x, pt.y, radius=1, color=color, opacity=0.7))
 
-    svg_lines.append('</svg>')
-
-    with open(output_path, 'w') as f:
-        f.write('\n'.join(svg_lines))
+    scene.save(OUTPUT_DIR / "04_all_paths.svg")
 
 
-if __name__ == '__main__':
+GENERATORS = {
+    "01_spirals": example_01_spirals,
+    "02_waves": example_02_waves,
+    "03_lissajous": example_03_lissajous,
+    "04_all_paths": example_04_all_paths,
+}
+
+
+def generate_all():
+    """Generate all SVG images for this document"""
+    print(f"Generating {len(GENERATORS)} SVGs for custom-paths examples...")
+
+    for name, func in GENERATORS.items():
+        try:
+            func()
+            print(f"  ✓ {name}.svg")
+        except Exception as e:
+            print(f"  ✗ {name}.svg - ERROR: {e}")
+
+    print(f"Complete! Generated to {OUTPUT_DIR}/")
+
+
+if __name__ == "__main__":
     import sys
-    import os
 
     if len(sys.argv) > 1:
-        output_dir = sys.argv[1]
+        name = sys.argv[1]
+        if name in GENERATORS:
+            GENERATORS[name]()
+            print(f"Generated {name}.svg")
+        else:
+            print(f"Unknown generator: {name}")
+            for key in sorted(GENERATORS.keys()):
+                print(f"  - {key}")
     else:
-        output_dir = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-            '_images', 'custom-paths'
-        )
-
-    os.makedirs(output_dir, exist_ok=True)
-
-    examples = [
-        '01_spirals.svg',
-        '02_waves.svg',
-        '03_lissajous.svg',
-        '04_all_paths.svg'
-    ]
-
-    for idx, filename in enumerate(examples, 1):
-        output_path = os.path.join(output_dir, filename)
-        generate_svg(output_path, idx)
-        print(f"Generated: {output_path}")
+        generate_all()

@@ -8,6 +8,7 @@ Generates visual examples demonstrating all Entity types and their properties.
 from pyfreeform import Scene, Palette, Dot, Line, Curve, Ellipse, Polygon, Text, Rect, shapes
 from pyfreeform.core.point import Point
 from pathlib import Path
+import math
 
 
 # Paths
@@ -102,7 +103,7 @@ def example5_polygon():
     square = [Point(200, 50), Point(300, 50), Point(300, 150), Point(200, 150)]
     scene.add(Polygon(square, fill=colors.secondary))
 
-    hexagon_verts = [Point(350 + 40 * np.cos(i * np.pi / 3), 100 + 40 * np.sin(i * np.pi / 3)) for i in range(6)]
+    hexagon_verts = [Point(350 + 40 * math.cos(i * math.pi / 3), 100 + 40 * math.sin(i * math.pi / 3)) for i in range(6)]
     scene.add(Polygon(hexagon_verts, fill=colors.accent))
 
     scene.save(OUTPUT_DIR / "example5-polygon.svg")
@@ -282,8 +283,6 @@ def example12_all_entities():
 # Generator Registry
 # =============================================================================
 
-# Need numpy for hexagon calculation
-import numpy as np
 
 GENERATORS = {
     "example1-dot": example1_dot,

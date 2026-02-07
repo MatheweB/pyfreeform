@@ -1,162 +1,137 @@
+#!/usr/bin/env python3
 """
-SVG Generator for Polygon Gallery Example
-Showcases all built-in polygon shapes
+SVG Generator for: examples/beginner/polygon-gallery
+
+Showcases all built-in polygon shapes using the shapes module.
 """
 
-import math
+from pyfreeform import Scene, Palette, shapes
+from pathlib import Path
 
-def triangle(size=1.0, center=(0.5, 0.5)):
-    """Equilateral triangle pointing up."""
-    cx, cy = center
-    h = size * 0.866  # height factor
-    return [
-        (cx, cy - h * 0.5),
-        (cx + size * 0.5, cy + h * 0.5),
-        (cx - size * 0.5, cy + h * 0.5)
-    ]
 
-def square(size=1.0, center=(0.5, 0.5)):
-    """Square rotated 45 degrees."""
-    cx, cy = center
-    d = size * 0.5 * 1.414
-    return [
-        (cx, cy - d),
-        (cx + d, cy),
-        (cx, cy + d),
-        (cx - d, cy)
-    ]
+OUTPUT_DIR = Path(__file__).parent.parent.parent / "_images" / "polygon-gallery"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-def diamond(size=1.0, center=(0.5, 0.5)):
-    """Diamond aligned to axes."""
-    cx, cy = center
-    return [
-        (cx, cy - size * 0.5),
-        (cx + size * 0.5, cy),
-        (cx, cy + size * 0.5),
-        (cx - size * 0.5, cy)
-    ]
 
-def hexagon(size=1.0, center=(0.5, 0.5)):
-    """Regular hexagon."""
-    cx, cy = center
-    points = []
-    for i in range(6):
-        angle = i * math.pi / 3
-        x = cx + size * 0.5 * math.cos(angle)
-        y = cy + size * 0.5 * math.sin(angle)
-        points.append((x, y))
-    return points
+def example_01_basic_shapes():
+    """Triangle, square, diamond, hexagon."""
+    colors = Palette.midnight()
+    scene = Scene.with_grid(
+        cols=4, rows=1, cell_size=80, background=colors.background
+    )
+    cells = list(scene.grid)
 
-def star(points=5, size=1.0, inner_ratio=0.4, center=(0.5, 0.5)):
-    """Multi-pointed star."""
-    cx, cy = center
-    vertices = []
-    for i in range(points * 2):
-        angle = i * math.pi / points - math.pi / 2
-        r = size * 0.5 if i % 2 == 0 else size * 0.5 * inner_ratio
-        x = cx + r * math.cos(angle)
-        y = cy + r * math.sin(angle)
-        vertices.append((x, y))
-    return vertices
+    cells[0].add_polygon(shapes.triangle(size=0.8), fill=colors.primary, opacity=0.8)
+    cells[1].add_polygon(shapes.square(size=0.7), fill=colors.secondary, opacity=0.8)
+    cells[2].add_polygon(shapes.diamond(size=0.8), fill=colors.accent, opacity=0.8)
+    cells[3].add_polygon(shapes.hexagon(size=0.8), fill="#64ffda", opacity=0.8)
 
-def regular_polygon(n_sides, size=1.0, center=(0.5, 0.5)):
-    """Regular n-sided polygon."""
-    cx, cy = center
-    points = []
-    for i in range(n_sides):
-        angle = i * 2 * math.pi / n_sides - math.pi / 2
-        x = cx + size * 0.5 * math.cos(angle)
-        y = cy + size * 0.5 * math.sin(angle)
-        points.append((x, y))
-    return points
+    scene.save(OUTPUT_DIR / "01_basic_shapes.svg")
 
-def generate_svg(output_path: str, number: int) -> None:
-    """Generate polygon gallery SVG."""
-    cols = 8
-    rows = 6
-    cell_size = 40
-    width = cols * cell_size
-    height = rows * cell_size
 
-    # Pastel palette
-    background = "#1a1a2e"
-    primary = "#4ecca3"
-    secondary = "#ee4266"
-    accent = "#ffd23f"
-    line_color = "#64ffda"
+def example_02_stars():
+    """Star variations: 5, 6, and 8 pointed."""
+    colors = Palette.midnight()
+    scene = Scene.with_grid(
+        cols=3, rows=1, cell_size=80, background=colors.background
+    )
+    cells = list(scene.grid)
 
-    svg_lines = [
-        f'<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg">',
-        f'  <rect width="{width}" height="{height}" fill="{background}"/>',
-        ''
-    ]
+    cells[0].add_polygon(shapes.star(5), fill=colors.primary, opacity=0.8)
+    cells[1].add_polygon(shapes.star(6), fill=colors.secondary, opacity=0.8)
+    cells[2].add_polygon(shapes.star(8), fill=colors.accent, opacity=0.8)
 
-    # Define shapes gallery
-    shapes_gallery = [
-        (triangle(), "Triangle", primary),
-        (square(), "Square", secondary),
-        (diamond(), "Diamond", accent),
-        (hexagon(), "Hexagon", line_color),
-        (star(points=5), "Star 5", primary),
-        (star(points=6), "Star 6", secondary),
-        (star(points=8), "Star 8", accent),
-        (regular_polygon(5), "Pentagon", line_color),
-        (regular_polygon(7), "Heptagon", primary),
-        (regular_polygon(8), "Octagon", secondary),
-    ]
+    scene.save(OUTPUT_DIR / "02_stars.svg")
 
-    # Place shapes in grid
-    for i, (shape_data, name, color) in enumerate(shapes_gallery):
-        row = i // cols
-        col = i % cols
 
-        if row >= rows:
-            break
+def example_03_regular_polygons():
+    """Pentagon through octagon using regular_polygon."""
+    colors = Palette.midnight()
+    scene = Scene.with_grid(
+        cols=4, rows=1, cell_size=80, background=colors.background
+    )
+    cells = list(scene.grid)
+    color_cycle = [colors.primary, colors.secondary, colors.accent, "#64ffda"]
 
-        # Cell position
-        cell_x = col * cell_size
-        cell_y = row * cell_size
-
-        # Scale and translate shape points
-        points_str = []
-        for x, y in shape_data:
-            px = cell_x + x * cell_size
-            py = cell_y + y * cell_size
-            points_str.append(f"{px:.1f},{py:.1f}")
-
-        svg_lines.append(
-            f'  <polygon points="{" ".join(points_str)}" '
-            f'fill="{color}" stroke="{line_color}" stroke-width="0.5" opacity="0.8"/>'
+    for i, n_sides in enumerate([5, 6, 7, 8]):
+        cells[i].add_polygon(
+            shapes.regular_polygon(n_sides, size=0.8),
+            fill=color_cycle[i],
+            opacity=0.8,
         )
 
-    svg_lines.append('</svg>')
-
-    with open(output_path, 'w') as f:
-        f.write('\n'.join(svg_lines))
+    scene.save(OUTPUT_DIR / "03_regular_polygons.svg")
 
 
-if __name__ == '__main__':
+def example_04_all_shapes():
+    """Comprehensive gallery of all shapes in a grid."""
+    colors = Palette.midnight()
+    scene = Scene.with_grid(
+        cols=5, rows=2, cell_size=60, background=colors.background
+    )
+    cells = list(scene.grid)
+    color_cycle = [
+        colors.primary, colors.secondary, colors.accent, "#64ffda",
+        colors.primary, colors.secondary, colors.accent, "#64ffda",
+        colors.primary, colors.secondary,
+    ]
+
+    shape_list = [
+        shapes.triangle(size=0.8),
+        shapes.square(size=0.7),
+        shapes.diamond(size=0.8),
+        shapes.hexagon(size=0.8),
+        shapes.star(5),
+        shapes.star(6),
+        shapes.regular_polygon(5, size=0.8),
+        shapes.regular_polygon(8, size=0.8),
+        shapes.squircle(n=4),
+        shapes.star(8),
+    ]
+
+    for i, (shape_verts, color) in enumerate(zip(shape_list, color_cycle)):
+        if i < len(cells):
+            cells[i].add_polygon(
+                shape_verts, fill=color,
+                stroke="#64ffda", stroke_width=0.5, opacity=0.8,
+            )
+
+    scene.save(OUTPUT_DIR / "04_all_shapes.svg")
+
+
+GENERATORS = {
+    "01_basic_shapes": example_01_basic_shapes,
+    "02_stars": example_02_stars,
+    "03_regular_polygons": example_03_regular_polygons,
+    "04_all_shapes": example_04_all_shapes,
+}
+
+
+def generate_all():
+    """Generate all SVG images for this document"""
+    print(f"Generating {len(GENERATORS)} SVGs for polygon-gallery examples...")
+
+    for name, func in GENERATORS.items():
+        try:
+            func()
+            print(f"  ✓ {name}.svg")
+        except Exception as e:
+            print(f"  ✗ {name}.svg - ERROR: {e}")
+
+    print(f"Complete! Generated to {OUTPUT_DIR}/")
+
+
+if __name__ == "__main__":
     import sys
-    import os
 
     if len(sys.argv) > 1:
-        output_dir = sys.argv[1]
+        name = sys.argv[1]
+        if name in GENERATORS:
+            GENERATORS[name]()
+            print(f"Generated {name}.svg")
+        else:
+            print(f"Unknown generator: {name}")
+            for key in sorted(GENERATORS.keys()):
+                print(f"  - {key}")
     else:
-        output_dir = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-            '_images', 'polygon-gallery'
-        )
-
-    os.makedirs(output_dir, exist_ok=True)
-
-    examples = [
-        '01_basic_shapes.svg',
-        '02_stars.svg',
-        '03_regular_polygons.svg',
-        '04_all_shapes.svg'
-    ]
-
-    for idx, filename in enumerate(examples, 1):
-        output_path = os.path.join(output_dir, filename)
-        generate_svg(output_path, idx)
-        print(f"Generated: {output_path}")
+        generate_all()
