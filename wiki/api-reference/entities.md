@@ -1,7 +1,7 @@
 
 # Entities API Reference
 
-Complete reference for all entity types: Dot, Line, Curve, Ellipse, Polygon, Text, and Rect.
+Complete reference for all entity types: Dot, Line, Curve, Ellipse, Polygon, Text, Rect, and EntityGroup.
 
 ---
 
@@ -480,6 +480,61 @@ rect = Rect(x=50, y=50, width=100, height=60, fill="blue", stroke="navy", stroke
 
 ---
 
+## EntityGroup
+
+Reusable composite shape — bundle multiple entities into one.
+
+```python
+class EntityGroup(Entity):
+    def __init__(
+        self,
+        x: float = 0,
+        y: float = 0,
+        z_index: int = 0
+    )
+```
+
+**Methods**:
+```python
+group.add(entity)       # Add a child entity (positioned relative to 0, 0)
+group.scale(factor, origin=None)  # Scale the group
+group.fit_to_cell(0.85) # Auto-scale to fit cell
+```
+
+**Properties**:
+```python
+group.children: list[Entity]  # Child entities (copy)
+group.x: float                # X position
+group.y: float                # Y position
+group.z_index: int            # Layer order
+```
+
+**Anchors**: `["center"]`
+
+**Example**:
+```python
+from pyfreeform import EntityGroup, Dot
+import math
+
+def make_flower(color="coral", petal_color="gold"):
+    g = EntityGroup()
+    g.add(Dot(0, 0, radius=10, color=color))
+    for i in range(8):
+        angle = i * (2 * math.pi / 8)
+        g.add(Dot(15 * math.cos(angle), 15 * math.sin(angle),
+                   radius=6, color=petal_color))
+    return g
+
+# Place like any entity
+cell.place(make_flower())
+cell.add_entity(make_flower(color="blue"))
+scene.add(make_flower().move_to(100, 100))
+```
+
+See [Entity Groups guide](../entities/08-entity-groups.md) for full details.
+
+---
+
 ## Common Properties and Methods
 
 All entities support these properties:
@@ -602,4 +657,5 @@ See [Fit to Cell Guide](../advanced-concepts/05-fit-to-cell.md) for more example
 - 📖 [Polygons](../entities/05-polygons.md) - Polygon shapes
 - 📖 [Text](../entities/06-text.md) - Text typography
 - 📖 [Rectangles](../entities/07-rectangles.md) - Rectangle guide
+- 📖 [Entity Groups](../entities/08-entity-groups.md) - Reusable composite shapes
 

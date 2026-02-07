@@ -11,5 +11,6 @@ This section covers all entity types in PyFreeform - the visual elements you can
 - [Polygons](05-polygons.md) - Custom shapes and helpers
 - [Text](06-text.md) - Typography
 - [Rectangles](07-rectangles.md) - Boxes and borders
+- [Entity Groups](08-entity-groups.md) - Reusable composite shapes
 
 Each entity has unique properties and capabilities. The mathematical entities (Curves and Ellipses) include detailed equation breakdowns.

@@ -442,6 +442,35 @@ scene.add(rect)
 
 ![Fill and border examples](./_images/cell/example9-fill-border.svg)
 
+### add_entity()
+
+```python
+def add_entity(
+    self,
+    entity: Entity,
+    at: Position = "center"
+) -> Entity
+```
+
+Place an existing entity in this cell. Works with any entity type — Dot, Line, Rect, EntityGroup, etc. Alias for `place()` that follows the `add_*` naming convention.
+
+**Parameters**:
+- `entity`: The entity to place
+- `at`: Position ("center", "top_left", etc.) or (rx, ry) tuple
+
+**Example**:
+```python
+from pyfreeform import EntityGroup, Dot
+
+flower = EntityGroup()
+flower.add(Dot(0, 0, radius=10, color="coral"))
+
+cell.add_entity(flower)              # Center in cell
+cell.add_entity(flower, at="top_left")  # At corner
+```
+
+See [Entity Groups](../entities/08-entity-groups.md) for more.
+
 ### add_diagonal()
 
 ```python

@@ -97,6 +97,7 @@ nav:
     - Polygons: entities/05-polygons.md
     - Text: entities/06-text.md
     - Rectangles: entities/07-rectangles.md
+    - Entity Groups: entities/08-entity-groups.md
   - Advanced Concepts:
     - Overview: advanced-concepts/README.md
     - Anchor System: advanced-concepts/01-anchor-system.md

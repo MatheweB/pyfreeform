@@ -26,6 +26,7 @@ PyFreeform provides these built-in entity types:
 | **[Polygon](../entities/05-polygons.md)** | Custom shape | Geometric forms, icons |
 | **[Text](../entities/06-text.md)** | Typography | Labels, titles, annotations |
 | **[Rect](../entities/07-rectangles.md)** | Rectangle | Backgrounds, borders, boxes |
+| **[EntityGroup](../entities/08-entity-groups.md)** | Composite shape | Custom stamps, reusable patterns |
 
 Each type has detailed documentation - see the [Entities section](../entities/01-dots.md).
 
@@ -221,10 +222,10 @@ for dot in dots:
 
 ### Group Entities
 
-Use Python lists for organization:
+Use Python lists for organization, or `EntityGroup` for reusable composite shapes:
 
 ```python
-# Collect related entities
+# Python lists for ad-hoc grouping
 bright_dots = []
 dark_dots = []
 
@@ -243,7 +244,20 @@ for dot in bright_dots:
 
 ![Grouping Entities](./_images/03-entities/10-group-entities.svg)
 
-See [Groups Example](../examples/intermediate/groups.md).
+For reusable composite shapes, use `EntityGroup`:
+
+```python
+from pyfreeform import EntityGroup, Dot
+
+flower = EntityGroup()
+flower.add(Dot(0, 0, radius=10, color="coral"))
+# ... add more children relative to (0, 0)
+
+cell.place(flower)          # Place like any entity
+flower.fit_to_cell(0.75)    # Auto-scale to fit
+```
+
+See [Entity Groups](../entities/08-entity-groups.md) and [Groups Example](../examples/intermediate/groups.md).
 
 ### Query Entities
 
@@ -538,6 +552,7 @@ for i in range(5):
 - 📖 [Dots](../entities/01-dots.md) - Simple circles
 - 📖 [Lines](../entities/02-lines.md) - Straight paths
 - 📖 [Curves](../entities/03-curves.md) - Bézier curves with math
+- 📖 [Entity Groups](../entities/08-entity-groups.md) - Reusable composite shapes
 - 🎯 [Quick Start Example](../examples/beginner/quick-start.md)
 - 🔍 [Entities API Reference](../api-reference/entities.md)
 
