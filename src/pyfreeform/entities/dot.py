@@ -84,7 +84,13 @@ class Dot(Entity):
             self.x + self.radius,
             self.y + self.radius,
         )
-    
+
+    def inner_bounds(self) -> tuple[float, float, float, float]:
+        """Inscribed square of the circle."""
+        import math
+        r = self.radius / math.sqrt(2)
+        return (self.x - r, self.y - r, self.x + r, self.y + r)
+
     def scale(self, factor: float, origin: Point | tuple[float, float] | None = None) -> Dot:
         """
         Scale the dot (changes radius and optionally position).

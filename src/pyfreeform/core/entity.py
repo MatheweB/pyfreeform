@@ -363,6 +363,136 @@ class Entity(ABC):
         """
         pass
 
+    def inner_bounds(self) -> tuple[float, float, float, float]:
+        """
+        Largest axis-aligned rectangle fully inside this entity.
+
+        Override for non-rectangular shapes (e.g. circles, ellipses)
+        to return the inscribed rectangle. Default: same as bounds().
+
+        Returns:
+            Tuple of (min_x, min_y, max_x, max_y).
+        """
+        return self.bounds()
+
+    def fit_within(
+        self,
+        target: Entity | tuple[float, float, float, float],
+        scale: float = 1.0,
+        recenter: bool = True,
+        *,
+        at: tuple[float, float] | None = None,
+    ) -> Entity:
+        """
+        Scale and position entity to fit within another entity's inner bounds.
+
+        Args:
+            target: Entity (uses inner_bounds()) or raw (min_x, min_y, max_x, max_y) tuple.
+            scale: Fraction of target inner bounds to fill (0.0-1.0].
+            recenter: If True, center entity within target after scaling.
+                      Ignored when ``at`` is provided.
+            at: Optional relative position (rx, ry) within the target's
+                inner bounds, where (0,0) is top-left and (1,1) is
+                bottom-right. Available space is constrained by the
+                nearest edges so the entity never overflows.
+
+        Returns:
+            self, for method chaining.
+
+        Example:
+            >>> dot = cell.add_dot(radius=15, color="navy")
+            >>> label = cell.add_text("0.5", color="white", font_size=50)
+            >>> label.fit_within(dot)
+            >>> # Position in top-left of a rect's inner bounds:
+            >>> label.fit_within(rect, at=(0.25, 0.25))
+        """
+        if not (0.0 < scale <= 1.0):
+            raise ValueError(f"scale must be between 0.0 and 1.0, got {scale}")
+
+        # Resolve target bounds
+        if isinstance(target, Entity):
+            t_min_x, t_min_y, t_max_x, t_max_y = target.inner_bounds()
+        else:
+            t_min_x, t_min_y, t_max_x, t_max_y = target
+
+        target_w = t_max_x - t_min_x
+        target_h = t_max_y - t_min_y
+
+        if at is not None:
+            # --- Position-aware mode ---
+            rx, ry = at
+            if not (0.0 < rx < 1.0 and 0.0 < ry < 1.0):
+                raise ValueError(
+                    f"at=({rx}, {ry}) must be inside the bounds "
+                    f"(0.0-1.0 exclusive)."
+                )
+
+            # Target position in absolute coordinates
+            target_x = t_min_x + rx * target_w
+            target_y = t_min_y + ry * target_h
+
+            # Available space constrained by nearest edge
+            available_w = min(target_x - t_min_x, t_max_x - target_x) * 2 * scale
+            available_h = min(target_y - t_min_y, t_max_y - target_y) * 2 * scale
+
+            # Get entity's current bounding box
+            e_min_x, e_min_y, e_max_x, e_max_y = self.bounds()
+            entity_w = e_max_x - e_min_x
+            entity_h = e_max_y - e_min_y
+
+            # Scale factors
+            scale_x = available_w / entity_w if entity_w > 0 else 1.0
+            scale_y = available_h / entity_h if entity_h > 0 else 1.0
+            factor = min(scale_x, scale_y, 1.0)
+
+            entity_center = Point(
+                (e_min_x + e_max_x) / 2, (e_min_y + e_max_y) / 2,
+            )
+            if factor < 0.999:
+                self.scale(factor, origin=entity_center)
+
+            # Move to target position
+            new_bounds = self.bounds()
+            new_cx = (new_bounds[0] + new_bounds[2]) / 2
+            new_cy = (new_bounds[1] + new_bounds[3]) / 2
+            self.move_by(target_x - new_cx, target_y - new_cy)
+
+            return self
+
+        # --- Default mode (at=None) ---
+        target_cx = (t_min_x + t_max_x) / 2
+        target_cy = (t_min_y + t_max_y) / 2
+
+        # Get entity's current bounding box
+        e_min_x, e_min_y, e_max_x, e_max_y = self.bounds()
+        entity_w = e_max_x - e_min_x
+        entity_h = e_max_y - e_min_y
+
+        # Calculate available space
+        available_w = target_w * scale
+        available_h = target_h * scale
+
+        # Scale factors
+        scale_x = available_w / entity_w if entity_w > 0 else 1.0
+        scale_y = available_h / entity_h if entity_h > 0 else 1.0
+        factor = min(scale_x, scale_y, 1.0)  # Don't scale up
+
+        # Scale around entity center if needed
+        entity_cx = (e_min_x + e_max_x) / 2
+        entity_cy = (e_min_y + e_max_y) / 2
+
+        if factor < 0.999:
+            self.scale(factor, origin=Point(entity_cx, entity_cy))
+
+        # Recenter within target
+        if recenter:
+            new_bounds = self.bounds()
+            new_cx = (new_bounds[0] + new_bounds[2]) / 2
+            new_cy = (new_bounds[1] + new_bounds[3]) / 2
+            self.move_by(target_cx - new_cx, target_cy - new_cy)
+
+        return self
+
     def fit_to_cell(
         self,
         scale: float = 1.0,

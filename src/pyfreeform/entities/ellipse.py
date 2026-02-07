@@ -403,6 +403,17 @@ class Ellipse(Entity):
 
         return (min_x, min_y, max_x, max_y)
 
+    def inner_bounds(self) -> tuple[float, float, float, float]:
+        """Inscribed rectangle of the ellipse."""
+        cx, cy = self.position.x, self.position.y
+        if self.rotation == 0:
+            hw = self.rx / math.sqrt(2)
+            hh = self.ry / math.sqrt(2)
+        else:
+            # Conservative: inscribed square using the smaller radius
+            hw = hh = min(self.rx, self.ry) / math.sqrt(2)
+        return (cx - hw, cy - hh, cx + hw, cy + hh)
+
     def to_svg(self) -> str:
         """Render to SVG ellipse element."""
         parts = [

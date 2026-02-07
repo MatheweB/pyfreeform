@@ -2,9 +2,79 @@
 
 from __future__ import annotations
 
+import functools
+
+from PIL import ImageFont
+
 from ..color import Color
 from ..core.entity import Entity
 from ..core.point import Point
+
+# ---------------------------------------------------------------------------
+# Font measurement via Pillow
+# ---------------------------------------------------------------------------
+
+_HEURISTIC_CHAR_WIDTH = 0.6
+_REFERENCE_FONT_SIZE = 100
+
+# Map generic CSS families → concrete font names to try
+_GENERIC_FAMILIES: dict[str, list[str]] = {
+    "sans-serif": ["Helvetica", "Arial", "DejaVu Sans"],
+    "serif": ["Times", "Times New Roman", "DejaVu Serif"],
+    "monospace": ["Menlo", "Courier New", "DejaVu Sans Mono", "Courier"],
+}
+
+
+@functools.lru_cache(maxsize=64)
+def _load_font(
+    family: str,
+    weight: str | int = "normal",
+    style: str = "normal",
+) -> ImageFont.FreeTypeFont | None:
+    """Load font at reference size. Advance widths scale linearly with size."""
+    is_bold = weight in ("bold", 700, 800, 900) or (
+        isinstance(weight, (int, float)) and weight >= 700
+    )
+    is_italic = style in ("italic", "oblique")
+
+    if is_bold and is_italic:
+        suffixes = [" Bold Italic", " Bold Oblique", ""]
+    elif is_bold:
+        suffixes = [" Bold", ""]
+    elif is_italic:
+        suffixes = [" Italic", " Oblique", ""]
+    else:
+        suffixes = [""]
+
+    concrete_names = [family] + _GENERIC_FAMILIES.get(family, [])
+
+    for name in concrete_names:
+        for suffix in suffixes:
+            try:
+                return ImageFont.truetype(name + suffix, _REFERENCE_FONT_SIZE)
+            except (OSError, IOError):
+                continue
+
+    return None
+
+
+def _measure_text_width(
+    content: str,
+    font_size: float,
+    font_family: str,
+    font_weight: str | int = "normal",
+    font_style: str = "normal",
+) -> float:
+    """Measure text width in pixels using Pillow, with heuristic fallback."""
+    if not content:
+        return 0.0
+
+    font = _load_font(font_family, font_weight, font_style)
+    if font is not None:
+        ref_width = font.getlength(content)
+        return ref_width * (font_size / _REFERENCE_FONT_SIZE)
+
+    return len(content) * font_size * _HEURISTIC_CHAR_WIDTH
 
 
 class Text(Entity):
@@ -143,15 +213,13 @@ class Text(Entity):
 
     def bounds(self) -> tuple[float, float, float, float]:
         """
-        Get approximate bounding box.
-
-        Note: This is an approximation since we don't have access to
-        actual text metrics. Assumes roughly 0.6 * font_size per character
-        width and font_size for height.
+        Get bounding box using Pillow font metrics for width
+        and font_size for height.
         """
-        # Rough approximation of text dimensions
-        char_width = self.font_size * 0.6
-        text_width = len(self.content) * char_width
+        text_width = _measure_text_width(
+            self.content, self.font_size, self.font_family,
+            self.font_weight, self.font_style,
+        )
         text_height = self.font_size
 
         # Adjust based on text_anchor
