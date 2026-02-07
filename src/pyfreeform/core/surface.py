@@ -674,7 +674,7 @@ class Surface:
         font_family: str = "sans-serif",
         bold: bool = False,
         italic: bool = False,
-        text_anchor: str = "center",
+        text_anchor: str | None = None,
         baseline: str = "middle",
         rotation: float = 0,
         z_index: int = 0,
@@ -746,8 +746,10 @@ class Surface:
             z_index = style.z_index
             opacity = style.opacity
 
-        # Resolve position
+        # Resolve text_anchor default based on mode
         is_textpath = along is not None and t is None
+        if text_anchor is None:
+            text_anchor = "start" if is_textpath else "middle"
         if along is not None and t is not None:
             position, rotation = self._resolve_along(along, t, align, rotation)
         elif along is not None:
