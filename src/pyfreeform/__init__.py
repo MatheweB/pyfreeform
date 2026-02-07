@@ -16,6 +16,7 @@ from .entities.dot import Dot
 from .entities.line import Line
 from .entities.rect import Rect
 from .entities.curve import Curve
+from .entities.path import Path
 from .entities.ellipse import Ellipse
 from .entities.text import Text
 from .entities.polygon import (
@@ -137,6 +138,7 @@ __all__ = [
     "Line",
     "Rect",
     "Curve",
+    "Path",
     "Ellipse",
     "Text",
     "Polygon",

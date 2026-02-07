@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from typing import TYPE_CHECKING, Any
 
 from .point import Point
@@ -213,6 +214,18 @@ class Connection(StrokedPathMixin):
         p1 = self.start_point
         p2 = self.end_point
         svg_cap, marker_attrs = self._svg_cap_and_marker_attrs()
+
+        # Shorten stroke so it ends at the marker base, not the tip.
+        ss, es = self._marker_shortening()
+        if ss > 0 or es > 0:
+            dx, dy = p2.x - p1.x, p2.y - p1.y
+            length = math.sqrt(dx * dx + dy * dy)
+            if length > ss + es:
+                ux, uy = dx / length, dy / length
+                if ss > 0:
+                    p1 = Point(p1.x + ux * ss, p1.y + uy * ss)
+                if es > 0:
+                    p2 = Point(p2.x - ux * es, p2.y - uy * es)
 
         parts = [
             f'<line x1="{p1.x}" y1="{p1.y}" '

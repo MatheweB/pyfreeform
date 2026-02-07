@@ -123,17 +123,8 @@ for cell in scene.grid:
         turns=3
     )
 
-    # Position dots along spiral
-    num_dots = 20
-    for i in range(num_dots):
-        t = i / num_dots
-
-        cell.add_dot(
-            along=spiral,
-            t=t,
-            radius=1.5,
-            color=colors.primary
-        )
+    # Render as a smooth SVG curve
+    cell.add_path(spiral, color=colors.primary, width=1.5)
 ```
 
 **Visual Result:**
@@ -216,16 +207,8 @@ for cell in scene.grid:
         frequency=3  # 3 complete waves
     )
 
-    # Dense dot placement
-    for i in range(30):
-        t = i / 29
-
-        cell.add_dot(
-            along=wave,
-            t=t,
-            radius=1,
-            color=colors.accent
-        )
+    # Render as a smooth SVG curve
+    cell.add_path(wave, color=colors.accent, width=1)
 ```
 
 ---
@@ -303,16 +286,8 @@ for cell in scene.grid:
         delta=delta
     )
 
-    # Many dots for smooth curve
-    for i in range(100):
-        t = i / 99
-
-        cell.add_dot(
-            along=lissajous,
-            t=t,
-            radius=0.8,
-            color=colors.primary
-        )
+    # Render as a smooth closed SVG curve
+    cell.add_path(lissajous, closed=True, color=colors.primary, width=0.8)
 ```
 
 **Pattern Examples:**
@@ -330,7 +305,6 @@ a=5, b=4, δ=0     : Five-petal flower
 
 ```python
 from pyfreeform import Scene, Palette
-from pyfreeform.core.pathable import Pathable
 from pyfreeform.core.point import Point
 import math
 
@@ -351,7 +325,7 @@ for cell in scene.grid:
             max_radius=12,
             turns=2 + cell.brightness
         )
-        num_dots = 15
+        cell.add_path(path, color=colors.primary, width=1)
 
     elif cell.col < third * 2:
         # Wave pattern
@@ -362,10 +336,10 @@ for cell in scene.grid:
             amplitude=6,
             frequency=freq
         )
-        num_dots = 25
+        cell.add_path(path, color=colors.accent, width=1)
 
     else:
-        # Lissajous pattern
+        # Lissajous pattern (closed)
         path = Lissajous(
             center=cell.center,
             size=10,
@@ -373,19 +347,7 @@ for cell in scene.grid:
             b=2,
             delta=cell.brightness * math.pi
         )
-        num_dots = 50
-
-    # Draw dots along path
-    for i in range(num_dots):
-        t = i / (num_dots - 1)
-
-        cell.add_dot(
-            along=path,
-            t=t,
-            radius=1,
-            color=colors.primary,
-            z_index=int(t * 10)  # Layering effect
-        )
+        cell.add_path(path, closed=True, color=colors.primary, width=0.8)
 
 scene.save("custom_paths.svg")
 ```

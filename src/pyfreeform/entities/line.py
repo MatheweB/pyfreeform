@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import math
+
 from ..color import Color
 from ..core.entity import Entity
 from ..core.point import Point
@@ -325,6 +327,18 @@ class Line(StrokedPathMixin, Entity):
         s = self.start
         e = self.end
         svg_cap, marker_attrs = self._svg_cap_and_marker_attrs()
+
+        # Shorten stroke so it ends at the marker base, not the tip.
+        ss, es = self._marker_shortening()
+        if ss > 0 or es > 0:
+            dx, dy = e.x - s.x, e.y - s.y
+            length = math.sqrt(dx * dx + dy * dy)
+            if length > ss + es:
+                ux, uy = dx / length, dy / length
+                if ss > 0:
+                    s = Point(s.x + ux * ss, s.y + uy * ss)
+                if es > 0:
+                    e = Point(e.x - ux * es, e.y - uy * es)
 
         parts = [
             f'<line x1="{s.x}" y1="{s.y}" '

@@ -15,14 +15,16 @@ class MyPath:
         return Point(x, y)
 ```
 
-That's it! Now works with `along=`:
+That's it! Render it as a smooth SVG curve with `Path`, or position entities along it with `along=`:
 
 ```python
 path = MyPath()
-cell.add_dot(along=path, t=0.5)
+cell.add_path(path, color="blue", width=2)          # Smooth SVG curve
+cell.add_path(path, closed=True, fill="lightblue")   # Closed + filled
+cell.add_dot(along=path, t=0.5)                      # Position dot at midpoint
 ```
 
-![The Pathable protocol concept showing any class with point_at works with along=](./_images/05-custom-paths/01-pathable-concept.svg)
+![The Pathable protocol concept showing any class with point_at can be rendered with Path()](./_images/05-custom-paths/01-pathable-concept.svg)
 
 ## Example 1: Archimedean Spiral
 
@@ -144,18 +146,20 @@ Famous ratios:
 ## Usage
 
 ```python
-# Create paths
+# Create paths and render as smooth SVG curves
 spiral = Spiral(cell.center, 0, 15, 3)
-wave = Wave(cell.top_left, cell.bottom_right, 5, 2)
-lissajous = Lissajous(cell.center, 3, 2, math.pi/2, 10)
+cell.add_path(spiral, color="navy", width=1.5)
 
-# Position dots along them
-for i in range(10):
-    t = i / 9
-    cell.add_dot(along=spiral, t=t, radius=2)
+lissajous = Lissajous(cell.center, 3, 2, math.pi/2, 10)
+cell.add_path(lissajous, closed=True, color="navy", fill="lightblue")
+
+# You can also position dots along them
+for i in range(15):
+    t = i / 14
+    cell.add_dot(along=lissajous, t=t, radius=2)
 ```
 
-![Dots positioned along a Lissajous curve using the along= pattern](./_images/05-custom-paths/12-usage-example.svg)
+![A smooth Lissajous curve rendered with Path and dots positioned along it](./_images/05-custom-paths/12-usage-example.svg)
 
 ## More Ideas
 

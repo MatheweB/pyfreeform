@@ -8,15 +8,15 @@ class StrokedPathMixin:
     Mixin providing cap/marker handling for stroked path entities.
 
     Consolidates the cap resolution and SVG marker logic shared by
-    Line, Curve, and Connection.
-
-    Requires the host class to have these attributes:
-        cap: str
-        start_cap: str | None
-        end_cap: str | None
-        width: float
-        color: str  (property returning hex string)
+    Line, Curve, Path, and Connection.
     """
+
+    # Attributes provided by the host class.
+    cap: str
+    start_cap: str | None
+    end_cap: str | None
+    width: float
+    color: str
 
     @property
     def effective_start_cap(self) -> str:
@@ -77,3 +77,25 @@ class StrokedPathMixin:
             parts.append(f' marker-end="url(#{mid})"')
 
         return svg_cap, "".join(parts)
+
+    def _marker_shortening(self) -> tuple[float, float]:
+        """
+        How much to shorten each end of the stroke for marker caps.
+
+        The stroke is shortened so it ends at the marker's base, preventing
+        the line from poking through the narrow tip.  Each marker cap
+        declares its own *inset* fraction (1.0 for arrow, 0.5 for diamond,
+        etc.) so this works for any registered cap type.
+
+        Returns:
+            (start_shorten, end_shorten) in user-space units.
+        """
+        from ..config.caps import DEFAULT_ARROW_SCALE, get_cap_inset
+
+        marker_size = self.width * DEFAULT_ARROW_SCALE
+        sc = self.effective_start_cap
+        ec = self.effective_end_cap
+        return (
+            marker_size * get_cap_inset(sc),
+            marker_size * get_cap_inset(ec),
+        )

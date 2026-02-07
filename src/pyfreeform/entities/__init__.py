@@ -6,6 +6,7 @@ from .rect import Rect
 from .curve import Curve
 from .ellipse import Ellipse
 from .text import Text
+from .path import Path
 from .polygon import (
     Polygon,
     triangle,
@@ -23,6 +24,7 @@ __all__ = [
     "Line", 
     "Rect",
     "Curve",
+    "Path",
     "Ellipse",
     "Text",
     "Polygon",

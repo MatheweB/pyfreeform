@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from ..entities.curve import Curve
     from ..entities.ellipse import Ellipse
     from ..entities.polygon import Polygon
+    from ..entities.path import Path
     from ..entities.text import Text
     from ..config.styles import (
         DotStyle, LineStyle, FillStyle, BorderStyle,
@@ -492,6 +493,89 @@ class Surface:
 
         self._register_entity(curve)
         return curve
+
+    def add_path(
+        self,
+        pathable: Pathable,
+        *,
+        segments: int = 64,
+        closed: bool = False,
+        width: float = 1,
+        color: str = "black",
+        fill: str | None = None,
+        z_index: int = 0,
+        cap: str = "round",
+        start_cap: str | None = None,
+        end_cap: str | None = None,
+        opacity: float = 1.0,
+        fill_opacity: float | None = None,
+        stroke_opacity: float | None = None,
+        style: LineStyle | None = None,
+    ) -> Path:
+        """
+        Add a smooth path rendered from any Pathable.
+
+        Takes any object with a ``point_at(t)`` method (Wave, Spiral,
+        Lissajous, or your own custom class) and renders it as a smooth
+        SVG path using cubic Bézier approximation.
+
+        Supports both open and closed paths. Closed paths can be filled.
+
+        Args:
+            pathable: Any object implementing ``point_at(t)``.
+            segments: Number of cubic Bézier segments (higher = smoother).
+            closed: Close the path smoothly back to start.
+            width: Stroke width in pixels.
+            color: Stroke color.
+            fill: Fill color for closed paths (ignored if not closed).
+            z_index: Layer order.
+            cap: Cap style for both ends ("round", "square", "butt", "arrow").
+            start_cap: Override cap for start only.
+            end_cap: Override cap for end only.
+            opacity: Overall opacity.
+            fill_opacity: Override fill opacity.
+            stroke_opacity: Override stroke opacity.
+            style: LineStyle object (overrides width/color/z_index/cap).
+
+        Returns:
+            The created Path entity.
+
+        Examples:
+            >>> wave = Wave(start=cell.center, end=cell.right_center, amplitude=10, frequency=3)
+            >>> cell.add_path(wave, color="blue", width=2)
+            >>> # Closed path with fill:
+            >>> liss = Lissajous(center=cell.center, a=3, b=2, delta=math.pi/2, size=30)
+            >>> cell.add_path(liss, closed=True, color="navy", fill="lightblue")
+        """
+        from ..entities.path import Path
+
+        if style:
+            width = style.width
+            color = style.color
+            z_index = style.z_index
+            cap = style.cap
+            start_cap = style.start_cap
+            end_cap = style.end_cap
+            opacity = style.opacity
+
+        path = Path(
+            pathable,
+            segments=segments,
+            closed=closed,
+            width=width,
+            color=color,
+            fill=fill,
+            z_index=z_index,
+            cap=cap,
+            start_cap=start_cap,
+            end_cap=end_cap,
+            opacity=opacity,
+            fill_opacity=fill_opacity,
+            stroke_opacity=stroke_opacity,
+        )
+
+        self._register_entity(path)
+        return path
 
     def add_ellipse(
         self,
