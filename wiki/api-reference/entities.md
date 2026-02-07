@@ -48,9 +48,10 @@ class Dot(Entity):
         self,
         x: float,
         y: float,
-        radius: float = 3,
+        radius: float = 5,
         color: str = "black",
-        z_index: int = 0
+        z_index: int = 0,
+        opacity: float = 1.0
     )
 ```
 
@@ -59,8 +60,9 @@ class Dot(Entity):
 dot.position: Point      # Center (x, y)
 dot.x: float            # X coordinate
 dot.y: float            # Y coordinate
-dot.radius: float       # Radius in pixels
+dot.radius: float       # Radius in pixels (default 5)
 dot.color: str          # Fill color
+dot.opacity: float      # 0.0-1.0
 dot.z_index: int        # Layer order
 ```
 
@@ -93,10 +95,13 @@ class Line(Entity, Pathable):
         y1: float,
         x2: float,
         y2: float,
-        color: str = "black",
         width: float = 1,
+        color: str = "black",
         z_index: int = 0,
-        cap: str = "round"
+        cap: str = "round",
+        start_cap: str | None = None,
+        end_cap: str | None = None,
+        opacity: float = 1.0
     )
 ```
 
@@ -106,7 +111,10 @@ line.start: Point        # Start point
 line.end: Point          # End point
 line.color: str          # Stroke color
 line.width: float        # Stroke width
-line.cap: str            # Line cap: "round", "square", "butt"
+line.cap: str            # Default cap: "round", "square", "butt", "arrow"
+line.start_cap: str      # Override cap for start end
+line.end_cap: str        # Override cap for end end
+line.opacity: float      # 0.0-1.0
 line.z_index: int        # Layer order
 ```
 
@@ -141,10 +149,13 @@ class Curve(Entity, Pathable):
         x2: float,
         y2: float,
         curvature: float = 0.5,
-        color: str = "black",
         width: float = 1,
+        color: str = "black",
         z_index: int = 0,
-        cap: str = "round"
+        cap: str = "round",
+        start_cap: str | None = None,
+        end_cap: str | None = None,
+        opacity: float = 1.0
     )
 ```
 
@@ -156,7 +167,10 @@ curve.control: Point     # Control point (calculated)
 curve.curvature: float   # Bow amount (-1 to 1)
 curve.color: str         # Stroke color
 curve.width: float       # Stroke width
-curve.cap: str           # Line cap: "round", "square", "butt"
+curve.cap: str           # Default cap: "round", "square", "butt", "arrow"
+curve.start_cap: str     # Override cap for start end
+curve.end_cap: str       # Override cap for end end
+curve.opacity: float     # 0.0-1.0
 curve.z_index: int       # Layer order
 ```
 
@@ -205,7 +219,10 @@ class Ellipse(Entity, Pathable):
         fill: str | None = "black",
         stroke: str | None = None,
         stroke_width: float = 1,
-        z_index: int = 0
+        z_index: int = 0,
+        opacity: float = 1.0,
+        fill_opacity: float | None = None,
+        stroke_opacity: float | None = None
     )
 ```
 
@@ -220,6 +237,9 @@ ellipse.rotation: float  # Rotation in degrees
 ellipse.fill: str        # Fill color
 ellipse.stroke: str      # Stroke color
 ellipse.stroke_width: float
+ellipse.opacity: float   # Overall opacity (0.0-1.0)
+ellipse.fill_opacity: float   # Fill opacity override
+ellipse.stroke_opacity: float # Stroke opacity override
 ellipse.z_index: int
 ```
 
@@ -270,7 +290,10 @@ class Polygon(Entity):
         fill: str | None = "black",
         stroke: str | None = None,
         stroke_width: float = 1,
-        z_index: int = 0
+        z_index: int = 0,
+        opacity: float = 1.0,
+        fill_opacity: float | None = None,
+        stroke_opacity: float | None = None
     )
 ```
 
@@ -281,6 +304,9 @@ polygon.position: Point        # Centroid (center of mass)
 polygon.fill: str
 polygon.stroke: str
 polygon.stroke_width: float
+polygon.opacity: float         # Overall opacity (0.0-1.0)
+polygon.fill_opacity: float    # Fill opacity override
+polygon.stroke_opacity: float  # Stroke opacity override
 polygon.z_index: int
 ```
 
@@ -339,10 +365,15 @@ class Text(Entity):
         font_size: float = 16,
         color: str = "black",
         font_family: str = "sans-serif",
+        font_style: str = "normal",
+        font_weight: str | int = "normal",
+        bold: bool = False,
+        italic: bool = False,
         text_anchor: Literal["start", "middle", "end"] = "middle",
         baseline: str = "middle",
         rotation: float = 0,
-        z_index: int = 0
+        z_index: int = 0,
+        opacity: float = 1.0
     )
 ```
 
@@ -355,9 +386,12 @@ text.content: str        # Text string
 text.font_size: float    # Size in pixels
 text.color: str          # Text color
 text.font_family: str    # Typeface
+text.bold: bool          # Bold weight (sugar for font_weight)
+text.italic: bool        # Italic style (sugar for font_style)
 text.text_anchor: str    # Horizontal alignment
 text.baseline: str       # Vertical alignment
 text.rotation: float     # Degrees
+text.opacity: float      # 0.0-1.0
 text.z_index: int        # Layer order
 ```
 
@@ -395,9 +429,18 @@ class Rect(Entity):
         fill: str | None = "black",
         stroke: str | None = None,
         stroke_width: float = 1,
+        rotation: float = 0,
         z_index: int = 0,
-        opacity: float = 1.0
+        opacity: float = 1.0,
+        fill_opacity: float | None = None,
+        stroke_opacity: float | None = None
     )
+```
+
+**Class Methods**:
+```python
+Rect.at_center(center, width, height, rotation=0, fill=, ...)
+# Create a Rect centered at a point (instead of top-left positioned)
 ```
 
 **Properties**:
@@ -410,7 +453,10 @@ rect.height: float       # Height
 rect.fill: str           # Fill color
 rect.stroke: str         # Stroke color
 rect.stroke_width: float
-rect.opacity: float      # Fill opacity (0.0-1.0)
+rect.rotation: float     # Rotation in degrees
+rect.opacity: float      # Overall opacity (0.0-1.0)
+rect.fill_opacity: float # Fill opacity override
+rect.stroke_opacity: float # Stroke opacity override
 rect.z_index: int
 ```
 
@@ -461,6 +507,45 @@ entity.scale(factor, origin=None)  # Scale around origin
 ```
 
 See [Transforms Guide](../advanced-concepts/04-transforms.md) for details.
+
+### Relative Positioning Methods
+
+```python
+entity.offset_from(anchor_name: str, dx: float = 0, dy: float = 0) -> Point
+```
+
+Get a point offset from a named anchor. Useful for placing labels or related elements near an entity.
+
+**Parameters**:
+- `anchor_name`: Named anchor on the entity (e.g., "center", "top", "end")
+- `dx`, `dy`: Pixel offsets from the anchor
+
+**Example**:
+```python
+dot = cell.add_dot(radius=8, color="red")
+label_pos = dot.offset_from("center", dx=0, dy=-15)
+# Use label_pos to place a text label above the dot
+```
+
+```python
+entity.place_beside(other: Entity, side: str = "right", gap: float = 5) -> Entity
+```
+
+Position this entity beside another entity using bounding boxes.
+
+**Parameters**:
+- `other`: The reference entity to position beside
+- `side`: Which side — "left", "right", "above", "below"
+- `gap`: Pixel gap between entities
+
+**Returns**: self (for method chaining)
+
+**Example**:
+```python
+dot1 = cell.add_dot(radius=8, color="red")
+dot2 = cell.add_dot(radius=8, color="blue")
+dot2.place_beside(dot1, side="right", gap=10)
+```
 
 ### fit_to_cell()
 

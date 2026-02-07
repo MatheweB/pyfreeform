@@ -42,12 +42,13 @@ class Grid:
 ## Properties
 
 ```python
-grid.rows: int          # Number of rows
-grid.cols: int          # Number of columns
-grid.cell_width: float  # Width of each cell
-grid.cell_height: float # Height of each cell
-grid.width: float       # Total grid width
-grid.height: float      # Total grid height
+grid.rows: int              # Number of rows
+grid.cols: int              # Number of columns
+grid.cell_width: float      # Width of each cell
+grid.cell_height: float     # Height of each cell
+grid.width: float           # Total grid width
+grid.height: float          # Total grid height
+grid.source_image: Image | None  # Source image (if created via from_image)
 ```
 
 **Example**:

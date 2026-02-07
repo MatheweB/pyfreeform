@@ -42,8 +42,11 @@ scene = Scene.from_image("photo.jpg", grid_size=40)
 ```python
 Scene.from_image(
     source="path/to/image.jpg",  # Image file path
-    grid_size=40,                # Grid columns (rows auto-calculated)
+    grid_size=40,                # Grid columns (None = fit to image)
     cell_size=10,                # Cell size in pixels
+    cell_ratio=1.0,              # Width:height ratio (2.0 = wide cells)
+    cell_width=None,             # Explicit cell width (overrides cell_size)
+    cell_height=None,            # Explicit cell height (overrides cell_size)
     background=None              # Background color (optional)
 )
 ```
@@ -93,8 +96,10 @@ scene = Scene.with_grid(cols=30, rows=30, cell_size=12)
 ```python
 Scene.with_grid(
     cols=30,                     # Number of columns
-    rows=30,                     # Number of rows
+    rows=30,                     # Number of rows (default: same as cols)
     cell_size=12,                # Size of each cell
+    cell_width=None,             # Explicit cell width (overrides cell_size)
+    cell_height=None,            # Explicit cell height (overrides cell_size)
     background=None              # Background color
 )
 ```
@@ -328,17 +333,37 @@ Useful for:
 
 ### From Image
 
-Scene dimensions match the image:
+`Scene.from_image()` has two modes:
+
+**Default mode** (`grid_size=N`): You choose the number of columns; rows are auto-calculated from aspect ratio. Scene size = cols × cell_size by rows × cell_size:
 
 ```python
-# If photo.jpg is 1200×800 pixels
 scene = Scene.from_image("photo.jpg", grid_size=40)
-
-print(scene.width)   # 1200
-print(scene.height)  # 800
+# 40 columns, rows auto-calculated from image aspect ratio
 ```
 
-Grid size affects cell count, not scene dimensions.
+**Fit-to-image mode** (`grid_size=None`): Grid is derived from the image — columns and rows are calculated from image dimensions divided by cell size:
+
+```python
+scene = Scene.from_image("photo.jpg", grid_size=None, cell_size=8)
+# If image is 800×600: cols ≈ 100, rows ≈ 75
+# Scene size ≈ image dimensions
+```
+
+### Rectangle Cells
+
+By default, cells are square. Use `cell_ratio`, `cell_width`, or `cell_height` for rectangular cells:
+
+```python
+# Wide "domino" cells (2:1 ratio)
+scene = Scene.from_image("photo.jpg", grid_size=40, cell_ratio=2.0)
+
+# Explicit dimensions
+scene = Scene.from_image("photo.jpg", grid_size=40, cell_width=20, cell_height=10)
+
+# Works with with_grid too
+scene = Scene.with_grid(cols=20, rows=30, cell_width=15, cell_height=8)
+```
 
 ### With Grid
 

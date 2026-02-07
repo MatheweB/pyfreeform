@@ -259,6 +259,36 @@ def complete_example():
 
 
 # =============================================================================
+# SECTION: Text Along Paths (TextPath)
+# =============================================================================
+
+def textpath():
+    """Text warped along a curve using SVG textPath"""
+    scene = Scene(width=500, height=200, background="white")
+
+    # Draw a visible curve path
+    from pyfreeform import Point
+    curve = scene.add_curve(
+        start=Point(30, 150),
+        end=Point(470, 150),
+        curvature=0.6,
+        color="#e2e8f0",
+        width=2,
+    )
+
+    # Warp text along the curve (no t= triggers textPath mode)
+    scene.add_text(
+        "Hello World flowing along a curve!",
+        along=curve,
+        font_size=18,
+        color="#ef4444",
+        font_family="sans-serif",
+    )
+
+    scene.save(OUTPUT_DIR / "08_textpath.svg")
+
+
+# =============================================================================
 # Generator Registry
 # =============================================================================
 
@@ -270,6 +300,7 @@ GENERATORS = {
     "05_data_labels": data_labels,
     "06_rotating_text": rotating_text,
     "07_complete_example": complete_example,
+    "08_textpath": textpath,
 }
 
 

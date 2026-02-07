@@ -109,6 +109,45 @@ len(grid)          # Total cell count (cols × rows)
 
 ---
 
+## Rectangle Cells
+
+By default, cells are square (`cell_width == cell_height`). You can create rectangular cells for different artistic effects:
+
+### Using cell_ratio
+
+The simplest approach — multiply the base `cell_size` width:
+
+```python
+# Wide "domino" cells (2:1 ratio)
+scene = Scene.from_image("photo.jpg", grid_size=40, cell_ratio=2.0)
+# cell_width = 20, cell_height = 10 (with cell_size=10)
+
+# Tall cells (0.5:1 ratio)
+scene = Scene.from_image("photo.jpg", grid_size=40, cell_ratio=0.5)
+# cell_width = 5, cell_height = 10
+```
+
+### Using explicit dimensions
+
+For precise control:
+
+```python
+# Explicit cell width and height
+scene = Scene.with_grid(cols=20, rows=30, cell_width=15, cell_height=8)
+
+# Or mix with cell_size (cell_height defaults to cell_size)
+scene = Scene.with_grid(cols=20, rows=30, cell_size=10, cell_width=20)
+# cell_width = 20, cell_height = 10
+```
+
+### Priority rules
+
+1. `cell_width` / `cell_height` (highest — explicit override)
+2. `cell_ratio` (multiplies `cell_size` for width)
+3. `cell_size` (base square size, default 10)
+
+---
+
 ## Accessing Cells
 
 ### By Index
@@ -219,6 +258,39 @@ cell.alpha       # Transparency 0.0 to 1.0
 
 Only available if grid was created from an image.
 
+### Sub-Cell Image Sampling
+
+When a grid is created from an image, you can sample the original image at any position within a cell — not just the center:
+
+```python
+# grid.source_image gives access to the original image
+grid.source_image  # Image object or None
+
+# Sample at a relative position within the cell
+cell.sample_image(rx=0.5, ry=0.5)       # → (r, g, b) tuple at center
+cell.sample_brightness(rx=0.0, ry=0.0)  # → float at top-left corner
+cell.sample_hex(rx=1.0, ry=1.0)         # → "#rrggbb" at bottom-right
+```
+
+The `rx`/`ry` parameters use relative coordinates: `0.0` = left/top edge, `1.0` = right/bottom edge. Default is `0.5, 0.5` (center).
+
+**Use cases:**
+
+```python
+for cell in scene.grid:
+    # Sample 4 corners for a gradient effect
+    tl = cell.sample_hex(0.0, 0.0)  # Top-left color
+    tr = cell.sample_hex(1.0, 0.0)  # Top-right color
+    bl = cell.sample_hex(0.0, 1.0)  # Bottom-left color
+    br = cell.sample_hex(1.0, 1.0)  # Bottom-right color
+
+    # Place dots at corners with sampled colors
+    cell.add_dot(at="top_left", radius=3, color=tl)
+    cell.add_dot(at="top_right", radius=3, color=tr)
+    cell.add_dot(at="bottom_left", radius=3, color=bl)
+    cell.add_dot(at="bottom_right", radius=3, color=br)
+```
+
 ### Neighbor Access
 
 ```python
@@ -255,6 +327,54 @@ cell.data["category"] = "important"
 # Read later
 if cell.data.get("category") == "important":
     cell.add_dot(color="gold")
+```
+
+### QoL Methods
+
+#### distance_to
+
+Calculate the pixel distance from this cell's center to another position:
+
+```python
+# Distance to another cell
+d = cell.distance_to(other_cell)
+
+# Distance to a Point or tuple
+d = cell.distance_to(Point(100, 200))
+d = cell.distance_to((100, 200))
+```
+
+Useful for radial effects:
+
+```python
+center_cell = scene.grid[scene.grid.rows // 2, scene.grid.cols // 2]
+
+for cell in scene.grid:
+    d = cell.distance_to(center_cell)
+    radius = max(1, 8 - d * 0.05)
+    cell.add_dot(radius=radius, color="coral")
+```
+
+#### normalized_position
+
+Get the cell's position as `(nx, ny)` normalized to 0.0–1.0:
+
+```python
+nx, ny = cell.normalized_position
+# (0.0, 0.0) = top-left cell
+# (1.0, 1.0) = bottom-right cell
+# (0.5, 0.5) = center cell
+```
+
+Useful for position-based gradients and effects:
+
+```python
+for cell in scene.grid:
+    nx, ny = cell.normalized_position
+    # Diagonal gradient
+    brightness = (nx + ny) / 2
+    gray = int(brightness * 255)
+    cell.add_fill(color=f"rgb({gray},{gray},{gray})")
 ```
 
 ---
@@ -610,6 +730,39 @@ for cell in grid:
     size = 2 + cell.brightness * 8
     cell.add_dot(radius=size, color=cell.color)
 ```
+
+---
+
+## Entity Positioning Helpers
+
+Entities have methods for relative positioning — useful when building complex compositions:
+
+### offset_from
+
+Get a point offset from any anchor:
+
+```python
+dot = cell.add_dot(radius=5, color="coral")
+
+# Get a point 10px to the right of the dot's center
+label_pos = dot.offset_from("center", dx=10, dy=0)
+```
+
+This is sugar for `entity.anchor(name) + Point(dx, dy)`.
+
+### place_beside
+
+Position one entity next to another using bounding boxes:
+
+```python
+rect1 = scene.add(Rect.at_center(Point(200, 200), 50, 30, fill="coral"))
+rect2 = scene.add(Rect.at_center(Point(0, 0), 50, 30, fill="blue"))
+
+# Place rect2 to the right of rect1 with 10px gap
+rect2.place_beside(rect1, side="right", gap=10)
+```
+
+Valid sides: `"right"`, `"left"`, `"above"`, `"below"`. Centers are aligned on the perpendicular axis (e.g., `"right"` aligns vertical centers).
 
 ---
 

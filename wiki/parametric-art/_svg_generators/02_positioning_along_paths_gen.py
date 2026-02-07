@@ -526,6 +526,280 @@ def example_10_code_example():
 
 
 # =============================================================================
+# SECTION: Along for All Entity Types
+# =============================================================================
+
+def example_11_along_all_entities():
+    """
+    Show all entity types positioned along a single curve on a plain Scene.
+    Demonstrates that dots, text, rects, ellipses, polygons, and lines can
+    all use the along= parameter.
+    """
+    from pyfreeform import shapes
+
+    scene = Scene(width=600, height=300, background="white")
+
+    # Draw a big curve across the scene
+    curve = scene.add_curve(
+        start=(0.05, 0.75),
+        end=(0.95, 0.75),
+        curvature=0.7,
+        color="#cbd5e1",
+        width=3,
+    )
+
+    # Dot at t=0.0
+    scene.add_dot(along=curve, t=0.0, radius=8, color="#ef4444")
+    scene.add_text("Dot (t=0.0)", along=curve, t=0.0, align=True,
+                   font_size=10, color="#ef4444")
+
+    # Text at t=0.2 (positioned, not warped)
+    scene.add_text("Text", along=curve, t=0.2, align=True,
+                   font_size=14, color="#8b5cf6")
+    scene.add_text("(t=0.2)", along=curve, t=0.18, align=True,
+                   font_size=9, color="#8b5cf6")
+
+    # Rect at t=0.4
+    scene.add_rect(width=30, height=16, along=curve, t=0.4, align=True,
+                   fill="#3b82f6", opacity=0.8)
+    scene.add_text("Rect (t=0.4)", along=curve, t=0.4, align=True,
+                   font_size=9, color="#3b82f6")
+
+    # Ellipse at t=0.6
+    scene.add_ellipse(rx=18, ry=10, along=curve, t=0.6, align=True,
+                      fill="#06b6d4", opacity=0.8)
+    scene.add_text("Ellipse (t=0.6)", along=curve, t=0.6, align=True,
+                   font_size=9, color="#06b6d4")
+
+    # Polygon (diamond) at t=0.8
+    diamond = [(0.5, 0.2), (0.8, 0.5), (0.5, 0.8), (0.2, 0.5)]
+    scene.add_polygon(diamond, along=curve, t=0.8, align=True,
+                      fill="#f59e0b", opacity=0.8)
+    scene.add_text("Polygon (t=0.8)", along=curve, t=0.8, align=True,
+                   font_size=9, color="#f59e0b")
+
+    # Line (tick mark) at t=1.0
+    scene.add_line(start=(0.48, 0.45), end=(0.52, 0.55),
+                   along=curve, t=1.0, align=True,
+                   color="#10b981", width=3)
+    scene.add_text("Line (t=1.0)", along=curve, t=1.0, align=True,
+                   font_size=9, color="#10b981")
+
+    # Title
+    scene.add(Text(300, 20, "All Entity Types Along a Curve",
+                   font_size=16, color="#334155", text_anchor="middle"))
+
+    scene.save(OUTPUT_DIR / "11-along-all-entities.svg")
+
+
+def example_12_align_vs_no_align():
+    """
+    Two rows comparing align=False (default) vs align=True.
+    5 rects at t=0, 0.25, 0.5, 0.75, 1.0 along a curve.
+    Without align they stay axis-aligned; with align they follow the tangent.
+    """
+    scene = Scene(width=550, height=350, background="white")
+
+    t_values = [0.0, 0.25, 0.5, 0.75, 1.0]
+    colors = ["#ef4444", "#f59e0b", "#3b82f6", "#8b5cf6", "#10b981"]
+
+    # --- Top row: no align ---
+    scene.add(Text(275, 25, "align=False (default)", font_size=14,
+                   color="#334155", text_anchor="middle"))
+
+    curve_top = scene.add_curve(
+        start=(0.05, 0.45),
+        end=(0.95, 0.45),
+        curvature=0.5,
+        color="#cbd5e1",
+        width=2,
+    )
+
+    for t, col in zip(t_values, colors):
+        scene.add_rect(width=24, height=12, along=curve_top, t=t,
+                       align=False, fill=col, opacity=0.85)
+        scene.add_text(f"t={t}", along=curve_top, t=t,
+                       font_size=8, color=col)
+
+    # --- Bottom row: align=True ---
+    scene.add(Text(275, 195, "align=True", font_size=14,
+                   color="#334155", text_anchor="middle"))
+
+    curve_bot = scene.add_curve(
+        start=(0.05, 0.9),
+        end=(0.95, 0.9),
+        curvature=0.5,
+        color="#cbd5e1",
+        width=2,
+    )
+
+    for t, col in zip(t_values, colors):
+        scene.add_rect(width=24, height=12, along=curve_bot, t=t,
+                       align=True, fill=col, opacity=0.85)
+        scene.add_text(f"t={t}", along=curve_bot, t=t, align=True,
+                       font_size=8, color=col)
+
+    scene.save(OUTPUT_DIR / "12-align-vs-no-align.svg")
+
+
+def example_13_align_rects_on_curve():
+    """
+    Grid from TEST_IMAGE (grid_size=15, cell_size=20).
+    Each cell gets a curve and 3 rects aligned along it, colored by cell.color.
+    """
+    scene = Scene.from_image(TEST_IMAGE, grid_size=15, cell_size=20)
+
+    for cell in scene.grid:
+        curve = cell.add_curve(
+            start="bottom_left",
+            end="top_right",
+            curvature=0.4,
+            color="#cbd5e1",
+            width=0.5,
+        )
+
+        for i in range(3):
+            t = (i + 1) / 4  # t = 0.25, 0.5, 0.75
+            cell.add_rect(
+                width=6, height=3,
+                along=curve, t=t, align=True,
+                fill=cell.color,
+            )
+
+    scene.save(OUTPUT_DIR / "13-align-rects-on-curve.svg")
+
+
+def example_14_textpath_curve():
+    """
+    Scene-level textPath: warp text along a curve using SVG <textPath>.
+    add_text with along= but WITHOUT t= triggers warp mode.
+    """
+    scene = Scene(width=500, height=250, background="#f8f9fa")
+
+    # Title
+    scene.add(Text(250, 25, "Text Warped Along a Curve (textPath)",
+                   font_size=14, color="#334155", text_anchor="middle"))
+
+    # Create a wide curve
+    curve = scene.add_curve(
+        start=(0.05, 0.75),
+        end=(0.95, 0.75),
+        curvature=0.6,
+        color="#e2e8f0",
+        width=2,
+    )
+
+    # Warp text along the curve (no t= means textPath mode)
+    scene.add_text(
+        "Hello World along a curve!",
+        along=curve,
+        color="#6366f1",
+        font_size=18,
+    )
+
+    scene.save(OUTPUT_DIR / "14-textpath-curve.svg")
+
+
+def example_15_textpath_ellipse():
+    """
+    Scene-level textPath along an ellipse.
+    Warp text around an ellipse perimeter using SVG <textPath>.
+    """
+    scene = Scene(width=400, height=300, background="#f8f9fa")
+
+    # Title
+    scene.add(Text(200, 25, "Text Warped Along an Ellipse",
+                   font_size=14, color="#334155", text_anchor="middle"))
+
+    # Create an ellipse at center
+    ellipse = scene.add_ellipse(
+        at="center",
+        rx=130, ry=80,
+        fill=None,
+        stroke="#e2e8f0",
+        stroke_width=2,
+    )
+
+    # Warp text along the ellipse (no t= means textPath mode)
+    scene.add_text(
+        "Text flowing around an ellipse path...",
+        along=ellipse,
+        color="coral",
+        font_size=14,
+    )
+
+    scene.save(OUTPUT_DIR / "15-textpath-ellipse.svg")
+
+
+def example_16_lines_along_path():
+    """
+    Grid from TEST_IMAGE (grid_size=12, cell_size=25).
+    Each cell gets a curve with 4 small perpendicular tick-mark lines
+    distributed along it with align=True.
+    """
+    scene = Scene.from_image(TEST_IMAGE, grid_size=12, cell_size=25)
+
+    for cell in scene.grid:
+        curve = cell.add_curve(
+            start="bottom_left",
+            end="top_right",
+            curvature=0.4,
+            color="#94a3b8",
+            width=1,
+        )
+
+        # 4 tick marks at t = 0.1, 0.35, 0.65, 0.9
+        for t in [0.1, 0.35, 0.65, 0.9]:
+            cell.add_line(
+                start=(0.45, 0.5),
+                end=(0.55, 0.5),
+                along=curve, t=t, align=True,
+                color=cell.color,
+                width=2,
+            )
+
+    scene.save(OUTPUT_DIR / "16-lines-along-path.svg")
+
+
+def example_17_complete_example():
+    """
+    Comprehensive parametric art: grid from TEST_IMAGE (grid_size=20, cell_size=15).
+    Each cell: curve with curvature based on brightness, 3 aligned rects colored
+    by cell.color, and 2 dots at the endpoints.
+    """
+    scene = Scene.from_image(TEST_IMAGE, grid_size=20, cell_size=15)
+
+    for cell in scene.grid:
+        b = cell.brightness
+
+        # Curvature varies with brightness: dark cells = flat, bright = bowed
+        curvature = 0.1 + b * 0.7
+
+        curve = cell.add_curve(
+            start="bottom_left",
+            end="top_right",
+            curvature=curvature,
+            color="#94a3b8",
+            width=0.5,
+        )
+
+        # 3 aligned rects along the curve
+        for i in range(3):
+            t = (i + 1) / 4  # 0.25, 0.5, 0.75
+            cell.add_rect(
+                width=5, height=3,
+                along=curve, t=t, align=True,
+                fill=cell.color,
+            )
+
+        # Dots at endpoints
+        cell.add_dot(along=curve, t=0.0, radius=1.5, color="#6366f1")
+        cell.add_dot(along=curve, t=1.0, radius=1.5, color="#ec4899")
+
+    scene.save(OUTPUT_DIR / "17-complete-example.svg")
+
+
+# =============================================================================
 # Generator Registry
 # =============================================================================
 
@@ -550,6 +824,15 @@ GENERATORS = {
     "08-multiple-points-step2": example_08_multiple_points_step2,
     "09-many-points": example_09_many_points,
     "10-code-example": example_10_code_example,
+
+    # Along for all entity types
+    "11-along-all-entities": example_11_along_all_entities,
+    "12-align-vs-no-align": example_12_align_vs_no_align,
+    "13-align-rects-on-curve": example_13_align_rects_on_curve,
+    "14-textpath-curve": example_14_textpath_curve,
+    "15-textpath-ellipse": example_15_textpath_ellipse,
+    "16-lines-along-path": example_16_lines_along_path,
+    "17-complete-example": example_17_complete_example,
 }
 
 

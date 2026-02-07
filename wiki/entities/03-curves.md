@@ -518,6 +518,11 @@ else:
 
 ---
 
+!!! tip "Curves as Paths and Along Paths"
+    Curves implement the **Pathable** protocol — use them as paths for `along=` positioning.
+    Curves can also be **placed along** other paths: `cell.add_curve(along=path, t=0.5, align=True)`.
+    See [Positioning Along Paths](../parametric-art/02-positioning-along-paths.md).
+
 ## See Also
 
 - 📖 [Ellipses](04-ellipses.md) - Parametric ellipse equations

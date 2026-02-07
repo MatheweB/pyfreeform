@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <defs>
+    <path id="textpath-0" d="M 330.0 150.0 A 130.0 80.0 0.0 1 1 70.0 150.0 A 130.0 80.0 0.0 1 1 330.0 150.0" fill="none" />
+  </defs>
+  <rect width="100%" height="100%" fill="#f8f9fa" />
+  <text x="200" y="25" font-size="14.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#334155" text-anchor="middle" dominant-baseline="middle">Text Warped Along an Ellipse</text>
+  <ellipse cx="200.0" cy="150.0" rx="130.0" ry="80.0" fill="none" stroke="#e2e8f0" stroke-width="2.0" />
+  <text font-size="14.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="coral" text-anchor="middle" dominant-baseline="middle"><textPath href="#textpath-0">Text flowing around an ellipse path...</textPath></text>
+</svg>

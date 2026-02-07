@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="550" height="350" viewBox="0 0 550 350">
+  <rect width="100%" height="100%" fill="white" />
+  <text x="275" y="25" font-size="14.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#334155" text-anchor="middle" dominant-baseline="middle">align=False (default)</text>
+  <path d="M 27.5 157.5 Q 275.0 281.25 522.5 157.5" fill="none" stroke="#cbd5e1" stroke-width="2.0" stroke-linecap="round" />
+  <rect x="15.5" y="151.5" width="24.0" height="12.0" fill="#ef4444" fill-opacity="0.85" stroke-opacity="0.85" />
+  <text x="27.5" y="157.5" font-size="8.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#ef4444" text-anchor="middle" dominant-baseline="middle">t=0.0</text>
+  <rect x="139.25" y="197.90625" width="24.0" height="12.0" fill="#f59e0b" fill-opacity="0.85" stroke-opacity="0.85" />
+  <text x="151.25" y="203.90625" font-size="8.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#f59e0b" text-anchor="middle" dominant-baseline="middle">t=0.25</text>
+  <rect x="263.0" y="213.375" width="24.0" height="12.0" fill="#3b82f6" fill-opacity="0.85" stroke-opacity="0.85" />
+  <text x="275.0" y="219.375" font-size="8.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#3b82f6" text-anchor="middle" dominant-baseline="middle">t=0.5</text>
+  <rect x="386.75" y="197.90625" width="24.0" height="12.0" fill="#8b5cf6" fill-opacity="0.85" stroke-opacity="0.85" />
+  <text x="398.75" y="203.90625" font-size="8.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#8b5cf6" text-anchor="middle" dominant-baseline="middle">t=0.75</text>
+  <rect x="510.5" y="151.5" width="24.0" height="12.0" fill="#10b981" fill-opacity="0.85" stroke-opacity="0.85" />
+  <text x="522.5" y="157.5" font-size="8.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#10b981" text-anchor="middle" dominant-baseline="middle">t=1.0</text>
+  <text x="275" y="195" font-size="14.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#334155" text-anchor="middle" dominant-baseline="middle">align=True</text>
+  <path d="M 27.5 315.0 Q 275.0 438.75 522.5 315.0" fill="none" stroke="#cbd5e1" stroke-width="2.0" stroke-linecap="round" />
+  <rect x="15.5" y="309.0" width="24.0" height="12.0" fill="#ef4444" fill-opacity="0.85" stroke-opacity="0.85" transform="rotate(26.56505117707799 27.5 315.0)" />
+  <text x="27.5" y="315.0" font-size="8.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#ef4444" text-anchor="middle" dominant-baseline="middle" transform="rotate(26.56505117707799 27.5 315.0)">t=0.0</text>
+  <rect x="139.25" y="355.40625" width="24.0" height="12.0" fill="#f59e0b" fill-opacity="0.85" stroke-opacity="0.85" transform="rotate(14.036243467926479 151.25 361.40625)" />
+  <text x="151.25" y="361.40625" font-size="8.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#f59e0b" text-anchor="middle" dominant-baseline="middle" transform="rotate(14.036243467926479 151.25 361.40625)">t=0.25</text>
+  <rect x="263.0" y="370.875" width="24.0" height="12.0" fill="#3b82f6" fill-opacity="0.85" stroke-opacity="0.85" />
+  <text x="275.0" y="376.875" font-size="8.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#3b82f6" text-anchor="middle" dominant-baseline="middle">t=0.5</text>
+  <rect x="386.75" y="355.40625" width="24.0" height="12.0" fill="#8b5cf6" fill-opacity="0.85" stroke-opacity="0.85" transform="rotate(-14.036243467926479 398.75 361.40625)" />
+  <text x="398.75" y="361.40625" font-size="8.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#8b5cf6" text-anchor="middle" dominant-baseline="middle" transform="rotate(-14.036243467926479 398.75 361.40625)">t=0.75</text>
+  <rect x="510.5" y="309.0" width="24.0" height="12.0" fill="#10b981" fill-opacity="0.85" stroke-opacity="0.85" transform="rotate(-26.56505117707799 522.5 315.0)" />
+  <text x="522.5" y="315.0" font-size="8.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#10b981" text-anchor="middle" dominant-baseline="middle" transform="rotate(-26.56505117707799 522.5 315.0)">t=1.0</text>
+</svg>

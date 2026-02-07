@@ -590,6 +590,11 @@ cell.add_dot(along=ellipse, t=cell.brightness)  # Smooth distribution
 
 ---
 
+!!! tip "Ellipses as Paths and Along Paths"
+    Ellipses implement the **Pathable** protocol — position entities around the perimeter with `along=`.
+    Ellipses can also be **placed along** other paths: `cell.add_ellipse(along=curve, t=0.5, align=True)`.
+    See [Positioning Along Paths](../parametric-art/02-positioning-along-paths.md).
+
 ## See Also
 
 - 📖 [Curves](03-curves.md) - Bézier curves

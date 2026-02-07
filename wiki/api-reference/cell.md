@@ -178,7 +178,8 @@ def add_dot(
     style: DotStyle | None = None,
     z_index: int = 0,
     along: Pathable | None = None,
-    t: float | None = None
+    t: float | None = None,
+    align: bool = False
 ) -> Dot
 ```
 
@@ -190,6 +191,7 @@ def add_dot(
 - `z_index`: Layer order
 - `along`: Optional path to position along
 - `t`: Parameter 0-1 along path
+- `align`: If True, rotate to follow path tangent at position t
 
 **Example**:
 ```python
@@ -216,7 +218,10 @@ def add_line(
     color: str = "black",
     width: float = 1,
     style: LineStyle | None = None,
-    z_index: int = 0
+    z_index: int = 0,
+    along: Pathable | None = None,
+    t: float | None = None,
+    align: bool = False
 ) -> Line
 ```
 
@@ -245,7 +250,10 @@ def add_curve(
     color: str = "black",
     width: float = 1,
     style: LineStyle | None = None,
-    z_index: int = 0
+    z_index: int = 0,
+    along: Pathable | None = None,
+    t: float | None = None,
+    align: bool = False
 ) -> Curve
 ```
 
@@ -280,7 +288,10 @@ def add_ellipse(
     fill: str | None = "black",
     stroke: str | None = None,
     stroke_width: float = 1,
-    z_index: int = 0
+    z_index: int = 0,
+    along: Pathable | None = None,
+    t: float | None = None,
+    align: bool = False
 ) -> Ellipse
 ```
 
@@ -307,7 +318,10 @@ def add_polygon(
     fill: str | None = "black",
     stroke: str | None = None,
     stroke_width: float = 1,
-    z_index: int = 0
+    z_index: int = 0,
+    along: Pathable | None = None,
+    t: float | None = None,
+    align: bool = False
 ) -> Polygon
 ```
 
@@ -339,9 +353,15 @@ def add_text(
     text_anchor: Literal["start", "middle", "end"] = "middle",
     baseline: str = "middle",
     rotation: float = 0,
-    z_index: int = 0
+    z_index: int = 0,
+    along: Pathable | None = None,
+    t: float | None = None
 ) -> Text
 ```
+
+!!! info "TextPath warping"
+    When `along=` is provided **without** `t=`, text warps along the path using SVG `<textPath>`.
+    When `along=` is provided **with** `t=`, text is positioned at that point on the path.
 
 **Example**:
 ```python
@@ -367,7 +387,10 @@ def add_rect(
     fill: str | None = "black",
     stroke: str | None = None,
     stroke_width: float = 1,
-    z_index: int = 0
+    z_index: int = 0,
+    along: Pathable | None = None,
+    t: float | None = None,
+    align: bool = False
 ) -> Rect
 
 # Shortcuts
@@ -445,6 +468,67 @@ cell.add_diagonal(start="bottom_left", end="top_right", width=1, color="red")
 ---
 
 ## Methods
+
+### distance_to()
+
+Calculate distance from this cell's center to another cell, point, or coordinate.
+
+```python
+def distance_to(self, other: Cell | Point | tuple[float, float]) -> float
+```
+
+**Parameters**:
+- `other`: A Cell, Point, or (x, y) tuple
+
+**Example**:
+```python
+center_cell = scene.grid[10, 10]
+for cell in scene.grid:
+    dist = cell.distance_to(center_cell)
+    radius = max(1, 8 - dist * 0.5)
+    cell.add_dot(radius=radius, color="coral")
+```
+
+### normalized_position
+
+Returns the cell's normalized position within the grid as `(nx, ny)` where both values are in the range 0.0–1.0.
+
+```python
+@property
+def normalized_position(self) -> tuple[float, float]
+```
+
+**Example**:
+```python
+for cell in scene.grid:
+    nx, ny = cell.normalized_position
+    r = int(nx * 255)
+    b = int(ny * 255)
+    cell.add_fill(color=f"rgb({r},100,{b})")
+```
+
+### sample_image() / sample_brightness() / sample_hex()
+
+Sample the source image at a specific point within the cell. Requires the grid to have been created with `Scene.from_image()`.
+
+```python
+def sample_image(self, rx: float = 0.5, ry: float = 0.5) -> tuple[int, int, int]
+def sample_brightness(self, rx: float = 0.5, ry: float = 0.5) -> float
+def sample_hex(self, rx: float = 0.5, ry: float = 0.5) -> str
+```
+
+**Parameters**:
+- `rx`: Relative x position within cell (0.0 = left edge, 1.0 = right edge)
+- `ry`: Relative y position within cell (0.0 = top edge, 1.0 = bottom edge)
+
+**Example**:
+```python
+for cell in scene.grid:
+    # Sample four corners within each cell
+    for rx, ry in [(0.2, 0.2), (0.8, 0.2), (0.2, 0.8), (0.8, 0.8)]:
+        color = cell.sample_hex(rx, ry)
+        cell.add_dot(at=(rx, ry), radius=2, color=color)
+```
 
 ### relative_to_absolute()
 

@@ -258,6 +258,11 @@ cell.add_fill(style=overlay)
 
 ---
 
+!!! tip "Rectangles Along Paths"
+    Rectangles can be positioned along any path with `along=` and rotated to follow the tangent with `align=True`:
+    `cell.add_rect(along=curve, t=0.5, align=True, width=8, height=4, fill="coral")`.
+    See [Positioning Along Paths](../parametric-art/02-positioning-along-paths.md).
+
 ## See Also
 
 - 📖 [Dots](01-dots.md) - Content to place on backgrounds

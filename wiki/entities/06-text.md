@@ -158,6 +158,38 @@ cell.add_text("Flipped", rotation=180)
 
 ---
 
+## Text Along Paths
+
+Text can be positioned along paths or **warped** to follow them:
+
+### Position at a Point (with t=)
+
+```python
+curve = cell.add_curve(curvature=0.5, color="gray")
+
+# Position text at t=0.5, rotated to follow tangent
+cell.add_text("Label", along=curve, t=0.5, align=True, font_size=10, color="white")
+```
+
+### Warp Along Path (without t=)
+
+Omit `t=` to flow text along the entire path using SVG `<textPath>`:
+
+```python
+curve = cell.add_curve(start="left", end="right", curvature=0.3)
+
+# Text warps along the curve shape
+cell.add_text("Hello World!", along=curve, font_size=12, color="coral")
+```
+
+![Text warped along a curve](./_images/06-text/08_textpath.svg)
+
+This works with any entity that has `to_svg_path_d()` — lines, curves, and ellipses.
+
+See [Positioning Along Paths](../parametric-art/02-positioning-along-paths.md#text-along-paths-textpath) for more details and examples.
+
+---
+
 ## Common Patterns
 
 ### Pattern 1: Grid Labels

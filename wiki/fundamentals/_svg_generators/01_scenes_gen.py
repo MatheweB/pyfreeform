@@ -439,6 +439,31 @@ def advanced_multiple_grids_step2():
 
 
 # =============================================================================
+# SECTION: Rectangular Cells & Fit-to-Image
+# =============================================================================
+
+def scene_rect_cells():
+    """Scene with rectangular cells"""
+    scene = Scene.with_grid(cols=12, rows=8, cell_size=20, cell_width=30, cell_height=20)
+    scene.background = "#1e293b"
+
+    for cell in scene.grid:
+        cell.add_dot(radius=4, color="#38bdf8")
+        cell.add_border(color="#334155", width=0.5)
+
+    scene.save(OUTPUT_DIR / "scene-rect-cells.svg")
+
+def scene_fit_to_image():
+    """Scene.from_image with grid_size=None (fit to image)"""
+    scene = Scene.from_image(TEST_IMAGE, grid_size=None, cell_size=8)
+
+    for cell in scene.grid:
+        cell.add_fill(color=cell.color)
+
+    scene.save(OUTPUT_DIR / "scene-fit-to-image.svg")
+
+
+# =============================================================================
 # Generator Registry
 # =============================================================================
 
@@ -487,6 +512,10 @@ GENERATORS = {
     # Advanced: Multiple Grids
     "advanced-multiple-grids-step1": advanced_multiple_grids_step1,
     "advanced-multiple-grids-step2": advanced_multiple_grids_step2,
+
+    # Rectangular cells & fit-to-image
+    "scene-rect-cells": scene_rect_cells,
+    "scene-fit-to-image": scene_fit_to_image,
 }
 
 

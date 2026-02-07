@@ -92,7 +92,45 @@ cell.add_dot(along=spiral, t=0.5)
 
 ![Practical example of distributing entities along custom paths](./_images/03-pathable-protocol/13-practical-example-distribution.svg)
 
+## Tangent Angles
+
+Every built-in Pathable has an `angle_at(t)` method returning the tangent angle in degrees:
+
+```python
+line = Line(0, 0, 100, 0)
+line.angle_at(0.5)    # 0.0 (pointing right)
+
+curve = Curve(0, 100, 100, 0, curvature=0.5)
+curve.angle_at(0.0)   # Angle at start
+curve.angle_at(1.0)   # Angle at end
+```
+
+For custom Pathables without `angle_at()`, use `get_angle_at()` which falls back to numeric differentiation:
+
+```python
+from pyfreeform import get_angle_at
+
+angle = get_angle_at(my_custom_path, t=0.5)
+```
+
+This powers the `align=True` feature in `add_dot`, `add_rect`, `add_text`, etc.
+
+## SVG Path Data
+
+Pathables with `to_svg_path_d()` can be used for text warping via SVG `<textPath>`:
+
+```python
+curve = cell.add_curve(curvature=0.5)
+curve.to_svg_path_d()  # "M 0 100 Q 50 0 100 100"
+
+# Text warps along the curve
+cell.add_text("Hello!", along=curve)  # No t= → textPath mode
+```
+
+Built-in paths (Line, Curve, Ellipse, Connection) all implement `to_svg_path_d()`.
+
 ## See Also
 - [Custom Paths](../parametric-art/05-custom-paths.md) - Examples
-- [Curves](../entities/03-curves.md) - Bézier math
+- [Curves](../entities/03-curves.md) - Bezier math
 - [Ellipses](../entities/04-ellipses.md) - Parametric ellipses
+- [Positioning Along Paths](../parametric-art/02-positioning-along-paths.md) - along= for all entities

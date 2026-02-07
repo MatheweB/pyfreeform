@@ -388,6 +388,107 @@ def common_pattern_wave():
     scene.save(OUTPUT_DIR / "common-pattern-wave.svg")
 
 # =============================================================================
+# SECTION: Rectangular Cells
+# =============================================================================
+
+def rect_cells_comparison():
+    """Square cells vs rectangular cells comparison"""
+    # Left half: square cells (default)
+    scene = Scene.with_grid(cols=8, rows=8, cell_size=20)
+    scene.background = "#f8f9fa"
+
+    for cell in scene.grid:
+        cell.add_dot(radius=3, color="#6366f1")
+        cell.add_border(color="#d1d5db", width=0.5)
+
+    scene.save(OUTPUT_DIR / "rect-cells-square.svg")
+
+    # Rectangular cells using cell_width / cell_height
+    scene2 = Scene.with_grid(cols=8, rows=8, cell_size=20, cell_width=40, cell_height=20)
+    scene2.background = "#f8f9fa"
+
+    for cell in scene2.grid:
+        cell.add_dot(radius=3, color="#6366f1")
+        cell.add_border(color="#d1d5db", width=0.5)
+
+    scene2.save(OUTPUT_DIR / "rect-cells-wide.svg")
+
+def rect_cells_domino():
+    """Domino-style cells (2:1 ratio)"""
+    scene = Scene.with_grid(cols=10, rows=10, cell_size=15, cell_width=30, cell_height=15)
+    scene.background = "#1e1b4b"
+
+    colors = ["#312e81", "#3730a3", "#4338ca", "#4f46e5", "#6366f1"]
+    for cell in scene.grid:
+        idx = (cell.row + cell.col) % len(colors)
+        cell.add_fill(color=colors[idx])
+        cell.add_border(color="#1e1b4b", width=0.5)
+
+    scene.save(OUTPUT_DIR / "rect-cells-domino.svg")
+
+# =============================================================================
+# SECTION: QoL Features
+# =============================================================================
+
+def qol_distance_to():
+    """distance_to() visualization - radial gradient effect"""
+    scene = Scene.with_grid(cols=25, rows=25, cell_size=12)
+    scene.background = "#0f172a"
+
+    center_cell = scene.grid[12, 12]
+
+    for cell in scene.grid:
+        dist = cell.distance_to(center_cell)
+        max_dist = 15  # approximate max
+        t = min(dist / max_dist, 1.0)
+
+        # Larger dots near center, smaller far away
+        radius = 5 * (1 - t) + 1
+
+        # Color gradient from warm to cool
+        r = int(239 * (1 - t) + 59 * t)
+        g = int(68 * (1 - t) + 130 * t)
+        b = int(68 * (1 - t) + 246 * t)
+
+        cell.add_dot(radius=radius, color=f"rgb({r},{g},{b})")
+
+    scene.save(OUTPUT_DIR / "qol-distance-to.svg")
+
+def qol_normalized_position():
+    """normalized_position visualization - smooth gradient"""
+    scene = Scene.with_grid(cols=20, rows=20, cell_size=15)
+    scene.background = "#0f172a"
+
+    for cell in scene.grid:
+        nx, ny = cell.normalized_position
+
+        # Map position to color
+        r = int(nx * 255)
+        g = int(100)
+        b = int(ny * 255)
+
+        cell.add_fill(color=f"rgb({r},{g},{b})")
+
+    scene.save(OUTPUT_DIR / "qol-normalized-position.svg")
+
+# =============================================================================
+# SECTION: Sub-cell Sampling
+# =============================================================================
+
+def subcell_sampling():
+    """Sub-cell image sampling - four corner dots per cell"""
+    scene = Scene.from_image(TEST_IMAGE, grid_size=15)
+
+    for cell in scene.grid:
+        # Sample at four corners within the cell
+        corners = [(0.2, 0.2), (0.8, 0.2), (0.2, 0.8), (0.8, 0.8)]
+        for rx, ry in corners:
+            color = cell.sample_hex(rx, ry)
+            cell.add_dot(at=(rx, ry), radius=3, color=color)
+
+    scene.save(OUTPUT_DIR / "subcell-sampling.svg")
+
+# =============================================================================
 # Generator Registry
 # =============================================================================
 
@@ -423,6 +524,17 @@ GENERATORS = {
     "common-pattern-checkerboard": common_pattern_checkerboard,
     "common-pattern-radial": common_pattern_radial,
     "common-pattern-wave": common_pattern_wave,
+
+    # Rectangular cells
+    "rect-cells-comparison": rect_cells_comparison,
+    "rect-cells-domino": rect_cells_domino,
+
+    # QoL features
+    "qol-distance-to": qol_distance_to,
+    "qol-normalized-position": qol_normalized_position,
+
+    # Sub-cell sampling
+    "subcell-sampling": subcell_sampling,
 }
 
 def generate_all():

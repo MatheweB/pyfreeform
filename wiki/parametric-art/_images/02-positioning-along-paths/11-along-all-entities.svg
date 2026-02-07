@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" viewBox="0 0 600 300">
+  <rect width="100%" height="100%" fill="white" />
+  <path d="M 30.0 225.0 Q 300.0 414.0 570.0 225.0" fill="none" stroke="#cbd5e1" stroke-width="3.0" stroke-linecap="round" />
+  <circle cx="30.0" cy="225.0" r="8.0" fill="#ef4444" />
+  <text x="30.0" y="225.0" font-size="10.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#ef4444" text-anchor="middle" dominant-baseline="middle" transform="rotate(34.99202019855866 30.0 225.0)">Dot (t=0.0)</text>
+  <text x="138.00000000000003" y="285.48" font-size="14.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#8b5cf6" text-anchor="middle" dominant-baseline="middle" transform="rotate(22.78240573048169 138.00000000000003 285.48)">Text</text>
+  <text x="127.2" y="280.79280000000006" font-size="9.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#8b5cf6" text-anchor="middle" dominant-baseline="middle" transform="rotate(24.13237959458082 127.2 280.79280000000006)">(t=0.2)</text>
+  <rect x="231.00000000000003" y="307.72" width="30.0" height="16.0" fill="#3b82f6" fill-opacity="0.8" stroke-opacity="0.8" transform="rotate(7.969610394321357 246.00000000000003 315.72)" />
+  <text x="246.00000000000003" y="315.72" font-size="9.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#3b82f6" text-anchor="middle" dominant-baseline="middle" transform="rotate(7.969610394321357 246.00000000000003 315.72)">Rect (t=0.4)</text>
+  <ellipse cx="354.0" cy="315.72" rx="18.0" ry="10.0" fill="#06b6d4" fill-opacity="0.8" stroke-opacity="0.8" transform="rotate(-7.969610394321357 354.0 315.72)" />
+  <text x="354.0" y="315.72" font-size="9.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#06b6d4" text-anchor="middle" dominant-baseline="middle" transform="rotate(-7.969610394321357 354.0 315.72)">Ellipse (t=0.6)</text>
+  <polygon points="427.14907640804176,202.5016104953375 627.956779009325,215.7781528160835 496.85092359195835,368.45838950466253 296.043220990675,355.18184718391655" fill="#f59e0b" fill-opacity="0.8" stroke-opacity="0.8" />
+  <text x="462.00000000000006" y="285.48" font-size="9.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#f59e0b" text-anchor="middle" dominant-baseline="middle" transform="rotate(-22.782405730481695 462.00000000000006 285.48)">Polygon (t=0.8)</text>
+  <line x1="551.5672817883216" y1="219.59306932457434" x2="588.4327182116784" y2="230.40693067542566" stroke="#10b981" stroke-width="3.0" stroke-linecap="round" />
+  <text x="570.0" y="225.0" font-size="9.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#10b981" text-anchor="middle" dominant-baseline="middle" transform="rotate(-34.99202019855866 570.0 225.0)">Line (t=1.0)</text>
+  <text x="300" y="20" font-size="16.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#334155" text-anchor="middle" dominant-baseline="middle">All Entity Types Along a Curve</text>
+</svg>

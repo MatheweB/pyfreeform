@@ -19,11 +19,30 @@ Scene(width: int, height: int, background: str | None = None)
 
 ```python
 @classmethod
-Scene.from_image(source, grid_size=40, cell_size=10, background=None)
+Scene.from_image(
+    source,
+    grid_size=40,         # Number of columns (None = fit grid to image)
+    cell_size=10,
+    cell_ratio=1.0,       # Width:height ratio (2.0 = domino cells)
+    cell_width=None,      # Explicit cell width (overrides cell_size/cell_ratio)
+    cell_height=None,     # Explicit cell height (overrides cell_size)
+    background=None
+)
 
 @classmethod
-Scene.with_grid(cols, rows, cell_size, background=None)
+Scene.with_grid(
+    cols=30,
+    rows=None,            # Defaults to cols (square grid)
+    cell_size=10,
+    cell_width=None,      # Explicit cell width (overrides cell_size)
+    cell_height=None,     # Explicit cell height (overrides cell_size)
+    background=None
+)
 ```
+
+**`grid_size` modes**:
+- `grid_size=40` (default): 40 columns, rows auto-calculated from aspect ratio. Scene size = cols × cell_size × rows × cell_size.
+- `grid_size=None`: Grid fits the image. Cols/rows derived from image dimensions ÷ cell size.
 
 ![Scene from Image](./_images/scene/example2-from-image.svg)
 
@@ -71,16 +90,16 @@ scene.add_dot(along=curve, t=0.75, radius=12, color="#3b82f6")
 
 | Method | Description |
 |---|---|
-| `add_dot(at=, along=, t=, radius=, color=)` | Add a dot |
-| `add_line(start=, end=, width=, color=)` | Add a line |
-| `add_curve(start=, end=, curvature=, width=, color=)` | Add a curve |
-| `add_text(content, at=, font_size=, color=)` | Add text |
-| `add_rect(at=, width=, height=, fill=)` | Add a rectangle |
-| `add_ellipse(at=, rx=, ry=, fill=)` | Add an ellipse |
-| `add_polygon(vertices, fill=)` | Add a polygon |
+| `add_dot(at=, along=, t=, align=, radius=, color=)` | Add a dot |
+| `add_line(start=, end=, along=, t=, align=, width=, color=)` | Add a line |
+| `add_curve(start=, end=, along=, t=, align=, curvature=, width=, color=)` | Add a curve |
+| `add_text(content, at=, along=, t=, font_size=, color=)` | Add text (along= without t= warps via textPath) |
+| `add_rect(at=, along=, t=, align=, width=, height=, fill=)` | Add a rectangle |
+| `add_ellipse(at=, along=, t=, align=, rx=, ry=, fill=)` | Add an ellipse |
+| `add_polygon(vertices, along=, t=, align=, fill=)` | Add a polygon |
 | `add_fill(color=)` | Fill the entire scene |
 | `add_border(color=, width=)` | Border around the scene |
-| `add_diagonal(...)` | Add a diagonal line |
+| `add_diagonal(along=, t=, align=, ...)` | Add a diagonal line |
 
 ---
 
