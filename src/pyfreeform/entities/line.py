@@ -171,6 +171,10 @@ class Line(StrokedPathMixin, Entity):
         """
         return self.start.lerp(self.end, t)
 
+    def arc_length(self) -> float:
+        """Return the length of the line segment."""
+        return self.length
+
     def angle_at(self, t: float) -> float:
         """
         Get the tangent angle in degrees at parameter t.

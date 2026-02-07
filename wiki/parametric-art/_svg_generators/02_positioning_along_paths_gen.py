@@ -198,8 +198,8 @@ def example_04_along_ellipse():
         scene.add(Dot(x, y, radius=7, color=color))
 
         # Label outside
-        label_x = cx + (rx + 35) * math.cos(angle)
-        label_y = cy + (ry + 35) * math.sin(angle)
+        label_x = cx + (rx + 15) * math.cos(angle)
+        label_y = cy + (ry + 15) * math.sin(angle)
         scene.add(Text(label_x, label_y, f"b={brightness}", font_size=11, color=color, text_anchor="middle"))
 
     # Title
@@ -682,8 +682,8 @@ def example_14_textpath_curve():
 
     # Create a wide curve
     curve = scene.add_curve(
-        start=(0.05, 0.75),
-        end=(0.95, 0.75),
+        start=(0.05, 0.5),
+        end=(0.95, 0.55),
         curvature=0.6,
         color="#e2e8f0",
         width=2,
@@ -694,7 +694,8 @@ def example_14_textpath_curve():
         "Hello World along a curve!",
         along=curve,
         color="#6366f1",
-        font_size=18,
+        font_size=14,
+        text_anchor="left"
     )
 
     scene.save(OUTPUT_DIR / "14-textpath-curve.svg")

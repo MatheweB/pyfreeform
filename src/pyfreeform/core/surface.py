@@ -674,11 +674,13 @@ class Surface:
         font_family: str = "sans-serif",
         bold: bool = False,
         italic: bool = False,
-        text_anchor: str = "middle",
+        text_anchor: str = "left",
         baseline: str = "middle",
         rotation: float = 0,
         z_index: int = 0,
         opacity: float = 1.0,
+        start_offset: float = 0.0,
+        end_offset: float = 1.0,
         style: TextStyle | None = None,
     ) -> Text:
         """
@@ -698,7 +700,9 @@ class Surface:
             t: Parameter on the path (0.0 to 1.0). If omitted with
                ``along``, text warps along the full path.
             align: Rotate text to follow path tangent (only with ``t``).
-            font_size: Font size in pixels (default: surface height * 0.6).
+            font_size: Font size in pixels. When omitted, auto-sizes to
+                25% of the surface's smallest dimension. For textPath
+                mode, auto-sizes to fill the path (bounded by 25%).
             color: Text color.
             font_family: Font family.
             bold: Bold text.
@@ -707,6 +711,10 @@ class Surface:
             baseline: Vertical alignment: "auto", "middle", "hanging".
             rotation: Rotation in degrees around the text position.
             z_index: Layer order (higher = on top).
+            start_offset: Where text begins on the path, 0.0–1.0
+                (textPath mode only). Default 0.0 = start of path.
+            end_offset: Where text ends on the path, 0.0–1.0
+                (textPath mode only). Default 1.0 = end of path.
             style: TextStyle object (overrides individual params).
 
         Returns:
@@ -720,6 +728,8 @@ class Surface:
             >>> cell.add_text("Hi", along=curve, t=0.5, align=True)
             >>> # Warp text along a curve (textPath)
             >>> cell.add_text("Hello World", along=curve)
+            >>> # Warp along middle 60% of the path
+            >>> cell.add_text("Partial", along=curve, start_offset=0.2, end_offset=0.8)
         """
         from ..entities.text import Text
 
@@ -736,17 +746,31 @@ class Surface:
             z_index = style.z_index
             opacity = style.opacity
 
+        # Resolve position
+        is_textpath = along is not None and t is None
         if along is not None and t is not None:
             position, rotation = self._resolve_along(along, t, align, rotation)
         elif along is not None:
-            # TextPath warp mode — will be handled in Phase 6
-            # For now, position at path midpoint
+            # TextPath warp mode — position at path midpoint (used as fallback)
             position, rotation = self._resolve_along(along, 0.5, align, rotation)
         else:
             position = self.relative_to_absolute(at)
 
+        # Compute the span fraction for textPath mode
+        span = end_offset - start_offset
+
+        # Auto-size font when not explicitly set
         if font_size is None:
-            font_size = self._height * 0.6
+            surface_bound = min(self._width, self._height)
+            if is_textpath and hasattr(along, 'arc_length'):
+                # Size to fill the spanned portion of the path
+                arc_len = along.arc_length() * span
+                chars = max(len(content), 1)
+                font_size = arc_len / (chars * 0.6)
+                # Bound by 25% of the surface
+                font_size = min(font_size, surface_bound * 0.25)
+            else:
+                font_size = surface_bound * 0.25
 
         text = Text(
             position.x, position.y,
@@ -764,7 +788,7 @@ class Surface:
         )
 
         # TextPath warp mode: along provided without t
-        if along is not None and t is None:
+        if is_textpath:
             if not hasattr(along, 'to_svg_path_d'):
                 raise TypeError(
                     f"Text warping requires a path with to_svg_path_d(), "
@@ -776,7 +800,14 @@ class Surface:
                 _textpath_counter = itertools.count()
                 self._textpath_counter = _textpath_counter
             path_id = f"textpath-{next(_textpath_counter)}"
-            text.set_textpath(path_id, along.to_svg_path_d())
+            # Compute text_length from the spanned portion of the path
+            text_length = None
+            if hasattr(along, 'arc_length'):
+                text_length = along.arc_length() * span
+            svg_start_offset = f"{start_offset * 100:.1f}%"
+            text.set_textpath(path_id, along.to_svg_path_d(),
+                              start_offset=svg_start_offset,
+                              text_length=text_length)
 
         self._register_entity(text)
         return text

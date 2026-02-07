@@ -219,7 +219,13 @@ class Text(Entity):
 
         return self
 
-    def set_textpath(self, path_id: str, path_d: str, start_offset: str = "0%") -> None:
+    def set_textpath(
+        self,
+        path_id: str,
+        path_d: str,
+        start_offset: str = "0%",
+        text_length: float | None = None,
+    ) -> None:
         """
         Configure this text to warp along an SVG path.
 
@@ -227,11 +233,14 @@ class Text(Entity):
             path_id: Unique ID for the path definition.
             path_d: SVG path ``d`` attribute string.
             start_offset: Offset along the path where text starts.
+            text_length: If set, the SVG ``textLength`` attribute that
+                stretches or compresses text to span this many pixels.
         """
         self._textpath_info = {
             "path_id": path_id,
             "path_d": path_d,
             "start_offset": start_offset,
+            "text_length": text_length,
         }
 
     def get_required_paths(self) -> list[tuple[str, str]]:
@@ -299,7 +308,14 @@ class Text(Entity):
         opacity_attr = f' opacity="{self.opacity}"' if self.opacity < 1.0 else ''
 
         offset = info["start_offset"]
-        offset_attr = f' startOffset="{offset}"' if offset != "0%" else ''
+        offset_attr = f' startOffset="{offset}"' if offset not in ("0%", "0.0%") else ''
+
+        text_len = info.get("text_length")
+        textlen_attr = (
+            f' textLength="{text_len:.1f}"'
+            f' lengthAdjust="spacing"'
+            if text_len else ''
+        )
 
         return (
             f'<text font-size="{self.font_size}" '
@@ -310,7 +326,8 @@ class Text(Entity):
             f'text-anchor="{self.text_anchor}" '
             f'dominant-baseline="{self.baseline}"'
             f'{opacity_attr}>'
-            f'<textPath href="#{info["path_id"]}"{offset_attr}>'
+            f'<textPath href="#{info["path_id"]}"'
+            f'{offset_attr}{textlen_attr}>'
             f'{escaped_content}'
             f'</textPath></text>'
         )

@@ -234,6 +234,26 @@ class Curve(StrokedPathMixin, Entity):
 
         return Point(x, y)
 
+    def arc_length(self, segments: int = 100) -> float:
+        """
+        Approximate the arc length of the curve by sampling.
+
+        Args:
+            segments: Number of line segments to approximate with.
+
+        Returns:
+            Approximate arc length in pixels.
+        """
+        total = 0.0
+        prev = self.point_at(0)
+        for i in range(1, segments + 1):
+            curr = self.point_at(i / segments)
+            dx = curr.x - prev.x
+            dy = curr.y - prev.y
+            total += math.sqrt(dx * dx + dy * dy)
+            prev = curr
+        return total
+
     def angle_at(self, t: float) -> float:
         """
         Get the tangent angle in degrees at parameter t on the curve.
