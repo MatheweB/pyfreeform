@@ -4,12 +4,12 @@ from __future__ import annotations
 
 import math
 from ..color import Color
-from ..config.caps import DEFAULT_ARROW_SCALE, get_marker, is_marker_cap
 from ..core.entity import Entity
 from ..core.point import Point
+from ..core.stroked_path_mixin import StrokedPathMixin
 
 
-class Curve(Entity):
+class Curve(StrokedPathMixin, Entity):
     """
     A quadratic Bezier curve between two points.
 
@@ -188,16 +188,6 @@ class Curve(Entity):
         self._color = Color(value)
 
     @property
-    def effective_start_cap(self) -> str:
-        """Resolved cap for the start end."""
-        return self.start_cap if self.start_cap is not None else self.cap
-
-    @property
-    def effective_end_cap(self) -> str:
-        """Resolved cap for the end end."""
-        return self.end_cap if self.end_cap is not None else self.cap
-
-    @property
     def anchor_names(self) -> list[str]:
         """Available anchors."""
         return ["start", "center", "end", "control"]
@@ -244,6 +234,35 @@ class Curve(Entity):
 
         return Point(x, y)
 
+    def angle_at(self, t: float) -> float:
+        """
+        Get the tangent angle in degrees at parameter t on the curve.
+
+        Uses the derivative of the quadratic Bezier formula.
+
+        Args:
+            t: Parameter from 0 (start) to 1 (end).
+
+        Returns:
+            Angle in degrees.
+        """
+        p0 = self.start
+        p1 = self.control
+        p2 = self.end
+
+        # Derivative of quadratic Bezier: B'(t) = 2(1-t)(P1-P0) + 2t(P2-P1)
+        dx = 2 * (1 - t) * (p1.x - p0.x) + 2 * t * (p2.x - p1.x)
+        dy = 2 * (1 - t) * (p1.y - p0.y) + 2 * t * (p2.y - p1.y)
+
+        if dx == 0 and dy == 0:
+            return 0.0
+        return math.degrees(math.atan2(dy, dx))
+
+    def to_svg_path_d(self) -> str:
+        """Return SVG path ``d`` attribute for this quadratic Bezier curve."""
+        s, c, e = self.start, self.control, self.end
+        return f"M {s.x} {s.y} Q {c.x} {c.y} {e.x} {e.y}"
+
     def bounds(self) -> tuple[float, float, float, float]:
         """Get bounding box (approximate - includes control point)."""
         points = [self.start, self.control, self.end]
@@ -253,36 +272,91 @@ class Curve(Entity):
         max_y = max(p.y for p in points)
         return (min_x, min_y, max_x, max_y)
 
-    def get_required_markers(self) -> list[tuple[str, str]]:
+    def move_by(self, dx: float = 0, dy: float = 0) -> Curve:
         """
-        Collect SVG marker definitions needed by this curve's caps.
+        Move the curve by an offset, updating both endpoints.
+
+        Args:
+            dx: Horizontal offset.
+            dy: Vertical offset.
 
         Returns:
-            List of (marker_id, marker_svg) tuples.
+            self, for method chaining.
         """
-        markers: list[tuple[str, str]] = []
-        size = self.width * DEFAULT_ARROW_SCALE
-        for cap_name in (self.effective_start_cap, self.effective_end_cap):
-            result = get_marker(cap_name, self.color, size)
-            if result is not None:
-                markers.append(result)
-        return markers
+        self._position = Point(self._position.x + dx, self._position.y + dy)
+        self._end = Point(self._end.x + dx, self._end.y + dy)
+        self._control = None  # Invalidate cached control point
+        return self
+
+    def rotate(self, angle: float, origin: Point | tuple[float, float] | None = None) -> Curve:
+        """
+        Rotate the curve around a point.
+
+        Args:
+            angle: Rotation angle in degrees (counterclockwise).
+            origin: Center of rotation (default: curve midpoint).
+
+        Returns:
+            self, for method chaining.
+        """
+        if origin is None:
+            origin = self.point_at(0.5)
+        elif isinstance(origin, tuple):
+            origin = Point(*origin)
+
+        angle_rad = math.radians(angle)
+        cos_a = math.cos(angle_rad)
+        sin_a = math.sin(angle_rad)
+
+        def rotate_point(p: Point) -> Point:
+            dx = p.x - origin.x
+            dy = p.y - origin.y
+            return Point(
+                dx * cos_a - dy * sin_a + origin.x,
+                dx * sin_a + dy * cos_a + origin.y,
+            )
+
+        self._position = rotate_point(self.start)
+        self._end = rotate_point(self.end)
+        self._control = None
+        return self
+
+    def scale(self, factor: float, origin: Point | tuple[float, float] | None = None) -> Curve:
+        """
+        Scale the curve around a point.
+
+        Args:
+            factor: Scale factor (1.0 = no change).
+            origin: Center of scaling (default: curve midpoint).
+
+        Returns:
+            self, for method chaining.
+        """
+        if origin is None:
+            origin = self.point_at(0.5)
+        elif isinstance(origin, tuple):
+            origin = Point(*origin)
+
+        new_start = Point(
+            origin.x + (self.start.x - origin.x) * factor,
+            origin.y + (self.start.y - origin.y) * factor,
+        )
+        new_end = Point(
+            origin.x + (self.end.x - origin.x) * factor,
+            origin.y + (self.end.y - origin.y) * factor,
+        )
+
+        self._position = new_start
+        self._end = new_end
+        self._control = None
+        return self
 
     def to_svg(self) -> str:
         """Render to SVG path element (quadratic Bezier)."""
         s = self.start
         c = self.control
         e = self.end
-        sc = self.effective_start_cap
-        ec = self.effective_end_cap
-        has_marker_start = is_marker_cap(sc)
-        has_marker_end = is_marker_cap(ec)
-
-        # Use "butt" linecap when markers are present
-        if has_marker_start or has_marker_end:
-            svg_cap = "butt"
-        else:
-            svg_cap = self.cap
+        svg_cap, marker_attrs = self._svg_cap_and_marker_attrs()
 
         parts = [
             f'<path d="M {s.x} {s.y} Q {c.x} {c.y} {e.x} {e.y}" '
@@ -290,15 +364,8 @@ class Curve(Entity):
             f'stroke-linecap="{svg_cap}"'
         ]
 
-        size = self.width * DEFAULT_ARROW_SCALE
-        if has_marker_start:
-            from ..config.caps import make_marker_id
-            mid = make_marker_id(sc, self.color, size)
-            parts.append(f' marker-start="url(#{mid})"')
-        if has_marker_end:
-            from ..config.caps import make_marker_id
-            mid = make_marker_id(ec, self.color, size)
-            parts.append(f' marker-end="url(#{mid})"')
+        if marker_attrs:
+            parts.append(marker_attrs)
 
         if self.opacity < 1.0:
             parts.append(f' opacity="{self.opacity}"')

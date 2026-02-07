@@ -9,6 +9,7 @@ from .core.point import Point
 from .core.entity import Entity
 from .core.connection import Connection
 from .core.pathable import Pathable
+from .core.tangent import get_angle_at
 
 # Entities
 from .entities.dot import Dot
@@ -129,6 +130,7 @@ __all__ = [
     "Entity",
     "Connection",
     "Pathable",
+    "get_angle_at",
     # Entities
     "Dot",
     "Line",

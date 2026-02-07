@@ -5,12 +5,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from .point import Point
+from .stroked_path_mixin import StrokedPathMixin
 
 if TYPE_CHECKING:
     from .entity import Entity
 
 
-class Connection:
+class Connection(StrokedPathMixin):
     """
     A connection between two entities.
     
@@ -145,14 +146,14 @@ class Connection:
         return self._style.get("cap", "round")
 
     @property
-    def effective_start_cap(self) -> str:
-        """Resolved cap for the start end."""
-        return self._style.get("start_cap") or self.cap
+    def start_cap(self) -> str | None:
+        """Override cap for the start end, or None."""
+        return self._style.get("start_cap")
 
     @property
-    def effective_end_cap(self) -> str:
-        """Resolved cap for the end end."""
-        return self._style.get("end_cap") or self.cap
+    def end_cap(self) -> str | None:
+        """Override cap for the end end, or None."""
+        return self._style.get("end_cap")
 
     @property
     def opacity(self) -> float:
@@ -174,41 +175,44 @@ class Connection:
             Point at that position along the connection.
         """
         return self.start_point.lerp(self.end_point, t)
-    
+
+    def angle_at(self, t: float) -> float:
+        """
+        Get the tangent angle in degrees at parameter t.
+
+        For a linear connection, the angle is constant.
+
+        Args:
+            t: Parameter (unused — angle is constant for connections).
+
+        Returns:
+            Angle in degrees.
+        """
+        import math
+
+        p1 = self.start_point
+        p2 = self.end_point
+        dx = p2.x - p1.x
+        dy = p2.y - p1.y
+        if dx == 0 and dy == 0:
+            return 0.0
+        return math.degrees(math.atan2(dy, dx))
+
+    def to_svg_path_d(self) -> str:
+        """Return SVG path ``d`` attribute for this connection."""
+        p1, p2 = self.start_point, self.end_point
+        return f"M {p1.x} {p1.y} L {p2.x} {p2.y}"
+
     def disconnect(self) -> None:
         """Remove this connection from both entities."""
         self._start.remove_connection(self)
         self._end.remove_connection(self)
 
-    def get_required_markers(self) -> list[tuple[str, str]]:
-        """
-        Collect SVG marker definitions needed by this connection's caps.
-
-        Returns:
-            List of (marker_id, marker_svg) tuples.
-        """
-        from ..config.caps import DEFAULT_ARROW_SCALE, get_marker
-
-        markers: list[tuple[str, str]] = []
-        size = self.width * DEFAULT_ARROW_SCALE
-        for cap_name in (self.effective_start_cap, self.effective_end_cap):
-            result = get_marker(cap_name, self.color, size)
-            if result is not None:
-                markers.append(result)
-        return markers
-
     def to_svg(self) -> str:
         """Render connection as SVG line element."""
-        from ..config.caps import DEFAULT_ARROW_SCALE, is_marker_cap, make_marker_id
-
         p1 = self.start_point
         p2 = self.end_point
-        sc = self.effective_start_cap
-        ec = self.effective_end_cap
-        has_marker_start = is_marker_cap(sc)
-        has_marker_end = is_marker_cap(ec)
-
-        svg_cap = "butt" if (has_marker_start or has_marker_end) else self.cap
+        svg_cap, marker_attrs = self._svg_cap_and_marker_attrs()
 
         parts = [
             f'<line x1="{p1.x}" y1="{p1.y}" '
@@ -217,13 +221,8 @@ class Connection:
             f'stroke-linecap="{svg_cap}"'
         ]
 
-        size = self.width * DEFAULT_ARROW_SCALE
-        if has_marker_start:
-            mid = make_marker_id(sc, self.color, size)
-            parts.append(f' marker-start="url(#{mid})"')
-        if has_marker_end:
-            mid = make_marker_id(ec, self.color, size)
-            parts.append(f' marker-end="url(#{mid})"')
+        if marker_attrs:
+            parts.append(marker_attrs)
 
         if self.opacity < 1.0:
             parts.append(f' opacity="{self.opacity}"')

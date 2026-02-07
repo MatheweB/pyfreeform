@@ -102,6 +102,7 @@ class Text(Entity):
         self.baseline = baseline
         self.rotation = float(rotation)
         self.opacity = float(opacity)
+        self._textpath_info: dict | None = None
 
     @property
     def color(self) -> str:
@@ -218,8 +219,38 @@ class Text(Entity):
 
         return self
 
+    def set_textpath(self, path_id: str, path_d: str, start_offset: str = "0%") -> None:
+        """
+        Configure this text to warp along an SVG path.
+
+        Args:
+            path_id: Unique ID for the path definition.
+            path_d: SVG path ``d`` attribute string.
+            start_offset: Offset along the path where text starts.
+        """
+        self._textpath_info = {
+            "path_id": path_id,
+            "path_d": path_d,
+            "start_offset": start_offset,
+        }
+
+    def get_required_paths(self) -> list[tuple[str, str]]:
+        """
+        Collect SVG path definitions needed by this text's textPath.
+
+        Returns:
+            List of (path_id, path_svg) tuples.
+        """
+        if self._textpath_info is None:
+            return []
+        info = self._textpath_info
+        path_svg = f'<path id="{info["path_id"]}" d="{info["path_d"]}" fill="none" />'
+        return [(info["path_id"], path_svg)]
+
     def to_svg(self) -> str:
         """Render to SVG text element."""
+        if self._textpath_info is not None:
+            return self._to_svg_textpath()
         # Build transform attribute if rotation is applied
         transform = ""
         if self.rotation != 0:
@@ -250,6 +281,38 @@ class Text(Entity):
             f'{transform}>'
             f'{escaped_content}'
             f'</text>'
+        )
+
+    def _to_svg_textpath(self) -> str:
+        """Render to SVG text element with textPath warping."""
+        info = self._textpath_info
+
+        escaped_content = (
+            self.content
+            .replace("&", "&amp;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+            .replace('"', "&quot;")
+            .replace("'", "&apos;")
+        )
+
+        opacity_attr = f' opacity="{self.opacity}"' if self.opacity < 1.0 else ''
+
+        offset = info["start_offset"]
+        offset_attr = f' startOffset="{offset}"' if offset != "0%" else ''
+
+        return (
+            f'<text font-size="{self.font_size}" '
+            f'font-family="{self.font_family}" '
+            f'font-style="{self.font_style}" '
+            f'font-weight="{self.font_weight}" '
+            f'fill="{self.color}" '
+            f'text-anchor="{self.text_anchor}" '
+            f'dominant-baseline="{self.baseline}"'
+            f'{opacity_attr}>'
+            f'<textPath href="#{info["path_id"]}"{offset_attr}>'
+            f'{escaped_content}'
+            f'</textPath></text>'
         )
 
     def __repr__(self) -> str:

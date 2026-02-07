@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Literal
 from .point import Point
 from .entity import Entity
 from .pathable import Pathable
+from .tangent import get_angle_at
 
 if TYPE_CHECKING:
     from ..entities.dot import Dot
@@ -184,6 +185,33 @@ class Surface:
         entity.cell = self
         self._entities.append(entity)
 
+    def _resolve_along(
+        self,
+        along: Pathable,
+        t: float | None,
+        align: bool,
+        user_rotation: float,
+    ) -> tuple[Point, float]:
+        """
+        Compute position and effective rotation from along/t/align params.
+
+        Args:
+            along: Path to position along.
+            t: Parameter on the path (defaults to 0.5).
+            align: Whether to rotate to follow path tangent.
+            user_rotation: User-supplied rotation offset.
+
+        Returns:
+            (position, effective_rotation) tuple.
+        """
+        if t is None:
+            t = 0.5
+        position = along.point_at(t)
+        if align:
+            tangent_angle = get_angle_at(along, t)
+            return position, tangent_angle + user_rotation
+        return position, user_rotation
+
     # =========================================================================
     # BUILDER METHODS
     # =========================================================================
@@ -244,8 +272,8 @@ class Surface:
             z_index = style.z_index
             opacity = style.opacity
 
-        if along is not None and t is not None:
-            position = along.point_at(t)
+        if along is not None:
+            position, _ = self._resolve_along(along, t, False, 0)
         else:
             position = self.relative_to_absolute(at)
 
@@ -259,6 +287,9 @@ class Surface:
         *,
         start: Position = "center",
         end: Position = "center",
+        along: Pathable | None = None,
+        t: float | None = None,
+        align: bool = False,
         width: float = 1,
         color: str = "black",
         z_index: int = 0,
@@ -271,9 +302,16 @@ class Surface:
         """
         Add a line to this surface.
 
+        When ``along`` is provided, the line's midpoint is repositioned
+        onto the path at parameter ``t``. If ``align=True``, the line
+        is also rotated to follow the path's tangent direction.
+
         Args:
             start: Starting position
             end: Ending position
+            along: Path to position the line's midpoint along
+            t: Parameter on the path (0.0 to 1.0, default 0.5)
+            align: Rotate line to follow path tangent
             width: Stroke width in pixels
             color: Stroke color
             z_index: Layer order
@@ -288,6 +326,9 @@ class Surface:
         Examples:
             >>> cell.add_line(start="top_left", end="bottom_right")
             >>> cell.add_line(start="left", end="right", end_cap="arrow")
+            >>> # Position along a curve
+            >>> curve = cell.add_curve()
+            >>> cell.add_line(start=(0,0), end=(20,0), along=curve, t=0.5, align=True)
         """
         from ..entities.line import Line
 
@@ -308,6 +349,14 @@ class Surface:
             width=width, color=color, z_index=z_index, cap=cap,
             start_cap=start_cap, end_cap=end_cap, opacity=opacity,
         )
+
+        if along is not None:
+            target, rotation = self._resolve_along(along, t, align, 0)
+            midpoint = line.anchor("center")
+            line.move_by(target.x - midpoint.x, target.y - midpoint.y)
+            if align:
+                line.rotate(rotation, origin=target)
+
         self._register_entity(line)
         return line
 
@@ -316,6 +365,9 @@ class Surface:
         *,
         start: Literal["top_left", "top_right", "bottom_left", "bottom_right"] = "bottom_left",
         end: Literal["top_left", "top_right", "bottom_left", "bottom_right"] = "top_right",
+        along: Pathable | None = None,
+        t: float | None = None,
+        align: bool = False,
         width: float = 1,
         color: str = "black",
         z_index: int = 0,
@@ -333,6 +385,9 @@ class Surface:
         Args:
             start: Starting corner (default: "bottom_left")
             end: Ending corner (default: "top_right")
+            along: Path to position the line's midpoint along
+            t: Parameter on the path (0.0 to 1.0, default 0.5)
+            align: Rotate line to follow path tangent
             width: Stroke width
             color: Stroke color
             z_index: Layer order
@@ -350,7 +405,7 @@ class Surface:
             >>> cell.add_dot(along=line, t=cell.brightness)  # Dot slides along
         """
         return self.add_line(
-            start=start, end=end,
+            start=start, end=end, along=along, t=t, align=align,
             width=width, color=color, z_index=z_index, cap=cap,
             start_cap=start_cap, end_cap=end_cap, opacity=opacity, style=style,
         )
@@ -361,6 +416,9 @@ class Surface:
         start: Position = "bottom_left",
         end: Position = "top_right",
         curvature: float = 0.5,
+        along: Pathable | None = None,
+        t: float | None = None,
+        align: bool = False,
         width: float = 1,
         color: str = "black",
         z_index: int = 0,
@@ -376,11 +434,18 @@ class Surface:
         Curves are quadratic Bezier curves. The curvature parameter controls
         how much the curve bows away from a straight line.
 
+        When ``along`` is provided, the curve's midpoint is repositioned
+        onto the path at parameter ``t``. If ``align=True``, the curve
+        is also rotated to follow the path's tangent direction.
+
         Args:
             start: Starting position
             end: Ending position
             curvature:  How much the curve bows (-1 to 1, 0 = straight)
                         Positive = bows left, Negative = bows right
+            along: Path to position the curve's midpoint along
+            t: Parameter on the path (0.0 to 1.0, default 0.5)
+            align: Rotate curve to follow path tangent
             width: Stroke width in pixels
             color: Stroke color
             z_index: Layer order
@@ -417,6 +482,14 @@ class Surface:
             width=width, color=color, z_index=z_index, cap=cap,
             start_cap=start_cap, end_cap=end_cap, opacity=opacity,
         )
+
+        if along is not None:
+            target, rotation = self._resolve_along(along, t, align, 0)
+            midpoint = curve.point_at(0.5)
+            curve.move_by(target.x - midpoint.x, target.y - midpoint.y)
+            if align:
+                curve.rotate(rotation, origin=target)
+
         self._register_entity(curve)
         return curve
 
@@ -424,6 +497,9 @@ class Surface:
         self,
         *,
         at: Position = "center",
+        along: Pathable | None = None,
+        t: float | None = None,
+        align: bool = False,
         rx: float | None = None,
         ry: float | None = None,
         rotation: float = 0,
@@ -440,11 +516,14 @@ class Surface:
         Add an ellipse to this surface.
 
         Ellipses support parametric positioning just like lines and curves.
-        Use `add_dot(along=ellipse, t=...)` to position dots around
-        the ellipse perimeter.
+        Use ``along`` + ``t`` to place the ellipse center on a path.
+        Use ``align=True`` to rotate the ellipse to follow the tangent.
 
         Args:
             at: Position (center of ellipse)
+            along: Path to position the ellipse center along
+            t: Parameter on the path (0.0 to 1.0, default 0.5)
+            align: Rotate ellipse to follow path tangent
             rx: Horizontal radius (default: 40% of surface width)
             ry: Vertical radius (default: 40% of surface height)
             rotation: Rotation in degrees (counterclockwise)
@@ -460,6 +539,9 @@ class Surface:
         Examples:
             >>> ellipse = cell.add_ellipse(rx=15, ry=10)
             >>> cell.add_dot(along=ellipse, t=cell.brightness)
+            >>> # Place ellipse along a curve
+            >>> curve = cell.add_curve()
+            >>> cell.add_ellipse(rx=5, ry=3, along=curve, t=0.5, align=True)
         """
         from ..entities.ellipse import Ellipse
 
@@ -472,7 +554,10 @@ class Surface:
             fill_opacity = style.fill_opacity
             stroke_opacity = style.stroke_opacity
 
-        position = self.relative_to_absolute(at)
+        if along is not None:
+            position, rotation = self._resolve_along(along, t, align, rotation)
+        else:
+            position = self.relative_to_absolute(at)
 
         if rx is None:
             rx = self._width * 0.4
@@ -493,6 +578,9 @@ class Surface:
         self,
         vertices: list[tuple[float, float]],
         *,
+        along: Pathable | None = None,
+        t: float | None = None,
+        align: bool = False,
         fill: str | None = "black",
         stroke: str | None = None,
         stroke_width: float = 1,
@@ -509,9 +597,16 @@ class Surface:
         Vertices are specified in relative coordinates (0-1), where
         (0,0) is top-left and (1,1) is bottom-right of the surface.
 
+        When ``along`` is provided, the polygon's centroid is repositioned
+        onto the path at parameter ``t``. If ``align=True``, the polygon
+        is rotated to follow the path's tangent direction.
+
         Args:
             vertices:   List of (x, y) tuples in relative coordinates.
                         Use shape helpers like hexagon(), star() for common shapes.
+            along: Path to position the polygon's centroid along
+            t: Parameter on the path (0.0 to 1.0, default 0.5)
+            align: Rotate polygon to follow path tangent
             fill: Fill color (None for transparent)
             stroke: Stroke color (None for no stroke)
             stroke_width: Stroke width in pixels
@@ -526,6 +621,9 @@ class Surface:
             >>> cell.add_polygon([(0.5, 0.1), (0.9, 0.9), (0.1, 0.9)], fill="red")
             >>> from pyfreeform import shapes
             >>> cell.add_polygon(shapes.hexagon(), fill="purple")
+            >>> # Place polygon along a curve
+            >>> curve = cell.add_curve()
+            >>> cell.add_polygon(shapes.hexagon(), along=curve, t=0.5, align=True)
         """
         from ..entities.polygon import Polygon
 
@@ -551,7 +649,13 @@ class Surface:
             stroke_opacity=stroke_opacity,
         )
 
-        if rotation != 0:
+        if along is not None:
+            target, effective_rotation = self._resolve_along(along, t, align, rotation)
+            center = polygon.position
+            polygon.move_by(target.x - center.x, target.y - center.y)
+            if effective_rotation != 0:
+                polygon.rotate(effective_rotation, origin=target)
+        elif rotation != 0:
             polygon.rotate(rotation)
 
         self._register_entity(polygon)
@@ -562,6 +666,9 @@ class Surface:
         content: str,
         *,
         at: Position = "center",
+        along: Pathable | None = None,
+        t: float | None = None,
+        align: bool = False,
         font_size: float | None = None,
         color: str = "black",
         font_family: str = "sans-serif",
@@ -577,9 +684,20 @@ class Surface:
         """
         Add text to this surface.
 
+        When ``along`` is provided with ``t``, the text is positioned at
+        that point on the path. If ``align=True``, the text is rotated
+        to follow the path's tangent.
+
+        When ``along`` is provided without ``t``, the text is warped
+        along the path using SVG ``<textPath>`` (Phase 6).
+
         Args:
             content: The text string to display.
             at: Position ("center", "top_left", or (rx, ry) tuple).
+            along: Path to position or warp text along.
+            t: Parameter on the path (0.0 to 1.0). If omitted with
+               ``along``, text warps along the full path.
+            align: Rotate text to follow path tangent (only with ``t``).
             font_size: Font size in pixels (default: surface height * 0.6).
             color: Text color.
             font_family: Font family.
@@ -597,6 +715,11 @@ class Surface:
         Examples:
             >>> cell.add_text("A")  # Centered letter
             >>> cell.add_text("Label", at="top", font_size=10)
+            >>> # Position text along a curve
+            >>> curve = cell.add_curve()
+            >>> cell.add_text("Hi", along=curve, t=0.5, align=True)
+            >>> # Warp text along a curve (textPath)
+            >>> cell.add_text("Hello World", along=curve)
         """
         from ..entities.text import Text
 
@@ -613,7 +736,14 @@ class Surface:
             z_index = style.z_index
             opacity = style.opacity
 
-        position = self.relative_to_absolute(at)
+        if along is not None and t is not None:
+            position, rotation = self._resolve_along(along, t, align, rotation)
+        elif along is not None:
+            # TextPath warp mode — will be handled in Phase 6
+            # For now, position at path midpoint
+            position, rotation = self._resolve_along(along, 0.5, align, rotation)
+        else:
+            position = self.relative_to_absolute(at)
 
         if font_size is None:
             font_size = self._height * 0.6
@@ -632,6 +762,22 @@ class Surface:
             z_index=z_index,
             opacity=opacity,
         )
+
+        # TextPath warp mode: along provided without t
+        if along is not None and t is None:
+            if not hasattr(along, 'to_svg_path_d'):
+                raise TypeError(
+                    f"Text warping requires a path with to_svg_path_d(), "
+                    f"but {type(along).__name__} does not have one."
+                )
+            import itertools
+            _textpath_counter = getattr(self, '_textpath_counter', None)
+            if _textpath_counter is None:
+                _textpath_counter = itertools.count()
+                self._textpath_counter = _textpath_counter
+            path_id = f"textpath-{next(_textpath_counter)}"
+            text.set_textpath(path_id, along.to_svg_path_d())
+
         self._register_entity(text)
         return text
 
@@ -639,6 +785,9 @@ class Surface:
         self,
         *,
         at: Position = "center",
+        along: Pathable | None = None,
+        t: float | None = None,
+        align: bool = False,
         width: float | None = None,
         height: float | None = None,
         rotation: float = 0,
@@ -657,10 +806,17 @@ class Surface:
         The ``at`` parameter specifies where the CENTER of the rectangle
         will be placed, consistent with add_ellipse().
 
+        When ``along`` is provided, the rectangle center is repositioned
+        onto the path at parameter ``t``. If ``align=True``, the rectangle
+        is rotated to follow the path's tangent direction.
+
         For full-surface fills use add_fill(). For borders use add_border().
 
         Args:
             at: Position of rectangle center.
+            along: Path to position the rectangle center along.
+            t: Parameter on the path (0.0 to 1.0, default 0.5).
+            align: Rotate rectangle to follow path tangent.
             width: Rectangle width in pixels (default: 60% of surface width).
             height: Rectangle height in pixels (default: 60% of surface height).
             rotation: Rotation in degrees (counterclockwise).
@@ -679,6 +835,9 @@ class Surface:
         Examples:
             >>> rect = cell.add_rect(fill="coral")
             >>> rect = cell.add_rect(width=30, height=20, rotation=45)
+            >>> # Place rect along a curve
+            >>> curve = cell.add_curve()
+            >>> cell.add_rect(width=10, height=5, along=curve, t=0.5, align=True)
         """
         from ..entities.rect import Rect
 
@@ -691,7 +850,10 @@ class Surface:
             fill_opacity = style.fill_opacity
             stroke_opacity = style.stroke_opacity
 
-        center_pos = self.relative_to_absolute(at)
+        if along is not None:
+            center_pos, rotation = self._resolve_along(along, t, align, rotation)
+        else:
+            center_pos = self.relative_to_absolute(at)
 
         if width is None:
             width = self._width * 0.6

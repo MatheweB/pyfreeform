@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 from ..color import Color
-from ..config.caps import DEFAULT_ARROW_SCALE, get_marker, is_marker_cap
 from ..core.entity import Entity
 from ..core.point import Point
+from ..core.stroked_path_mixin import StrokedPathMixin
 
 
-class Line(Entity):
+class Line(StrokedPathMixin, Entity):
     """
     A line segment between two points.
 
@@ -139,16 +139,6 @@ class Line(Entity):
         self._color = Color(value)
 
     @property
-    def effective_start_cap(self) -> str:
-        """Resolved cap for the start end."""
-        return self.start_cap if self.start_cap is not None else self.cap
-
-    @property
-    def effective_end_cap(self) -> str:
-        """Resolved cap for the end end."""
-        return self.end_cap if self.end_cap is not None else self.cap
-
-    @property
     def length(self) -> float:
         """Length of the line."""
         return self.start.distance_to(self.end)
@@ -180,6 +170,31 @@ class Line(Entity):
             Point at that position along the line.
         """
         return self.start.lerp(self.end, t)
+
+    def angle_at(self, t: float) -> float:
+        """
+        Get the tangent angle in degrees at parameter t.
+
+        For a line, the angle is constant (same at every point).
+
+        Args:
+            t: Parameter (unused — angle is constant for lines).
+
+        Returns:
+            Angle in degrees.
+        """
+        import math
+
+        dx = self.end.x - self.start.x
+        dy = self.end.y - self.start.y
+        if dx == 0 and dy == 0:
+            return 0.0
+        return math.degrees(math.atan2(dy, dx))
+
+    def to_svg_path_d(self) -> str:
+        """Return SVG path ``d`` attribute for this line."""
+        s, e = self.start, self.end
+        return f"M {s.x} {s.y} L {e.x} {e.y}"
 
     def move_to(self, x: float | Point, y: float | None = None) -> Line:
         """
@@ -301,35 +316,11 @@ class Line(Entity):
         x2, y2 = self.end
         return (min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2))
 
-    def get_required_markers(self) -> list[tuple[str, str]]:
-        """
-        Collect SVG marker definitions needed by this line's caps.
-
-        Returns:
-            List of (marker_id, marker_svg) tuples.
-        """
-        markers: list[tuple[str, str]] = []
-        size = self.width * DEFAULT_ARROW_SCALE
-        for cap_name in (self.effective_start_cap, self.effective_end_cap):
-            result = get_marker(cap_name, self.color, size)
-            if result is not None:
-                markers.append(result)
-        return markers
-
     def to_svg(self) -> str:
         """Render to SVG line element."""
         s = self.start
         e = self.end
-        sc = self.effective_start_cap
-        ec = self.effective_end_cap
-        has_marker_start = is_marker_cap(sc)
-        has_marker_end = is_marker_cap(ec)
-
-        # Use "butt" linecap when markers are present (arrowhead covers the endpoint)
-        if has_marker_start or has_marker_end:
-            svg_cap = "butt"
-        else:
-            svg_cap = self.cap
+        svg_cap, marker_attrs = self._svg_cap_and_marker_attrs()
 
         parts = [
             f'<line x1="{s.x}" y1="{s.y}" '
@@ -338,15 +329,8 @@ class Line(Entity):
             f'stroke-linecap="{svg_cap}"'
         ]
 
-        size = self.width * DEFAULT_ARROW_SCALE
-        if has_marker_start:
-            from ..config.caps import make_marker_id
-            mid = make_marker_id(sc, self.color, size)
-            parts.append(f' marker-start="url(#{mid})"')
-        if has_marker_end:
-            from ..config.caps import make_marker_id
-            mid = make_marker_id(ec, self.color, size)
-            parts.append(f' marker-end="url(#{mid})"')
+        if marker_attrs:
+            parts.append(marker_attrs)
 
         if self.opacity < 1.0:
             parts.append(f' opacity="{self.opacity}"')

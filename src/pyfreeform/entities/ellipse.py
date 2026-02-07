@@ -194,6 +194,67 @@ class Ellipse(Entity):
         angle_rad = t * 2 * math.pi
         return self._point_at_angle_rad(angle_rad)
 
+    def angle_at(self, t: float) -> float:
+        """
+        Get the tangent angle in degrees at parameter t on the ellipse.
+
+        Uses the derivative of the parametric ellipse equations,
+        accounting for rotation.
+
+        Args:
+            t: Parameter from 0.0 to 1.0 around the ellipse.
+
+        Returns:
+            Angle in degrees.
+        """
+        angle_rad = t * 2 * math.pi
+
+        # Derivative of parametric ellipse (unrotated):
+        # dx/dθ = -rx * sin(θ)
+        # dy/dθ =  ry * cos(θ)
+        dx_unrot = -self.rx * math.sin(angle_rad)
+        dy_unrot = self.ry * math.cos(angle_rad)
+
+        # Apply ellipse rotation
+        if self.rotation != 0:
+            rot_rad = math.radians(self.rotation)
+            cos_r = math.cos(rot_rad)
+            sin_r = math.sin(rot_rad)
+            dx = dx_unrot * cos_r - dy_unrot * sin_r
+            dy = dx_unrot * sin_r + dy_unrot * cos_r
+        else:
+            dx, dy = dx_unrot, dy_unrot
+
+        if dx == 0 and dy == 0:
+            return 0.0
+        return math.degrees(math.atan2(dy, dx))
+
+    def to_svg_path_d(self) -> str:
+        """Return SVG path ``d`` attribute for the full ellipse as two arcs."""
+        cx, cy = self.position.x, self.position.y
+
+        # Right point (start) and left point (midway), accounting for rotation
+        if self.rotation != 0:
+            rot_rad = math.radians(self.rotation)
+            cos_r, sin_r = math.cos(rot_rad), math.sin(rot_rad)
+            # Rightmost point
+            sx = cx + self.rx * cos_r
+            sy = cy + self.rx * sin_r
+            # Leftmost point
+            mx = cx - self.rx * cos_r
+            my = cy - self.rx * sin_r
+        else:
+            sx = cx + self.rx
+            sy = cy
+            mx = cx - self.rx
+            my = cy
+
+        return (
+            f"M {sx} {sy} "
+            f"A {self.rx} {self.ry} {self.rotation} 1 1 {mx} {my} "
+            f"A {self.rx} {self.ry} {self.rotation} 1 1 {sx} {sy}"
+        )
+
     def point_at_angle(self, degrees: float) -> Point:
         """
         Get a point at a specific angle on the ellipse perimeter.

@@ -375,6 +375,15 @@ class Scene(Surface):
 
         return markers
 
+    def _collect_path_defs(self) -> dict[str, str]:
+        """Collect unique SVG path definitions needed by textPath entities."""
+        paths: dict[str, str] = {}
+        for entity in self.entities:
+            if hasattr(entity, "get_required_paths"):
+                for pid, svg in entity.get_required_paths():
+                    paths[pid] = svg
+        return paths
+
     def to_svg(self) -> str:
         """
         Render the scene to an SVG string.
@@ -393,11 +402,14 @@ class Scene(Surface):
             f'viewBox="0 0 {self._width} {self._height}">',
         ]
 
-        # Marker definitions (for arrow caps, etc.)
+        # Definitions (markers for arrow caps, paths for textPath)
         markers = self._collect_markers()
-        if markers:
+        path_defs = self._collect_path_defs()
+        if markers or path_defs:
             lines.append("  <defs>")
             for svg in markers.values():
+                lines.append(f"    {svg}")
+            for svg in path_defs.values():
                 lines.append(f"    {svg}")
             lines.append("  </defs>")
 
