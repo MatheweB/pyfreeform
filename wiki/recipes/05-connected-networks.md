@@ -99,9 +99,9 @@ for cell in scene.grid:
         )
         scene.add(connection)
 
-    # Connect to bottom neighbor
-    if cell.bottom and (cell.bottom.row, cell.bottom.col) in dots:
-        dot2 = dots[(cell.bottom.row, cell.bottom.col)]
+    # Connect to below neighbor
+    if cell.below and (cell.below.row, cell.below.col) in dots:
+        dot2 = dots[(cell.below.row, cell.below.col)]
 
         connection = Connection(
             start=dot1,
@@ -310,9 +310,9 @@ if cell.brightness > 0.5 and neighbor.brightness > 0.5:
 # Connect to all 8 neighbors
 neighbors = [
     cell.right, cell.left,
-    cell.top, cell.bottom,
-    cell.top_left, cell.top_right,
-    cell.bottom_left, cell.bottom_right
+    cell.above, cell.below,
+    cell.above_left, cell.above_right,
+    cell.below_left, cell.below_right
 ]
 
 for neighbor in neighbors:
@@ -487,22 +487,22 @@ for (row, col), dot1 in dots.items():
     # ... find neighbors and connect
 ```
 
-### Pitfall 5: Using `cell.below` Instead of `cell.bottom`
+### Pitfall 5: Using `cell.bottom` Instead of `cell.below`
 
 ```python
-# ❌ WRONG - No such attribute
-if cell.below:
-    # This will cause AttributeError
-
-# ✅ CORRECT - Use cell.bottom
+# ❌ WRONG - cell.bottom is not a neighbor accessor
 if cell.bottom:
-    dot2 = dots.get((cell.bottom.row, cell.bottom.col))
+    # cell.bottom does not exist as a property
+
+# ✅ CORRECT - Use cell.below for the neighbor below
+if cell.below:
+    dot2 = dots.get((cell.below.row, cell.below.col))
     if dot2:
         Connection(start=dot1, end=dot2, ...)
 ```
 
 !!! warning "Neighbor Attribute Names"
-    Cell neighbors are: `cell.left`, `cell.right`, `cell.above`, `cell.bottom` (NOT `cell.top` or `cell.below`).
+    Cell neighbors are: `cell.left`, `cell.right`, `cell.above`, `cell.below` (NOT `cell.top` or `cell.bottom`).
 
 ---
 
@@ -551,8 +551,8 @@ for (row, col), dot in dots.items():
 for cell in scene.grid:
     if cell.right:
         # Connect to right
-    if cell.bottom:
-        # Connect to bottom
+    if cell.below:
+        # Connect to below
 
 # Phase 2: Add distance-based connections (complex)
 for i, (dot1, cell1) in enumerate(dots):

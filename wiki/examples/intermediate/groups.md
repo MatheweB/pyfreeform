@@ -1,90 +1,61 @@
 
-# Example: Groups
+# EntityGroup — Reusable Shapes
 
 **Difficulty**: ⭐⭐ Intermediate
 
-Organize multiple entities into groups for easier management and transformations.
+Define composite shapes once and place them like any entity — `cell.place()`, `scene.add()`, `fit_to_cell()` all work.
 
 ---
 
 ## What You'll Learn
 
-- Creating groups of entities
-- Transforming entire groups at once
-- Layering groups
-- Building composite shapes
+- Creating reusable shapes with `EntityGroup`
+- Placing groups with `cell.place()`, `cell.add_entity()`, and `scene.add()`
+- Auto-sizing with `fit_to_cell()`
+- Writing factory functions for parameterized shapes
+- Nesting groups inside groups
 
 ---
 
 ## Final Result
 
-![Flower Groups](../_images/groups/01_flower_groups.svg)
+![Grid Stamps](../_images/groups/03_grid_stamps.svg)
 
 ### More Examples
 
-| Flower Groups | Composite Shapes | Radial Groups |
-|---------------|------------------|---------------|
-| ![Example 1](../_images/groups/01_flower_groups.svg) | ![Example 2](../_images/groups/02_composite_shapes.svg) | ![Example 3](../_images/groups/03_radial_groups.svg) |
+| Flower Pattern | Shape Library | Grid Stamps | Nested Groups |
+|---------------|---------------|-------------|---------------|
+| ![1](../_images/groups/01_flower_pattern.svg) | ![2](../_images/groups/02_shape_library.svg) | ![3](../_images/groups/03_grid_stamps.svg) | ![4](../_images/groups/04_nested_groups.svg) |
 
 ---
 
 ## Complete Code
 
 ```python
-from pyfreeform import Scene, Palette, Group
+from pyfreeform import Scene, Palette, EntityGroup, Dot
 import math
 
-scene = Scene.with_grid(cols=12, rows=10, cell_size=25)
+def make_flower(color="coral", petal_color="gold", petal_count=8):
+    """Create a flower EntityGroup."""
+    g = EntityGroup()
+    g.add(Dot(0, 0, radius=10, color=color))
+    for i in range(petal_count):
+        angle = i * (2 * math.pi / petal_count)
+        g.add(Dot(15 * math.cos(angle), 15 * math.sin(angle), radius=6, color=petal_color))
+    return g
+
 colors = Palette.midnight()
+scene = Scene.with_grid(cols=8, rows=6, cell_size=40)
 scene.background = colors.background
 
-# Example 1: Flower pattern as a group
-def create_flower(center_cell, scale=1.0):
-    """Create a flower pattern from dots."""
-    group = Group()
-
-    # Center dot
-    center = center_cell.add_dot(
-        radius=10 * scale,
+for cell in scene.grid:
+    flower = make_flower(
         color=colors.primary,
-        z_index=5
+        petal_color=colors.accent,
+        petal_count=6 + (cell.col % 3) * 2,
     )
-    group.add(center)
-
-    # Petals around center
-    for i in range(8):
-        angle = i * (2 * math.pi / 8)
-        distance = 15 * scale
-
-        x = center_cell.center.x + distance * math.cos(angle)
-        y = center_cell.center.y + distance * math.sin(angle)
-
-        from pyfreeform import Dot
-        petal = Dot(x=x, y=y, radius=6 * scale, color=colors.accent)
-        scene.add(petal)
-        group.add(petal)
-
-    return group
-
-# Create flowers
-cell1 = scene.grid[2, 2]
-flower1 = create_flower(cell1, scale=1.0)
-flower1.rotate(15)  # Rotate entire flower
-
-cell2 = scene.grid[2, 8]
-flower2 = create_flower(cell2, scale=0.8)
-flower2.rotate(-30)
-
-# Example 2: Constellation group
-constellation = Group()
-
-# Stars
-for cell in scene.grid[6:8, 3:6]:
-    dot = cell.add_dot(radius=3, color=colors.secondary, z_index=5)
-    constellation.add(dot)
-
-# Connections between stars (simplified)
-# ... add connections to group ...
+    cell.place(flower)
+    flower.fit_to_cell(0.75)
 
 scene.save("groups.svg")
 ```
@@ -93,243 +64,345 @@ scene.save("groups.svg")
 
 ## Step-by-Step Breakdown
 
-### Step 1: Creating a Group
+### Step 1: Define an EntityGroup
+
+Add entities positioned relative to `(0, 0)` — the group's local origin:
 
 ```python
-from pyfreeform import Group
+from pyfreeform import EntityGroup, Dot
+import math
 
-group = Group()
+flower = EntityGroup()
+
+# Center dot at the origin
+flower.add(Dot(0, 0, radius=10, color="coral"))
+
+# Petals around the center
+for i in range(8):
+    angle = i * (2 * math.pi / 8)
+    x = 15 * math.cos(angle)
+    y = 15 * math.sin(angle)
+    flower.add(Dot(x, y, radius=6, color="gold"))
 ```
 
 **What's happening:**
-- `Group()` creates an empty container for entities
-- Groups can hold dots, lines, curves, polygons, etc.
-- Entities can belong to multiple groups
 
-### Step 2: Adding Entities to Groups
+- `EntityGroup()` creates an empty group at position `(0, 0)`
+- `group.add(entity)` adds a child — its position is relative to the group's origin
+- The group is not rendered yet — it's just a definition
+
+---
+
+### Step 2: Place It
+
+EntityGroup behaves like any entity. All standard placement methods work:
+
+![Flower Pattern](../_images/groups/01_flower_pattern.svg)
 
 ```python
-dot1 = cell.add_dot(radius=5, color="red")
-dot2 = cell.add_dot(radius=5, color="blue")
-line = cell.add_line(start="left", end="right")
+# Place at an absolute position
+scene.add(flower.move_to(100, 100))
 
-group.add(dot1)
-group.add(dot2)
-group.add(line)
+# Place centered in a cell
+cell.place(flower)
+
+# Same thing, add_* naming convention
+cell.add_entity(flower)
+
+# Place at a specific position within a cell
+cell.add_entity(flower, at="top_left")
+cell.add_entity(flower, at=(0.3, 0.7))
 ```
 
 **What's happening:**
-- `group.add(entity)` adds an entity to the group
-- Entities still exist independently in the scene
-- Group maintains references for batch operations
 
-### Step 3: Transforming Groups
+- `scene.add(group)` adds the group to the scene at its current position
+- `cell.place(group)` sets the group's position to the cell center and registers it
+- `cell.add_entity(group)` is an alias for `place()` that matches the `add_*` naming convention
+- The SVG output wraps children in `<g transform="translate(x, y)">` — children are never mutated
+
+---
+
+### Step 3: Auto-Size with fit_to_cell
+
+`fit_to_cell()` scales the group to fit within its cell bounds, just like any entity:
+
+![Grid Stamps](../_images/groups/03_grid_stamps.svg)
 
 ```python
-# Rotate all entities in group
-group.rotate(45)
+scene = Scene.with_grid(cols=8, rows=6, cell_size=40)
+scene.background = colors.background
 
-# Scale all entities in group
-group.scale(1.5)
-
-# Move all entities in group
-group.translate(dx=20, dy=10)
+for cell in scene.grid:
+    flower = make_flower(color=colors.primary, petal_color=colors.accent)
+    cell.place(flower)
+    flower.fit_to_cell(0.75)  # Scale to 75% of cell size
 ```
 
 **What's happening:**
-- Transformations apply to ALL entities in the group
-- Rotation happens around the group's centroid
-- Can specify custom origin for rotation/scaling
 
-### Step 4: Composite Patterns
+- `fit_to_cell(0.75)` computes the group's bounding box, calculates the scale needed to fit within 75% of the cell, and applies it
+- The group's internal scale factor adjusts the SVG `<g>` transform — children are not modified
+- This works identically to calling `fit_to_cell()` on a Dot, Ellipse, or any other entity
+
+---
+
+### Step 4: Factory Functions for Reuse
+
+Wrap `EntityGroup` creation in a function for parameterized reuse. Each call returns a new independent instance:
+
+![Shape Library](../_images/groups/02_shape_library.svg)
 
 ```python
-def create_arrow(cell, direction=0):
-    """Create an arrow pointing in direction (degrees)."""
-    group = Group()
+def make_flower(color="coral", petal_color="gold", petal_count=8):
+    g = EntityGroup()
+    g.add(Dot(0, 0, radius=10, color=color))
+    for i in range(petal_count):
+        angle = i * (2 * math.pi / petal_count)
+        g.add(Dot(15 * math.cos(angle), 15 * math.sin(angle), radius=6, color=petal_color))
+    return g
 
-    # Arrow shaft (custom rectangle)
-    from pyfreeform import Rect
-    shaft = Rect(
-        x=cell.x,
-        y=cell.center.y - cell.height * 0.1,
-        width=cell.width * 0.6,
-        height=cell.height * 0.2,
-        fill=colors.primary
-    )
-    scene.add(shaft)
-    group.add(shaft)
+def make_ring(radius=20, count=8, dot_radius=3, color="teal"):
+    g = EntityGroup()
+    for i in range(count):
+        angle = i * (2 * math.pi / count)
+        g.add(Dot(radius * math.cos(angle), radius * math.sin(angle),
+                   radius=dot_radius, color=color))
+    return g
 
-    # Arrowhead (triangle)
-    from pyfreeform import shapes
-    head = cell.add_polygon(
-        shapes.triangle(size=0.4, center=(0.85, 0.5)),
-        fill=colors.primary
-    )
-    head.rotate(90)  # Point right
-    group.add(head)
+def make_star_burst(count=12, radius=20, color="white"):
+    g = EntityGroup()
+    g.add(Dot(0, 0, radius=3, color=color))
+    for i in range(count):
+        angle = i * (2 * math.pi / count)
+        g.add(Dot(radius * math.cos(angle), radius * math.sin(angle),
+                   radius=2, color=color, opacity=0.6))
+    return g
 
-    # Rotate entire arrow
-    group.rotate(direction, origin=cell.center)
-
-    return group
-
-# Create arrows pointing different directions
-arrow_up = create_arrow(scene.grid[3, 3], direction=270)
-arrow_right = create_arrow(scene.grid[3, 6], direction=0)
-arrow_down = create_arrow(scene.grid[6, 3], direction=90)
+# Use them
+scene.add(make_flower(color="coral").move_to(100, 100))
+scene.add(make_ring(color="teal").move_to(250, 100))
+scene.add(make_star_burst(color="gold").move_to(100, 200))
 ```
 
 **What's happening:**
-- Function creates composite shape from multiple entities
-- Returns group for further manipulation
-- Each arrow can be rotated independently
+
+- Each factory function creates a fresh `EntityGroup` — no shared state between placements
+- Parameters control colors, counts, sizes — full customization per instance
+- Build a library of shapes and mix them freely
+
+---
+
+### Step 5: Nesting Groups
+
+EntityGroup can contain other EntityGroups. Build complex shapes from simpler ones:
+
+![Nested Groups](../_images/groups/04_nested_groups.svg)
+
+```python
+def make_bouquet(center_color, petal_colors):
+    bouquet = EntityGroup()
+
+    # Center flower
+    center = make_flower(color=center_color, petal_color=petal_colors[0])
+    bouquet.add(center)
+
+    # Surrounding flowers (smaller, offset)
+    for i in range(5):
+        angle = i * (2 * math.pi / 5)
+        outer = make_flower(
+            color=petal_colors[i % len(petal_colors)],
+            petal_color=center_color,
+            petal_count=6,
+        )
+        outer.scale(0.6)
+        outer.move_to(45 * math.cos(angle), 45 * math.sin(angle))
+        bouquet.add(outer)
+
+    return bouquet
+
+scene.add(make_bouquet(colors.primary, [colors.accent, colors.secondary]).move_to(200, 150))
+```
+
+**What's happening:**
+
+- `bouquet.add(center)` adds a flower EntityGroup as a child of the bouquet EntityGroup
+- `outer.scale(0.6)` scales the outer flowers before adding them — this adjusts the SVG scale transform
+- `outer.move_to(x, y)` offsets each outer flower from the bouquet center
+- The resulting SVG nests `<g>` elements: the bouquet `<g>` contains each flower's `<g>`
+
+---
+
+## EntityGroup vs CellGroup
+
+PyFreeform has two kinds of "groups" — they solve different problems:
+
+| | EntityGroup | CellGroup |
+|-|------------|-----------|
+| **Purpose** | Reusable composite shapes | Multi-cell surface regions |
+| **Inherits from** | `Entity` | `Surface` |
+| **Created by** | Direct construction | `grid.merge()` |
+| **Has** | Child entities | Builder methods (add_dot, add_text, ...) |
+| **Placement** | `cell.place()`, `scene.add()` | Already positioned by its cells |
+| **Use for** | Custom shapes, stamps, patterns | Headers, sidebars, multi-cell labels |
+
+```python
+# EntityGroup — reusable shape
+flower = EntityGroup()
+flower.add(Dot(0, 0, radius=10, color="coral"))
+cell.place(flower)
+
+# CellGroup — multi-cell region
+header = grid.merge_row(0)
+header.add_text("Title", font_size=20, color="white")
+header.add_border(color="gray", width=2)
+```
 
 ---
 
 ## Try It Yourself
 
-### Experiment 1: Radial Pattern
+### Experiment 1: Crosshair Markers
 
 ```python
-def create_radial_group(center_cell, count=12):
-    """Create radial pattern of lines."""
-    group = Group()
+from pyfreeform import EntityGroup, Dot, Line
 
-    for i in range(count):
-        angle = i * (2 * math.pi / count)
-        x_end = center_cell.center.x + 30 * math.cos(angle)
-        y_end = center_cell.center.y + 30 * math.sin(angle)
+def make_crosshair(size=15, color="white"):
+    g = EntityGroup()
+    g.add(Line(-size, 0, size, 0, width=1, color=color, opacity=0.5))
+    g.add(Line(0, -size, 0, size, width=1, color=color, opacity=0.5))
+    g.add(Dot(0, 0, radius=3, color=color))
+    return g
 
-        from pyfreeform import Line
-        line = Line.from_points(
-            start=center_cell.center,
-            end=(x_end, y_end),
-            color=colors.line,
-            width=2
-        )
-        scene.add(line)
-        group.add(line)
-
-    return group
-
-radial = create_radial_group(scene.grid[5, 5])
-radial.rotate(15)  # Rotate entire pattern
+for cell in scene.grid:
+    if cell.brightness > 0.6:
+        cell.place(make_crosshair(color=cell.color))
 ```
 
-### Experiment 2: Grid of Groups
+### Experiment 2: Scaled Grid Pattern
 
 ```python
 for cell in scene.grid:
-    if (cell.row + cell.col) % 3 == 0:
-        # Create mini pattern in cell
-        group = Group()
-
-        # Four corner dots
-        for at in ["top_left", "top_right", "bottom_left", "bottom_right"]:
-            dot = cell.add_dot(at=at, radius=2, color=colors.primary)
-            group.add(dot)
-
-        # Rotate based on position
-        angle = (cell.row * 15 + cell.col * 15) % 360
-        group.rotate(angle, origin=cell.center)
+    shape = make_flower(color=colors.primary, petal_color=colors.accent)
+    cell.place(shape)
+    shape.fit_to_cell(0.3 + cell.brightness * 0.5)
 ```
 
-### Experiment 3: Hierarchical Groups
+### Experiment 3: Random Composition
 
 ```python
-# Groups can contain other groups
-main_group = Group()
+import random
 
-sub_group1 = create_flower(scene.grid[3, 3])
-sub_group2 = create_flower(scene.grid[3, 6])
+shape_factories = [make_flower, make_ring, make_star_burst]
 
-# Add sub-groups to main group
-for entity in sub_group1.entities:
-    main_group.add(entity)
-for entity in sub_group2.entities:
-    main_group.add(entity)
-
-# Transform all at once
-main_group.scale(1.2)
-main_group.rotate(10)
+for cell in scene.grid:
+    factory = random.choice(shape_factories)
+    shape = factory(color=colors.primary)
+    cell.place(shape)
+    shape.fit_to_cell(0.7)
 ```
 
 ---
 
-## Group Properties
+## API Reference
+
+### EntityGroup
 
 ```python
-group.entities       # List of all entities in group
-group.centroid       # Geometric center of group
-len(group)           # Number of entities
+from pyfreeform import EntityGroup
 
-# Check if entity is in group
-if dot in group:
-    print("Dot is in group")
+# Create
+g = EntityGroup(x=0, y=0, z_index=0)
 
-# Remove entity from group
-group.remove(dot)
+# Add children (positioned relative to 0, 0)
+g.add(entity)
 
-# Clear all entities
-group.clear()
+# Properties
+g.children      # list of child entities (copy)
+g.bounds()      # (min_x, min_y, max_x, max_y) in absolute coords
+g.anchor_names  # ["center"]
+
+# Placement (inherited from Entity)
+scene.add(g)                    # add to scene
+cell.place(g)                   # center in cell
+cell.add_entity(g, at="center") # same as place, add_* naming
+g.move_to(x, y)                 # move to absolute position
+g.move_by(dx, dy)               # move by offset
+
+# Transforms
+g.scale(factor)                 # scale group
+g.scale(factor, origin=point)   # scale around a point
+g.fit_to_cell(0.85)             # auto-scale to fit cell
+
+# Connections (inherited from Entity)
+conn = g.connect(other_entity, style={"color": "white", "width": 1})
+scene.add(conn)
+```
+
+### Surface.add_entity()
+
+```python
+# Works on Cell, CellGroup, and Scene — accepts any Entity type
+cell.add_entity(dot, at="center")
+cell.add_entity(group, at=(0.3, 0.7))
+scene.add_entity(rect, at="top_left")
 ```
 
 ---
 
 ## Best Practices
 
-### 1. Use Groups for Composite Shapes
+### 1. Use Factory Functions for Reusable Shapes
 
 ```python
-# Create reusable composite shapes
-def create_house(cell):
-    group = Group()
+def make_shape(color="coral", size=10):
+    g = EntityGroup()
+    g.add(Dot(0, 0, radius=size, color=color))
+    return g
 
-    # Base (fill cell)
-    base = cell.add_fill(color=colors.primary)
-    group.add(base)
-
-    # Roof (triangle)
-    roof = cell.add_polygon(shapes.triangle(), fill=colors.secondary)
-    group.add(roof)
-
-    return group
+# Each call returns a new independent instance
+cell1.place(make_shape(color="red"))
+cell2.place(make_shape(color="blue"))
 ```
 
-### 2. Transform Groups, Not Individuals
+### 2. Use fit_to_cell() for Auto-Sizing
 
 ```python
-# Good: Transform once
-group.rotate(45)
-
-# Bad: Transform each entity
-for entity in entities:
-    entity.rotate(45)  # Slower, less accurate
+for cell in scene.grid:
+    shape = make_shape()
+    cell.place(shape)
+    shape.fit_to_cell(0.75)  # Consistent sizing across all cells
 ```
 
-### 3. Layer Groups
+### 3. Compose Complex Shapes from Simple Ones
 
 ```python
-# Background group
-background_group = Group()
-for entity in backgrounds:
-    entity.z_index = 0
-    background_group.add(entity)
+def make_complex():
+    g = EntityGroup()
+    g.add(make_simple_a())                    # center
+    g.add(make_simple_b().move_to(30, 0))     # right
+    g.add(make_simple_b().move_to(-30, 0))    # left
+    return g
+```
 
-# Foreground group
-foreground_group = Group()
-for entity in foregrounds:
-    entity.z_index = 10
-    foreground_group.add(entity)
+### 4. Z-Index Works at the Group Level
+
+```python
+background = make_ring(color="gray")
+background.z_index = 0
+
+foreground = make_flower(color="coral")
+foreground.z_index = 10
+
+cell.place(background)
+cell.place(foreground)
 ```
 
 ---
 
 ## Related
 
-- 📖 [Transforms](../../advanced-concepts/04-transforms.md) - Rotation, scaling, translation
-- 📖 [Layering](../../fundamentals/05-layering.md) - Z-index system
-- 🎯 [Transforms Example](transforms.md) - Individual entity transforms
-- 🎯 [Multi-Layer Example](../advanced/multi-layer.md) - Complex grouping
-
+- [Entities](../../fundamentals/03-entities.md) — Entity types and properties
+- [Grids and Cells](../../fundamentals/02-grids-and-cells.md) — Cell placement and grid access
+- [Fit to Cell](../../advanced-concepts/05-fit-to-cell.md) — Auto-scaling entities
+- [Multi-Layer Example](../advanced/multi-layer.md) — Complex layered compositions

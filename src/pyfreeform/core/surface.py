@@ -674,7 +674,7 @@ class Surface:
         font_family: str = "sans-serif",
         bold: bool = False,
         italic: bool = False,
-        text_anchor: str = "left",
+        text_anchor: str = "center",
         baseline: str = "middle",
         rotation: float = 0,
         z_index: int = 0,
@@ -1008,6 +1008,26 @@ class Surface:
         entity.position = position
         self._register_entity(entity)
         return entity
+
+    def add_entity(
+        self,
+        entity: Entity,
+        at: Position = "center",
+    ) -> Entity:
+        """
+        Place an existing entity in this surface.
+
+        Follows the ``add_*`` naming convention. Works with any entity
+        type — Dot, Line, Rect, EntityGroup, etc.
+
+        Args:
+            entity: The entity to place.
+            at: Position - relative coords or named position.
+
+        Returns:
+            The placed entity (for chaining).
+        """
+        return self.place(entity, at)
 
     def remove(self, entity: Entity) -> bool:
         """Remove an entity from this surface."""

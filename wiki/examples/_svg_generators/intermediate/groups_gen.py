@@ -2,98 +2,203 @@
 """
 SVG Generator for: examples/intermediate/groups
 
-Demonstrates organizing entities into patterns.
+Demonstrates EntityGroup — reusable composite shapes that behave
+like normal entities.
 """
 
 import math
-from pyfreeform import Scene, Palette, Dot
 from pathlib import Path
+
+from pyfreeform import Scene, Palette, EntityGroup, Dot, Line
 
 
 OUTPUT_DIR = Path(__file__).parent.parent.parent / "_images" / "groups"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def _add_flower(scene, cx, cy, scale, rotation, center_color, petal_color):
-    """Create a flower pattern from dots at the given position."""
-    scene.add(Dot(cx, cy, radius=10 * scale, color=center_color, opacity=0.8))
+# =============================================================================
+# REUSABLE SHAPE FACTORIES
+# =============================================================================
 
-    rot_rad = math.radians(rotation)
-    for i in range(8):
-        angle = i * (2 * math.pi / 8) + rot_rad
-        distance = 15 * scale
-        x = cx + distance * math.cos(angle)
-        y = cy + distance * math.sin(angle)
-        scene.add(Dot(x, y, radius=6 * scale, color=petal_color, opacity=0.9))
+def make_flower(color="coral", petal_color="gold", petal_count=8):
+    """Create a flower EntityGroup."""
+    g = EntityGroup()
+    g.add(Dot(0, 0, radius=10, color=color, opacity=0.9))
+    for i in range(petal_count):
+        angle = i * (2 * math.pi / petal_count)
+        x = 15 * math.cos(angle)
+        y = 15 * math.sin(angle)
+        g.add(Dot(x, y, radius=6, color=petal_color, opacity=0.8))
+    return g
 
 
-def example_01_flower_groups():
-    """Flower patterns composed from dots."""
+def make_star_burst(count=12, radius=20, color="white"):
+    """Create a radial burst of dots."""
+    g = EntityGroup()
+    g.add(Dot(0, 0, radius=3, color=color))
+    for i in range(count):
+        angle = i * (2 * math.pi / count)
+        x = radius * math.cos(angle)
+        y = radius * math.sin(angle)
+        g.add(Dot(x, y, radius=2, color=color, opacity=0.6))
+    return g
+
+
+def make_ring(radius=20, count=8, dot_radius=3, color="teal"):
+    """Create a ring of dots."""
+    g = EntityGroup()
+    for i in range(count):
+        angle = i * (2 * math.pi / count)
+        x = radius * math.cos(angle)
+        y = radius * math.sin(angle)
+        g.add(Dot(x, y, radius=dot_radius, color=color))
+    return g
+
+
+def make_crosshair(size=15, color="white", width=1):
+    """Create a crosshair marker."""
+    g = EntityGroup()
+    g.add(Line(-size, 0, size, 0, width=width, color=color, opacity=0.5))
+    g.add(Line(0, -size, 0, size, width=width, color=color, opacity=0.5))
+    g.add(Dot(0, 0, radius=3, color=color))
+    return g
+
+
+# =============================================================================
+# SVG GENERATORS
+# =============================================================================
+
+def example_01_flower_pattern():
+    """Defining and placing a reusable EntityGroup at multiple positions."""
     colors = Palette.midnight()
-    scene = Scene(width=300, height=250, background=colors.background)
+    scene = Scene(width=350, height=250, background=colors.background)
 
-    _add_flower(scene, 75, 75, 1.0, 15, colors.primary, colors.secondary)
-    _add_flower(scene, 225, 75, 0.8, -30, colors.secondary, colors.accent)
-    _add_flower(scene, 150, 200, 1.2, 45, colors.accent, colors.primary)
+    # Place the same shape at different positions with different styles
+    f1 = make_flower(color=colors.primary, petal_color=colors.secondary)
+    scene.add(f1.move_to(80, 80))
 
-    scene.save(OUTPUT_DIR / "01_flower_groups.svg")
+    f2 = make_flower(color=colors.secondary, petal_color=colors.accent)
+    scene.add(f2.move_to(260, 80))
+
+    f3 = make_flower(
+        color=colors.accent, petal_color=colors.primary, petal_count=12
+    )
+    scene.add(f3.move_to(170, 180))
+
+    scene.save(OUTPUT_DIR / "01_flower_pattern.svg")
 
 
-def example_02_composite_shapes():
-    """Concentric ring patterns using dots."""
+def example_02_shape_library():
+    """Multiple shape factory functions composed together."""
     colors = Palette.ocean()
-    scene = Scene(width=300, height=300, background=colors.background)
+    scene = Scene(width=400, height=280, background=colors.background)
 
-    cx, cy = 150, 150
-    ring_colors = [colors.primary, colors.secondary, colors.accent]
+    # Flowers in a row
+    for i, color in enumerate([colors.primary, colors.secondary, colors.accent]):
+        f = make_flower(color=color, petal_color=colors.line)
+        scene.add(f.move_to(80 + i * 120, 70))
 
-    for ring_idx, (radius, n_dots, color) in enumerate([
-        (30, 6, ring_colors[0]),
-        (60, 12, ring_colors[1]),
-        (90, 18, ring_colors[2]),
-    ]):
-        for i in range(n_dots):
-            angle = i * (2 * math.pi / n_dots)
-            x = cx + radius * math.cos(angle)
-            y = cy + radius * math.sin(angle)
-            scene.add(Dot(x, y, radius=4, color=color))
+    # Star bursts below
+    for i in range(4):
+        sb = make_star_burst(count=8 + i * 4, radius=15 + i * 5, color=colors.accent)
+        scene.add(sb.move_to(60 + i * 100, 170))
 
-    # Center dot
-    scene.add(Dot(cx, cy, radius=8, color=colors.accent))
-
-    scene.save(OUTPUT_DIR / "02_composite_shapes.svg")
-
-
-def example_03_radial_groups():
-    """Flower groups arranged radially around a center."""
-    colors = Palette.midnight()
-    scene = Scene(width=350, height=350, background=colors.background)
-
-    cx, cy = 175, 175
-    petal_colors = [colors.primary, colors.secondary, colors.accent, "#64ffda"]
-
-    for i in range(6):
-        angle = i * (2 * math.pi / 6)
-        flower_x = cx + 80 * math.cos(angle)
-        flower_y = cy + 80 * math.sin(angle)
-        petal_color = petal_colors[i % len(petal_colors)]
-
-        _add_flower(
-            scene, flower_x, flower_y,
-            scale=0.6, rotation=math.degrees(angle),
-            center_color=colors.primary, petal_color=petal_color,
+    # Rings at bottom
+    for i in range(3):
+        r = make_ring(
+            radius=12, count=6, dot_radius=2,
+            color=[colors.primary, colors.secondary, colors.accent][i],
         )
+        scene.add(r.move_to(100 + i * 100, 240))
 
-    # Central flower
-    _add_flower(scene, cx, cy, 0.8, 0, colors.accent, colors.primary)
+    scene.save(OUTPUT_DIR / "02_shape_library.svg")
 
-    scene.save(OUTPUT_DIR / "03_radial_groups.svg")
+
+def example_03_grid_stamps():
+    """Stamp EntityGroups across grid cells with fit_to_cell."""
+    colors = Palette.midnight()
+    scene = Scene.with_grid(cols=8, rows=6, cell_size=40)
+    scene.background = colors.background
+    grid = scene.grid
+
+    accent_colors = [colors.primary, colors.secondary, colors.accent]
+
+    for cell in grid:
+        # Pick shape based on position
+        idx = (cell.row + cell.col) % 3
+
+        if idx == 0:
+            shape = make_flower(
+                color=accent_colors[0],
+                petal_color=accent_colors[1],
+                petal_count=6,
+            )
+        elif idx == 1:
+            shape = make_ring(
+                radius=15, count=6, dot_radius=2,
+                color=accent_colors[idx],
+            )
+        else:
+            shape = make_star_burst(
+                count=8, radius=12, color=accent_colors[idx],
+            )
+
+        # Place and auto-fit to cell
+        cell.place(shape)
+        shape.fit_to_cell(0.75)
+
+    scene.save(OUTPUT_DIR / "03_grid_stamps.svg")
+
+
+def example_04_nested_groups():
+    """EntityGroup containing other EntityGroups."""
+    colors = Palette.sunset()
+    scene = Scene(width=400, height=300, background=colors.background)
+
+    # Build a "bouquet" from smaller flower groups
+    def make_bouquet(center_color, petal_colors):
+        bouquet = EntityGroup()
+
+        # Center flower
+        center = make_flower(color=center_color, petal_color=petal_colors[0])
+        bouquet.add(center)
+
+        # Surrounding flowers (smaller, offset)
+        for i in range(5):
+            angle = i * (2 * math.pi / 5)
+            outer = make_flower(
+                color=petal_colors[i % len(petal_colors)],
+                petal_color=center_color,
+                petal_count=6,
+            )
+            outer.scale(0.6)
+            outer.move_to(45 * math.cos(angle), 45 * math.sin(angle))
+            bouquet.add(outer)
+
+        return bouquet
+
+    # Place bouquets
+    b1 = make_bouquet(
+        colors.primary,
+        [colors.secondary, colors.accent, "#64ffda"],
+    )
+    scene.add(b1.move_to(130, 150))
+
+    b2 = make_bouquet(
+        colors.accent,
+        [colors.primary, colors.secondary, "#ff9f43"],
+    )
+    b2.scale(0.7)
+    scene.add(b2.move_to(310, 130))
+
+    scene.save(OUTPUT_DIR / "04_nested_groups.svg")
 
 
 GENERATORS = {
-    "01_flower_groups": example_01_flower_groups,
-    "02_composite_shapes": example_02_composite_shapes,
-    "03_radial_groups": example_03_radial_groups,
+    "01_flower_pattern": example_01_flower_pattern,
+    "02_shape_library": example_02_shape_library,
+    "03_grid_stamps": example_03_grid_stamps,
+    "04_nested_groups": example_04_nested_groups,
 }
 
 

@@ -210,8 +210,8 @@ class Wave(Pathable):
 ```python
 for cell in scene.grid:
     wave = Wave(
-        start=cell.left,
-        end=cell.right,
+        start=cell.top_left,
+        end=cell.top_right,
         amplitude=8,
         frequency=3  # 3 complete waves
     )
@@ -357,8 +357,8 @@ for cell in scene.grid:
         # Wave pattern
         freq = 2 + cell.row % 3
         path = Wave(
-            start=cell.top,
-            end=cell.bottom,
+            start=cell.top_left,
+            end=cell.bottom_left,
             amplitude=6,
             frequency=freq
         )

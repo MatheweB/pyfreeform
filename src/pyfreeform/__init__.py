@@ -29,6 +29,7 @@ from .entities.polygon import (
     squircle,
     rounded_rect,
 )
+from .entities.entity_group import EntityGroup
 
 # Core (Surface protocol)
 from .core.surface import Surface
@@ -139,6 +140,7 @@ __all__ = [
     "Ellipse",
     "Text",
     "Polygon",
+    "EntityGroup",
     # Shape helpers (also available via `shapes.hexagon()`)
     "triangle",
     "square",

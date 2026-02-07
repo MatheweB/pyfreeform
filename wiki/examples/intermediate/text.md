@@ -58,7 +58,7 @@ for row in range(scene.grid.rows):
         content=str(row + 1),
         at="left",
         font_size=12,
-        color=colors.text,
+        color=colors.line,
         text_anchor="start"
     )
 
@@ -69,7 +69,7 @@ for col in range(scene.grid.cols):
         content=label,
         at="top",
         font_size=12,
-        color=colors.text,
+        color=colors.line,
         baseline="hanging"
     )
 
@@ -219,7 +219,7 @@ for col in range(scene.grid.cols):
         label,
         at="top",
         font_size=12,
-        color=colors.text
+        color=colors.line
     )
 
 # Row numbers
@@ -229,7 +229,7 @@ for row in range(scene.grid.rows):
         str(row + 1),
         at="left",
         font_size=12,
-        color=colors.text
+        color=colors.line
     )
 ```
 

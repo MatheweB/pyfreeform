@@ -117,7 +117,7 @@ for dot, cell in network_dots:
             y=cell.center.y - dot.radius - 8,
             content=f"N{label_count+1}",
             font_size=9,
-            color=colors.text,
+            color=colors.line,
             font_family="monospace",
             text_anchor="middle",
             z_index=50  # Always on top
@@ -271,7 +271,7 @@ for i, (dot, cell) in enumerate(important_nodes):
         y=cell.center.y - 15,
         content=f"Node {i+1}",
         font_size=10,
-        color=colors.text,
+        color=colors.line,
         z_index=50  # Above everything
     )
     scene.add(label)

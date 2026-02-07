@@ -66,7 +66,7 @@ for i, cell in enumerate(scene.grid):
     )
 
     # Optional: Add label
-    # cell.add_text(name, font_size=8, color=colors.text)
+    # cell.add_text(name, font_size=8, color=colors.line)
 
 scene.save("polygon_gallery.svg")
 ```

@@ -131,7 +131,7 @@ for col, row, label in labels:
         y=scene.grid[row, col].center.y,
         content=label,
         font_size=8,
-        color=colors.text,
+        color=colors.line,
         font_family="sans-serif",
         text_anchor="middle",
         z_index=10

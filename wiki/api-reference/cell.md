@@ -81,18 +81,26 @@ for cell in scene.grid:
     is_reddish = r > g and r > b
 ```
 
-### Named Positions
+### Point Properties
+
+These properties return `Point` objects for absolute pixel positions:
 
 ```python
-cell.top_left: Point
-cell.top_right: Point
-cell.bottom_left: Point
-cell.bottom_right: Point
-cell.center: Point
-cell.top: Point         # Top center
-cell.bottom: Point      # Bottom center
-cell.left: Point        # Left center
-cell.right: Point       # Right center
+cell.top_left: Point       # Top-left corner
+cell.top_right: Point      # Top-right corner
+cell.bottom_left: Point    # Bottom-left corner
+cell.bottom_right: Point   # Bottom-right corner
+cell.center: Point         # Center of cell
+```
+
+### Named Position Strings
+
+These string names can be used with `start=`, `end=`, and `at=` parameters:
+
+```python
+# All valid position strings for method parameters:
+"center", "top_left", "top_right", "bottom_left", "bottom_right",
+"top", "bottom", "left", "right"
 ```
 
 ![Named positions](./_images/cell/example1-named-positions.svg)
