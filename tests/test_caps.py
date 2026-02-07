@@ -90,7 +90,7 @@ def test_line_end_cap_arrow():
     svg = line.to_svg()
     assert "marker-end" in svg
     assert "marker-start" not in svg
-    assert 'stroke-linecap="butt"' in svg
+    assert 'stroke-linecap="round"' in svg
 
 
 def test_line_start_cap_arrow():

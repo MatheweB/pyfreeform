@@ -407,14 +407,21 @@ Implement a hypotrochoid (spirograph pattern):
 class Hypotrochoid(Pathable):
     """Hypotrochoid: spirograph pattern"""
 
-    def __init__(self, center: Point, R: float, r: float, d: float):
+    def __init__(self, center: Point, R: float, r: float, d: float,
+                 full_rotations: int | None = None):
         self.center = center
         self.R = R  # Radius of fixed circle
         self.r = r  # Radius of rolling circle
         self.d = d  # Distance of pen from rolling circle center
+        # Auto-compute rotations needed for closure:
+        # (R-r)/r * full_rotations must be an integer.
+        if full_rotations is None:
+            from math import gcd
+            full_rotations = round(r) // gcd(round(abs(R - r)), round(r))
+        self.full_rotations = full_rotations
 
     def point_at(self, t: float) -> Point:
-        theta = t * 2 * math.pi
+        theta = t * self.full_rotations * 2 * math.pi
 
         x = self.center.x + (self.R - self.r) * math.cos(theta) + \
             self.d * math.cos((self.R - self.r) / self.r * theta)

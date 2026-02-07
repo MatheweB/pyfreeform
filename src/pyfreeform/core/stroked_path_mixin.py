@@ -39,8 +39,11 @@ class StrokedPathMixin:
 
         markers: list[tuple[str, str]] = []
         size = self.width * DEFAULT_ARROW_SCALE
-        for cap_name in (self.effective_start_cap, self.effective_end_cap):
-            result = get_marker(cap_name, self.color, size)
+        for cap_name, for_start in (
+            (self.effective_start_cap, True),
+            (self.effective_end_cap, False),
+        ):
+            result = get_marker(cap_name, self.color, size, for_start=for_start)
             if result is not None:
                 markers.append(result)
         return markers
@@ -65,37 +68,16 @@ class StrokedPathMixin:
         has_marker_start = is_marker_cap(sc)
         has_marker_end = is_marker_cap(ec)
 
-        svg_cap = "butt" if (has_marker_start or has_marker_end) else self.cap
+        svg_cap = self.cap
 
         parts: list[str] = []
         size = self.width * DEFAULT_ARROW_SCALE
         if has_marker_start:
-            mid = make_marker_id(sc, self.color, size)
+            mid = make_marker_id(sc, self.color, size, for_start=True)
             parts.append(f' marker-start="url(#{mid})"')
         if has_marker_end:
-            mid = make_marker_id(ec, self.color, size)
+            mid = make_marker_id(ec, self.color, size, for_start=False)
             parts.append(f' marker-end="url(#{mid})"')
 
         return svg_cap, "".join(parts)
 
-    def _marker_shortening(self) -> tuple[float, float]:
-        """
-        How much to shorten each end of the stroke for marker caps.
-
-        The stroke is shortened so it ends at the marker's base, preventing
-        the line from poking through the narrow tip.  Each marker cap
-        declares its own *inset* fraction (1.0 for arrow, 0.5 for diamond,
-        etc.) so this works for any registered cap type.
-
-        Returns:
-            (start_shorten, end_shorten) in user-space units.
-        """
-        from ..config.caps import DEFAULT_ARROW_SCALE, get_cap_inset
-
-        marker_size = self.width * DEFAULT_ARROW_SCALE
-        sc = self.effective_start_cap
-        ec = self.effective_end_cap
-        return (
-            marker_size * get_cap_inset(sc),
-            marker_size * get_cap_inset(ec),
-        )

@@ -366,32 +366,11 @@ class Path(StrokedPathMixin, Entity):
 
         svg_cap, marker_attrs = self._svg_cap_and_marker_attrs()
 
-        # Build path d, shortening endpoints for marker caps on open paths.
         segs = self._bezier_segments
-        first_p0 = segs[0][0]
-        last_p3 = segs[-1][3]
 
-        if not self._closed:
-            ss, es = self._marker_shortening()
-            if ss > 0:
-                cp1 = segs[0][1]
-                dx, dy = cp1.x - first_p0.x, cp1.y - first_p0.y
-                d = math.sqrt(dx * dx + dy * dy)
-                if d > 0:
-                    first_p0 = Point(first_p0.x + dx / d * ss,
-                                     first_p0.y + dy / d * ss)
-            if es > 0:
-                cp2 = segs[-1][2]
-                dx, dy = last_p3.x - cp2.x, last_p3.y - cp2.y
-                d = math.sqrt(dx * dx + dy * dy)
-                if d > 0:
-                    last_p3 = Point(last_p3.x - dx / d * es,
-                                    last_p3.y - dy / d * es)
-
-        parts_d = [f"M {first_p0.x} {first_p0.y}"]
-        for i, (_, cp1, cp2, p3) in enumerate(segs):
-            ep = last_p3 if i == len(segs) - 1 else p3
-            parts_d.append(f" C {cp1.x} {cp1.y} {cp2.x} {cp2.y} {ep.x} {ep.y}")
+        parts_d = [f"M {segs[0][0].x} {segs[0][0].y}"]
+        for _, cp1, cp2, p3 in segs:
+            parts_d.append(f" C {cp1.x} {cp1.y} {cp2.x} {cp2.y} {p3.x} {p3.y}")
         if self._closed:
             parts_d.append(" Z")
         d_attr = "".join(parts_d)
@@ -499,6 +478,7 @@ def _fit_cubic_beziers(
             # Hermite-to-Bézier: scale tangent by dt/3
             cp1 = Point(p0.x + tx0 * dt / 3, p0.y + ty0 * dt / 3)
             cp2 = Point(p3.x - tx3 * dt / 3, p3.y - ty3 * dt / 3)
+            cp1, cp2 = _clamp_control_points(p0, cp1, cp2, p3)
             result.append((p0, cp1, cp2, p3))
 
         return result
@@ -521,9 +501,43 @@ def _fit_cubic_beziers(
 
             cp1 = Point(p0.x + tx0 * dt / 3, p0.y + ty0 * dt / 3)
             cp2 = Point(p3.x - tx3 * dt / 3, p3.y - ty3 * dt / 3)
+            cp1, cp2 = _clamp_control_points(p0, cp1, cp2, p3)
             result.append((p0, cp1, cp2, p3))
 
         return result
+
+
+def _clamp_control_points(
+    p0: Point, cp1: Point, cp2: Point, p3: Point,
+    max_ratio: float = 0.75,
+) -> tuple[Point, Point]:
+    """
+    Clamp control point offsets to a fraction of the chord length.
+
+    For well-behaved curves the offset is ~chord/3, so 0.75 is generous.
+    This prevents pathological blowup when the parametric tangent is
+    near-infinite (e.g. superellipse corners with n > 2).
+    """
+    chord_sq = (p3.x - p0.x) ** 2 + (p3.y - p0.y) ** 2
+    if chord_sq == 0:
+        return cp1, cp2
+    max_dist_sq = chord_sq * max_ratio * max_ratio
+
+    # Clamp cp1 distance from p0
+    dx1, dy1 = cp1.x - p0.x, cp1.y - p0.y
+    d1_sq = dx1 * dx1 + dy1 * dy1
+    if d1_sq > max_dist_sq and d1_sq > 0:
+        s = math.sqrt(max_dist_sq / d1_sq)
+        cp1 = Point(p0.x + dx1 * s, p0.y + dy1 * s)
+
+    # Clamp cp2 distance from p3
+    dx2, dy2 = cp2.x - p3.x, cp2.y - p3.y
+    d2_sq = dx2 * dx2 + dy2 * dy2
+    if d2_sq > max_dist_sq and d2_sq > 0:
+        s = math.sqrt(max_dist_sq / d2_sq)
+        cp2 = Point(p3.x + dx2 * s, p3.y + dy2 * s)
+
+    return cp1, cp2
 
 
 def _eval_cubic(p0: Point, cp1: Point, cp2: Point, p3: Point, t: float) -> Point:

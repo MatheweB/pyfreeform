@@ -159,7 +159,7 @@ for i in range(15):
     cell.add_dot(along=lissajous, t=t, radius=2)
 ```
 
-![A smooth Lissajous curve rendered with Path and dots positioned along it](./_images/05-custom-paths/12-usage-example.svg)
+![A smooth Lissajous curve rendered with Path and dots positioned along it](./_images/05-custom-paths/13-usage-example.svg)
 
 ## More Ideas
 
@@ -175,12 +175,22 @@ def point_at(self, t):
 **Epitrochoid:**
 ```python
 def point_at(self, t):
-    angle = t * 2 * math.pi
+    angle = t * self.full_rotations * 2 * math.pi
     x = (R+r)*math.cos(angle) - d*math.cos((R+r)/r * angle)
     y = (R+r)*math.sin(angle) - d*math.sin((R+r)/r * angle)
 ```
 
 ![Epitrochoid curve showing spirograph-like pattern](./_images/05-custom-paths/10-epitrochoid.svg)
+
+**Hypotrochoid:**
+```python
+def point_at(self, t):
+    angle = t * self.full_rotations * 2 * math.pi
+    x = (R-r)*math.cos(angle) + d*math.cos((R-r)/r * angle)
+    y = (R-r)*math.sin(angle) - d*math.sin((R-r)/r * angle)
+```
+
+![Hypotrochoid curve showing inner spirograph pattern](./_images/05-custom-paths/11-hypotrochoid.svg)
 
 **Butterfly Curve:**
 ```python
@@ -191,7 +201,7 @@ def point_at(self, t):
     y = r * math.sin(angle)
 ```
 
-![Butterfly curve showing the complex organic shape](./_images/05-custom-paths/11-butterfly-curve.svg)
+![Butterfly curve showing the complex organic shape](./_images/05-custom-paths/12-butterfly-curve.svg)
 
 ![Superellipse variations with different n values from diamond to rounded square](./_images/05-custom-paths/09-superellipse.svg)
 

@@ -378,21 +378,6 @@ class Curve(StrokedPathMixin, Entity):
         e = self.end
         svg_cap, marker_attrs = self._svg_cap_and_marker_attrs()
 
-        # Shorten stroke so it ends at the marker base, not the tip.
-        # Move start along tangent at t=0 (P0→P1) and end along tangent
-        # at t=1 (P1→P2, reversed).
-        ss, es = self._marker_shortening()
-        if ss > 0:
-            dx, dy = c.x - s.x, c.y - s.y
-            d = math.sqrt(dx * dx + dy * dy)
-            if d > 0:
-                s = Point(s.x + dx / d * ss, s.y + dy / d * ss)
-        if es > 0:
-            dx, dy = e.x - c.x, e.y - c.y
-            d = math.sqrt(dx * dx + dy * dy)
-            if d > 0:
-                e = Point(e.x - dx / d * es, e.y - dy / d * es)
-
         parts = [
             f'<path d="M {s.x} {s.y} Q {c.x} {c.y} {e.x} {e.y}" '
             f'fill="none" stroke="{self.color}" stroke-width="{self.width}" '
