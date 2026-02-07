@@ -66,7 +66,8 @@ class Grid:
         self._cell_width = cell_width or cell_size or 10
         self._cell_height = cell_height or cell_size or 10
         self._origin = Point(*origin)
-        
+        self._source_image: Image | None = None
+
         # Create cells
         self._cells: list[list[Cell]] = []
         self._cell_groups: list[CellGroup] = []
@@ -94,23 +95,42 @@ class Grid:
         cols: int | None = None,
         rows: int | None = None,
         cell_size: float = 10,
+        cell_ratio: float = 1.0,
+        cell_width: float | None = None,
+        cell_height: float | None = None,
         origin: tuple[float, float] = (0, 0),
         load_layers: bool = True,
     ) -> Grid:
         """
         Create a grid sized to match an image.
-        
+
         Args:
             image: Source image (will be resized to match grid).
             cols: Number of columns (calculates rows from aspect ratio).
+                  If None and rows is also None, derives both from image
+                  dimensions and cell size (fit-grid-to-image mode).
             rows: Number of rows (calculates cols from aspect ratio).
-            cell_size: Size of each cell in pixels.
+            cell_size: Base size of each cell in pixels.
+            cell_ratio: Width-to-height ratio (e.g., 2.0 for domino cells).
+            cell_width: Explicit cell width (overrides cell_size and cell_ratio).
+            cell_height: Explicit cell height (overrides cell_size).
             origin: Top-left corner of the grid.
             load_layers: Whether to load image data into cells.
-        
+
         Returns:
             A new Grid with image data loaded into cells.
         """
+        # Resolve cell dimensions
+        if cell_width is not None or cell_height is not None:
+            cw = float(cell_width or cell_size)
+            ch = float(cell_height or cell_size)
+        elif cell_ratio != 1.0:
+            cw = cell_size * cell_ratio
+            ch = float(cell_size)
+        else:
+            cw = float(cell_size)
+            ch = float(cell_size)
+
         # Calculate grid dimensions from image aspect ratio
         if cols is not None and rows is not None:
             pass  # Use both as provided
@@ -121,13 +141,16 @@ class Grid:
             aspect = image.width / image.height
             cols = max(1, int(rows * aspect))
         else:
-            raise ValueError("Must specify cols and/or rows")
-        
+            # Fit grid to image: derive cols/rows from image dimensions
+            cols = max(1, round(image.width / cw))
+            rows = max(1, round(image.height / ch))
+
         # Create grid
         grid = cls(
             cols=cols,
             rows=rows,
-            cell_size=cell_size,
+            cell_width=cw,
+            cell_height=ch,
             origin=origin,
         )
         
@@ -141,7 +164,10 @@ class Grid:
             grid.load_layer("brightness", resized["brightness"])
             if resized.has_alpha:
                 grid.load_layer("alpha", resized["alpha"])
-        
+
+        # Store source image reference for sub-cell sampling
+        grid._source_image = image
+
         return grid
     
     # --- Properties ---
@@ -185,6 +211,11 @@ class Grid:
     def origin(self) -> Point:
         """Top-left corner of the grid."""
         return self._origin
+
+    @property
+    def source_image(self) -> Image | None:
+        """The original source image (if created via from_image), or None."""
+        return self._source_image
     
     # --- Cell access ---
     

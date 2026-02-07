@@ -260,5 +260,103 @@ class Cell(Surface):
             "below_right": self.below_right,
         }
 
+    # =========================================================================
+    # QOL METHODS
+    # =========================================================================
+
+    def distance_to(self, other) -> float:
+        """
+        Euclidean pixel distance from this cell's center to another position.
+
+        Accepts: Cell (uses center), Point, or (x, y) tuple.
+        Entity positions work too — just pass entity.anchor("center") or
+        entity.position.
+
+        Args:
+            other: A Cell, Point, or (x, y) tuple.
+
+        Returns:
+            Distance in pixels.
+        """
+        from ..core.point import Point
+        if isinstance(other, Cell):
+            target = other.center
+        elif isinstance(other, Point):
+            target = other
+        elif isinstance(other, tuple):
+            target = Point(*other)
+        else:
+            raise TypeError(f"Expected Cell, Point, or tuple, got {type(other).__name__}")
+        return self.center.distance_to(target)
+
+    @property
+    def normalized_position(self) -> tuple[float, float]:
+        """
+        (col, row) normalized to 0.0-1.0 within the grid.
+
+        Useful for position-based gradients and effects.
+
+        Returns:
+            Tuple of (nx, ny) where both are in [0.0, 1.0].
+        """
+        cols = self._grid.cols
+        rows = self._grid.rows
+        nx = self._col / (cols - 1) if cols > 1 else 0.0
+        ny = self._row / (rows - 1) if rows > 1 else 0.0
+        return (nx, ny)
+
+    # =========================================================================
+    # SUB-CELL IMAGE SAMPLING
+    # =========================================================================
+
+    def sample_image(self, rx: float = 0.5, ry: float = 0.5) -> tuple[int, int, int]:
+        """
+        Sample the original source image at a relative position within this cell.
+
+        Args:
+            rx: Horizontal position within cell (0.0 = left edge, 1.0 = right edge).
+            ry: Vertical position within cell (0.0 = top edge, 1.0 = bottom edge).
+
+        Returns:
+            RGB tuple (0-255 each).
+
+        Raises:
+            ValueError: If the grid was not created from an image.
+        """
+        image = self._grid.source_image
+        if image is None:
+            raise ValueError("Grid was not created from an image — no source image to sample")
+        px = int(min(max(0, (self._col + rx) * image.width / self._grid.cols), image.width - 1))
+        py = int(min(max(0, (self._row + ry) * image.height / self._grid.rows), image.height - 1))
+        return image.rgb_at(px, py)
+
+    def sample_brightness(self, rx: float = 0.5, ry: float = 0.5) -> float:
+        """
+        Sample brightness from the original source image at a relative position.
+
+        Args:
+            rx: Horizontal position within cell (0.0-1.0).
+            ry: Vertical position within cell (0.0-1.0).
+
+        Returns:
+            Brightness value 0.0-1.0.
+        """
+        r, g, b = self.sample_image(rx, ry)
+        return (0.299 * r + 0.587 * g + 0.114 * b) / 255.0
+
+    def sample_hex(self, rx: float = 0.5, ry: float = 0.5) -> str:
+        """
+        Sample hex color from the original source image at a relative position.
+
+        Args:
+            rx: Horizontal position within cell (0.0-1.0).
+            ry: Vertical position within cell (0.0-1.0).
+
+        Returns:
+            Hex color string (e.g., "#ff5733").
+        """
+        r, g, b = self.sample_image(rx, ry)
+        return f"#{r:02x}{g:02x}{b:02x}"
+
     def __repr__(self) -> str:
         return f"Cell(row={self._row}, col={self._col}, brightness={self.brightness:.2f})"

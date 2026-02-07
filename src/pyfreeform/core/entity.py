@@ -267,7 +267,58 @@ class Entity(ABC):
             self, for method chaining.
         """
         return self.move_by(dx, dy)
-    
+
+    def offset_from(self, anchor_name: str, dx: float = 0, dy: float = 0) -> Point:
+        """
+        Get a point offset from a named anchor.
+
+        Sugar for ``entity.anchor(name) + Point(dx, dy)``.
+
+        Args:
+            anchor_name: Name of the anchor (e.g., "center", "top_left").
+            dx: Horizontal offset in pixels.
+            dy: Vertical offset in pixels.
+
+        Returns:
+            The offset point.
+        """
+        return self.anchor(anchor_name) + Point(dx, dy)
+
+    def place_beside(self, other: Entity, side: str = "right", gap: float = 0) -> Entity:
+        """
+        Position this entity beside another using bounding boxes.
+
+        Args:
+            other: Reference entity to position relative to.
+            side: "right", "left", "above", or "below".
+            gap: Pixels between bounding boxes.
+
+        Returns:
+            self, for method chaining.
+        """
+        o_min_x, o_min_y, o_max_x, o_max_y = other.bounds()
+        s_min_x, s_min_y, s_max_x, s_max_y = self.bounds()
+        s_w = s_max_x - s_min_x
+        s_h = s_max_y - s_min_y
+        s_cx = (s_min_x + s_max_x) / 2
+        s_cy = (s_min_y + s_max_y) / 2
+        o_cx = (o_min_x + o_max_x) / 2
+        o_cy = (o_min_y + o_max_y) / 2
+
+        if side == "right":
+            tx, ty = o_max_x + gap + s_w / 2, o_cy
+        elif side == "left":
+            tx, ty = o_min_x - gap - s_w / 2, o_cy
+        elif side == "above":
+            tx, ty = o_cx, o_min_y - gap - s_h / 2
+        elif side == "below":
+            tx, ty = o_cx, o_max_y + gap + s_h / 2
+        else:
+            raise ValueError(f"Invalid side '{side}'. Use 'right', 'left', 'above', 'below'.")
+
+        self.move_by(tx - s_cx, ty - s_cy)
+        return self
+
     # --- Abstract methods for subclasses ---
     
     @property

@@ -82,29 +82,42 @@ class Scene(Surface):
         cls,
         source: str | Path | Image,
         *,
-        grid_size: int = 40,
+        grid_size: int | None = 40,
         cell_size: int = 10,
+        cell_ratio: float = 1.0,
+        cell_width: float | None = None,
+        cell_height: float | None = None,
         background: str | None = None,
     ) -> Scene:
         """
         Create a scene from an image file (one-liner for image-based art).
-        
+
         This is the recommended way to create image-based artwork:
-        
+
             scene = Scene.from_image("photo.jpg", grid_size=40)
             for cell in scene.grid:
                 cell.add_dot(color=cell.color)
             scene.save("art.svg")
-        
+
+        Two modes:
+            - **grid_size=N** (default): N columns, auto rows from aspect ratio.
+              Scene size = cols * cell_size × rows * cell_size.
+            - **grid_size=None**: Grid fits the image. Cols/rows derived from
+              image dimensions ÷ cell size. Scene size ≈ image dimensions.
+
         Args:
             source: Path to image file, or an Image object.
             grid_size: Number of columns (rows auto-calculated from aspect ratio).
-            cell_size: Size of each cell in pixels.
+                       Pass None to derive grid from image dimensions.
+            cell_size: Base size of each cell in pixels.
+            cell_ratio: Width-to-height ratio (e.g., 2.0 for domino cells).
+            cell_width: Explicit cell width (overrides cell_size and cell_ratio).
+            cell_height: Explicit cell height (overrides cell_size).
             background: Background color (defaults to dark blue).
-        
+
         Returns:
             Scene with grid loaded from image, ready to iterate.
-        
+
         The grid's cells will have typed properties:
             - cell.color: Hex color string
             - cell.brightness: Float 0.0-1.0
@@ -112,18 +125,21 @@ class Scene(Surface):
             - cell.alpha: Float 0.0-1.0
         """
         from ..image import Image as ImageClass
-        
+
         # Load image if path provided
         if isinstance(source, (str, Path)):
             image = ImageClass.load(source)
         else:
             image = source
-        
+
         # Create grid from image
         grid = Grid.from_image(
             image,
             cols=grid_size,
             cell_size=cell_size,
+            cell_ratio=cell_ratio,
+            cell_width=cell_width,
+            cell_height=cell_height,
             load_layers=True,
         )
         
@@ -151,29 +167,39 @@ class Scene(Surface):
         cols: int = 30,
         rows: int | None = None,
         cell_size: int = 10,
+        cell_width: float | None = None,
+        cell_height: float | None = None,
         background: str | None = None,
     ) -> Scene:
         """
         Create a scene with an empty grid (for non-image-based art).
-        
+
             scene = Scene.with_grid(cols=30, rows=30, cell_size=12)
             for cell in scene.grid:
                 cell.add_dot(color="coral")
             scene.save("art.svg")
-        
+
         Args:
             cols: Number of columns.
             rows: Number of rows (defaults to same as cols for square grid).
-            cell_size: Size of each cell in pixels.
+            cell_size: Base size of each cell in pixels.
+            cell_width: Explicit cell width (overrides cell_size).
+            cell_height: Explicit cell height (overrides cell_size).
             background: Background color.
-        
+
         Returns:
             Scene with empty grid, ready to iterate.
         """
         if rows is None:
             rows = cols
-        
-        grid = Grid(cols=cols, rows=rows, cell_size=cell_size)
+
+        grid = Grid(
+            cols=cols,
+            rows=rows,
+            cell_size=cell_size,
+            cell_width=cell_width,
+            cell_height=cell_height,
+        )
         
         # Set default background if not specified
         if background is None:
