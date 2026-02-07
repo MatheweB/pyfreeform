@@ -391,7 +391,27 @@ cell.add_fill(color=colors.background, z_index=0)
 cell.add_text("LABEL", z_index=100)
 ```
 
-![Text numbers layered on top of dot shapes](./_images/07-text-art/11_text_with_shapes.svg)
+### Auto-Size Text Inside Shapes
+
+Use `fit_within` to automatically scale text to fit inside dots, ellipses, or any entity:
+
+```python
+for cell in scene.grid:
+    dot = cell.add_dot(radius=8, color=colors.primary, z_index=0)
+
+    # Start with a large font_size — fit_within scales it down
+    label = cell.add_text(
+        content=str(int(cell.brightness * 9)),
+        font_size=50,
+        color=colors.background,
+        z_index=10
+    )
+    label.fit_within(dot)
+```
+
+`fit_within` uses the dot's **inscribed square** (via `inner_bounds()`) so text never spills outside the circle boundary.
+
+![Text numbers auto-sized inside dot shapes](./_images/07-text-art/11_text_with_shapes.svg)
 
 ### Wave Text
 
@@ -887,13 +907,14 @@ for cell in scene.grid:
 poly = cell.add_polygon(shapes.hexagon(), fill=colors.primary, z_index=0)
 poly.rotate((cell.row + cell.col) * 15)
 
-# Foreground: text label
-cell.add_text(
+# Foreground: text label auto-sized to fit the polygon
+label = cell.add_text(
     content=f"{cell.row}",
-    font_size=10,
+    font_size=50,
     color="white",
     z_index=10
 )
+label.fit_within(poly)
 ```
 
 ### Text + Connected Networks
@@ -902,13 +923,14 @@ cell.add_text(
 # Create network of dots
 dot = cell.add_dot(radius=3, color=colors.primary, z_index=5)
 
-# Label each node
-cell.add_text(
+# Label each node — auto-sized to fit inside the dot
+label = cell.add_text(
     content=str(cell.row * scene.grid.cols + cell.col),  # Node ID
-    font_size=6,
+    font_size=50,
     color="white",
     z_index=15
 )
+label.fit_within(dot)
 ```
 
 ### Text + Rotating Shapes

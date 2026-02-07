@@ -14,6 +14,7 @@ Master typography features: alignment, rotation, sizing, and combining text with
 - Rotating text
 - Combining text with entities
 - Data-driven labels
+- Auto-sizing text inside shapes with `fit_within`
 
 ---
 
@@ -73,7 +74,7 @@ for col in range(scene.grid.cols):
         baseline="hanging"
     )
 
-# Example 3: Data labels
+# Example 3: Data labels inside dots (auto-sized with fit_within)
 for cell in scene.grid[2:8, 2:8]:
     # Dot sized by brightness
     dot = cell.add_dot(
@@ -82,14 +83,15 @@ for cell in scene.grid[2:8, 2:8]:
         z_index=5
     )
 
-    # Label showing brightness value
-    cell.add_text(
+    # Label auto-sized to fit inside the dot
+    label = cell.add_text(
         content=f"{cell.brightness:.2f}",
-        font_size=8,
+        font_size=50,
         color="white" if cell.brightness < 0.5 else "black",
         font_family="monospace",
         z_index=10
     )
+    label.fit_within(dot)
 
 scene.save("text_art.svg")
 ```
@@ -319,27 +321,29 @@ title = Text(
 scene.add(title)
 ```
 
-### Pattern 2: Data Annotations
+### Pattern 2: Data Annotations (with fit_within)
 
 ```python
 for cell in scene.grid:
     # Dot sized by data
-    size = 2 + cell.brightness * 10
+    dot = cell.add_dot(
+        radius=2 + cell.brightness * 10,
+        color=colors.primary,
+        z_index=5
+    )
 
-    cell.add_dot(radius=size, color=colors.primary, z_index=5)
-
-    # Numeric label
-    value = f"{cell.brightness:.2f}"
-    cell.add_text(
-        content=value,
-        font_size=8,
+    # Label auto-sized to fit inside the dot
+    label = cell.add_text(
+        content=f"{cell.brightness:.2f}",
+        font_size=50,  # Start large — fit_within scales down
         color="white",
         font_family="monospace",
-        text_anchor="middle",
-        baseline="middle",
         z_index=10
     )
+    label.fit_within(dot)
 ```
+
+**What's happening:** `fit_within` uses the dot's inscribed square (the largest rectangle inside the circle) to calculate the maximum font size. No manual `font_size` tuning needed — it always fits.
 
 ### Pattern 3: Corner Labels
 

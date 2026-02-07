@@ -289,6 +289,39 @@ def textpath():
 
 
 # =============================================================================
+# SECTION: Fit Within (Text inside Dots)
+# =============================================================================
+
+def fit_within_dots():
+    """Text auto-sized to fit inside dots using fit_within + inner_bounds"""
+    import math
+
+    scene = Scene.with_grid(cols=6, rows=4, cell_size=50)
+    scene.background = "white"
+
+    colors = ["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"]
+
+    for cell in scene.grid:
+        # Vary dot radius by position
+        radius = 10 + (cell.row + cell.col) * 2
+
+        color_idx = (cell.row + cell.col) % len(colors)
+        dot = cell.add_dot(radius=radius, color=colors[color_idx], z_index=0)
+
+        # Large font_size — fit_within auto-scales to inscribed square
+        label = cell.add_text(
+            content=str(radius),
+            font_size=50,
+            color="white",
+            font_family="monospace",
+            z_index=10,
+        )
+        label.fit_within(dot)
+
+    scene.save(OUTPUT_DIR / "09_fit_within_dots.svg")
+
+
+# =============================================================================
 # Generator Registry
 # =============================================================================
 
@@ -301,6 +334,7 @@ GENERATORS = {
     "06_rotating_text": rotating_text,
     "07_complete_example": complete_example,
     "08_textpath": textpath,
+    "09_fit_within_dots": fit_within_dots,
 }
 
 

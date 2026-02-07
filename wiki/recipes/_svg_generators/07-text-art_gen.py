@@ -311,7 +311,7 @@ def image_10_mixed_fonts():
 
 
 def image_11_text_with_shapes():
-    """Text combined with geometric shapes."""
+    """Text combined with geometric shapes, auto-sized via fit_within."""
     scene = Scene.with_grid(cols=15, rows=12, cell_size=30)
     colors = Palette.midnight()
     scene.background = colors.background
@@ -320,22 +320,21 @@ def image_11_text_with_shapes():
 
     for cell in scene.grid:
         # Background shape
-        cell.add_dot(
+        dot = cell.add_dot(
             radius=8,
             color=colors.primary,
             z_index=0
         )
 
-        # Foreground text
-        cell.add_text(
+        # Foreground text — fit_within auto-sizes to inscribed square
+        label = cell.add_text(
             content=str(int(cell._brightness * 9)),
-            font_size=12,
+            font_size=50,
             color=colors.background,
             font_family="sans-serif",
-            text_anchor="middle",
-            baseline="middle",
             z_index=10
         )
+        label.fit_within(dot)
 
     save_svg("11_text_with_shapes.svg", scene)
 

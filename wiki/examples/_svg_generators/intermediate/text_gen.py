@@ -61,7 +61,7 @@ def example_02_font_families():
 
 
 def example_03_data_labels():
-    """Data points with value labels."""
+    """Data points with value labels auto-sized via fit_within."""
     colors = Palette.midnight()
     scene = Scene(width=350, height=150, background=colors.background)
 
@@ -72,11 +72,14 @@ def example_03_data_labels():
     ]
 
     for x, y, radius, value, color in data_points:
-        scene.add(Dot(x, y, radius=radius, color=color, opacity=0.5))
-        scene.add(Text(
-            x, y + 5, f"{value:.2f}",
-            font_size=10, color="white", font_family="monospace", text_anchor="middle",
-        ))
+        dot = Dot(x, y, radius=radius, color=color, opacity=0.5)
+        scene.add(dot)
+        label = Text(
+            x, y, f"{value:.2f}",
+            font_size=50, color="white", font_family="monospace",
+        )
+        scene.add(label)
+        label.fit_within(dot)
 
     scene.save(OUTPUT_DIR / "03_data_labels.svg")
 

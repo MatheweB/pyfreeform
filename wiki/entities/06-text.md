@@ -298,6 +298,30 @@ size = cell.height * 0.6  # 60% of cell height
 cell.add_text("Auto-sized", font_size=size)
 ```
 
+### Automatic Sizing with fit_within
+
+When placing text inside another entity (like a dot or ellipse), use `fit_within` to auto-scale the font size:
+
+```python
+dot = cell.add_dot(radius=15, color="navy", z_index=0)
+
+# Start with a large font_size — fit_within scales it down to fit
+label = cell.add_text(
+    content=str(radius),
+    font_size=50,
+    color="white",
+    font_family="monospace",
+    z_index=10
+)
+label.fit_within(dot)
+```
+
+For circles and ellipses, `fit_within` uses the **inscribed rectangle** (`inner_bounds()`) so text stays inside the curved boundary — not the bounding box.
+
+![Text auto-sized inside dots using fit_within](./_images/06-text/09_fit_within_dots.svg)
+
+See [Fit to Cell](../advanced-concepts/05-fit-to-cell.md) for the related `fit_to_cell()` method.
+
 ---
 
 ## Layering
