@@ -172,19 +172,21 @@ def test_fit_to_cell_method_chaining():
 
 
 def test_fit_to_cell_already_fits():
-    """Test that fit_to_cell() handles entities that already fit."""
+    """Test that fit_to_cell() scales up entities that are smaller than cell."""
     scene = Scene.with_grid(cols=2, rows=2, cell_size=20)
     cell = scene.grid[0, 0]
 
-    # Create small dot that already fits
+    # Create small dot that is smaller than cell
     dot = cell.add_dot(radius=3, color="blue")
-    original_radius = dot.radius
 
-    # Fit to cell (should not scale up, only down)
+    # Fit to cell (should scale up to fill)
     dot.fit_to_cell(1.0)
 
-    # Radius should stay roughly the same (not scaled up)
-    assert abs(dot.radius - original_radius) < 0.1
+    # Radius should be scaled up to fill the cell (cell is 20x20, so radius ~10)
+    assert dot.radius > 3
+    min_x, min_y, max_x, max_y = dot.bounds()
+    assert max_x - min_x <= cell.width + 0.1
+    assert max_y - min_y <= cell.height + 0.1
 
 
 def test_fit_to_cell_different_scales():

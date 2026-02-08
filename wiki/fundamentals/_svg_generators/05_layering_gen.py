@@ -13,7 +13,7 @@ Corresponds to sections:
 - Advanced Layering
 """
 
-from pyfreeform import Scene, Palette, shapes
+from pyfreeform import Scene, Palette
 from pyfreeform.config import DotStyle
 from pathlib import Path
 from PIL import Image, ImageDraw

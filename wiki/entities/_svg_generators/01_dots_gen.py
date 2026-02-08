@@ -5,7 +5,7 @@ SVG Generator for: entities/01-dots.md
 Generates visual examples for dot entity documentation.
 """
 
-from pyfreeform import Scene, Dot, shapes
+from pyfreeform import Scene, Dot
 from pathlib import Path
 from PIL import Image, ImageDraw
 import tempfile

@@ -7,34 +7,15 @@ from .curve import Curve
 from .ellipse import Ellipse
 from .text import Text
 from .path import Path
-from .polygon import (
-    Polygon,
-    triangle,
-    square, 
-    diamond,
-    hexagon,
-    star,
-    regular_polygon,
-    squircle,
-    rounded_rect,
-)
+from .polygon import Polygon
 
 __all__ = [
-    "Dot", 
-    "Line", 
+    "Dot",
+    "Line",
     "Rect",
     "Curve",
     "Path",
     "Ellipse",
     "Text",
     "Polygon",
-    # Shape helpers
-    "triangle",
-    "square", 
-    "diamond",
-    "hexagon",
-    "star",
-    "regular_polygon",
-    "squircle",
-    "rounded_rect",
 ]

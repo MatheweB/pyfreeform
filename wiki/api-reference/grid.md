@@ -183,7 +183,7 @@ def corners() -> list[Cell]
 **Example**:
 ```python
 for cell in grid.corners():
-    cell.add_polygon(shapes.star(5), fill="gold")
+    cell.add_polygon(Polygon.star(5), fill="gold")
 ```
 
 ![Corners Example](./_images/grid/example8-corners.svg)

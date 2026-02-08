@@ -3,13 +3,13 @@
 
 **Difficulty**: ⭐ Beginner
 
-Showcase all built-in polygon shapes with the shape helper library.
+Showcase all built-in polygon shapes with the `Polygon` classmethods.
 
 ---
 
 ## What You'll Learn
 
-- Using `shapes` module for built-in polygons
+- Using `Polygon` classmethods for built-in polygons
 - Triangle, square, hexagon, star, diamond helpers
 - Squircles and rounded rectangles
 - Regular polygons with n sides
@@ -31,7 +31,7 @@ Showcase all built-in polygon shapes with the shape helper library.
 ## Complete Code
 
 ```python
-from pyfreeform import Scene, Palette, shapes
+from pyfreeform import Scene, Palette, Polygon
 
 scene = Scene.with_grid(cols=8, rows=6, cell_size=40)
 colors = Palette.pastel()
@@ -39,18 +39,18 @@ scene.background = colors.background
 
 # Define all shapes to showcase
 shape_gallery = [
-    (shapes.triangle(), "Triangle"),
-    (shapes.square(), "Square"),
-    (shapes.diamond(), "Diamond"),
-    (shapes.hexagon(), "Hexagon"),
-    (shapes.star(points=5), "Star 5"),
-    (shapes.star(points=6), "Star 6"),
-    (shapes.star(points=8), "Star 8"),
-    (shapes.regular_polygon(5), "Pentagon"),
-    (shapes.regular_polygon(7), "Heptagon"),
-    (shapes.regular_polygon(8), "Octagon"),
-    (shapes.squircle(n=4), "Squircle"),
-    (shapes.rounded_rect(corner_radius=0.2), "Rounded"),
+    (Polygon.triangle(), "Triangle"),
+    (Polygon.square(), "Square"),
+    (Polygon.diamond(), "Diamond"),
+    (Polygon.hexagon(), "Hexagon"),
+    (Polygon.star(points=5), "Star 5"),
+    (Polygon.star(points=6), "Star 6"),
+    (Polygon.star(points=8), "Star 8"),
+    (Polygon.regular_polygon(5), "Pentagon"),
+    (Polygon.regular_polygon(7), "Heptagon"),
+    (Polygon.regular_polygon(8), "Octagon"),
+    (Polygon.squircle(n=4), "Squircle"),
+    (Polygon.rounded_rect(corner_radius=0.2), "Rounded"),
 ]
 
 # Cycle through shapes
@@ -78,22 +78,22 @@ scene.save("polygon_gallery.svg")
 ### Step 1: Import Shapes Module
 
 ```python
-from pyfreeform import shapes
+from pyfreeform import Polygon
 ```
 
 **What's happening:**
-- `shapes` module contains helper functions
-- Each function returns a list of vertices in relative coordinates (0-1)
+- `Polygon` class provides shape classmethods
+- Each method returns a list of vertices in relative coordinates (0-1)
 - Vertices are automatically scaled to fit the cell
 
 ### Step 2: Basic Shapes
 
 ```python
 # Simple shapes
-triangle = shapes.triangle()       # 3 sides, pointing up
-square = shapes.square()           # 4 sides, rotated 45°
-diamond = shapes.diamond()         # 4 sides, aligned to axes
-hexagon = shapes.hexagon()         # 6 sides, flat top
+triangle = Polygon.triangle()       # 3 sides, pointing up
+square = Polygon.square()           # 4 sides, rotated 45°
+diamond = Polygon.diamond()         # 4 sides, aligned to axes
+hexagon = Polygon.hexagon()         # 6 sides, flat top
 
 cell.add_polygon(triangle, fill="red")
 ```
@@ -107,9 +107,9 @@ cell.add_polygon(triangle, fill="red")
 
 ```python
 # Multi-pointed stars
-star_5 = shapes.star(points=5)              # Classic 5-point
-star_6 = shapes.star(points=6)              # 6-point
-star_8 = shapes.star(points=8, inner_radius=0.3)  # 8-point, sharper
+star_5 = Polygon.star(points=5)              # Classic 5-point
+star_6 = Polygon.star(points=6)              # 6-point
+star_8 = Polygon.star(points=8, inner_radius=0.3)  # 8-point, sharper
 
 cell.add_polygon(star_5, fill="gold")
 ```
@@ -133,10 +133,10 @@ points=5, inner=0.4     points=6, inner=0.3
 
 ```python
 # Any number of sides
-pentagon = shapes.regular_polygon(5)    # 5 sides
-heptagon = shapes.regular_polygon(7)    # 7 sides
-octagon = shapes.regular_polygon(8)     # 8 sides
-decagon = shapes.regular_polygon(10)    # 10 sides
+pentagon = Polygon.regular_polygon(5)    # 5 sides
+heptagon = Polygon.regular_polygon(7)    # 7 sides
+octagon = Polygon.regular_polygon(8)     # 8 sides
+decagon = Polygon.regular_polygon(10)    # 10 sides
 
 cell.add_polygon(octagon, fill="navy")
 ```
@@ -150,10 +150,10 @@ cell.add_polygon(octagon, fill="navy")
 
 ```python
 # Squircle (superellipse - iOS icon shape!)
-squircle = shapes.squircle(n=4)  # n controls roundness
+squircle = Polygon.squircle(n=4)  # n controls roundness
 
 # Rounded rectangle
-rounded = shapes.rounded_rect(corner_radius=0.2)
+rounded = Polygon.rounded_rect(corner_radius=0.2)
 
 cell.add_polygon(squircle, fill="blue")
 cell.add_polygon(rounded, fill="green")
@@ -179,7 +179,7 @@ cell.add_polygon(rounded, fill="green")
 for i in range(5, 9):
     for inner in [0.3, 0.4, 0.5]:
         cell.add_polygon(
-            shapes.star(points=i, inner_radius=inner),
+            Polygon.star(points=i, inner_radius=inner),
             fill=colors.primary
         )
 ```
@@ -188,11 +188,11 @@ for i in range(5, 9):
 
 ```python
 # Smaller shapes, custom center
-small_triangle = shapes.triangle(size=0.6, center=(0.5, 0.3))
+small_triangle = Polygon.triangle(size=0.6, center=(0.5, 0.3))
 cell.add_polygon(small_triangle, fill="red")
 
 # Large hexagon
-large_hex = shapes.hexagon(size=1.2)  # Extends beyond cell
+large_hex = Polygon.hexagon(size=1.2)  # Extends beyond cell
 cell.add_polygon(large_hex, fill="blue")
 ```
 
@@ -203,7 +203,7 @@ cell.add_polygon(large_hex, fill="blue")
 for col, n in enumerate([2, 3, 4, 5, 6, 8]):
     cell = scene.grid[0, col]
     cell.add_polygon(
-        shapes.squircle(n=n),
+        Polygon.squircle(n=n),
         fill=colors.primary
     )
     cell.add_text(f"n={n}", font_size=8)
@@ -215,11 +215,11 @@ for col, n in enumerate([2, 3, 4, 5, 6, 8]):
 # Mix shapes based on position
 for cell in scene.grid:
     if (cell.row + cell.col) % 3 == 0:
-        shape = shapes.triangle()
+        shape = Polygon.triangle()
     elif (cell.row + cell.col) % 3 == 1:
-        shape = shapes.hexagon()
+        shape = Polygon.hexagon()
     else:
-        shape = shapes.star(5)
+        shape = Polygon.star(5)
 
     cell.add_polygon(shape, fill=colors.primary)
 ```

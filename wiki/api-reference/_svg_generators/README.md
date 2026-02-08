@@ -37,7 +37,7 @@ The generators revealed several API differences that need correction:
 - `grid.checkerboard(offset=...)` - different parameter name
 
 ### Shape Helper Arguments
-- `shapes.star(points, inner_radius=...)` - `inner_radius` not supported
+- `Polygon.star(points, inner_radius=...)` - `inner_radius` not supported
 
 ### Style Objects
 - `DotStyle(opacity=...)` - opacity parameter not supported

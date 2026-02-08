@@ -15,7 +15,7 @@ Corresponds to sections:
 - Layering examples
 """
 
-from pyfreeform import Scene, Palette, shapes, map_range
+from pyfreeform import Scene, Palette, Polygon, map_range
 from pathlib import Path
 from PIL import Image, ImageDraw
 import tempfile
@@ -138,7 +138,7 @@ def example_05_shapes_by_brightness():
     for cell in scene.grid:
         if cell.brightness > 0.7:
             # Bright: Hexagons
-            cell.add_polygon(shapes.hexagon(), fill=cell.color)
+            cell.add_polygon(Polygon.hexagon(), fill=cell.color)
 
         elif cell.brightness > 0.4:
             # Medium: Curves
@@ -572,7 +572,7 @@ def example_24_mixed_techniques():
         # Shape based on brightness
         if cell.brightness > 0.8:
             # Very bright: hexagons
-            cell.add_polygon(shapes.hexagon(), fill=colors.primary)
+            cell.add_polygon(Polygon.hexagon(), fill=colors.primary)
 
         elif cell.brightness > 0.6:
             # Bright: large dots

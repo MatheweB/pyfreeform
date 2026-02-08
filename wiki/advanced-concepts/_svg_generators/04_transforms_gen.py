@@ -12,7 +12,7 @@ Corresponds to sections:
 - Examples
 """
 
-from pyfreeform import Scene, shapes
+from pyfreeform import Scene, Polygon
 from pyfreeform.core.point import Point
 from pathlib import Path
 import math
@@ -53,7 +53,7 @@ def rotation_progressive():
         angle = i * 30
         cell = scene.grid[0, i]
 
-        poly = cell.add_polygon(shapes.hexagon(size=0.7), fill="#10b981")
+        poly = cell.add_polygon(Polygon.hexagon(size=0.7), fill="#10b981")
         poly.rotate(angle)
 
         cell.add_text(f"{angle}°", at=(0.5, 0.85), font_size=7, color="#1f2937")
@@ -136,7 +136,7 @@ def scaling_progressive():
     colors = ["#ef4444", "#f59e0b", "#10b981", "#3b82f6", "#8b5cf6", "#ec4899"]
 
     for scale, color in zip(scales, colors):
-        poly = cell.add_polygon(shapes.hexagon(size=0.5), fill=color)
+        poly = cell.add_polygon(Polygon.hexagon(size=0.5), fill=color)
         poly.scale(scale)
 
     scene.save(OUTPUT_DIR / "06-scaling-progressive.svg")
@@ -288,7 +288,7 @@ def chaining_complex():
     # Create a pattern with chained transformations
     for i in range(8):
         angle = i * 45
-        poly = cell.add_polygon(shapes.triangle(size=0.3), fill="#3b82f6")
+        poly = cell.add_polygon(Polygon.triangle(size=0.3), fill="#3b82f6")
         scale = 0.5 + i * 0.1
         poly.rotate(angle).scale(scale).move_by(0, -i * 3)
 
@@ -313,7 +313,7 @@ def example_distance_based_rotation():
 
         rotation = distance * 10
 
-        poly = cell.add_polygon(shapes.hexagon(size=0.6), fill="#3b82f6")
+        poly = cell.add_polygon(Polygon.hexagon(size=0.6), fill="#3b82f6")
         poly.rotate(rotation)
 
     scene.save(OUTPUT_DIR / "13-example-distance-based-rotation.svg")
@@ -367,7 +367,7 @@ def example_combined_transforms():
         rotation = distance * 15
         scale = 0.3 + (1 - distance / max_dist) * 0.7
 
-        poly = cell.add_polygon(shapes.square(size=0.7), fill="#8b5cf6")
+        poly = cell.add_polygon(Polygon.square(size=0.7), fill="#8b5cf6")
         poly.rotate(rotation).scale(scale)
 
     scene.save(OUTPUT_DIR / "16-example-combined-transforms.svg")
@@ -379,36 +379,36 @@ def example_transform_comparison():
 
     # Original
     cell1 = scene.grid[0, 0]
-    cell1.add_polygon(shapes.hexagon(size=0.7), fill="#3b82f6")
+    cell1.add_polygon(Polygon.hexagon(size=0.7), fill="#3b82f6")
     cell1.add_text("Original", at=(0.5, 0.85), font_size=8, color="#1f2937")
 
     # Rotated
     cell2 = scene.grid[0, 1]
-    poly2 = cell2.add_polygon(shapes.hexagon(size=0.7), fill="#10b981")
+    poly2 = cell2.add_polygon(Polygon.hexagon(size=0.7), fill="#10b981")
     poly2.rotate(45)
     cell2.add_text("Rotated", at=(0.5, 0.85), font_size=8, color="#1f2937")
 
     # Scaled
     cell3 = scene.grid[0, 2]
-    poly3 = cell3.add_polygon(shapes.hexagon(size=0.7), fill="#f59e0b")
+    poly3 = cell3.add_polygon(Polygon.hexagon(size=0.7), fill="#f59e0b")
     poly3.scale(1.3)
     cell3.add_text("Scaled", at=(0.5, 0.85), font_size=8, color="#1f2937")
 
     # Rotated + Scaled
     cell4 = scene.grid[1, 0]
-    poly4 = cell4.add_polygon(shapes.hexagon(size=0.7), fill="#ef4444")
+    poly4 = cell4.add_polygon(Polygon.hexagon(size=0.7), fill="#ef4444")
     poly4.rotate(45).scale(1.3)
     cell4.add_text("Rotate + Scale", at=(0.5, 0.85), font_size=8, color="#1f2937")
 
     # Translated
     cell5 = scene.grid[1, 1]
-    poly5 = cell5.add_polygon(shapes.hexagon(size=0.7), fill="#8b5cf6")
+    poly5 = cell5.add_polygon(Polygon.hexagon(size=0.7), fill="#8b5cf6")
     poly5.move_by(dx=10, dy=-8)
     cell5.add_text("Translated", at=(0.5, 0.85), font_size=8, color="#1f2937")
 
     # All combined
     cell6 = scene.grid[1, 2]
-    poly6 = cell6.add_polygon(shapes.hexagon(size=0.7), fill="#ec4899")
+    poly6 = cell6.add_polygon(Polygon.hexagon(size=0.7), fill="#ec4899")
     poly6.rotate(30).scale(1.2).move_by(dx=8, dy=-6)
     cell6.add_text("Combined", at=(0.5, 0.85), font_size=8, color="#1f2937")
 

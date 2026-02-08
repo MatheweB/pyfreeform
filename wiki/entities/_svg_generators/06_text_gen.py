@@ -5,7 +5,7 @@ SVG Generator for: entities/06-text.md
 Generates visual examples for text entity documentation.
 """
 
-from pyfreeform import Scene, Text, shapes
+from pyfreeform import Scene, Text
 from pathlib import Path
 from PIL import Image, ImageDraw
 import tempfile

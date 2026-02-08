@@ -9,7 +9,7 @@ Corresponds to sections:
 - Entity Lifecycle
 """
 
-from pyfreeform import Scene, shapes
+from pyfreeform import Scene, Polygon
 from pathlib import Path
 
 # Paths
@@ -77,7 +77,7 @@ def abstract_methods_anchors():
     cells[2].add_border(color="#e5e7eb", width=1)
 
     # Polygon anchors
-    poly = cells[3].add_polygon(shapes.hexagon(size=0.7), fill="#8b5cf6")
+    poly = cells[3].add_polygon(Polygon.hexagon(size=0.7), fill="#8b5cf6")
     cells[3].add_dot(at="center", radius=3, color="#ef4444")
     cells[3].add_border(color="#e5e7eb", width=1)
 
@@ -102,7 +102,7 @@ def entity_lifecycle():
     cells[1].add_border(color="#10b981", width=2)
 
     # 3. Transformation - rotated
-    rect = cells[2].add_polygon(shapes.square(size=0.7), fill="#f59e0b")
+    rect = cells[2].add_polygon(Polygon.square(size=0.7), fill="#f59e0b")
     rect.rotate(45)
     cells[2].add_border(color="#f59e0b", width=2)
 
@@ -128,21 +128,21 @@ def lifecycle_transformation():
     cells = list(scene.grid)
 
     # Original
-    cells[0].add_polygon(shapes.square(size=0.7), fill="#3b82f6")
+    cells[0].add_polygon(Polygon.square(size=0.7), fill="#3b82f6")
     cells[0].add_border(color="#e5e7eb", width=1)
 
     # After rotate
-    rect2 = cells[1].add_polygon(shapes.square(size=0.7), fill="#3b82f6")
+    rect2 = cells[1].add_polygon(Polygon.square(size=0.7), fill="#3b82f6")
     rect2.rotate(45)
     cells[1].add_border(color="#e5e7eb", width=1)
 
     # After scale
-    rect3 = cells[2].add_polygon(shapes.square(size=0.7), fill="#3b82f6")
+    rect3 = cells[2].add_polygon(Polygon.square(size=0.7), fill="#3b82f6")
     rect3.scale(0.6)
     cells[2].add_border(color="#e5e7eb", width=1)
 
     # Combined
-    rect4 = cells[3].add_polygon(shapes.square(size=0.7), fill="#3b82f6")
+    rect4 = cells[3].add_polygon(Polygon.square(size=0.7), fill="#3b82f6")
     rect4.rotate(30)
     rect4.scale(0.8)
     cells[3].add_border(color="#e5e7eb", width=1)
@@ -187,17 +187,17 @@ def bounds_method_visual():
     # Dot with bounds
     cells[0].add_dot(radius=20, color="#3b82f6")
     # Can't actually draw the bounding box, but show the concept with a square
-    cells[0].add_polygon(shapes.square(size=0.7), fill="none", stroke="#ef4444", stroke_width=1)
+    cells[0].add_polygon(Polygon.square(size=0.7), fill="none", stroke="#ef4444", stroke_width=1)
     cells[0].add_border(color="#e5e7eb", width=1)
 
     # Ellipse with bounds
     cells[1].add_ellipse(rx=25, ry=18, fill="#10b981")
-    cells[1].add_polygon(shapes.square(size=0.85), fill="none", stroke="#ef4444", stroke_width=1)
+    cells[1].add_polygon(Polygon.square(size=0.85), fill="none", stroke="#ef4444", stroke_width=1)
     cells[1].add_border(color="#e5e7eb", width=1)
 
     # Polygon with bounds
-    cells[2].add_polygon(shapes.star(points=5, size=0.6), fill="#f59e0b")
-    cells[2].add_polygon(shapes.square(size=0.75), fill="none", stroke="#ef4444", stroke_width=1)
+    cells[2].add_polygon(Polygon.star(points=5, size=0.6), fill="#f59e0b")
+    cells[2].add_polygon(Polygon.square(size=0.75), fill="none", stroke="#ef4444", stroke_width=1)
     cells[2].add_border(color="#e5e7eb", width=1)
 
     scene.save(OUTPUT_DIR / "06-bounds-method-visual.svg")
@@ -218,9 +218,9 @@ def entity_inheritance_pattern():
     cells[1].add_line(start="top_left", end="bottom_right", width=3, color="#f59e0b")
     cells[2].add_curve(start="left", end="right", curvature=0.5, width=2, color="#fbbf24")
     cells[3].add_ellipse(rx=15, ry=15, fill="#10b981")
-    cells[4].add_polygon(shapes.triangle(size=0.7), fill="#3b82f6")
-    cells[5].add_polygon(shapes.hexagon(size=0.7), fill="#8b5cf6")
-    cells[6].add_polygon(shapes.star(points=5, size=0.7), fill="#ec4899")
+    cells[4].add_polygon(Polygon.triangle(size=0.7), fill="#3b82f6")
+    cells[5].add_polygon(Polygon.hexagon(size=0.7), fill="#8b5cf6")
+    cells[6].add_polygon(Polygon.star(points=5, size=0.7), fill="#ec4899")
 
     for cell in cells:
         cell.add_border(color="#f3f4f6", width=0.5)

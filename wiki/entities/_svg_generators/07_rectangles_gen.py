@@ -5,7 +5,7 @@ SVG Generator for: entities/07-rectangles.md
 Generates visual examples for rectangle entity documentation.
 """
 
-from pyfreeform import Scene, Rect, shapes
+from pyfreeform import Scene, Rect
 from pathlib import Path
 from PIL import Image, ImageDraw
 import tempfile

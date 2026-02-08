@@ -347,12 +347,12 @@ cell.add_dot(along=ellipse, t=0.25)
 
 ### Polygons
 - Custom vertices
-- Built-in shape helpers (triangle, hexagon, star, etc.)
+- Built-in shape classmethods (triangle, hexagon, star, etc.)
 - Fill and stroke styling
 
 ```python
-from pyfreeform import shapes
-cell.add_polygon(shapes.hexagon(), fill="purple")
+from pyfreeform import Polygon
+cell.add_polygon(Polygon.hexagon(), fill="purple")
 ```
 
 ![Polygons](./_images/03-entities/20-entity-specific-polygons.svg)

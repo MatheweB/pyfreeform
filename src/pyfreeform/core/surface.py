@@ -500,6 +500,8 @@ class Surface:
         *,
         segments: int = 64,
         closed: bool = False,
+        start_t: float = 0.0,
+        end_t: float = 1.0,
         width: float = 1,
         color: str = "black",
         fill: str | None = None,
@@ -520,11 +522,15 @@ class Surface:
         SVG path using cubic Bézier approximation.
 
         Supports both open and closed paths. Closed paths can be filled.
+        Use ``start_t`` and ``end_t`` to render a sub-section (arc) of
+        any pathable.
 
         Args:
             pathable: Any object implementing ``point_at(t)``.
             segments: Number of cubic Bézier segments (higher = smoother).
             closed: Close the path smoothly back to start.
+            start_t: Start parameter on the pathable (0.0-1.0).
+            end_t: End parameter on the pathable (0.0-1.0).
             width: Stroke width in pixels.
             color: Stroke color.
             fill: Fill color for closed paths (ignored if not closed).
@@ -543,9 +549,9 @@ class Surface:
         Examples:
             >>> wave = Wave(start=cell.center, end=cell.right_center, amplitude=10, frequency=3)
             >>> cell.add_path(wave, color="blue", width=2)
-            >>> # Closed path with fill:
-            >>> liss = Lissajous(center=cell.center, a=3, b=2, delta=math.pi/2, size=30)
-            >>> cell.add_path(liss, closed=True, color="navy", fill="lightblue")
+            >>> # Arc of an ellipse (quarter circle):
+            >>> ellipse = cell.add_ellipse(rx=20, ry=20)
+            >>> cell.add_path(ellipse, start_t=0.0, end_t=0.25, color="red")
         """
         from ..entities.path import Path
 
@@ -562,6 +568,8 @@ class Surface:
             pathable,
             segments=segments,
             closed=closed,
+            start_t=start_t,
+            end_t=end_t,
             width=width,
             color=color,
             fill=fill,
@@ -687,7 +695,7 @@ class Surface:
 
         Args:
             vertices:   List of (x, y) tuples in relative coordinates.
-                        Use shape helpers like hexagon(), star() for common shapes.
+                        Use Polygon.hexagon(), Polygon.star() for common shapes.
             along: Path to position the polygon's centroid along
             t: Parameter on the path (0.0 to 1.0, default 0.5)
             align: Rotate polygon to follow path tangent
@@ -703,11 +711,11 @@ class Surface:
 
         Examples:
             >>> cell.add_polygon([(0.5, 0.1), (0.9, 0.9), (0.1, 0.9)], fill="red")
-            >>> from pyfreeform import shapes
-            >>> cell.add_polygon(shapes.hexagon(), fill="purple")
+            >>> from pyfreeform.entities.polygon import Polygon
+            >>> cell.add_polygon(Polygon.hexagon(), fill="purple")
             >>> # Place polygon along a curve
             >>> curve = cell.add_curve()
-            >>> cell.add_polygon(shapes.hexagon(), along=curve, t=0.5, align=True)
+            >>> cell.add_polygon(Polygon.hexagon(), along=curve, t=0.5, align=True)
         """
         from ..entities.polygon import Polygon
 

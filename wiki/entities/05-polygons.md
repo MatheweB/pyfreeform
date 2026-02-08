@@ -24,18 +24,18 @@ Polygons can have any number of vertices (minimum 3) and support both fill and s
 ### Via Cell Method with Shape Helpers
 
 ```python
-from pyfreeform import shapes
+from pyfreeform import Polygon
 
 # Built-in shapes (relative coordinates 0-1)
-cell.add_polygon(shapes.triangle(), fill="red")
-cell.add_polygon(shapes.square(), fill="blue")
-cell.add_polygon(shapes.hexagon(), fill="purple")
-cell.add_polygon(shapes.star(points=5), fill="gold")
-cell.add_polygon(shapes.diamond(), fill="coral")
+cell.add_polygon(Polygon.triangle(), fill="red")
+cell.add_polygon(Polygon.square(), fill="blue")
+cell.add_polygon(Polygon.hexagon(), fill="purple")
+cell.add_polygon(Polygon.star(points=5), fill="gold")
+cell.add_polygon(Polygon.diamond(), fill="coral")
 
 # Advanced shapes
-cell.add_polygon(shapes.squircle(), fill="blue")  # iOS icon shape!
-cell.add_polygon(shapes.rounded_rect(corner_radius=0.2), fill="green")
+cell.add_polygon(Polygon.squircle(), fill="blue")  # iOS icon shape!
+cell.add_polygon(Polygon.rounded_rect(corner_radius=0.2), fill="green")
 ```
 
 ### Custom Vertices
@@ -169,20 +169,20 @@ polygon.anchor("v1")      # Second vertex
 ### Pattern 1: Shape Gallery
 
 ```python
-from pyfreeform import shapes, Palette
+from pyfreeform import Polygon, Palette
 
 scene = Scene.with_grid(cols=8, rows=6, cell_size=20)
 colors = Palette.pastel()
 
 shape_grid = [
-    shapes.triangle(),
-    shapes.square(),
-    shapes.diamond(),
-    shapes.hexagon(),
-    shapes.star(5),
-    shapes.star(6),
-    shapes.star(8),
-    shapes.regular_polygon(7)
+    Polygon.triangle(),
+    Polygon.square(),
+    Polygon.diamond(),
+    Polygon.hexagon(),
+    Polygon.star(5),
+    Polygon.star(6),
+    Polygon.star(8),
+    Polygon.regular_polygon(7)
 ]
 
 for i, cell in enumerate(scene.grid):
@@ -199,7 +199,7 @@ for cell in scene.grid:
     # Rotation based on position
     rotation = (cell.row + cell.col) * 15
 
-    poly = cell.add_polygon(shapes.hexagon(), fill=cell.color)
+    poly = cell.add_polygon(Polygon.hexagon(), fill=cell.color)
     poly.rotate(rotation)
 ```
 
@@ -210,11 +210,11 @@ for cell in scene.grid:
 ```python
 for cell in scene.grid:
     if cell.brightness > 0.7:
-        cell.add_polygon(shapes.hexagon(), fill="gold")
+        cell.add_polygon(Polygon.hexagon(), fill="gold")
     elif cell.brightness > 0.4:
-        cell.add_polygon(shapes.diamond(), fill="silver")
+        cell.add_polygon(Polygon.diamond(), fill="silver")
     else:
-        cell.add_polygon(shapes.triangle(), fill="bronze")
+        cell.add_polygon(Polygon.triangle(), fill="bronze")
 ```
 
 ![Conditional Shapes](./_images/05-polygons/04_conditional_shapes.svg)
@@ -245,7 +245,7 @@ cell.add_polygon(custom_star(8), fill="orange")
 Polygons support rotation and scaling:
 
 ```python
-poly = cell.add_polygon(shapes.hexagon(), fill="purple")
+poly = cell.add_polygon(Polygon.hexagon(), fill="purple")
 
 # Rotate around centroid
 poly.rotate(45)
@@ -266,14 +266,14 @@ poly.scale(0.8, origin=cell.center)
 
 ```python
 # Fill only
-cell.add_polygon(shapes.star(5), fill="gold")
+cell.add_polygon(Polygon.star(5), fill="gold")
 
 # Stroke only
-cell.add_polygon(shapes.hexagon(), fill=None, stroke="navy", stroke_width=2)
+cell.add_polygon(Polygon.hexagon(), fill=None, stroke="navy", stroke_width=2)
 
 # Both fill and stroke
 cell.add_polygon(
-    shapes.diamond(),
+    Polygon.diamond(),
     fill="lightblue",
     stroke="darkblue",
     stroke_width=1
@@ -285,7 +285,7 @@ cell.add_polygon(
 ## Complete Example
 
 ```python
-from pyfreeform import Scene, Palette, shapes
+from pyfreeform import Scene, Palette, Polygon
 
 scene = Scene.with_grid(cols=15, rows=15, cell_size=20)
 colors = Palette.ocean()
@@ -299,13 +299,13 @@ for cell in scene.grid:
 
     # Choose shape by distance
     if distance < 3:
-        shape = shapes.squircle(n=4)
+        shape = Polygon.squircle(n=4)
         color = colors.primary
     elif distance < 6:
-        shape = shapes.hexagon()
+        shape = Polygon.hexagon()
         color = colors.secondary
     else:
-        shape = shapes.triangle()
+        shape = Polygon.triangle()
         color = colors.accent
 
     # Create polygon
@@ -329,7 +329,7 @@ scene.save("polygon_pattern.svg")
 They handle the math for you:
 ```python
 # Easy
-cell.add_polygon(shapes.star(6), fill="gold")
+cell.add_polygon(Polygon.star(6), fill="gold")
 
 # vs Manual (tedious)
 vertices = [(calculate x, calculate y) for each point]
@@ -340,14 +340,14 @@ vertices = [(calculate x, calculate y) for each point]
 The n parameter creates interesting variations:
 ```python
 for n in [2, 3, 4, 5, 6]:
-    cell.add_polygon(shapes.squircle(n=n), fill="blue")
+    cell.add_polygon(Polygon.squircle(n=n), fill="blue")
 ```
 
 ### Combine with Rotation
 
 Rotating polygons creates dynamic effects:
 ```python
-poly = cell.add_polygon(shapes.hexagon())
+poly = cell.add_polygon(Polygon.hexagon())
 poly.rotate((cell.row + cell.col) * 15)
 ```
 

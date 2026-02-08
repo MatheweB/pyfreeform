@@ -443,12 +443,12 @@ class Entity(ABC):
             # Scale factors
             scale_x = available_w / entity_w if entity_w > 0 else 1.0
             scale_y = available_h / entity_h if entity_h > 0 else 1.0
-            factor = min(scale_x, scale_y, 1.0)
+            factor = min(scale_x, scale_y)
 
             entity_center = Point(
                 (e_min_x + e_max_x) / 2, (e_min_y + e_max_y) / 2,
             )
-            if factor < 0.999:
+            if abs(factor - 1.0) > 0.001:
                 self.scale(factor, origin=entity_center)
 
             # Move to target position
@@ -475,13 +475,13 @@ class Entity(ABC):
         # Scale factors
         scale_x = available_w / entity_w if entity_w > 0 else 1.0
         scale_y = available_h / entity_h if entity_h > 0 else 1.0
-        factor = min(scale_x, scale_y, 1.0)  # Don't scale up
+        factor = min(scale_x, scale_y)
 
         # Scale around entity center if needed
         entity_cx = (e_min_x + e_max_x) / 2
         entity_cy = (e_min_y + e_max_y) / 2
 
-        if factor < 0.999:
+        if abs(factor - 1.0) > 0.001:
             self.scale(factor, origin=Point(entity_cx, entity_cy))
 
         # Recenter within target
@@ -579,14 +579,14 @@ class Entity(ABC):
             # Calculate scale factors
             scale_x = available_w / entity_w if entity_w > 0 else 1.0
             scale_y = available_h / entity_h if entity_h > 0 else 1.0
-            factor = min(scale_x, scale_y, 1.0)  # Don't scale up
+            factor = min(scale_x, scale_y)
 
             # Scale around entity center if needed
             entity_center = Point(
                 (e_min_x + e_max_x) / 2,
                 (e_min_y + e_max_y) / 2,
             )
-            if factor < 0.999:
+            if abs(factor - 1.0) > 0.001:
                 self.scale(factor, origin=entity_center)
 
             # Move to target position
@@ -626,10 +626,10 @@ class Entity(ABC):
             scale_y = 1.0
 
         # Use smaller scale to maintain aspect ratio and fit within bounds
-        scale_factor = min(scale_x, scale_y, 1.0)  # Don't scale up, only down
+        scale_factor = min(scale_x, scale_y)
 
         # If already fits, skip scaling (optimization)
-        if scale_factor >= 0.999:  # Allow small floating point error
+        if abs(scale_factor - 1.0) < 0.001:  # Allow small floating point error
             if recenter:
                 # Just recenter without scaling
                 cell_center = Point(

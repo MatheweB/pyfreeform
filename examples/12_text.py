@@ -24,7 +24,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from pyfreeform import Scene, Palette, shapes
+from pyfreeform import Scene, Palette, Polygon
 
 # =============================================================================
 # Configuration
@@ -70,7 +70,7 @@ for cell in scene.grid:
     elif cell.row == cell.col:
         # Diagonal: special symbols
         cell.add_polygon(
-            shapes.star(points=4, size=0.5, inner_ratio=0.4),
+            Polygon.star(points=4, size=0.5, inner_ratio=0.4),
             fill=colors.primary,
             z_index=1,
         )

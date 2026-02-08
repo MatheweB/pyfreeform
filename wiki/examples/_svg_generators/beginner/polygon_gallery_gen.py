@@ -5,7 +5,7 @@ SVG Generator for: examples/beginner/polygon-gallery
 Showcases all built-in polygon shapes using the shapes module.
 """
 
-from pyfreeform import Scene, Palette, shapes
+from pyfreeform import Scene, Palette, Polygon
 from pathlib import Path
 
 
@@ -21,12 +21,12 @@ def example_01_basic_shapes():
     )
     cells = list(scene.grid)
 
-    cells[0].add_polygon(shapes.triangle(size=0.8), fill=colors.primary, opacity=0.8)
-    cells[1].add_polygon(shapes.square(size=0.7), fill=colors.secondary, opacity=0.8)
-    cells[2].add_polygon(shapes.diamond(size=0.8), fill=colors.accent, opacity=0.8)
-    cells[3].add_polygon(shapes.hexagon(size=0.8), fill="#64ffda", opacity=0.8)
+    cells[0].add_polygon(Polygon.triangle(size=0.8), fill=colors.primary, opacity=0.8)
+    cells[1].add_polygon(Polygon.square(size=0.7), fill=colors.secondary, opacity=0.8)
+    cells[2].add_polygon(Polygon.diamond(size=0.8), fill=colors.accent, opacity=0.8)
+    cells[3].add_polygon(Polygon.hexagon(size=0.8), fill="#64ffda", opacity=0.8)
 
-    scene.save(OUTPUT_DIR / "01_basic_shapes.svg")
+    scene.save(OUTPUT_DIR / "01_basic_Polygon.svg")
 
 
 def example_02_stars():
@@ -37,9 +37,9 @@ def example_02_stars():
     )
     cells = list(scene.grid)
 
-    cells[0].add_polygon(shapes.star(5), fill=colors.primary, opacity=0.8)
-    cells[1].add_polygon(shapes.star(6), fill=colors.secondary, opacity=0.8)
-    cells[2].add_polygon(shapes.star(8), fill=colors.accent, opacity=0.8)
+    cells[0].add_polygon(Polygon.star(5), fill=colors.primary, opacity=0.8)
+    cells[1].add_polygon(Polygon.star(6), fill=colors.secondary, opacity=0.8)
+    cells[2].add_polygon(Polygon.star(8), fill=colors.accent, opacity=0.8)
 
     scene.save(OUTPUT_DIR / "02_stars.svg")
 
@@ -55,7 +55,7 @@ def example_03_regular_polygons():
 
     for i, n_sides in enumerate([5, 6, 7, 8]):
         cells[i].add_polygon(
-            shapes.regular_polygon(n_sides, size=0.8),
+            Polygon.regular_polygon(n_sides, size=0.8),
             fill=color_cycle[i],
             opacity=0.8,
         )
@@ -77,16 +77,16 @@ def example_04_all_shapes():
     ]
 
     shape_list = [
-        shapes.triangle(size=0.8),
-        shapes.square(size=0.7),
-        shapes.diamond(size=0.8),
-        shapes.hexagon(size=0.8),
-        shapes.star(5),
-        shapes.star(6),
-        shapes.regular_polygon(5, size=0.8),
-        shapes.regular_polygon(8, size=0.8),
-        shapes.squircle(n=4),
-        shapes.star(8),
+        Polygon.triangle(size=0.8),
+        Polygon.square(size=0.7),
+        Polygon.diamond(size=0.8),
+        Polygon.hexagon(size=0.8),
+        Polygon.star(5),
+        Polygon.star(6),
+        Polygon.regular_polygon(5, size=0.8),
+        Polygon.regular_polygon(8, size=0.8),
+        Polygon.squircle(n=4),
+        Polygon.star(8),
     ]
 
     for i, (shape_verts, color) in enumerate(zip(shape_list, color_cycle)):
@@ -96,7 +96,7 @@ def example_04_all_shapes():
                 stroke="#64ffda", stroke_width=0.5, opacity=0.8,
             )
 
-    scene.save(OUTPUT_DIR / "04_all_shapes.svg")
+    scene.save(OUTPUT_DIR / "04_all_Polygon.svg")
 
 
 GENERATORS = {

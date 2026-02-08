@@ -335,11 +335,11 @@ def add_polygon(
 
 **Example**:
 ```python
-from pyfreeform import shapes
+from pyfreeform import Polygon
 
 # Built-in shapes
-cell.add_polygon(shapes.hexagon(), fill="green")
-cell.add_polygon(shapes.star(5), fill="gold")
+cell.add_polygon(Polygon.hexagon(), fill="green")
+cell.add_polygon(Polygon.star(5), fill="gold")
 
 # Custom vertices (relative 0-1)
 triangle = [(0.5, 0), (1, 1), (0, 1)]

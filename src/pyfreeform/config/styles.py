@@ -190,7 +190,7 @@ class ShapeStyle:
 
         style = ShapeStyle(color="coral", stroke="navy", stroke_width=2)
         cell.add_ellipse(style=style)
-        cell.add_polygon(shapes.hexagon(), style=style)
+        cell.add_polygon(Polygon.hexagon(), style=style)
 
     Note: ``color`` maps to ``fill`` at the entity level.
 

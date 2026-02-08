@@ -11,7 +11,7 @@ Corresponds to sections:
 
 from pathlib import Path
 import math
-from pyfreeform import Scene, shapes, Color
+from pyfreeform import Scene, Polygon, Color
 from pyfreeform.core.entity import Entity
 from pyfreeform.core.point import Point
 
@@ -206,9 +206,9 @@ def builtin_vs_custom():
 
     # Row 1: Built-in entities
     scene.grid[0, 0].add_dot(radius=15, color="#3b82f6")
-    scene.grid[0, 1].add_polygon(shapes.triangle(size=0.7), fill="#10b981")
+    scene.grid[0, 1].add_polygon(Polygon.triangle(size=0.7), fill="#10b981")
     scene.grid[0, 2].add_ellipse(rx=18, ry=18, fill="#f59e0b")
-    scene.grid[0, 3].add_polygon(shapes.hexagon(size=0.7), fill="#8b5cf6")
+    scene.grid[0, 3].add_polygon(Polygon.hexagon(size=0.7), fill="#8b5cf6")
 
     # Row 2: Custom star entities
     for col in range(4):
@@ -246,13 +246,13 @@ def implementation_requirements():
     cells[1].add_border(color="#e5e7eb", width=1)
 
     # 3. anchor()
-    poly = cells[2].add_polygon(shapes.hexagon(size=0.7), fill="#f59e0b")
+    poly = cells[2].add_polygon(Polygon.hexagon(size=0.7), fill="#f59e0b")
     cells[2].add_dot(at="center", radius=4, color="#f59e0b")
     cells[2].add_border(color="#e5e7eb", width=1)
 
     # 4. bounds()
-    cells[3].add_polygon(shapes.star(points=5, size=0.7), fill="#8b5cf6")
-    cells[3].add_polygon(shapes.square(size=0.85), fill="none", stroke="#ef4444", stroke_width=1)
+    cells[3].add_polygon(Polygon.star(points=5, size=0.7), fill="#8b5cf6")
+    cells[3].add_polygon(Polygon.square(size=0.85), fill="none", stroke="#ef4444", stroke_width=1)
     cells[3].add_border(color="#e5e7eb", width=1)
 
     # 5. to_svg()

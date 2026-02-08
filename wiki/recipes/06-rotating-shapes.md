@@ -41,11 +41,11 @@ The technique works because:
 **Key Idea**: Rotate shapes based on their position in the grid to create spiraling or wave-like effects.
 
 ```python
-from pyfreeform import shapes
+from pyfreeform import Polygon
 
 for cell in scene.grid:
     # Create shape
-    poly = cell.add_polygon(shapes.hexagon(), fill=cell.color)
+    poly = cell.add_polygon(Polygon.hexagon(), fill=cell.color)
 
     # Rotate based on position
     angle = (cell.row + cell.col) * 15  # degrees
@@ -59,7 +59,7 @@ for cell in scene.grid:
 ## Complete Example
 
 ```python
-from pyfreeform import Scene, Palette, shapes
+from pyfreeform import Scene, Palette, Polygon
 
 scene = Scene.from_image("photo.jpg", grid_size=25)
 colors = Palette.ocean()
@@ -69,13 +69,13 @@ for cell in scene.grid:
     if cell.brightness > 0.3:
         # Choose shape based on brightness
         if cell.brightness > 0.7:
-            shape = shapes.star(5)
+            shape = Polygon.star(5)
             color = colors.accent
         elif cell.brightness > 0.5:
-            shape = shapes.hexagon()
+            shape = Polygon.hexagon()
             color = colors.primary
         else:
-            shape = shapes.diamond()
+            shape = Polygon.diamond()
             color = colors.secondary
 
         # Create polygon
@@ -98,7 +98,7 @@ Rotation increases steadily:
 
 ```python
 for cell in scene.grid:
-    poly = cell.add_polygon(shapes.hexagon(), fill=cell.color)
+    poly = cell.add_polygon(Polygon.hexagon(), fill=cell.color)
 
     # Increases left to right, top to bottom
     angle = (cell.row * scene.grid.cols + cell.col) * 5
@@ -118,7 +118,7 @@ center_row = scene.grid.rows // 2
 center_col = scene.grid.cols // 2
 
 for cell in scene.grid:
-    poly = cell.add_polygon(shapes.triangle(), fill=cell.color)
+    poly = cell.add_polygon(Polygon.triangle(), fill=cell.color)
 
     # Calculate angle from center
     dr = cell.row - center_row
@@ -147,7 +147,7 @@ for cell in scene.grid:
     # Rotation combines angle + distance
     rotation = angle + distance * 30
 
-    poly = cell.add_polygon(shapes.hexagon(), fill=cell.color)
+    poly = cell.add_polygon(Polygon.hexagon(), fill=cell.color)
     poly.rotate(rotation)
 ```
 
@@ -157,7 +157,7 @@ for cell in scene.grid:
 
 ```python
 for cell in scene.grid:
-    poly = cell.add_polygon(shapes.star(5), fill=cell.color)
+    poly = cell.add_polygon(Polygon.star(5), fill=cell.color)
 
     # Bright cells rotate more
     angle = cell.brightness * 360  # 0° to 360°
@@ -172,7 +172,7 @@ for cell in scene.grid:
 import math
 
 for cell in scene.grid:
-    poly = cell.add_polygon(shapes.hexagon(), fill=cell.color)
+    poly = cell.add_polygon(Polygon.hexagon(), fill=cell.color)
 
     # Sine wave rotation
     angle = math.sin(cell.col / scene.grid.cols * math.pi * 2) * 90
@@ -212,7 +212,7 @@ for cell in scene.grid:
 Rotate around a point other than the center:
 
 ```python
-poly = cell.add_polygon(shapes.hexagon(), fill=cell.color)
+poly = cell.add_polygon(Polygon.hexagon(), fill=cell.color)
 
 # Rotate around top-left corner instead of center
 poly.rotate(45, origin=cell.top_left)
@@ -226,7 +226,7 @@ For animation loops (if exporting frames):
 frame = 0  # Animation frame number
 
 for cell in scene.grid:
-    poly = cell.add_polygon(shapes.star(5), fill=cell.color)
+    poly = cell.add_polygon(Polygon.star(5), fill=cell.color)
 
     # Rotation changes per frame
     base_angle = (cell.row + cell.col) * 15
@@ -238,7 +238,7 @@ for cell in scene.grid:
 ### Combined Rotation and Scale
 
 ```python
-poly = cell.add_polygon(shapes.hexagon(), fill=cell.color)
+poly = cell.add_polygon(Polygon.hexagon(), fill=cell.color)
 
 # Rotate
 poly.rotate(45)
@@ -252,7 +252,7 @@ poly.scale(0.8)
 ```python
 # Background shape - slow rotation
 bg = cell.add_polygon(
-    shapes.hexagon(size=1.0),
+    Polygon.hexagon(size=1.0),
     fill=colors.primary,
     z_index=0
 )
@@ -260,7 +260,7 @@ bg.rotate((cell.row + cell.col) * 10)
 
 # Foreground shape - fast rotation
 fg = cell.add_polygon(
-    shapes.star(5, size=0.6),
+    Polygon.star(5, size=0.6),
     fill=colors.accent,
     z_index=10
 )
@@ -415,11 +415,11 @@ angle = ((cell.row + cell.col) * 90) % 360  # Only 0°, 90°, 180°, 270°
 
 ```python
 # ❌ WRONG - Can't rotate without storing polygon
-cell.add_polygon(shapes.hexagon(), fill=colors.primary)
+cell.add_polygon(Polygon.hexagon(), fill=colors.primary)
 # ... now what? Can't rotate it
 
 # ✅ CORRECT - Store reference first
-poly = cell.add_polygon(shapes.hexagon(), fill=colors.primary)
+poly = cell.add_polygon(Polygon.hexagon(), fill=colors.primary)
 poly.rotate(45)
 ```
 
@@ -462,12 +462,12 @@ distance = math.sqrt(dr*dr + dc*dc)
 # Order matters! Transforms apply in sequence
 
 # Rotate THEN scale (shape rotates, then shrinks in place)
-poly = cell.add_polygon(shapes.hexagon(), fill=colors.primary)
+poly = cell.add_polygon(Polygon.hexagon(), fill=colors.primary)
 poly.rotate(45)
 poly.scale(0.8)  # Scales around already-rotated shape
 
 # Scale THEN rotate (shape shrinks, then rotates)
-poly = cell.add_polygon(shapes.hexagon(), fill=colors.primary)
+poly = cell.add_polygon(Polygon.hexagon(), fill=colors.primary)
 poly.scale(0.8)
 poly.rotate(45)  # Rotates the scaled shape
 ```
@@ -510,7 +510,7 @@ for cell in scene.grid:
 
 ```python
 for cell in scene.grid:
-    poly = cell.add_polygon(shapes.star(5), fill=cell.color)
+    poly = cell.add_polygon(Polygon.star(5), fill=cell.color)
 
     # Base rotation from position
     base_angle = (cell.row + cell.col) * 15
@@ -535,10 +535,10 @@ angle = ((cell.row + cell.col) * 45) % 180  # Only 0°, 45°, 90°, 135°
 
 ```python
 # Develop with fast-rendering squares
-poly = cell.add_polygon(shapes.square(), fill=cell.color)
+poly = cell.add_polygon(Polygon.square(), fill=cell.color)
 
 # Once pattern works, switch to complex shapes
-poly = cell.add_polygon(shapes.star(8), fill=cell.color)
+poly = cell.add_polygon(Polygon.star(8), fill=cell.color)
 ```
 
 ### 5. Layer Multiple Rotations
@@ -546,7 +546,7 @@ poly = cell.add_polygon(shapes.star(8), fill=cell.color)
 ```python
 # Background: slow rotation
 bg = cell.add_polygon(
-    shapes.hexagon(size=1.0),
+    Polygon.hexagon(size=1.0),
     fill=colors.primary,
     z_index=0
 )
@@ -554,7 +554,7 @@ bg.rotate((cell.row + cell.col) * 10)
 
 # Foreground: fast rotation
 fg = cell.add_polygon(
-    shapes.star(5, size=0.6),
+    Polygon.star(5, size=0.6),
     fill=colors.accent,
     z_index=10
 )
@@ -576,7 +576,7 @@ import math
 phase_shift = 0  # Adjust for different wave patterns
 
 for cell in scene.grid:
-    poly = cell.add_polygon(shapes.hexagon(), fill=cell.color)
+    poly = cell.add_polygon(Polygon.hexagon(), fill=cell.color)
 
     # Sine wave rotation across columns
     phase = (cell.col / scene.grid.cols * math.pi * 2) + phase_shift
@@ -598,7 +598,7 @@ import math
 golden_ratio = 1.618034
 
 for i, cell in enumerate(scene.grid):
-    poly = cell.add_polygon(shapes.hexagon(), fill=cell.color)
+    poly = cell.add_polygon(Polygon.hexagon(), fill=cell.color)
 
     # Fibonacci spiral angle
     angle = i * golden_ratio * 137.5  # Golden angle in degrees
@@ -642,7 +642,7 @@ poly.rotate(angle)
 import math
 
 for cell in scene.grid:
-    poly = cell.add_polygon(shapes.hexagon(), fill=cell.color)
+    poly = cell.add_polygon(Polygon.hexagon(), fill=cell.color)
 
     # Horizontal wave
     row_wave = math.sin(cell.row / scene.grid.rows * math.pi * 2) * 45
@@ -676,7 +676,7 @@ angle = (cell.row + cell.col) * 10
 **Solution**: Scale shapes down before rotating.
 
 ```python
-poly = cell.add_polygon(shapes.hexagon(), fill=cell.color)
+poly = cell.add_polygon(Polygon.hexagon(), fill=cell.color)
 poly.scale(0.8)  # Shrink first
 poly.rotate(angle)  # Then rotate
 ```

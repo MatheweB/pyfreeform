@@ -5,7 +5,7 @@ SVG Generator for: api-reference/utilities.md
 Generates visual examples demonstrating utility functions and helpers.
 """
 
-from pyfreeform import Scene, Palette, shapes
+from pyfreeform import Scene, Palette, Polygon
 from pathlib import Path
 
 
@@ -19,19 +19,19 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 # =============================================================================
 
 def example1_basic_shapes():
-    """shapes.triangle(), shapes.square(), shapes.hexagon()"""
+    """Polygon.triangle(), Polygon.square(), Polygon.hexagon()"""
     scene = Scene.with_grid(cols=4, rows=1, cell_size=100, background="#1a1a2e")
     colors = Palette.ocean()
 
     cells = list(scene.grid)
 
     # Basic shapes
-    cells[0].add_polygon(shapes.triangle(size=0.8), fill=colors.primary)
-    cells[1].add_polygon(shapes.square(size=0.8), fill=colors.secondary)
-    cells[2].add_polygon(shapes.diamond(size=0.8), fill=colors.accent)
-    cells[3].add_polygon(shapes.hexagon(size=0.8), fill="#64ffda")
+    cells[0].add_polygon(Polygon.triangle(size=0.8), fill=colors.primary)
+    cells[1].add_polygon(Polygon.square(size=0.8), fill=colors.secondary)
+    cells[2].add_polygon(Polygon.diamond(size=0.8), fill=colors.accent)
+    cells[3].add_polygon(Polygon.hexagon(size=0.8), fill="#64ffda")
 
-    scene.save(OUTPUT_DIR / "example1-basic-shapes.svg")
+    scene.save(OUTPUT_DIR / "example1-basic-Polygon.svg")
 
 
 # =============================================================================
@@ -39,17 +39,17 @@ def example1_basic_shapes():
 # =============================================================================
 
 def example2_stars():
-    """shapes.star() - Different point counts"""
+    """Polygon.star() - Different point counts"""
     scene = Scene.with_grid(cols=4, rows=1, cell_size=100, background="#1a1a2e")
     colors = Palette.midnight()
 
     cells = list(scene.grid)
 
     # Different star configurations
-    cells[0].add_polygon(shapes.star(4), fill=colors.primary)
-    cells[1].add_polygon(shapes.star(5), fill=colors.secondary)
-    cells[2].add_polygon(shapes.star(6), fill=colors.accent)
-    cells[3].add_polygon(shapes.star(8), fill="#ffd23f")
+    cells[0].add_polygon(Polygon.star(4), fill=colors.primary)
+    cells[1].add_polygon(Polygon.star(5), fill=colors.secondary)
+    cells[2].add_polygon(Polygon.star(6), fill=colors.accent)
+    cells[3].add_polygon(Polygon.star(8), fill="#ffd23f")
 
     scene.save(OUTPUT_DIR / "example2-stars.svg")
 
@@ -59,17 +59,17 @@ def example2_stars():
 # =============================================================================
 
 def example3_star_radius():
-    """shapes.star() - Different inner radius values"""
+    """Polygon.star() - Different inner radius values"""
     scene = Scene.with_grid(cols=4, rows=1, cell_size=100, background="#1a1a2e")
     colors = Palette.ocean()
 
     cells = list(scene.grid)
 
     # Different inner radius values
-    cells[0].add_polygon(shapes.star(5, inner_ratio=0.3), fill=colors.primary)
-    cells[1].add_polygon(shapes.star(5, inner_ratio=0.4), fill=colors.secondary)
-    cells[2].add_polygon(shapes.star(5, inner_ratio=0.5), fill=colors.accent)
-    cells[3].add_polygon(shapes.star(5, inner_ratio=0.6), fill="#64ffda")
+    cells[0].add_polygon(Polygon.star(5, inner_ratio=0.3), fill=colors.primary)
+    cells[1].add_polygon(Polygon.star(5, inner_ratio=0.4), fill=colors.secondary)
+    cells[2].add_polygon(Polygon.star(5, inner_ratio=0.5), fill=colors.accent)
+    cells[3].add_polygon(Polygon.star(5, inner_ratio=0.6), fill="#64ffda")
 
     scene.save(OUTPUT_DIR / "example3-star-radius.svg")
 
@@ -79,7 +79,7 @@ def example3_star_radius():
 # =============================================================================
 
 def example4_regular_polygons():
-    """shapes.regular_polygon() - Different side counts"""
+    """Polygon.regular_polygon() - Different side counts"""
     scene = Scene.with_grid(cols=5, rows=1, cell_size=80, background="#1a1a2e")
     colors = Palette.midnight()
 
@@ -87,7 +87,7 @@ def example4_regular_polygons():
 
     # Different regular polygons
     for i, n_sides in enumerate([3, 5, 6, 7, 8]):
-        cells[i].add_polygon(shapes.regular_polygon(n_sides), fill=colors.primary)
+        cells[i].add_polygon(Polygon.regular_polygon(n_sides), fill=colors.primary)
 
     scene.save(OUTPUT_DIR / "example4-regular-polygons.svg")
 
@@ -97,7 +97,7 @@ def example4_regular_polygons():
 # =============================================================================
 
 def example5_squircle():
-    """shapes.squircle() - Different n values"""
+    """Polygon.squircle() - Different n values"""
     scene = Scene.with_grid(cols=5, rows=1, cell_size=80, background="#1a1a2e")
     colors = Palette.ocean()
 
@@ -106,7 +106,7 @@ def example5_squircle():
     # Different squircle values
     n_values = [2, 3, 4, 5, 6]
     for i, n in enumerate(n_values):
-        cells[i].add_polygon(shapes.squircle(size=0.8, n=n), fill=colors.accent)
+        cells[i].add_polygon(Polygon.squircle(size=0.8, n=n), fill=colors.accent)
 
     scene.save(OUTPUT_DIR / "example5-squircle.svg")
 
@@ -116,17 +116,17 @@ def example5_squircle():
 # =============================================================================
 
 def example6_rounded_rect():
-    """shapes.rounded_rect() - Different corner radius"""
+    """Polygon.rounded_rect() - Different corner radius"""
     scene = Scene.with_grid(cols=4, rows=1, cell_size=100, background="#1a1a2e")
     colors = Palette.midnight()
 
     cells = list(scene.grid)
 
     # Different corner radius values
-    cells[0].add_polygon(shapes.rounded_rect(size=0.8, corner_radius=0.05), fill=colors.primary)
-    cells[1].add_polygon(shapes.rounded_rect(size=0.8, corner_radius=0.1), fill=colors.secondary)
-    cells[2].add_polygon(shapes.rounded_rect(size=0.8, corner_radius=0.2), fill=colors.accent)
-    cells[3].add_polygon(shapes.rounded_rect(size=0.8, corner_radius=0.3), fill="#ffd23f")
+    cells[0].add_polygon(Polygon.rounded_rect(size=0.8, corner_radius=0.05), fill=colors.primary)
+    cells[1].add_polygon(Polygon.rounded_rect(size=0.8, corner_radius=0.1), fill=colors.secondary)
+    cells[2].add_polygon(Polygon.rounded_rect(size=0.8, corner_radius=0.2), fill=colors.accent)
+    cells[3].add_polygon(Polygon.rounded_rect(size=0.8, corner_radius=0.3), fill="#ffd23f")
 
     scene.save(OUTPUT_DIR / "example6-rounded-rect.svg")
 
@@ -151,7 +151,7 @@ def example7_palettes():
     for i, (name, palette) in enumerate(palettes):
         # Show primary, secondary, accent colors
         cells[i].add_fill(color=palette.background, z_index=0)
-        cells[i].add_polygon(shapes.hexagon(size=0.8), fill=palette.primary, z_index=5)
+        cells[i].add_polygon(Polygon.hexagon(size=0.8), fill=palette.primary, z_index=5)
         cells[i].add_dot(radius=15, color=palette.accent, z_index=10)
 
     scene.save(OUTPUT_DIR / "example7-palettes.svg")
@@ -208,7 +208,7 @@ def example10_shape_sizes():
     sizes = [0.4, 0.5, 0.6, 0.7, 0.8]
 
     for cell, size in zip(cells, sizes):
-        cell.add_polygon(shapes.hexagon(size=size), fill=colors.primary)
+        cell.add_polygon(Polygon.hexagon(size=size), fill=colors.primary)
 
     scene.save(OUTPUT_DIR / "example10-shape-sizes.svg")
 
@@ -226,25 +226,25 @@ def example11_all_shapes():
 
     # Define shapes
     all_shapes = [
-        shapes.triangle(size=0.8),
-        shapes.square(size=0.8),
-        shapes.diamond(size=0.8),
-        shapes.hexagon(size=0.8),
-        shapes.star(5, size=0.8),
-        shapes.star(8, size=0.8),
-        shapes.regular_polygon(5, size=0.8),
-        shapes.regular_polygon(7, size=0.8),
-        shapes.squircle(size=0.8, n=4),
-        shapes.rounded_rect(size=0.8, corner_radius=0.2),
-        shapes.star(6, size=0.8, inner_ratio=0.5),
-        shapes.regular_polygon(9, size=0.8),
+        Polygon.triangle(size=0.8),
+        Polygon.square(size=0.8),
+        Polygon.diamond(size=0.8),
+        Polygon.hexagon(size=0.8),
+        Polygon.star(5, size=0.8),
+        Polygon.star(8, size=0.8),
+        Polygon.regular_polygon(5, size=0.8),
+        Polygon.regular_polygon(7, size=0.8),
+        Polygon.squircle(size=0.8, n=4),
+        Polygon.rounded_rect(size=0.8, corner_radius=0.2),
+        Polygon.star(6, size=0.8, inner_ratio=0.5),
+        Polygon.regular_polygon(9, size=0.8),
     ]
 
     # Add each shape
     for cell, shape in zip(cells, all_shapes):
         cell.add_polygon(shape, fill=colors.primary)
 
-    scene.save(OUTPUT_DIR / "example11-all-shapes.svg")
+    scene.save(OUTPUT_DIR / "example11-all-Polygon.svg")
 
 
 # =============================================================================

@@ -5,7 +5,7 @@ SVG Generator for: entities/05-polygons.md
 Generates visual examples for polygon entity documentation.
 """
 
-from pyfreeform import Scene, shapes
+from pyfreeform import Scene, Polygon
 from pathlib import Path
 from PIL import Image, ImageDraw
 import tempfile
@@ -43,14 +43,14 @@ def shape_gallery():
     cells = list(scene.grid)
 
     shape_data = [
-        (shapes.triangle(), "#ef4444"),
-        (shapes.square(), "#f59e0b"),
-        (shapes.diamond(), "#10b981"),
-        (shapes.regular_polygon(sides=5), "#3b82f6"),
-        (shapes.hexagon(), "#8b5cf6"),
-        (shapes.star(points=5), "#ec4899"),
-        (shapes.squircle(), "#14b8a6"),
-        (shapes.rounded_rect(), "#f97316"),
+        (Polygon.triangle(), "#ef4444"),
+        (Polygon.square(), "#f59e0b"),
+        (Polygon.diamond(), "#10b981"),
+        (Polygon.regular_polygon(sides=5), "#3b82f6"),
+        (Polygon.hexagon(), "#8b5cf6"),
+        (Polygon.star(points=5), "#ec4899"),
+        (Polygon.squircle(), "#14b8a6"),
+        (Polygon.rounded_rect(), "#f97316"),
     ]
 
     for i, (verts, color) in enumerate(shape_data):
@@ -73,10 +73,10 @@ def rotating_shapes():
 
     for cell in scene.grid:
         rotation = (cell.row + cell.col) * 15
-        poly = cell.add_polygon(shapes.hexagon(size=0.7), fill="#8b5cf6")
+        poly = cell.add_polygon(Polygon.hexagon(size=0.7), fill="#8b5cf6")
         poly.rotate(rotation)
 
-    scene.save(OUTPUT_DIR / "02_rotating_shapes.svg")
+    scene.save(OUTPUT_DIR / "02_rotating_Polygon.svg")
 
 
 # =============================================================================
@@ -93,7 +93,7 @@ def squircle_variations():
     colors = ["#ef4444", "#f59e0b", "#10b981", "#3b82f6", "#8b5cf6"]
 
     for i, (n, color) in enumerate(zip(n_values, colors)):
-        cells[i].add_polygon(shapes.squircle(n=n), fill=color)
+        cells[i].add_polygon(Polygon.squircle(n=n), fill=color)
 
     for cell in scene.grid:
         cell.add_border(color="#e0e0e0", width=0.5)
@@ -111,13 +111,13 @@ def conditional_shapes():
 
     for cell in scene.grid:
         if cell.brightness > 0.7:
-            cell.add_polygon(shapes.regular_polygon(sides=5, size=0.7), fill="#fbbf24")
+            cell.add_polygon(Polygon.regular_polygon(sides=5, size=0.7), fill="#fbbf24")
         elif cell.brightness > 0.4:
-            cell.add_polygon(shapes.square(size=0.6), fill="#94a3b8")
+            cell.add_polygon(Polygon.square(size=0.6), fill="#94a3b8")
         else:
-            cell.add_polygon(shapes.triangle(size=0.6), fill="#78716c")
+            cell.add_polygon(Polygon.triangle(size=0.6), fill="#78716c")
 
-    scene.save(OUTPUT_DIR / "04_conditional_shapes.svg")
+    scene.save(OUTPUT_DIR / "04_conditional_Polygon.svg")
 
 
 # =============================================================================
@@ -137,7 +137,7 @@ def custom_star_burst():
         color_idx = (cell.row + cell.col) % len(colors)
 
         cell.add_polygon(
-            shapes.star(points=points, inner_ratio=min(inner, 0.6)),
+            Polygon.star(points=points, inner_ratio=min(inner, 0.6)),
             fill=colors[color_idx],
         )
 
@@ -163,13 +163,13 @@ def complete_example():
 
         # Choose shape by distance from center
         if distance < 3:
-            shape_verts = shapes.squircle(n=4, size=0.8)
+            shape_verts = Polygon.squircle(n=4, size=0.8)
             color = "#a78bfa"
         elif distance < 5.5:
-            shape_verts = shapes.hexagon(size=0.7)
+            shape_verts = Polygon.hexagon(size=0.7)
             color = "#818cf8"
         else:
-            shape_verts = shapes.triangle(size=0.6)
+            shape_verts = Polygon.triangle(size=0.6)
             color = "#6366f1"
 
         poly = cell.add_polygon(shape_verts, fill=color)

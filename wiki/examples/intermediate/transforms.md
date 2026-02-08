@@ -33,7 +33,7 @@ Create dynamic compositions using rotation and scaling transforms on polygons.
 ### Step 1: Setup
 
 ```python
-from pyfreeform import Scene, Palette, shapes
+from pyfreeform import Scene, Palette, Polygon
 
 scene = Scene.with_grid(cols=20, rows=20, cell_size=25)
 colors = Palette.sunset()
@@ -51,7 +51,7 @@ scene.background = colors.background
 for cell in scene.grid:
     # Create hexagon
     poly = cell.add_polygon(
-        shapes.hexagon(),
+        Polygon.hexagon(),
         fill=colors.primary
     )
 
@@ -61,7 +61,7 @@ for cell in scene.grid:
 ```
 
 **What's happening:**
-- `shapes.hexagon()` creates a regular hexagon
+- `Polygon.hexagon()` creates a regular hexagon
 - `cell.row + cell.col` increases from top-left to bottom-right
 - Each step increases rotation by 15°
 - Creates a progressive rotation pattern
@@ -80,7 +80,7 @@ Row 19, Col 19: angle = 570° (= 210° mod 360°)
 
 ```python
 for cell in scene.grid:
-    poly = cell.add_polygon(shapes.star(5), fill=cell.color)
+    poly = cell.add_polygon(Polygon.star(5), fill=cell.color)
 
     # Rotation
     angle = (cell.row * cell.col) * 10
@@ -106,7 +106,7 @@ center_row = scene.grid.rows // 2
 center_col = scene.grid.cols // 2
 
 for cell in scene.grid:
-    poly = cell.add_polygon(shapes.triangle(), fill=cell.color)
+    poly = cell.add_polygon(Polygon.triangle(), fill=cell.color)
 
     # Calculate angle from center
     dr = cell.row - center_row
@@ -140,7 +140,7 @@ Converted to degrees: [-180°, 180°]
 ## Complete Code
 
 ```python
-from pyfreeform import Scene, Palette, shapes
+from pyfreeform import Scene, Palette, Polygon
 import math
 
 scene = Scene.from_image("photo.jpg", grid_size=25)
@@ -154,13 +154,13 @@ for cell in scene.grid:
     if cell.brightness > 0.3:
         # Choose shape based on brightness
         if cell.brightness > 0.7:
-            shape = shapes.star(5)
+            shape = Polygon.star(5)
             color = colors.accent
         elif cell.brightness > 0.5:
-            shape = shapes.hexagon()
+            shape = Polygon.hexagon()
             color = colors.primary
         else:
-            shape = shapes.diamond()
+            shape = Polygon.diamond()
             color = colors.secondary
 
         # Create polygon
@@ -207,7 +207,7 @@ else:
 ### Experiment 2: Combine Rotation and Scale
 
 ```python
-poly = cell.add_polygon(shapes.hexagon(), fill=cell.color)
+poly = cell.add_polygon(Polygon.hexagon(), fill=cell.color)
 
 # Rotate first
 poly.rotate((cell.row + cell.col) * 15)
@@ -231,7 +231,7 @@ angle = math.degrees(math.atan2(dr, dc))
 # Spiral: rotation increases with distance
 rotation = angle + distance * 45
 
-poly = cell.add_polygon(shapes.hexagon(), fill=cell.color)
+poly = cell.add_polygon(Polygon.hexagon(), fill=cell.color)
 poly.rotate(rotation)
 ```
 
@@ -249,7 +249,7 @@ for cell in scene.grid:
     # Vortex rotation (decreases with distance)
     rotation = angle - (20 - distance) * 40
 
-    poly = cell.add_polygon(shapes.star(6), fill=cell.color)
+    poly = cell.add_polygon(Polygon.star(6), fill=cell.color)
     poly.rotate(rotation)
 
     # Scale decreases toward center
@@ -263,6 +263,6 @@ for cell in scene.grid:
 
 - 📖 [Transforms API](../../api-reference/transforms.md) - Full API reference
 - 📖 [Polygons](../../entities/05-polygons.md) - Polygon shapes
-- 🎯 [Rotating Shapes Recipe](../../recipes/06-rotating-shapes.md) - More patterns
+- 🎯 [Rotating Shapes Recipe](../../recipes/06-rotating-Polygon.md) - More patterns
 - 🎯 [Geometric Patterns Recipe](../../recipes/04-geometric-patterns.md) - Shape ideas
 

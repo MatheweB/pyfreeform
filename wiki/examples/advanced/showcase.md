@@ -31,7 +31,7 @@ Integrate multiple PyFreeform features into a single comprehensive artwork: para
 ## Complete Code
 
 ```python
-from pyfreeform import Scene, Palette, Connection, Text, shapes
+from pyfreeform import Scene, Palette, Connection, Text, Polygon
 from pyfreeform.config import FillStyle
 import math
 
@@ -80,7 +80,7 @@ for cell in scene.grid.where(lambda c: c.brightness > 0.7 and (c.row + c.col) % 
     angle = (cell.row * 20 + cell.col * 30) % 360
 
     poly = cell.add_polygon(
-        shapes.hexagon(size=0.8),
+        Polygon.hexagon(size=0.8),
         fill=colors.accent,
         stroke=colors.line,
         stroke_width=1,

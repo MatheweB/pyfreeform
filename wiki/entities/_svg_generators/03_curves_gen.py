@@ -5,7 +5,7 @@ SVG Generator for: entities/03-curves.md
 Generates visual examples for curve entity documentation.
 """
 
-from pyfreeform import Scene, Curve, Palette, shapes
+from pyfreeform import Scene, Curve, Palette
 from pathlib import Path
 from PIL import Image, ImageDraw
 import tempfile

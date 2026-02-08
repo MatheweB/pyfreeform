@@ -19,7 +19,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from pyfreeform import Scene, Palette, shapes
+from pyfreeform import Scene, Palette, Polygon
 
 # =============================================================================
 # Configuration
@@ -90,7 +90,7 @@ for cell in scene.grid:
         size = 0.4 + (b - BRIGHT_THRESHOLD) * 1.5
         
         poly = cell.add_polygon(
-            shapes.hexagon(size=min(size, 0.9)),
+            Polygon.hexagon(size=min(size, 0.9)),
             fill=colors.primary,
             stroke=colors.accent,
             stroke_width=1,

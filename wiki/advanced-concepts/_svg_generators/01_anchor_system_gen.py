@@ -11,7 +11,7 @@ Corresponds to sections:
 - Examples
 """
 
-from pyfreeform import Scene
+from pyfreeform import Scene, Polygon
 from pathlib import Path
 
 # Paths
@@ -122,8 +122,7 @@ def anchors_polygon():
     cell = scene.grid[0, 0]
 
     # Create a hexagon
-    from pyfreeform import shapes
-    poly = cell.add_polygon(shapes.hexagon(size=0.7), fill="#3b82f6")
+    poly = cell.add_polygon(Polygon.hexagon(size=0.7), fill="#3b82f6")
 
     # Show vertex anchors
     colors = ["#ef4444", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899", "#14b8a6"]
@@ -377,8 +376,7 @@ def example_all_entity_types():
 
     # Polygon
     cell = scene.grid[1, 1]
-    from pyfreeform import shapes
-    poly = cell.add_polygon(shapes.triangle(size=0.7), fill="#3b82f6")
+    poly = cell.add_polygon(Polygon.triangle(size=0.7), fill="#3b82f6")
     for i in range(3):
         cell.add_dot(at=poly.anchor(f"v{i}"), radius=2, color="#ef4444")
     cell.add_dot(at=poly.anchor("center"), radius=2, color="#10b981")

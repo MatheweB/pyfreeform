@@ -637,7 +637,7 @@ cell.add_text(
 ```python
 # Standard z-index convention
 cell.add_fill(color=colors.background, z_index=0)     # Background
-cell.add_polygon(shapes.hexagon(), fill=colors.primary, z_index=5)  # Shapes
+cell.add_polygon(Polygon.hexagon(), fill=colors.primary, z_index=5)  # Shapes
 cell.add_text(content="LABEL", z_index=100)           # Text on top
 ```
 
@@ -904,7 +904,7 @@ for cell in scene.grid:
 
 ```python
 # Background: geometric shape
-poly = cell.add_polygon(shapes.hexagon(), fill=colors.primary, z_index=0)
+poly = cell.add_polygon(Polygon.hexagon(), fill=colors.primary, z_index=0)
 poly.rotate((cell.row + cell.col) * 15)
 
 # Foreground: text label auto-sized to fit the polygon
@@ -937,7 +937,7 @@ label.fit_within(dot)
 
 ```python
 # Rotating shape
-poly = cell.add_polygon(shapes.star(5), fill=colors.primary, z_index=0)
+poly = cell.add_polygon(Polygon.star(5), fill=colors.primary, z_index=0)
 poly.rotate((cell.row + cell.col) * 30)
 
 # Static text label

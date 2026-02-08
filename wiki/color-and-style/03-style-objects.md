@@ -99,7 +99,7 @@ style = ShapeStyle(
 )
 
 cell.add_ellipse(style=style)
-cell.add_polygon(shapes.hexagon(), style=style)
+cell.add_polygon(Polygon.hexagon(), style=style)
 
 # Builder methods
 outlined = style.with_stroke("black").with_stroke_width(3)

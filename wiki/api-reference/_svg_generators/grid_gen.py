@@ -5,7 +5,7 @@ SVG Generator for: api-reference/grid.md
 Generates visual examples demonstrating Grid API methods and iteration patterns.
 """
 
-from pyfreeform import Scene, Palette, shapes
+from pyfreeform import Scene, Palette, Polygon
 from pathlib import Path
 
 
@@ -179,7 +179,7 @@ def example8_corners():
         grid[grid.rows - 1, grid.cols - 1]   # bottom-right
     ]
     for cell in corners:
-        cell.add_polygon(shapes.star(5), fill=colors.accent, z_index=5)
+        cell.add_polygon(Polygon.star(5), fill=colors.accent, z_index=5)
 
     scene.save(OUTPUT_DIR / "example8-corners.svg")
 
@@ -345,7 +345,7 @@ def example15_combined():
         grid[grid.rows - 1, grid.cols - 1]   # bottom-right
     ]
     for cell in corners:
-        cell.add_polygon(shapes.star(5), fill="#ffd23f", z_index=15)
+        cell.add_polygon(Polygon.star(5), fill="#ffd23f", z_index=15)
 
     scene.save(OUTPUT_DIR / "example15-combined.svg")
 

@@ -25,7 +25,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from pyfreeform import Scene, Palette, shapes
+from pyfreeform import Scene, Palette, Polygon
 
 # =============================================================================
 # Configuration
@@ -46,14 +46,14 @@ scene.background = colors.background
 
 # Different shape for each column
 shape_funcs = [
-    lambda: shapes.triangle(size=0.7),
-    lambda: shapes.square(size=0.6),
-    lambda: shapes.diamond(size=0.7),
-    lambda: shapes.hexagon(size=0.7),
-    lambda: shapes.star(points=5, size=0.75),
-    lambda: shapes.star(points=6, size=0.75, inner_ratio=0.5),
-    lambda: shapes.regular_polygon(sides=8, size=0.7),
-    lambda: shapes.regular_polygon(sides=3, size=0.7),  # Another triangle
+    lambda: Polygon.triangle(size=0.7),
+    lambda: Polygon.square(size=0.6),
+    lambda: Polygon.diamond(size=0.7),
+    lambda: Polygon.hexagon(size=0.7),
+    lambda: Polygon.star(points=5, size=0.75),
+    lambda: Polygon.star(points=6, size=0.75, inner_ratio=0.5),
+    lambda: Polygon.regular_polygon(sides=8, size=0.7),
+    lambda: Polygon.regular_polygon(sides=3, size=0.7),  # Another triangle
 ]
 
 # Color for each row

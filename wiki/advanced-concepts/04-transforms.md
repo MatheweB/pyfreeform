@@ -81,7 +81,7 @@ for cell in scene.grid:
     distance = (dx*dx + dy*dy) ** 0.5
     rotation = distance * 10
     
-    poly = cell.add_polygon(shapes.hexagon())
+    poly = cell.add_polygon(Polygon.hexagon())
     poly.rotate(rotation)
 ```
 

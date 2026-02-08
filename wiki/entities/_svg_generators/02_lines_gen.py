@@ -5,7 +5,7 @@ SVG Generator for: entities/02-lines.md
 Generates visual examples for line entity documentation.
 """
 
-from pyfreeform import Scene, Line, shapes
+from pyfreeform import Scene, Line
 from pathlib import Path
 from PIL import Image, ImageDraw
 import tempfile

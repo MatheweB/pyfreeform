@@ -7,7 +7,7 @@ text, parametric positioning, and layering.
 """
 
 import math
-from pyfreeform import Scene, Palette, Dot, Text, Connection, shapes
+from pyfreeform import Scene, Palette, Dot, Text, Connection, Polygon
 from pyfreeform.core.point import Point
 from pathlib import Path
 
@@ -53,7 +53,6 @@ def example_01_comprehensive():
         for i in range(6):
             a = i * math.pi / 3 + angle_rad
             verts.append(Point(x + 15 * math.cos(a), y + 15 * math.sin(a)))
-        from pyfreeform import Polygon
         scene.add(Polygon(verts, fill=color, opacity=0.8, z_index=20))
 
     # Legend (z=30)
@@ -97,7 +96,7 @@ def example_02_all_features():
         if cell.row < 3 and cell.col < 3:
             angle = (cell.row + cell.col) * 30
             cell.add_polygon(
-                shapes.star(5, size=0.6), fill=colors.accent,
+                Polygon.star(5, size=0.6), fill=colors.accent,
                 rotation=angle, opacity=0.6, z_index=15,
             )
 

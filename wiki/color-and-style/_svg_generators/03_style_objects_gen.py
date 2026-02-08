@@ -12,7 +12,7 @@ Corresponds to sections:
 """
 
 from pathlib import Path
-from pyfreeform import Scene, Dot, Line, Rect, Connection, shapes
+from pyfreeform import Scene, Dot, Line, Rect, Connection, Polygon
 from pyfreeform.config import (
     DotStyle, LineStyle, FillStyle, BorderStyle,
     ShapeStyle, TextStyle, ConnectionStyle,
@@ -354,7 +354,7 @@ def example_15_shapestyle_basic():
 
     # Row 2: Polygons with same style
     for i in range(4, 8):
-        cells[i].add_polygon(shapes.hexagon(), style=style)
+        cells[i].add_polygon(Polygon.hexagon(), style=style)
 
     scene.save(OUTPUT_DIR / "15-shapestyle-basic.svg")
 
@@ -380,7 +380,7 @@ def example_16_shapestyle_variations():
     strokes = [None, "#e74c3c", "#2ecc71", "#3498db", "#9b59b6"]
     for i, stroke in enumerate(strokes):
         variant = base.with_stroke(stroke)
-        cells[i + 5].add_polygon(shapes.star(5), style=variant)
+        cells[i + 5].add_polygon(Polygon.star(5), style=variant)
 
     scene.save(OUTPUT_DIR / "16-shapestyle-variations.svg")
 

@@ -29,6 +29,8 @@ class Path(StrokedPathMixin, Entity):
     Attributes:
         closed: Whether this is a closed path.
         segments: Number of cubic Bézier segments used.
+        start_t: Start parameter on the source pathable.
+        end_t: End parameter on the source pathable.
 
     Anchors:
         - "start": The first point (t=0)
@@ -46,6 +48,10 @@ class Path(StrokedPathMixin, Entity):
         >>> liss = Lissajous(center=Point(100, 100), a=3, b=2, delta=math.pi/2, size=80)
         >>> path = Path(liss, closed=True, color="navy", fill="lightblue", width=1.5)
 
+        >>> # Sub-path (arc) of an ellipse:
+        >>> ellipse = Ellipse(100, 100, rx=50, ry=30)
+        >>> arc = Path(ellipse, start_t=0.0, end_t=0.25, color="red", width=2)
+
         >>> # In a cell:
         >>> spiral = Spiral(center=cell.center, start_radius=5, end_radius=40, turns=3)
         >>> cell.add_path(spiral, color="red", width=1)
@@ -62,6 +68,8 @@ class Path(StrokedPathMixin, Entity):
         *,
         segments: int = DEFAULT_SEGMENTS,
         closed: bool = False,
+        start_t: float = 0.0,
+        end_t: float = 1.0,
         width: float = DEFAULT_WIDTH,
         color: str | tuple[int, int, int] = DEFAULT_COLOR,
         fill: str | tuple[int, int, int] | None = None,
@@ -83,6 +91,10 @@ class Path(StrokedPathMixin, Entity):
                       curves; use 128+ for very detailed spirals.
             closed: If True, the path closes smoothly back to the start and
                     SVG ``Z`` is appended. Enables ``fill``.
+            start_t: Start parameter on the pathable (0.0-1.0). Use with
+                     ``end_t`` to render a sub-section of the path.
+            end_t: End parameter on the pathable (0.0-1.0). Use with
+                   ``start_t`` to render a sub-section (arc) of any path.
             width: Stroke width in pixels.
             color: Stroke color.
             fill: Fill color for closed paths (ignored if not closed).
@@ -95,10 +107,12 @@ class Path(StrokedPathMixin, Entity):
             stroke_opacity: Override stroke opacity (defaults to ``opacity``).
         """
         # Compute the first point for Entity's position
-        first_point = pathable.point_at(0.0)
+        first_point = pathable.point_at(start_t)
         super().__init__(first_point.x, first_point.y, z_index)
 
         self._closed = closed
+        self._start_t = float(start_t)
+        self._end_t = float(end_t)
         self.segments = segments
         self.width = float(width)
         self._color = Color(color)
@@ -111,7 +125,9 @@ class Path(StrokedPathMixin, Entity):
         self.stroke_opacity = stroke_opacity
 
         # Compute cubic Bézier segments from the pathable
-        self._bezier_segments = _fit_cubic_beziers(pathable, segments, closed)
+        self._bezier_segments = _fit_cubic_beziers(
+            pathable, segments, closed, start_t, end_t
+        )
 
     @property
     def closed(self) -> bool:
@@ -439,6 +455,8 @@ def _fit_cubic_beziers(
     pathable: Pathable,
     segments: int,
     closed: bool,
+    start_t: float = 0.0,
+    end_t: float = 1.0,
 ) -> list[tuple[Point, Point, Point, Point]]:
     """
     Fit cubic Bézier segments to a Pathable using Hermite interpolation.
@@ -450,6 +468,8 @@ def _fit_cubic_beziers(
         pathable: The source path.
         segments: Number of Bézier segments.
         closed: Whether to close the path smoothly.
+        start_t: Start parameter on the pathable (0.0-1.0).
+        end_t: End parameter on the pathable (0.0-1.0).
 
     Returns:
         List of (p0, cp1, cp2, p3) tuples.
@@ -457,13 +477,16 @@ def _fit_cubic_beziers(
     if segments < 1:
         segments = 1
 
-    if closed:
-        # Sample N points at t = 0, 1/N, 2/N, ..., (N-1)/N
-        # The last segment wraps from point N-1 back to point 0
+    t_span = end_t - start_t
+
+    if closed and start_t == 0.0 and end_t == 1.0:
+        # Full closed path: sample N points, wrap last segment
         n = segments
         t_values = [i / n for i in range(n)]
         points = [pathable.point_at(t) for t in t_values]
-        tangents = [_tangent_at(pathable, t, closed=True) for t in t_values]
+        tangents = [
+            _tangent_at(pathable, t, closed=True) for t in t_values
+        ]
 
         result = []
         for i in range(n):
@@ -484,15 +507,20 @@ def _fit_cubic_beziers(
         return result
 
     else:
-        # Sample N+1 points at t = 0, 1/N, 2/N, ..., 1
+        # Open path (or sub-range of a closed path)
         n = segments
-        t_values = [i / n for i in range(n + 1)]
+        t_values = [
+            start_t + (i / n) * t_span for i in range(n + 1)
+        ]
         points = [pathable.point_at(t) for t in t_values]
-        tangents = [_tangent_at(pathable, t, closed=False) for t in t_values]
+        tangents = [
+            _tangent_at(pathable, t, closed=False)
+            for t in t_values
+        ]
 
         result = []
         for i in range(n):
-            dt = 1.0 / n
+            dt = t_span / n
 
             p0 = points[i]
             p3 = points[i + 1]

@@ -5,7 +5,7 @@ SVG Generator for: api-reference/entities.md
 Generates visual examples demonstrating all Entity types and their properties.
 """
 
-from pyfreeform import Scene, Palette, Dot, Line, Curve, Ellipse, Polygon, Text, Rect, shapes
+from pyfreeform import Scene, Palette, Dot, Line, Curve, Ellipse, Polygon, Text, Rect
 from pyfreeform.core.point import Point
 from pathlib import Path
 import math
@@ -121,13 +121,13 @@ def example6_polygon_shapes():
     cells = list(scene.grid)
 
     # Built-in shapes
-    cells[0].add_polygon(shapes.triangle(size=0.8), fill=colors.primary)
-    cells[1].add_polygon(shapes.hexagon(size=0.8), fill=colors.secondary)
-    cells[2].add_polygon(shapes.star(5), fill=colors.accent)
-    cells[3].add_polygon(shapes.squircle(n=4), fill="#64ffda")
-    cells[4].add_polygon(shapes.diamond(size=0.8), fill="#ffd23f")
+    cells[0].add_polygon(Polygon.triangle(size=0.8), fill=colors.primary)
+    cells[1].add_polygon(Polygon.hexagon(size=0.8), fill=colors.secondary)
+    cells[2].add_polygon(Polygon.star(5), fill=colors.accent)
+    cells[3].add_polygon(Polygon.squircle(n=4), fill="#64ffda")
+    cells[4].add_polygon(Polygon.diamond(size=0.8), fill="#ffd23f")
 
-    scene.save(OUTPUT_DIR / "example6-polygon-shapes.svg")
+    scene.save(OUTPUT_DIR / "example6-polygon-Polygon.svg")
 
 
 # =============================================================================

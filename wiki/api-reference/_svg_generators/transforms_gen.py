@@ -5,7 +5,7 @@ SVG Generator for: api-reference/transforms.md
 Generates visual examples demonstrating polygon transformation methods.
 """
 
-from pyfreeform import Scene, Palette, shapes
+from pyfreeform import Scene, Palette, Polygon
 from pathlib import Path
 import math
 
@@ -29,7 +29,7 @@ def example1_rotate_basic():
     # Same shape, different rotations
     angles = [0, 30, 60, 90]
     for cell, angle in zip(cells, angles):
-        poly = cell.add_polygon(shapes.triangle(size=0.8), fill=colors.primary)
+        poly = cell.add_polygon(Polygon.triangle(size=0.8), fill=colors.primary)
         poly.rotate(angle)
 
     scene.save(OUTPUT_DIR / "example1-rotate-basic.svg")
@@ -47,15 +47,15 @@ def example2_rotate_origin():
     cells = list(scene.grid)
 
     # Rotate around center (default)
-    poly1 = cells[0].add_polygon(shapes.hexagon(size=0.7), fill=colors.primary)
+    poly1 = cells[0].add_polygon(Polygon.hexagon(size=0.7), fill=colors.primary)
     poly1.rotate(45)
 
     # Rotate around top_left
-    poly2 = cells[1].add_polygon(shapes.hexagon(size=0.7), fill=colors.secondary)
+    poly2 = cells[1].add_polygon(Polygon.hexagon(size=0.7), fill=colors.secondary)
     poly2.rotate(45, origin=cells[1].top_left)
 
     # Rotate around custom point
-    poly3 = cells[2].add_polygon(shapes.hexagon(size=0.7), fill=colors.accent)
+    poly3 = cells[2].add_polygon(Polygon.hexagon(size=0.7), fill=colors.accent)
     poly3.rotate(45, origin=cells[2].bottom_right)
 
     scene.save(OUTPUT_DIR / "example2-rotate-origin.svg")
@@ -75,7 +75,7 @@ def example3_scale_basic():
     # Different scale factors
     scale_factors = [0.5, 0.7, 0.9, 1.1]
     for cell, factor in zip(cells, scale_factors):
-        poly = cell.add_polygon(shapes.star(5), fill=colors.accent)
+        poly = cell.add_polygon(Polygon.star(5), fill=colors.accent)
         poly.scale(factor)
 
     scene.save(OUTPUT_DIR / "example3-scale-basic.svg")
@@ -93,15 +93,15 @@ def example4_scale_origin():
     cells = list(scene.grid)
 
     # Scale from center (default)
-    poly1 = cells[0].add_polygon(shapes.square(size=0.5), fill=colors.primary)
+    poly1 = cells[0].add_polygon(Polygon.square(size=0.5), fill=colors.primary)
     poly1.scale(1.5)
 
     # Scale from top_left
-    poly2 = cells[1].add_polygon(shapes.square(size=0.5), fill=colors.secondary)
+    poly2 = cells[1].add_polygon(Polygon.square(size=0.5), fill=colors.secondary)
     poly2.scale(1.5, origin=cells[1].top_left)
 
     # Scale from bottom_right
-    poly3 = cells[2].add_polygon(shapes.square(size=0.5), fill=colors.accent)
+    poly3 = cells[2].add_polygon(Polygon.square(size=0.5), fill=colors.accent)
     poly3.scale(1.5, origin=cells[2].bottom_right)
 
     scene.save(OUTPUT_DIR / "example4-scale-origin.svg")
@@ -119,15 +119,15 @@ def example5_translate():
     cells = list(scene.grid)
 
     # Different translations
-    cells[0].add_polygon(shapes.hexagon(size=0.6), fill=colors.primary)  # No translation
+    cells[0].add_polygon(Polygon.hexagon(size=0.6), fill=colors.primary)  # No translation
 
-    poly2 = cells[1].add_polygon(shapes.hexagon(size=0.6), fill=colors.secondary)
+    poly2 = cells[1].add_polygon(Polygon.hexagon(size=0.6), fill=colors.secondary)
     poly2.translate(dx=15, dy=0)  # Right
 
-    poly3 = cells[2].add_polygon(shapes.hexagon(size=0.6), fill=colors.accent)
+    poly3 = cells[2].add_polygon(Polygon.hexagon(size=0.6), fill=colors.accent)
     poly3.translate(dx=0, dy=15)  # Down
 
-    poly4 = cells[3].add_polygon(shapes.hexagon(size=0.6), fill="#64ffda")
+    poly4 = cells[3].add_polygon(Polygon.hexagon(size=0.6), fill="#64ffda")
     poly4.translate(dx=10, dy=10)  # Diagonal
 
     scene.save(OUTPUT_DIR / "example5-translate.svg")
@@ -145,18 +145,18 @@ def example6_combined():
     cells = list(scene.grid)
 
     # Original
-    cells[0].add_polygon(shapes.star(5), fill=colors.primary)
+    cells[0].add_polygon(Polygon.star(5), fill=colors.primary)
 
     # Rotate only
-    poly2 = cells[1].add_polygon(shapes.star(5), fill=colors.secondary)
+    poly2 = cells[1].add_polygon(Polygon.star(5), fill=colors.secondary)
     poly2.rotate(45)
 
     # Scale only
-    poly3 = cells[2].add_polygon(shapes.star(5), fill=colors.accent)
+    poly3 = cells[2].add_polygon(Polygon.star(5), fill=colors.accent)
     poly3.scale(1.3)
 
     # Rotate + Scale
-    poly4 = cells[3].add_polygon(shapes.star(5), fill="#ffd23f")
+    poly4 = cells[3].add_polygon(Polygon.star(5), fill="#ffd23f")
     poly4.rotate(45)
     poly4.scale(1.3)
 
@@ -173,7 +173,7 @@ def example7_position_rotation():
     colors = Palette.ocean()
 
     for cell in scene.grid:
-        poly = cell.add_polygon(shapes.triangle(size=0.8), fill=colors.primary)
+        poly = cell.add_polygon(Polygon.triangle(size=0.8), fill=colors.primary)
 
         # Rotate based on position
         angle = (cell.row + cell.col) * 15
@@ -195,7 +195,7 @@ def example8_radial_rotation():
     center_col = scene.grid.cols // 2
 
     for cell in scene.grid:
-        poly = cell.add_polygon(shapes.triangle(size=0.7), fill=colors.primary)
+        poly = cell.add_polygon(Polygon.triangle(size=0.7), fill=colors.primary)
 
         # Calculate angle toward center
         dr = cell.row - center_row
@@ -229,7 +229,7 @@ def example9_brightness_scaling():
         max_distance = 7
         if distance < max_distance:
             scale_factor = 0.5 + (max_distance - distance) * 0.1
-            poly = cell.add_polygon(shapes.hexagon(size=0.8), fill=colors.accent)
+            poly = cell.add_polygon(Polygon.hexagon(size=0.8), fill=colors.accent)
             poly.scale(scale_factor)
 
     scene.save(OUTPUT_DIR / "example9-brightness-scaling.svg")
@@ -247,9 +247,9 @@ def example10_complex():
     for cell in scene.grid:
         # Alternate shapes
         if (cell.row + cell.col) % 2 == 0:
-            poly = cell.add_polygon(shapes.star(5, inner_ratio=0.4), fill=colors.primary)
+            poly = cell.add_polygon(Polygon.star(5, inner_ratio=0.4), fill=colors.primary)
         else:
-            poly = cell.add_polygon(shapes.hexagon(size=0.7), fill=colors.secondary)
+            poly = cell.add_polygon(Polygon.hexagon(size=0.7), fill=colors.secondary)
 
         # Rotate based on position
         angle = (cell.row * 10 + cell.col * 15) % 360
@@ -274,12 +274,12 @@ def example11_order_matters():
     cells = list(scene.grid)
 
     # Scale then rotate
-    poly1 = cells[0].add_polygon(shapes.triangle(size=0.6), fill=colors.primary)
+    poly1 = cells[0].add_polygon(Polygon.triangle(size=0.6), fill=colors.primary)
     poly1.scale(1.5)
     poly1.rotate(45)
 
     # Rotate then scale
-    poly2 = cells[1].add_polygon(shapes.triangle(size=0.6), fill=colors.secondary)
+    poly2 = cells[1].add_polygon(Polygon.triangle(size=0.6), fill=colors.secondary)
     poly2.rotate(45)
     poly2.scale(1.5)
 

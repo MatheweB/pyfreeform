@@ -320,25 +320,25 @@ polygon.scale(factor: float, origin: Point | None = None)
 
 **Shape Helpers**:
 ```python
-from pyfreeform import shapes
+from pyfreeform import Polygon
 
-shapes.triangle()                      # Equilateral triangle
-shapes.square()                        # Perfect square
-shapes.diamond()                       # Diamond shape
-shapes.hexagon()                       # Regular hexagon
-shapes.star(points=5, inner_radius=0.4)  # Multi-pointed star
-shapes.regular_polygon(n_sides=8)      # Any regular polygon
-shapes.squircle(n=4)                   # iOS icon shape!
-shapes.rounded_rect(corner_radius=0.2) # Rounded rectangle
+Polygon.triangle()                      # Equilateral triangle
+Polygon.square()                        # Perfect square
+Polygon.diamond()                       # Diamond shape
+Polygon.hexagon()                       # Regular hexagon
+Polygon.star(points=5, inner_radius=0.4)  # Multi-pointed star
+Polygon.regular_polygon(n_sides=8)      # Any regular polygon
+Polygon.squircle(n=4)                   # iOS icon shape!
+Polygon.rounded_rect(corner_radius=0.2) # Rounded rectangle
 ```
 
 **Example**:
 ```python
-from pyfreeform import shapes
+from pyfreeform import Polygon
 
 # Built-in shapes (relative coords 0-1)
-cell.add_polygon(shapes.hexagon(), fill="purple")
-cell.add_polygon(shapes.star(5), fill="gold")
+cell.add_polygon(Polygon.hexagon(), fill="purple")
+cell.add_polygon(Polygon.star(5), fill="gold")
 
 # Custom vertices (absolute coords)
 triangle = [Point(10, 10), Point(50, 10), Point(30, 50)]
@@ -628,8 +628,8 @@ ellipse = cell.add_ellipse(rx=100, ry=60, rotation=45)
 ellipse.fit_to_cell(0.85)  # Scale to 85% of cell size
 
 # Create rotated polygon and fit
-from pyfreeform import shapes
-poly = cell.add_polygon(shapes.star(5), fill="gold")
+from pyfreeform import Polygon
+poly = cell.add_polygon(Polygon.star(5), fill="gold")
 poly.rotate(30, cell.center)  # Rotate first
 poly.fit_to_cell(0.9)         # Then auto-fit
 

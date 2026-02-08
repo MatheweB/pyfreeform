@@ -5,7 +5,7 @@ SVG Generator for: entities/04-ellipses.md
 Generates visual examples for ellipse entity documentation.
 """
 
-from pyfreeform import Scene, shapes
+from pyfreeform import Scene
 from pathlib import Path
 from PIL import Image, ImageDraw
 import tempfile

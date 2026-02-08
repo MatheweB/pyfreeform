@@ -5,7 +5,7 @@ SVG Generator for: api-reference/connections.md
 Generates visual examples demonstrating Connection class usage.
 """
 
-from pyfreeform import Scene, Palette, Dot, Connection, shapes
+from pyfreeform import Scene, Palette, Dot, Connection, Polygon
 from pathlib import Path
 import math
 
@@ -234,7 +234,7 @@ def example8_layering():
     # Create polygons in each cell
     dots = []
     for cell in scene.grid:
-        poly = cell.add_polygon(shapes.hexagon(size=0.8), fill=colors.primary, z_index=10)
+        poly = cell.add_polygon(Polygon.hexagon(size=0.8), fill=colors.primary, z_index=10)
         # Get center as connection point
         dot = cell.add_dot(radius=0, color="transparent", z_index=10)  # Invisible anchor
         dots.append(dot)

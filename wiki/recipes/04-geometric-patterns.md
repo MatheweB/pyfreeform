@@ -15,7 +15,7 @@ Geometric patterns create structured, mathematical beauty.
 
 ## Why This Works
 
-Geometric patterns leverage our brain's natural ability to recognize order and symmetry. By using mathematical formulas to determine shape placement, rotation, and color, you create compositions that feel intentional yet complex. The `shapes` module provides battle-tested polygon vertices that tile perfectly, while position-based logic ensures every cell follows a consistent rule.
+Geometric patterns leverage our brain's natural ability to recognize order and symmetry. By using mathematical formulas to determine shape placement, rotation, and color, you create compositions that feel intentional yet complex. The `Polygon` class provides battle-tested vertex classmethods that tile perfectly, while position-based logic ensures every cell follows a consistent rule.
 
 The visual power comes from:
 
@@ -40,14 +40,14 @@ The visual power comes from:
 **Key Idea**: Use shape helpers and conditional logic to create repeating geometric forms.
 
 ```python
-from pyfreeform import shapes
+from pyfreeform import Polygon
 
 # Alternate shapes in checkerboard
 for cell in scene.grid:
     if (cell.row + cell.col) % 2 == 0:
-        cell.add_polygon(shapes.hexagon(), fill=colors.primary)
+        cell.add_polygon(Polygon.hexagon(), fill=colors.primary)
     else:
-        cell.add_polygon(shapes.star(5), fill=colors.secondary)
+        cell.add_polygon(Polygon.star(5), fill=colors.secondary)
 ```
 
 ![Checkerboard of alternating hexagons and stars](./_images/04-geometric-patterns/02_alternating_shapes.svg)
@@ -57,7 +57,7 @@ for cell in scene.grid:
 ## Complete Example
 
 ```python
-from pyfreeform import Scene, Palette, shapes
+from pyfreeform import Scene, Palette, Polygon
 
 scene = Scene.with_grid(cols=20, rows=20, cell_size=25)
 colors = Palette.sunset()
@@ -65,11 +65,11 @@ scene.background = colors.background
 
 # Define shape library
 shape_types = [
-    shapes.triangle(),
-    shapes.hexagon(),
-    shapes.diamond(),
-    shapes.star(5),
-    shapes.squircle(n=4)
+    Polygon.triangle(),
+    Polygon.hexagon(),
+    Polygon.diamond(),
+    Polygon.star(5),
+    Polygon.squircle(n=4)
 ]
 
 for cell in scene.grid:
@@ -118,11 +118,11 @@ for cell in scene.grid:
 
     # Different shape per ring
     if distance % 3 == 0:
-        cell.add_polygon(shapes.hexagon(), fill=colors.primary)
+        cell.add_polygon(Polygon.hexagon(), fill=colors.primary)
     elif distance % 3 == 1:
-        cell.add_polygon(shapes.triangle(), fill=colors.secondary)
+        cell.add_polygon(Polygon.triangle(), fill=colors.secondary)
     else:
-        cell.add_polygon(shapes.diamond(), fill=colors.accent)
+        cell.add_polygon(Polygon.diamond(), fill=colors.accent)
 ```
 
 ![Concentric Rings](./_images/04-geometric-patterns/03_concentric_rings.svg)
@@ -137,11 +137,11 @@ for cell in scene.grid:
     diagonal = (cell.row + cell.col) % 4
 
     if diagonal == 0:
-        cell.add_polygon(shapes.square(), fill=colors.primary)
+        cell.add_polygon(Polygon.square(), fill=colors.primary)
     elif diagonal == 1:
-        cell.add_polygon(shapes.hexagon(), fill=colors.secondary)
+        cell.add_polygon(Polygon.hexagon(), fill=colors.secondary)
     elif diagonal == 2:
-        cell.add_polygon(shapes.star(6), fill=colors.accent)
+        cell.add_polygon(Polygon.star(6), fill=colors.accent)
     # diagonal == 3: leave empty
 ```
 
@@ -154,13 +154,13 @@ scene = Scene.from_image("photo.jpg", grid_size=20)
 
 for cell in scene.grid:
     if cell.brightness > 0.7:
-        cell.add_polygon(shapes.star(5), fill="gold")
+        cell.add_polygon(Polygon.star(5), fill="gold")
     elif cell.brightness > 0.4:
-        cell.add_polygon(shapes.hexagon(), fill="silver")
+        cell.add_polygon(Polygon.hexagon(), fill="silver")
     elif cell.brightness > 0.2:
-        cell.add_polygon(shapes.diamond(), fill="bronze")
+        cell.add_polygon(Polygon.diamond(), fill="bronze")
     else:
-        cell.add_polygon(shapes.triangle(), fill="darkgray")
+        cell.add_polygon(Polygon.triangle(), fill="darkgray")
 ```
 
 ---
@@ -175,7 +175,7 @@ for cell in scene.grid:
     rotation = (cell.row + cell.col) * 30
 
     poly = cell.add_polygon(
-        shapes.squircle(n=4),  # iOS icon shape
+        Polygon.squircle(n=4),  # iOS icon shape
         fill=cell.color
     )
     poly.rotate(rotation)
@@ -188,14 +188,14 @@ for cell in scene.grid:
 ```python
 # Large background shape
 cell.add_polygon(
-    shapes.hexagon(size=1.0),
+    Polygon.hexagon(size=1.0),
     fill=colors.primary,
     z_index=0
 )
 
 # Smaller foreground shape
 cell.add_polygon(
-    shapes.star(5, size=0.6),
+    Polygon.star(5, size=0.6),
     fill=colors.accent,
     z_index=10
 )
@@ -211,7 +211,7 @@ for cell in scene.grid:
     points = 5 + (cell.row % 4)  # 5, 6, 7, or 8 points
 
     cell.add_polygon(
-        shapes.star(points=points, inner_radius=0.4),
+        Polygon.star(points=points, inner_radius=0.4),
         fill=cell.color
     )
 ```
@@ -230,7 +230,7 @@ Don't overcrowd - leave some cells empty:
 for cell in scene.grid:
     # Only fill 60% of cells
     if cell.brightness > 0.4:
-        cell.add_polygon(shapes.hexagon(), fill=cell.color)
+        cell.add_polygon(Polygon.hexagon(), fill=cell.color)
 ```
 
 ### Use Consistent Sizing
@@ -238,7 +238,7 @@ for cell in scene.grid:
 Scale shapes proportionally:
 
 ```python
-poly = cell.add_polygon(shapes.star(5), fill=colors.primary)
+poly = cell.add_polygon(Polygon.star(5), fill=colors.primary)
 poly.scale(0.85)  # Slightly smaller than cell
 ```
 
@@ -248,7 +248,7 @@ poly.scale(0.85)  # Slightly smaller than cell
 
 ```python
 for cell in scene.grid:
-    poly = cell.add_polygon(shapes.diamond(), fill=cell.color)
+    poly = cell.add_polygon(Polygon.diamond(), fill=cell.color)
 
     # Rotate based on position
     angle = (cell.row * 45 + cell.col * 30) % 360
@@ -262,7 +262,7 @@ for cell in scene.grid:
 ```python
 for cell in scene.grid:
     rotation = 0 if (cell.row + cell.col) % 2 == 0 else 180
-    poly = cell.add_polygon(shapes.triangle(), fill=cell.color)
+    poly = cell.add_polygon(Polygon.triangle(), fill=cell.color)
     poly.rotate(rotation)
 ```
 
@@ -272,7 +272,7 @@ for cell in scene.grid:
 
 ```python
 for cell in scene.grid:
-    poly = cell.add_polygon(shapes.diamond(), fill=cell.color)
+    poly = cell.add_polygon(Polygon.diamond(), fill=cell.color)
     poly.scale(0.8 + cell.brightness * 0.2)
 ```
 
@@ -306,14 +306,14 @@ Control how much of each cell the shape fills:
 
 ```python
 # Default: shapes fill most of the cell
-cell.add_polygon(shapes.hexagon(), fill=color)
+cell.add_polygon(Polygon.hexagon(), fill=color)
 
 # Smaller: more whitespace
-poly = cell.add_polygon(shapes.hexagon(), fill=color)
+poly = cell.add_polygon(Polygon.hexagon(), fill=color)
 poly.scale(0.7)  # 70% of cell size
 
 # Overlapping: shapes extend beyond cell boundaries
-poly = cell.add_polygon(shapes.hexagon(), fill=color)
+poly = cell.add_polygon(Polygon.hexagon(), fill=color)
 poly.scale(1.2)  # 120% of cell size - creates overlap
 ```
 
@@ -352,10 +352,10 @@ color = cell.color  # Uses sampled color from source image
 
 ```python
 # ❌ WRONG - add_polygon uses fill=, not color=
-cell.add_polygon(shapes.hexagon(), color=colors.primary)
+cell.add_polygon(Polygon.hexagon(), color=colors.primary)
 
 # ✅ CORRECT
-cell.add_polygon(shapes.hexagon(), fill=colors.primary)
+cell.add_polygon(Polygon.hexagon(), fill=colors.primary)
 ```
 
 !!! warning "Parameter Names Matter"
@@ -365,11 +365,11 @@ cell.add_polygon(shapes.hexagon(), fill=colors.primary)
 
 ```python
 # ❌ WRONG - can't rotate without storing reference
-cell.add_polygon(shapes.star(5), fill=color)
+cell.add_polygon(Polygon.star(5), fill=color)
 # ... how do we rotate this?
 
 # ✅ CORRECT - store reference to transform
-poly = cell.add_polygon(shapes.star(5), fill=color)
+poly = cell.add_polygon(Polygon.star(5), fill=color)
 poly.rotate(45)
 poly.scale(0.8)
 ```
@@ -408,11 +408,11 @@ Define shapes once, reuse many times:
 ```python
 # Define library at the top
 SHAPES = {
-    'triangle': shapes.triangle(),
-    'square': shapes.square(),
-    'hexagon': shapes.hexagon(),
-    'star': shapes.star(5),
-    'diamond': shapes.diamond()
+    'triangle': Polygon.triangle(),
+    'square': Polygon.square(),
+    'hexagon': Polygon.hexagon(),
+    'star': Polygon.star(5),
+    'diamond': Polygon.diamond()
 }
 
 # Use throughout your code
@@ -426,7 +426,7 @@ for cell in scene.grid:
 ```python
 # Too uniform (boring)
 for cell in scene.grid:
-    cell.add_polygon(shapes.hexagon(), fill=colors.primary)
+    cell.add_polygon(Polygon.hexagon(), fill=colors.primary)
 
 # Too chaotic (overwhelming)
 for cell in scene.grid:
@@ -437,7 +437,7 @@ for cell in scene.grid:
 # Balanced (interesting but cohesive)
 for cell in scene.grid:
     shape_idx = (cell.row + cell.col) % 3
-    shape = [shapes.triangle(), shapes.hexagon(), shapes.diamond()][shape_idx]
+    shape = [Polygon.triangle(), Polygon.hexagon(), Polygon.diamond()][shape_idx]
     color = cell.color  # Consistent color scheme
     cell.add_polygon(shape, fill=color)
 ```
@@ -446,10 +446,10 @@ for cell in scene.grid:
 
 ```python
 # Background layer
-cell.add_polygon(shapes.hexagon(), fill=colors.primary, z_index=0)
+cell.add_polygon(Polygon.hexagon(), fill=colors.primary, z_index=0)
 
 # Middle layer
-cell.add_polygon(shapes.star(5, size=0.6), fill=colors.secondary, z_index=5)
+cell.add_polygon(Polygon.star(5, size=0.6), fill=colors.secondary, z_index=5)
 
 # Foreground layer
 cell.add_dot(radius=2, color=colors.accent, z_index=10)
@@ -484,9 +484,9 @@ for cell in scene.grid:
     # Pattern 1: Distance-based shape selection
     distance = ((cell.row - 10)**2 + (cell.col - 10)**2) ** 0.5
     if distance < 5:
-        shape = shapes.star(5)
+        shape = Polygon.star(5)
     else:
-        shape = shapes.hexagon()
+        shape = Polygon.hexagon()
 
     # Pattern 2: Diagonal rotation
     rotation = (cell.row + cell.col) * 15
@@ -505,7 +505,7 @@ for cell in scene.grid:
     idx = (cell.row + cell.col) % len(fib)
     points = fib[idx]
 
-    cell.add_polygon(shapes.star(points), fill=cell.color)
+    cell.add_polygon(Polygon.star(points), fill=cell.color)
 ```
 
 ### Negative Space Patterns
@@ -515,7 +515,7 @@ for cell in scene.grid:
 for cell in scene.grid:
     # Only fill if both row and col are even
     if cell.row % 2 == 0 and cell.col % 2 == 0:
-        cell.add_polygon(shapes.hexagon(), fill=colors.primary)
+        cell.add_polygon(Polygon.hexagon(), fill=colors.primary)
     # Creates a sparse, airy pattern
 ```
 

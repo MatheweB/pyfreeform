@@ -184,11 +184,11 @@ for cell in scene.grid:
         )
 
 # Hexagons in bright areas
-from pyfreeform import shapes
+from pyfreeform import Polygon
 for cell in scene.grid:
     if cell.brightness > 0.7:
         cell.add_polygon(
-            shapes.hexagon(),
+            Polygon.hexagon(),
             fill=colors.primary,
             z_index=Z_SHAPES
         )
@@ -467,7 +467,7 @@ cell1.add_dot(radius=2, color="white", z_index=Z_HIGHLIGHTS)
 Here's a complete multi-layer composition from Example 06:
 
 ```python
-from pyfreeform import Scene, Palette, shapes
+from pyfreeform import Scene, Palette, Polygon
 
 scene = Scene.from_image("photo.jpg", grid_size=25)
 colors = Palette.midnight()

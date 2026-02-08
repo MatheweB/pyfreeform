@@ -34,7 +34,7 @@ def rotate(
 
 **Example**:
 ```python
-poly = cell.add_polygon(shapes.hexagon(), fill="blue")
+poly = cell.add_polygon(Polygon.hexagon(), fill="blue")
 
 # Rotate around centroid (default)
 poly.rotate(45)
@@ -79,7 +79,7 @@ def scale(
 
 **Example**:
 ```python
-poly = cell.add_polygon(shapes.star(5), fill="gold")
+poly = cell.add_polygon(Polygon.star(5), fill="gold")
 
 # Enlarge by 50%
 poly.scale(1.5)
@@ -126,7 +126,7 @@ def translate(
 
 **Example**:
 ```python
-poly = cell.add_polygon(shapes.diamond(), fill="purple")
+poly = cell.add_polygon(Polygon.diamond(), fill="purple")
 
 # Move right and down
 poly.translate(dx=10, dy=20)
@@ -144,7 +144,7 @@ poly.translate(dx=-5, dy=-10)
 Transforms can be chained together:
 
 ```python
-poly = cell.add_polygon(shapes.hexagon(), fill="coral")
+poly = cell.add_polygon(Polygon.hexagon(), fill="coral")
 
 # Rotate, then scale, then translate
 poly.rotate(45)
@@ -166,7 +166,7 @@ poly.translate(dx=5, dy=5)
 
 ```python
 for cell in scene.grid:
-    poly = cell.add_polygon(shapes.hexagon(), fill=cell.color)
+    poly = cell.add_polygon(Polygon.hexagon(), fill=cell.color)
 
     # Rotation based on position
     angle = (cell.row + cell.col) * 15
@@ -184,7 +184,7 @@ center_row = scene.grid.rows // 2
 center_col = scene.grid.cols // 2
 
 for cell in scene.grid:
-    poly = cell.add_polygon(shapes.triangle(), fill=cell.color)
+    poly = cell.add_polygon(Polygon.triangle(), fill=cell.color)
 
     # Point toward center
     dr = cell.row - center_row
@@ -200,7 +200,7 @@ for cell in scene.grid:
 
 ```python
 for cell in scene.grid:
-    poly = cell.add_polygon(shapes.star(5), fill=cell.color)
+    poly = cell.add_polygon(Polygon.star(5), fill=cell.color)
 
     # Bright = bigger, dark = smaller
     scale_factor = 0.5 + cell.brightness * 0.5  # 0.5 to 1.0
@@ -219,7 +219,7 @@ For animation frames:
 frame = 0  # Current frame number
 
 for cell in scene.grid:
-    poly = cell.add_polygon(shapes.squircle(n=4), fill=cell.color)
+    poly = cell.add_polygon(Polygon.squircle(n=4), fill=cell.color)
 
     # Rotation increases each frame
     angle = frame * 6  # 6° per frame
@@ -263,7 +263,7 @@ poly.scale(1.5)  # Scales in rotated orientation
 After transforms, use fit_to_cell() to ensure polygon stays within bounds:
 
 ```python
-poly = cell.add_polygon(shapes.hexagon(), fill=cell.color)
+poly = cell.add_polygon(Polygon.hexagon(), fill=cell.color)
 poly.rotate(45)
 poly.scale(1.5)
 
@@ -278,6 +278,6 @@ poly.fit_to_cell(0.9)
 - 📖 [Transforms Guide](../advanced-concepts/04-transforms.md) - Detailed usage
 - 📖 [Polygons](../entities/05-polygons.md) - Polygon entity
 - 📖 [fit_to_cell Guide](../advanced-concepts/05-fit-to-cell.md) - Auto-constraining
-- 🎯 [Rotating Shapes Recipe](../recipes/06-rotating-shapes.md) - Rotation patterns
+- 🎯 [Rotating Shapes Recipe](../recipes/06-rotating-Polygon.md) - Rotation patterns
 - 🎯 [Transforms Example](../examples/intermediate/transforms.md) - Step-by-step tutorial
 

@@ -19,17 +19,7 @@ from .entities.curve import Curve
 from .entities.path import Path
 from .entities.ellipse import Ellipse
 from .entities.text import Text
-from .entities.polygon import (
-    Polygon,
-    triangle,
-    square,
-    diamond,
-    hexagon,
-    star,
-    regular_polygon,
-    squircle,
-    rounded_rect,
-)
+from .entities.polygon import Polygon
 from .entities.entity_group import EntityGroup
 
 # Core (Surface protocol)
@@ -59,8 +49,6 @@ from .config.styles import (
 from .color import Color
 from .display import display
 
-# Shape helpers module (for `from pyfreeform import shapes`)
-from .entities import polygon as shapes
 
 
 # =============================================================================
@@ -143,16 +131,6 @@ __all__ = [
     "Text",
     "Polygon",
     "EntityGroup",
-    # Shape helpers (also available via `shapes.hexagon()`)
-    "triangle",
-    "square",
-    "diamond",
-    "hexagon",
-    "star",
-    "regular_polygon",
-    "squircle",
-    "rounded_rect",
-    "shapes",
     # Core (Surface protocol)
     "Surface",
     # Grid

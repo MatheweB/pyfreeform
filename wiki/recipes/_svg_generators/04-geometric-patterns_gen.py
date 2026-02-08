@@ -3,7 +3,7 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../')))
 
-from pyfreeform import Scene, Palette, shapes
+from pyfreeform import Scene, Palette, Polygon
 import math
 
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), '../_images/04-geometric-patterns')
@@ -23,7 +23,7 @@ def image_01_hexagon_grid():
     scene.background = colors.background
 
     for cell in scene.grid:
-        cell.add_polygon(shapes.hexagon(), fill=colors.primary)
+        cell.add_polygon(Polygon.hexagon(), fill=colors.primary)
 
     save_svg("01_hexagon_grid.svg", scene)
 
@@ -36,15 +36,15 @@ def image_02_alternating_shapes():
 
     for cell in scene.grid:
         if (cell.row + cell.col) % 2 == 0:
-            cell.add_polygon(shapes.hexagon(), fill=colors.primary)
+            cell.add_polygon(Polygon.hexagon(), fill=colors.primary)
         else:
-            cell.add_polygon(shapes.star(5), fill=colors.secondary)
+            cell.add_polygon(Polygon.star(5), fill=colors.secondary)
 
-    save_svg("02_alternating_shapes.svg", scene)
+    save_svg("02_alternating_Polygon.svg", scene)
 
 
 def image_03_concentric_rings():
-    """Concentric rings with different shapes."""
+    """Concentric rings with different Polygon."""
     scene = Scene.with_grid(cols=20, rows=20, cell_size=20)
     colors = Palette.midnight()
     scene.background = colors.background
@@ -59,11 +59,11 @@ def image_03_concentric_rings():
 
         # Different shape per ring
         if distance % 3 == 0:
-            cell.add_polygon(shapes.hexagon(), fill=colors.primary)
+            cell.add_polygon(Polygon.hexagon(), fill=colors.primary)
         elif distance % 3 == 1:
-            cell.add_polygon(shapes.triangle(), fill=colors.secondary)
+            cell.add_polygon(Polygon.triangle(), fill=colors.secondary)
         else:
-            cell.add_polygon(shapes.diamond(), fill=colors.accent)
+            cell.add_polygon(Polygon.diamond(), fill=colors.accent)
 
     save_svg("03_concentric_rings.svg", scene)
 
@@ -78,11 +78,11 @@ def image_04_diagonal_stripes():
         diagonal = (cell.row + cell.col) % 4
 
         if diagonal == 0:
-            cell.add_polygon(shapes.square(), fill=colors.primary)
+            cell.add_polygon(Polygon.square(), fill=colors.primary)
         elif diagonal == 1:
-            cell.add_polygon(shapes.hexagon(), fill=colors.secondary)
+            cell.add_polygon(Polygon.hexagon(), fill=colors.secondary)
         elif diagonal == 2:
-            cell.add_polygon(shapes.star(6), fill=colors.accent)
+            cell.add_polygon(Polygon.star(6), fill=colors.accent)
         # diagonal == 3: leave empty
 
     save_svg("04_diagonal_stripes.svg", scene)
@@ -95,13 +95,13 @@ def image_05_rotating_shapes():
     scene.background = colors.background
 
     for cell in scene.grid:
-        poly = cell.add_polygon(shapes.hexagon(), fill=colors.primary)
+        poly = cell.add_polygon(Polygon.hexagon(), fill=colors.primary)
 
         # Rotate based on position
         angle = (cell.row * cell.col) * 15
         poly.rotate(angle)
 
-    save_svg("05_rotating_shapes.svg", scene)
+    save_svg("05_rotating_Polygon.svg", scene)
 
 
 def image_06_star_variations():
@@ -115,7 +115,7 @@ def image_06_star_variations():
         points = 5 + (cell.row % 4)  # 5, 6, 7, or 8 points
 
         cell.add_polygon(
-            shapes.star(points=points, inner_ratio=0.4),
+            Polygon.star(points=points, inner_ratio=0.4),
             fill=colors.primary
         )
 
@@ -141,7 +141,7 @@ def image_07_squircle_pattern():
         else:
             color = colors.accent
 
-        poly = cell.add_polygon(shapes.squircle(n=4), fill=color)
+        poly = cell.add_polygon(Polygon.squircle(n=4), fill=color)
 
         # Rotate based on distance
         angle = distance * 10
@@ -159,19 +159,19 @@ def image_08_nested_shapes():
     for cell in scene.grid:
         # Large background hexagon
         cell.add_polygon(
-            shapes.hexagon(size=1.0),
+            Polygon.hexagon(size=1.0),
             fill=colors.primary,
             z_index=0
         )
 
         # Smaller foreground star
         cell.add_polygon(
-            shapes.star(5),
+            Polygon.star(5),
             fill=colors.accent,
             z_index=10
         )
 
-    save_svg("08_nested_shapes.svg", scene)
+    save_svg("08_nested_Polygon.svg", scene)
 
 
 def image_09_size_variations():
@@ -194,7 +194,7 @@ def image_09_size_variations():
         size = 1.0 - (distance / max_distance) * 0.6
 
         poly = cell.add_polygon(
-            shapes.hexagon(size=size),
+            Polygon.hexagon(size=size),
             fill=colors.primary
         )
 
@@ -208,7 +208,7 @@ def image_10_triangle_tessellation():
     scene.background = colors.background
 
     for cell in scene.grid:
-        poly = cell.add_polygon(shapes.triangle(), fill=colors.primary)
+        poly = cell.add_polygon(Polygon.triangle(), fill=colors.primary)
 
         # Rotate triangles to create tessellation
         if (cell.row + cell.col) % 2 == 0:
@@ -228,23 +228,23 @@ def image_11_diamond_pattern():
     for cell in scene.grid:
         # Checkerboard of diamonds
         if (cell.row + cell.col) % 2 == 0:
-            cell.add_polygon(shapes.diamond(), fill=colors.primary)
+            cell.add_polygon(Polygon.diamond(), fill=colors.primary)
 
     save_svg("11_diamond_pattern.svg", scene)
 
 
 def image_12_mixed_geometry():
-    """Mix of all geometric shapes."""
+    """Mix of all geometric Polygon."""
     scene = Scene.with_grid(cols=20, rows=15, cell_size=20)
     colors = Palette.midnight()
     scene.background = colors.background
 
     shape_types = [
-        shapes.triangle(),
-        shapes.square(),
-        shapes.hexagon(),
-        shapes.diamond(),
-        shapes.star(5),
+        Polygon.triangle(),
+        Polygon.square(),
+        Polygon.hexagon(),
+        Polygon.diamond(),
+        Polygon.star(5),
     ]
 
     for cell in scene.grid:

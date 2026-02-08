@@ -5,7 +5,7 @@ SVG Generator for: api-reference/cell.md
 Generates visual examples demonstrating Cell API methods and properties.
 """
 
-from pyfreeform import Scene, Palette, shapes
+from pyfreeform import Scene, Palette, Polygon
 from pathlib import Path
 
 
@@ -165,10 +165,10 @@ def example7_add_polygon():
     cells = list(scene.grid)
 
     # Different shapes
-    cells[0].add_polygon(shapes.triangle(size=0.8), fill=colors.primary)
-    cells[1].add_polygon(shapes.hexagon(size=0.8), fill=colors.secondary)
-    cells[2].add_polygon(shapes.star(5), fill=colors.accent)
-    cells[3].add_polygon(shapes.squircle(n=4), fill="#64ffda")
+    cells[0].add_polygon(Polygon.triangle(size=0.8), fill=colors.primary)
+    cells[1].add_polygon(Polygon.hexagon(size=0.8), fill=colors.secondary)
+    cells[2].add_polygon(Polygon.star(5), fill=colors.accent)
+    cells[3].add_polygon(Polygon.squircle(n=4), fill="#64ffda")
 
     scene.save(OUTPUT_DIR / "example7-add-polygon.svg")
 
@@ -265,7 +265,7 @@ def example11_layering():
 
     # Cell 2: Complex layering
     cells[2].add_fill(color="#0a3d62", z_index=0)
-    cells[2].add_polygon(shapes.hexagon(size=0.9), fill=colors.primary, z_index=3)
+    cells[2].add_polygon(Polygon.hexagon(size=0.9), fill=colors.primary, z_index=3)
     cells[2].add_dot(radius=12, color=colors.accent, z_index=10)
 
     scene.save(OUTPUT_DIR / "example11-layering.svg")
@@ -288,7 +288,7 @@ def example12_complete():
         if (cell.row + cell.col) % 2 == 0:
             cell.add_dot(radius=8, color=colors.primary, z_index=5)
         else:
-            cell.add_polygon(shapes.diamond(size=0.6), fill=colors.secondary, z_index=5)
+            cell.add_polygon(Polygon.diamond(size=0.6), fill=colors.secondary, z_index=5)
 
         # Border on edge cells
         if cell.row == 0 or cell.col == 0 or cell.row == 3 or cell.col == 5:

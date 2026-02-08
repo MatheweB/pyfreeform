@@ -11,30 +11,29 @@ from ..core.point import Point
 class Polygon(Entity):
     """
     A closed polygon defined by a list of vertices.
-    
-    Polygons can be filled, stroked, or both. Use helper functions
-    in `pyfreeform.shapes` for common shapes like triangles, hexagons, stars.
-    
+
+    Polygons can be filled, stroked, or both. Use classmethods like
+    ``Polygon.star()``, ``Polygon.hexagon()`` for common shapes.
+
     Attributes:
         vertices: List of Point objects defining the polygon
         fill: Fill color (or None for no fill)
         stroke: Stroke color (or None for no stroke)
         stroke_width: Stroke width
-    
+
     Anchors:
         - "center": Centroid of the polygon
         - "v0", "v1", ...: Individual vertices
-    
+
     Examples:
         >>> # Triangle from points
         >>> tri = Polygon([(0, 0), (50, 100), (100, 0)], fill="blue")
-        
+
         >>> # In a cell (relative coordinates 0-1)
         >>> cell.add_polygon([(0.5, 0), (1, 1), (0, 1)], fill="red")
-        
-        >>> # Using shape helpers
-        >>> from pyfreeform import shapes
-        >>> cell.add_polygon(shapes.hexagon(), fill="purple")
+
+        >>> # Using shape classmethods
+        >>> cell.add_polygon(Polygon.hexagon(), fill="purple")
     """
     
     def __init__(
@@ -251,12 +250,93 @@ class Polygon(Entity):
     def __repr__(self) -> str:
         return f"Polygon({len(self._vertices)} vertices, fill={self.fill!r})"
 
+    # ---- Shape classmethods ------------------------------------------------
+
+    @classmethod
+    def triangle(
+        cls,
+        size: float = 1.0,
+        center: tuple[float, float] = (0.5, 0.5),
+    ) -> list[tuple[float, float]]:
+        """Generate equilateral triangle vertices (pointing up)."""
+        return _triangle(size, center)
+
+    @classmethod
+    def square(
+        cls,
+        size: float = 0.8,
+        center: tuple[float, float] = (0.5, 0.5),
+    ) -> list[tuple[float, float]]:
+        """Generate square vertices."""
+        return _square(size, center)
+
+    @classmethod
+    def diamond(
+        cls,
+        size: float = 0.8,
+        center: tuple[float, float] = (0.5, 0.5),
+    ) -> list[tuple[float, float]]:
+        """Generate diamond (rotated square) vertices."""
+        return _diamond(size, center)
+
+    @classmethod
+    def hexagon(
+        cls,
+        size: float = 0.8,
+        center: tuple[float, float] = (0.5, 0.5),
+    ) -> list[tuple[float, float]]:
+        """Generate regular hexagon vertices."""
+        return _hexagon(size, center)
+
+    @classmethod
+    def star(
+        cls,
+        points: int = 5,
+        size: float = 0.8,
+        inner_ratio: float = 0.4,
+        center: tuple[float, float] = (0.5, 0.5),
+    ) -> list[tuple[float, float]]:
+        """Generate star vertices."""
+        return _star(points, size, inner_ratio, center)
+
+    @classmethod
+    def regular_polygon(
+        cls,
+        sides: int,
+        size: float = 0.8,
+        center: tuple[float, float] = (0.5, 0.5),
+    ) -> list[tuple[float, float]]:
+        """Generate regular polygon with N sides."""
+        return _regular_polygon(sides, size, center)
+
+    @classmethod
+    def squircle(
+        cls,
+        size: float = 0.8,
+        center: tuple[float, float] = (0.5, 0.5),
+        n: float = 4,
+        points: int = 32,
+    ) -> list[tuple[float, float]]:
+        """Generate squircle (superellipse) vertices."""
+        return _squircle(size, center, n, points)
+
+    @classmethod
+    def rounded_rect(
+        cls,
+        size: float = 0.8,
+        center: tuple[float, float] = (0.5, 0.5),
+        corner_radius: float = 0.2,
+        points_per_corner: int = 8,
+    ) -> list[tuple[float, float]]:
+        """Generate rectangle with rounded corners vertices."""
+        return _rounded_rect(size, center, corner_radius, points_per_corner)
+
 
 # =============================================================================
-# Shape Helper Functions
+# Shape Helper Functions (internal)
 # =============================================================================
 
-def triangle(
+def _triangle(
     size: float = 1.0,
     center: tuple[float, float] = (0.5, 0.5),
 ) -> list[tuple[float, float]]:
@@ -281,7 +361,7 @@ def triangle(
     ]
 
 
-def square(
+def _square(
     size: float = 0.8,
     center: tuple[float, float] = (0.5, 0.5),
 ) -> list[tuple[float, float]]:
@@ -296,7 +376,7 @@ def square(
     ]
 
 
-def diamond(
+def _diamond(
     size: float = 0.8,
     center: tuple[float, float] = (0.5, 0.5),
 ) -> list[tuple[float, float]]:
@@ -311,7 +391,7 @@ def diamond(
     ]
 
 
-def hexagon(
+def _hexagon(
     size: float = 0.8,
     center: tuple[float, float] = (0.5, 0.5),
 ) -> list[tuple[float, float]]:
@@ -328,7 +408,7 @@ def hexagon(
     return vertices
 
 
-def star(
+def _star(
     points: int = 5,
     size: float = 0.8,
     inner_ratio: float = 0.4,
@@ -336,7 +416,7 @@ def star(
 ) -> list[tuple[float, float]]:
     """
     Generate star vertices.
-    
+
     Args:
         points: Number of star points.
         size: Outer radius scale.
@@ -358,14 +438,14 @@ def star(
     return vertices
 
 
-def regular_polygon(
+def _regular_polygon(
     sides: int,
     size: float = 0.8,
     center: tuple[float, float] = (0.5, 0.5),
 ) -> list[tuple[float, float]]:
     """
     Generate regular polygon with N sides.
-    
+
     Args:
         sides: Number of sides (3 = triangle, 4 = square, etc.)
         size: Scale factor.
@@ -386,7 +466,7 @@ def regular_polygon(
     return vertices
 
 
-def squircle(
+def _squircle(
     size: float = 0.8,
     center: tuple[float, float] = (0.5, 0.5),
     n: float = 4,
@@ -394,27 +474,12 @@ def squircle(
 ) -> list[tuple[float, float]]:
     """
     Generate a squircle (superellipse) - a shape between square and circle.
-    
-    The squircle is the "premium UI" shape used by iOS icons, modern logos,
-    and anywhere you want something softer than a square but more structured
-    than a circle.
-    
+
     Args:
         size: Scale factor (1.0 fills the cell).
         center: Center point in relative coordinates.
-        n: Squareness parameter:
-           - n=2: Perfect circle
-           - n=4: Classic squircle (iOS icon shape)
-           - n=6+: Approaches a square with rounded corners
+        n: Squareness parameter (2=circle, 4=squircle, 6+=rounded square).
         points: Number of vertices (higher = smoother).
-    
-    Returns:
-        List of vertices for use with add_polygon().
-    
-    Examples:
-        >>> cell.add_polygon(shapes.squircle(), fill="blue")  # Classic squircle
-        >>> cell.add_polygon(shapes.squircle(n=2), fill="red")  # Circle
-        >>> cell.add_polygon(shapes.squircle(n=8), fill="green")  # Rounded square
     """
     cx, cy = center
     r = size * 0.5
@@ -440,7 +505,7 @@ def squircle(
     return vertices
 
 
-def rounded_rect(
+def _rounded_rect(
     size: float = 0.8,
     center: tuple[float, float] = (0.5, 0.5),
     corner_radius: float = 0.2,
@@ -448,15 +513,12 @@ def rounded_rect(
 ) -> list[tuple[float, float]]:
     """
     Generate a rectangle with rounded corners.
-    
+
     Args:
         size: Scale factor.
         center: Center point.
         corner_radius: Radius of corners as fraction of size (0-0.5).
         points_per_corner: Vertices per corner arc.
-    
-    Returns:
-        List of vertices for use with add_polygon().
     """
     cx, cy = center
     half = size * 0.5

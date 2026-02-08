@@ -13,7 +13,7 @@ Corresponds to sections:
 - Entity Patterns
 """
 
-from pyfreeform import Scene, Grid, Palette, Dot, Line, Curve, shapes
+from pyfreeform import Scene, Grid, Palette, Dot, Line, Curve, Polygon
 from pyfreeform.config import DotStyle
 from pathlib import Path
 from PIL import Image, ImageDraw
@@ -64,7 +64,7 @@ def entity_types_overview():
     cells[3].add_ellipse(rx=20, ry=15, fill="#10b981")
 
     # Polygon (hexagon)
-    cells[4].add_polygon(shapes.hexagon(), fill="#f59e0b", stroke="none")
+    cells[4].add_polygon(Polygon.hexagon(), fill="#f59e0b", stroke="none")
 
     # Text
     cells[5].add_text("Hi", font_size=24, color="#ec4899")
@@ -499,11 +499,11 @@ def entity_specific_polygons():
     cells = list(scene.grid)
 
     # Different built-in shapes
-    cells[0].add_polygon(shapes.triangle(), fill="#8b5cf6")
-    cells[1].add_polygon(shapes.square(), fill="#8b5cf6")
-    cells[2].add_polygon(shapes.regular_polygon(sides=5), fill="#8b5cf6")  # Pentagon
-    cells[3].add_polygon(shapes.hexagon(), fill="#8b5cf6")
-    cells[4].add_polygon(shapes.star(points=5), fill="#8b5cf6")
+    cells[0].add_polygon(Polygon.triangle(), fill="#8b5cf6")
+    cells[1].add_polygon(Polygon.square(), fill="#8b5cf6")
+    cells[2].add_polygon(Polygon.regular_polygon(sides=5), fill="#8b5cf6")  # Pentagon
+    cells[3].add_polygon(Polygon.hexagon(), fill="#8b5cf6")
+    cells[4].add_polygon(Polygon.star(points=5), fill="#8b5cf6")
 
     # Grid
     for cell in scene.grid:

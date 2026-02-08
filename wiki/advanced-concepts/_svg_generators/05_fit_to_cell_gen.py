@@ -12,7 +12,7 @@ Corresponds to sections:
 - Works For All Entities
 """
 
-from pyfreeform import Scene, shapes
+from pyfreeform import Scene, Polygon
 from pathlib import Path
 
 # Paths
@@ -131,18 +131,18 @@ def usage_different_shapes():
     # Polygon
     cell3 = scene.grid[0, 2]
     cell3.add_border(color="#d1d5db", width=1)
-    poly = cell3.add_polygon(shapes.hexagon( size=60), rotation=15, fill="#f59e0b")
+    poly = cell3.add_polygon(Polygon.hexagon( size=60), rotation=15, fill="#f59e0b")
     poly.fit_to_cell(0.85)
     cell3.add_text("Polygon", at=(0.5, 0.9), font_size=7, color="#1f2937")
 
     # Star
     cell4 = scene.grid[0, 3]
     cell4.add_border(color="#d1d5db", width=1)
-    star = cell4.add_polygon(shapes.star(5, size=60), rotation=18, fill="#ef4444")
+    star = cell4.add_polygon(Polygon.star(5, size=60), rotation=18, fill="#ef4444")
     star.fit_to_cell(0.85)
     cell4.add_text("Star", at=(0.5, 0.9), font_size=7, color="#1f2937")
 
-    scene.save(OUTPUT_DIR / "04-usage-different-shapes.svg")
+    scene.save(OUTPUT_DIR / "04-usage-different-Polygon.svg")
 
 # =============================================================================
 # SECTION: Parameters
@@ -241,7 +241,7 @@ def example_position_based():
         # Size inversely proportional to distance
         target_scale = 0.3 + (1 - distance / max_dist) * 0.7
 
-        poly = cell.add_polygon(shapes.hexagon( size=40), fill="#10b981")
+        poly = cell.add_polygon(Polygon.hexagon( size=40), fill="#10b981")
         poly.fit_to_cell(target_scale)
 
     scene.save(OUTPUT_DIR / "08-example-position-based.svg")
@@ -355,7 +355,7 @@ def works_for_all_comparison():
     # Polygon
     cell4 = scene.grid[0, 3]
     cell4.add_border(color="#d1d5db", width=1)
-    poly = cell4.add_polygon(shapes.star(5, size=80), rotation=18, fill="#f59e0b")
+    poly = cell4.add_polygon(Polygon.star(5, size=80), rotation=18, fill="#f59e0b")
     poly.fit_to_cell(0.8)
     cell4.add_text("Polygon", at=(0.5, 0.9), font_size=7, color="#1f2937")
 
@@ -374,14 +374,14 @@ def works_for_all_complex():
     scene.background = "#f8f9fa"
 
     shape_data = [
-        (shapes.triangle(), "Triangle"),
-        (shapes.square(), "Square"),
-        (shapes.regular_polygon(sides=5), "Pentagon"),
-        (shapes.hexagon(), "Hexagon"),
-        (shapes.star(5), "Star 5"),
-        (shapes.star(6), "Star 6"),
-        (shapes.star(8), "Star 8"),
-        (shapes.diamond(), "Diamond"),
+        (Polygon.triangle(), "Triangle"),
+        (Polygon.square(), "Square"),
+        (Polygon.regular_polygon(sides=5), "Pentagon"),
+        (Polygon.hexagon(), "Hexagon"),
+        (Polygon.star(5), "Star 5"),
+        (Polygon.star(6), "Star 6"),
+        (Polygon.star(8), "Star 8"),
+        (Polygon.diamond(), "Diamond"),
     ]
 
     for i, (shape, name) in enumerate(shape_data):

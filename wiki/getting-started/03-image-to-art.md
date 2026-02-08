@@ -142,12 +142,12 @@ for cell in scene.grid:
 ### Different Shapes by Brightness
 
 ```python
-from pyfreeform import shapes
+from pyfreeform import Polygon
 
 for cell in scene.grid:
     if cell.brightness > 0.7:
         # Bright: Hexagons
-        cell.add_polygon(shapes.hexagon(), fill=cell.color)
+        cell.add_polygon(Polygon.hexagon(), fill=cell.color)
 
     elif cell.brightness > 0.4:
         # Medium: Curves

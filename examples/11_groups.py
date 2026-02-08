@@ -23,7 +23,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from pyfreeform import Scene, Palette, shapes
+from pyfreeform import Scene, Palette, Polygon
 
 # =============================================================================
 # Configuration
@@ -55,7 +55,7 @@ for cell in scene.grid.border(thickness=1):
 diagonal_hexagons = []
 for cell in scene.grid.where(lambda c: c.row == c.col):
     hex_poly = cell.add_polygon(
-        shapes.hexagon(size=0.8),
+        Polygon.hexagon(size=0.8),
         fill=colors.primary,
         z_index=2,
     )
@@ -75,7 +75,7 @@ for start_row, start_col in corner_regions:
         for dc in range(2):
             cell = scene.grid[start_row + dr, start_col + dc]
             star_poly = cell.add_polygon(
-                shapes.star(points=4, size=0.6, inner_ratio=0.3),
+                Polygon.star(points=4, size=0.6, inner_ratio=0.3),
                 fill=colors.accent,
                 z_index=3,
             )

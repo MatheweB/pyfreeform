@@ -7,10 +7,10 @@ Helper functions, shape builders, and utility classes.
 
 ## Shape Helpers
 
-The `shapes` module provides pre-built polygon vertices.
+The `Polygon` class provides pre-built polygon vertices via classmethods.
 
 ```python
-from pyfreeform import shapes
+from pyfreeform import Polygon
 ```
 
 All shape helpers return vertex lists in relative coordinates (0-1), perfect for use with `cell.add_polygon()`.
@@ -25,8 +25,8 @@ Equilateral triangle pointing up.
 
 **Example**:
 ```python
-cell.add_polygon(shapes.triangle(), fill="red")
-cell.add_polygon(shapes.triangle(size=0.8), fill="blue")
+cell.add_polygon(Polygon.triangle(), fill="red")
+cell.add_polygon(Polygon.triangle(size=0.8), fill="blue")
 ```
 
 ![Basic Shapes Example](./_images/utilities/example1-basic-shapes.svg)
@@ -57,7 +57,7 @@ Regular hexagon with flat top.
 
 **Example**:
 ```python
-cell.add_polygon(shapes.hexagon(), fill="purple")
+cell.add_polygon(Polygon.hexagon(), fill="purple")
 ```
 
 ### star()
@@ -79,8 +79,8 @@ Multi-pointed star.
 
 **Example**:
 ```python
-cell.add_polygon(shapes.star(5), fill="gold")
-cell.add_polygon(shapes.star(8, inner_radius=0.3), fill="silver")
+cell.add_polygon(Polygon.star(5), fill="gold")
+cell.add_polygon(Polygon.star(8, inner_radius=0.3), fill="silver")
 ```
 
 ![Stars Example](./_images/utilities/example2-stars.svg)
@@ -102,10 +102,10 @@ Any regular polygon.
 **Example**:
 ```python
 # Pentagon
-cell.add_polygon(shapes.regular_polygon(5), fill="blue")
+cell.add_polygon(Polygon.regular_polygon(5), fill="blue")
 
 # Octagon
-cell.add_polygon(shapes.regular_polygon(8), fill="green")
+cell.add_polygon(Polygon.regular_polygon(8), fill="green")
 ```
 
 ![Regular Polygons Example](./_images/utilities/example4-regular-polygons.svg)
@@ -141,11 +141,11 @@ Where:
 **Example**:
 ```python
 # iOS icon shape
-cell.add_polygon(shapes.squircle(n=4), fill="blue")
+cell.add_polygon(Polygon.squircle(n=4), fill="blue")
 
 # Variations
 for i, n in enumerate([2, 3, 4, 5, 6]):
-    cell.add_polygon(shapes.squircle(n=n), fill=colors[i])
+    cell.add_polygon(Polygon.squircle(n=n), fill=colors[i])
 ```
 
 ![Squircle Example](./_images/utilities/example5-squircle.svg)

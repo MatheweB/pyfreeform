@@ -3,7 +3,7 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../')))
 
-from pyfreeform import Scene, Palette, shapes
+from pyfreeform import Scene, Palette, Polygon
 import math
 
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), '../_images/06-rotating-shapes')
@@ -38,7 +38,7 @@ def image_01_linear_progression():
     scene.background = colors.background
 
     for cell in scene.grid:
-        poly = cell.add_polygon(shapes.hexagon(), fill=colors.primary)
+        poly = cell.add_polygon(Polygon.hexagon(), fill=colors.primary)
 
         # Rotation increases left to right, top to bottom
         angle = (cell.row * scene.grid.cols + cell.col) * 5
@@ -57,7 +57,7 @@ def image_02_radial_pattern():
     center_col = scene.grid.cols // 2
 
     for cell in scene.grid:
-        poly = cell.add_polygon(shapes.triangle(), fill=colors.primary)
+        poly = cell.add_polygon(Polygon.triangle(), fill=colors.primary)
 
         # Calculate angle from center
         dr = cell.row - center_row
@@ -79,7 +79,7 @@ def image_03_spiral_pattern():
     center_col = scene.grid.cols // 2
 
     for cell in scene.grid:
-        poly = cell.add_polygon(shapes.hexagon(), fill=colors.primary)
+        poly = cell.add_polygon(Polygon.hexagon(), fill=colors.primary)
 
         # Distance from center
         dr = cell.row - center_row
@@ -108,13 +108,13 @@ def image_04_brightness_driven():
         if cell._brightness > 0.3:
             # Choose shape based on brightness
             if cell._brightness > 0.7:
-                shape = shapes.star(5)
+                shape = Polygon.star(5)
                 color = colors.accent
             elif cell._brightness > 0.5:
-                shape = shapes.hexagon()
+                shape = Polygon.hexagon()
                 color = colors.primary
             else:
-                shape = shapes.diamond()
+                shape = Polygon.diamond()
                 color = colors.secondary
 
             poly = cell.add_polygon(shape, fill=color)
@@ -133,7 +133,7 @@ def image_05_diagonal_rotation():
     scene.background = colors.background
 
     for cell in scene.grid:
-        poly = cell.add_polygon(shapes.hexagon(), fill=colors.primary)
+        poly = cell.add_polygon(Polygon.hexagon(), fill=colors.primary)
 
         # Diagonal-based rotation
         angle = (cell.row + cell.col) * 15
@@ -149,7 +149,7 @@ def image_06_wave_rotation():
     scene.background = colors.background
 
     for cell in scene.grid:
-        poly = cell.add_polygon(shapes.star(5), fill=colors.primary)
+        poly = cell.add_polygon(Polygon.star(5), fill=colors.primary)
 
         # Sine wave rotation
         phase = cell.col / scene.grid.cols * math.pi * 2
@@ -190,7 +190,7 @@ def image_08_multi_shape_rotation():
     for cell in scene.grid:
         # Background shape - slow rotation
         bg = cell.add_polygon(
-            shapes.hexagon(size=1.0),
+            Polygon.hexagon(size=1.0),
             fill=colors.primary,
             z_index=0
         )
@@ -198,7 +198,7 @@ def image_08_multi_shape_rotation():
 
         # Foreground shape - fast rotation
         fg = cell.add_polygon(
-            shapes.star(5),
+            Polygon.star(5),
             fill=colors.accent,
             z_index=10
         )
@@ -214,7 +214,7 @@ def image_09_alternating_rotation():
     scene.background = colors.background
 
     for cell in scene.grid:
-        poly = cell.add_polygon(shapes.hexagon(), fill=colors.primary)
+        poly = cell.add_polygon(Polygon.hexagon(), fill=colors.primary)
 
         # Alternate rotation direction
         if (cell.row + cell.col) % 2 == 0:
@@ -234,7 +234,7 @@ def image_10_stepped_rotation():
     scene.background = colors.background
 
     for cell in scene.grid:
-        poly = cell.add_polygon(shapes.star(6), fill=colors.primary)
+        poly = cell.add_polygon(Polygon.star(6), fill=colors.primary)
 
         # Only 4 rotation states: 0, 90, 180, 270
         step = ((cell.row + cell.col) % 4) * 90
@@ -253,7 +253,7 @@ def image_11_concentric_rotation():
     center_col = scene.grid.cols // 2
 
     for cell in scene.grid:
-        poly = cell.add_polygon(shapes.hexagon(), fill=colors.primary)
+        poly = cell.add_polygon(Polygon.hexagon(), fill=colors.primary)
 
         # Distance from center
         dr = cell.row - center_row
@@ -280,7 +280,7 @@ def image_12_complex_pattern():
 
     for cell in scene.grid:
         if cell._brightness > 0.3:
-            poly = cell.add_polygon(shapes.star(5), fill=colors.primary)
+            poly = cell.add_polygon(Polygon.star(5), fill=colors.primary)
 
             # Combine multiple rotation factors
             dr = cell.row - center_row

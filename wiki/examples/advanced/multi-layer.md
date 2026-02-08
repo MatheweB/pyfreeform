@@ -220,7 +220,7 @@ for cell in scene.grid:
     elif cell.brightness > 0.3:
         # Secondary shapes
         cell.add_polygon(
-            shapes.hexagon(size=0.7),
+            Polygon.hexagon(size=0.7),
             fill=colors.secondary,
             z_index=20
         )

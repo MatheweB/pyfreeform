@@ -5,7 +5,7 @@ SVG Generator for: examples/intermediate/transforms
 Demonstrates rotation and scaling of polygons using the shapes module.
 """
 
-from pyfreeform import Scene, Palette, shapes
+from pyfreeform import Scene, Palette, Polygon
 from pathlib import Path
 
 
@@ -25,7 +25,7 @@ def example_01_rotating_hexagons():
         angle = (cell.row + cell.col) * 15
         color = color_cycle[(cell.row + cell.col) % len(color_cycle)]
         cell.add_polygon(
-            shapes.hexagon(size=0.8), fill=color, rotation=angle, opacity=0.7,
+            Polygon.hexagon(size=0.8), fill=color, rotation=angle, opacity=0.7,
         )
 
     scene.save(OUTPUT_DIR / "01_rotating_hexagons.svg")
@@ -54,7 +54,7 @@ def example_02_radial_rotation():
 
         if brightness > 0.2:
             cell.add_polygon(
-                shapes.hexagon(size=0.7),
+                Polygon.hexagon(size=0.7),
                 fill=colors.primary, rotation=angle, opacity=brightness,
             )
 
@@ -85,7 +85,7 @@ def example_03_spiral_pattern():
         size = max(0.3, 0.8 - dist * 0.05)
 
         cell.add_polygon(
-            shapes.star(5, size=size), fill=color, rotation=rotation, opacity=0.7,
+            Polygon.star(5, size=size), fill=color, rotation=rotation, opacity=0.7,
         )
 
     scene.save(OUTPUT_DIR / "03_spiral_pattern.svg")

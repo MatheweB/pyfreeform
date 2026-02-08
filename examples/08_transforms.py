@@ -23,7 +23,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from pyfreeform import Scene, Palette, shapes
+from pyfreeform import Scene, Palette, Polygon
 
 # =============================================================================
 # Configuration
@@ -59,7 +59,7 @@ for cell in scene.grid:
     
     # Create a diamond shape
     poly = cell.add_polygon(
-        shapes.diamond(size=0.7),
+        Polygon.diamond(size=0.7),
         fill=colors.primary,
         stroke=colors.accent,
         stroke_width=1,
