@@ -122,6 +122,7 @@ nav:
     - Connected Networks: recipes/05-connected-networks.md
     - Rotating Shapes: recipes/06-rotating-shapes.md
     - Text Art: recipes/07-text-art.md
+    - Arcs & Sub-Paths: recipes/08-arcs-and-sub-paths.md
   - Examples:
     - Gallery: examples/index.md
     - Beginner:
