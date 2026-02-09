@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Literal
 
-from .point import Point
+from .coord import Coord, CoordLike
 from .entity import Entity
 from .pathable import Pathable
 from .tangent import get_angle_at
@@ -108,46 +108,46 @@ class Surface:
     # =========================================================================
 
     @property
-    def top_left(self) -> Point:
+    def top_left(self) -> Coord:
         """Top-left corner position."""
-        return Point(self._x, self._y)
+        return Coord(self._x, self._y)
 
     @property
-    def top_right(self) -> Point:
+    def top_right(self) -> Coord:
         """Top-right corner position."""
-        return Point(self._x + self._width, self._y)
+        return Coord(self._x + self._width, self._y)
 
     @property
-    def bottom_left(self) -> Point:
+    def bottom_left(self) -> Coord:
         """Bottom-left corner position."""
-        return Point(self._x, self._y + self._height)
+        return Coord(self._x, self._y + self._height)
 
     @property
-    def bottom_right(self) -> Point:
+    def bottom_right(self) -> Coord:
         """Bottom-right corner position."""
-        return Point(self._x + self._width, self._y + self._height)
+        return Coord(self._x + self._width, self._y + self._height)
 
     @property
-    def center(self) -> Point:
+    def center(self) -> Coord:
         """Center position."""
-        return Point(
+        return Coord(
             self._x + self._width / 2,
             self._y + self._height / 2
         )
 
-    def relative_to_absolute(self, pos: Position) -> Point:
+    def relative_to_absolute(self, pos: Position) -> Coord:
         """
         Convert relative position to absolute pixels.
 
         Args:
             pos: Either a (rx, ry) tuple where 0-1 maps to surface bounds,
                 a named position like "center", "top_left", etc.,
-                or a Point (already absolute — passed through unchanged).
+                or a Coord (already absolute -- passed through unchanged).
 
         Returns:
-            Absolute pixel position as Point.
+            Absolute pixel position as Coord.
         """
-        if isinstance(pos, Point):
+        if isinstance(pos, Coord):
             return pos
 
         if isinstance(pos, str):
@@ -159,18 +159,18 @@ class Surface:
             pos = NAMED_POSITIONS[pos]
 
         rx, ry = pos
-        return Point(
+        return Coord(
             self._x + rx * self._width,
             self._y + ry * self._height
         )
 
-    def absolute_to_relative(self, point: Point) -> tuple[float, float]:
+    def absolute_to_relative(self, point: Coord) -> tuple[float, float]:
         """Convert absolute position to relative (0-1) coordinates."""
         rx = (point.x - self._x) / self._width if self._width > 0 else 0
         ry = (point.y - self._y) / self._height if self._height > 0 else 0
         return (rx, ry)
 
-    def contains(self, point: Point) -> bool:
+    def contains(self, point: Coord) -> bool:
         """Check if a point is within this surface's bounds."""
         return (
             self._x <= point.x <= self._x + self._width and
@@ -192,7 +192,7 @@ class Surface:
         t: float | None,
         align: bool,
         user_rotation: float,
-    ) -> tuple[Point, float]:
+    ) -> tuple[Coord, float]:
         """
         Compute position and effective rotation from along/t/align params.
 

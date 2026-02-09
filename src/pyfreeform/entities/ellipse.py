@@ -6,7 +6,7 @@ import math
 
 from ..color import Color
 from ..core.entity import Entity
-from ..core.point import Point
+from ..core.coord import Coord, CoordLike
 
 
 class Ellipse(Entity):
@@ -35,7 +35,7 @@ class Ellipse(Entity):
 
     Examples:
         >>> ellipse = Ellipse(100, 100, rx=30, ry=20, fill="coral")
-        >>> ellipse = Ellipse.at_center(Point(100, 100), rx=30, ry=20)
+        >>> ellipse = Ellipse.at_center(Coord(100, 100), rx=30, ry=20)
 
         >>> # Parametric positioning (t from 0 to 1)
         >>> point = ellipse.point_at(0.25)  # Top of ellipse
@@ -99,7 +99,7 @@ class Ellipse(Entity):
     @classmethod
     def at_center(
         cls,
-        center: Point | tuple[float, float],
+        center: CoordLike,
         rx: float = 10,
         ry: float = 10,
         rotation: float = 0,
@@ -115,7 +115,7 @@ class Ellipse(Entity):
         Create an ellipse at a specific center point.
 
         Args:
-            center: Center position as Point or (x, y) tuple.
+            center: Center position as Coord or (x, y) tuple.
             rx: Horizontal radius.
             ry: Vertical radius.
             rotation: Rotation in degrees.
@@ -131,7 +131,7 @@ class Ellipse(Entity):
             A new Ellipse entity.
         """
         if isinstance(center, tuple):
-            center = Point(*center)
+            center = Coord(*center)
         return cls(center.x, center.y, rx, ry, rotation, fill, stroke, stroke_width,
                    z_index, opacity, fill_opacity, stroke_opacity)
 
@@ -158,7 +158,7 @@ class Ellipse(Entity):
         """Available anchors: center, right, top, left, bottom."""
         return ["center", "right", "top", "left", "bottom"]
 
-    def anchor(self, name: str = "center") -> Point:
+    def anchor(self, name: str = "center") -> Coord:
         """Get anchor point by name."""
         if name == "center":
             return self.position
@@ -172,7 +172,7 @@ class Ellipse(Entity):
             return self.point_at_angle(270)
         raise ValueError(f"Ellipse has no anchor '{name}'. Available: {self.anchor_names}")
 
-    def point_at(self, t: float) -> Point:
+    def point_at(self, t: float) -> Coord:
         """
         Get a point at parameter t along the ellipse perimeter.
 
@@ -184,7 +184,7 @@ class Ellipse(Entity):
                t=0.25 is top (90°), t=0.5 is left (180°), t=0.75 is bottom (270°).
 
         Returns:
-            Point on the ellipse at parameter t.
+            Coord on the ellipse at parameter t.
 
         Example:
             >>> ellipse = cell.add_ellipse(rx=20, ry=15)
@@ -275,7 +275,7 @@ class Ellipse(Entity):
             f"A {self.rx} {self.ry} {self.rotation} 1 1 {sx} {sy}"
         )
 
-    def point_at_angle(self, degrees: float) -> Point:
+    def point_at_angle(self, degrees: float) -> Coord:
         """
         Get a point at a specific angle on the ellipse perimeter.
 
@@ -283,7 +283,7 @@ class Ellipse(Entity):
             degrees: Angle in degrees (0° = right, 90° = top, counterclockwise).
 
         Returns:
-            Point on the ellipse at the specified angle.
+            Coord on the ellipse at the specified angle.
 
         Example:
             >>> point = ellipse.point_at_angle(45)  # Northeast
@@ -292,7 +292,7 @@ class Ellipse(Entity):
         angle_rad = math.radians(degrees)
         return self._point_at_angle_rad(angle_rad)
 
-    def _point_at_angle_rad(self, angle_rad: float) -> Point:
+    def _point_at_angle_rad(self, angle_rad: float) -> Coord:
         """Internal: Get point at angle (in radians), accounting for rotation."""
         # Parametric ellipse equation (unrotated)
         x_unrot = self.rx * math.cos(angle_rad)
@@ -309,9 +309,9 @@ class Ellipse(Entity):
             x_rot, y_rot = x_unrot, y_unrot
 
         # Translate to center position
-        return Point(self.position.x + x_rot, self.position.y + y_rot)
+        return Coord(self.position.x + x_rot, self.position.y + y_rot)
 
-    def rotate(self, angle: float, origin: Point | tuple[float, float] | None = None) -> Ellipse:
+    def rotate(self, angle: float, origin: CoordLike | None = None) -> Ellipse:
         """
         Rotate the ellipse around a point.
 
@@ -328,7 +328,7 @@ class Ellipse(Entity):
         else:
             # Rotate position around external origin
             if isinstance(origin, tuple):
-                origin = Point(*origin)
+                origin = Coord(*origin)
 
             angle_rad = math.radians(angle)
             cos_a = math.cos(angle_rad)
@@ -339,14 +339,14 @@ class Ellipse(Entity):
             dy = self.position.y - origin.y
             new_x = dx * cos_a - dy * sin_a + origin.x
             new_y = dx * sin_a + dy * cos_a + origin.y
-            self._position = Point(new_x, new_y)
+            self._position = Coord(new_x, new_y)
 
             # Also update intrinsic rotation
             self.rotation = (self.rotation + angle) % 360
 
         return self
 
-    def scale(self, factor: float, origin: Point | tuple[float, float] | None = None) -> Ellipse:
+    def scale(self, factor: float, origin: CoordLike | None = None) -> Ellipse:
         """
         Scale the ellipse around a point.
 
@@ -364,11 +364,11 @@ class Ellipse(Entity):
         if origin is not None:
             # Also scale position relative to origin
             if isinstance(origin, tuple):
-                origin = Point(*origin)
+                origin = Coord(*origin)
 
             new_x = origin.x + (self.position.x - origin.x) * factor
             new_y = origin.y + (self.position.y - origin.y) * factor
-            self._position = Point(new_x, new_y)
+            self._position = Coord(new_x, new_y)
 
         return self
 

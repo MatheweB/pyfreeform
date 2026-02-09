@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from ..color import Color
 from ..core.entity import Entity
-from ..core.point import Point
+from ..core.coord import Coord, CoordLike
 
 
 class Dot(Entity):
@@ -70,7 +70,7 @@ class Dot(Entity):
         """Available anchors: just 'center' for dots."""
         return ["center"]
     
-    def anchor(self, name: str = "center") -> Point:
+    def anchor(self, name: str = "center") -> Coord:
         """Get anchor point by name."""
         if name == "center":
             return self.position
@@ -91,7 +91,7 @@ class Dot(Entity):
         r = self.radius / math.sqrt(2)
         return (self.x - r, self.y - r, self.x + r, self.y + r)
 
-    def scale(self, factor: float, origin: Point | tuple[float, float] | None = None) -> Dot:
+    def scale(self, factor: float, origin: CoordLike | None = None) -> Dot:
         """
         Scale the dot (changes radius and optionally position).
         

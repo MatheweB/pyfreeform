@@ -5,7 +5,7 @@ PyFreeform - A minimalist, art-focused Python drawing library.
 __version__ = "0.3.0"
 
 # Core
-from .core.point import Point
+from .core.coord import Coord, CoordLike
 from .core.entity import Entity
 from .core.connection import Connection
 from .core.pathable import Pathable
@@ -21,6 +21,7 @@ from .entities.ellipse import Ellipse
 from .entities.text import Text
 from .entities.polygon import Polygon
 from .entities.entity_group import EntityGroup
+from .entities.point import Point
 
 # Core (Surface protocol)
 from .core.surface import Surface
@@ -116,7 +117,8 @@ __all__ = [
     # Version
     "__version__",
     # Core
-    "Point",
+    "Coord",
+    "CoordLike",
     "Entity",
     "Connection",
     "Pathable",
@@ -131,6 +133,7 @@ __all__ = [
     "Text",
     "Polygon",
     "EntityGroup",
+    "Point",
     # Core (Surface protocol)
     "Surface",
     # Grid

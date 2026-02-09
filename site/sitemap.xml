@@ -2,302 +2,118 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://pyfreeform.github.io/pyfreeform/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/API_MIGRATION_GUIDE/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <loc>https://pyfreeform.github.io/pyfreeform/API_SURFACE/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/MAINTAINING_SVG_EXAMPLES/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <loc>https://pyfreeform.github.io/pyfreeform/DESIGN_FLOW/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/advanced-concepts/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <loc>https://pyfreeform.github.io/pyfreeform/api-surface/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/advanced-concepts/01-anchor-system/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/advanced-concepts/02-connections/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/advanced-concepts/03-pathable-protocol/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/advanced-concepts/04-transforms/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/advanced-concepts/05-fit-to-cell/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/advanced-concepts/06-grid-selections/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/api-reference/cell/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/api-reference/connections/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/api-reference/entities/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/api-reference/grid/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/api-reference/pathable/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/api-reference/scene/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/api-reference/transforms/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/api-reference/utilities/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/api-reference/_svg_generators/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/color-and-style/01-color-system/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/color-and-style/02-palettes/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/color-and-style/03-style-objects/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/color-and-style/04-creating-palettes/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <loc>https://pyfreeform.github.io/pyfreeform/developer-guide/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
          <loc>https://pyfreeform.github.io/pyfreeform/developer-guide/01-architecture/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/developer-guide/02-entity-system/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <loc>https://pyfreeform.github.io/pyfreeform/developer-guide/02-creating-entities/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/developer-guide/03-creating-entities/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <loc>https://pyfreeform.github.io/pyfreeform/developer-guide/03-pathable-protocol/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/developer-guide/04-pathable-protocol/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <loc>https://pyfreeform.github.io/pyfreeform/gallery/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/developer-guide/05-image-processing/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <loc>https://pyfreeform.github.io/pyfreeform/getting-started/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/developer-guide/06-contributing/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <loc>https://pyfreeform.github.io/pyfreeform/getting-started/01-installation/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/entities/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <loc>https://pyfreeform.github.io/pyfreeform/getting-started/02-your-first-artwork/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/entities/01-dots/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <loc>https://pyfreeform.github.io/pyfreeform/getting-started/03-how-it-works/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/entities/02-lines/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <loc>https://pyfreeform.github.io/pyfreeform/guide/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/entities/03-curves/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <loc>https://pyfreeform.github.io/pyfreeform/guide/01-scenes-and-grids/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/entities/04-ellipses/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <loc>https://pyfreeform.github.io/pyfreeform/guide/02-working-with-cells/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/entities/05-polygons/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <loc>https://pyfreeform.github.io/pyfreeform/guide/03-drawing-with-entities/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/entities/06-text/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <loc>https://pyfreeform.github.io/pyfreeform/guide/04-colors-styles-palettes/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/entities/07-rectangles/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <loc>https://pyfreeform.github.io/pyfreeform/guide/05-paths-and-parametric/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/examples/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <loc>https://pyfreeform.github.io/pyfreeform/guide/06-shapes-and-polygons/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/examples/advanced/custom-paths/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <loc>https://pyfreeform.github.io/pyfreeform/guide/07-text-and-typography/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/examples/advanced/ellipses/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <loc>https://pyfreeform.github.io/pyfreeform/guide/08-transforms-and-layout/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/examples/advanced/multi-layer/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <loc>https://pyfreeform.github.io/pyfreeform/recipes/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/examples/advanced/parametric-paths/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <loc>https://pyfreeform.github.io/pyfreeform/recipes/01-image-to-art/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/examples/advanced/showcase/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/examples/beginner/custom-dots/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/examples/beginner/diagonal-lines/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/examples/beginner/grid-patterns/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/examples/beginner/polygon-gallery/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/examples/beginner/quick-start/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/examples/intermediate/connections/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/examples/intermediate/curves/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/examples/intermediate/groups/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/examples/intermediate/text/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/examples/intermediate/transforms/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/fundamentals/01-scenes/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/fundamentals/02-grids-and-cells/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/fundamentals/03-entities/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/fundamentals/04-styling/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/fundamentals/05-layering/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/getting-started/00-installation/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/getting-started/01-your-first-artwork/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/getting-started/02-core-concepts/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/getting-started/03-image-to-art/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/parametric-art/01-what-is-parametric/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/parametric-art/02-positioning-along-paths/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/parametric-art/03-bezier-mathematics/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/parametric-art/04-ellipse-mathematics/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/parametric-art/05-custom-paths/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/parametric-art/06-mathematical-reference/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/recipes/01-dot-art-from-images/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/recipes/02-halftone-effects/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <loc>https://pyfreeform.github.io/pyfreeform/recipes/02-geometric-patterns/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
          <loc>https://pyfreeform.github.io/pyfreeform/recipes/03-flowing-curves/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/recipes/04-geometric-patterns/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <loc>https://pyfreeform.github.io/pyfreeform/recipes/04-connected-networks/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/recipes/05-connected-networks/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <loc>https://pyfreeform.github.io/pyfreeform/recipes/05-typographic-art/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
     <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/recipes/06-rotating-shapes/</loc>
-         <lastmod>2026-02-06</lastmod>
-    </url>
-    <url>
-         <loc>https://pyfreeform.github.io/pyfreeform/recipes/07-text-art/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <loc>https://pyfreeform.github.io/pyfreeform/recipes/06-advanced-compositions/</loc>
+         <lastmod>2026-02-08</lastmod>
     </url>
 </urlset>

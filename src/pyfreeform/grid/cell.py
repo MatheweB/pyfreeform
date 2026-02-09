@@ -268,25 +268,25 @@ class Cell(Surface):
         """
         Euclidean pixel distance from this cell's center to another position.
 
-        Accepts: Cell (uses center), Point, or (x, y) tuple.
+        Accepts: Cell (uses center), Coord, or (x, y) tuple.
         Entity positions work too — just pass entity.anchor("center") or
         entity.position.
 
         Args:
-            other: A Cell, Point, or (x, y) tuple.
+            other: A Cell, Coord, or (x, y) tuple.
 
         Returns:
             Distance in pixels.
         """
-        from ..core.point import Point
+        from ..core.coord import Coord
         if isinstance(other, Cell):
             target = other.center
-        elif isinstance(other, Point):
+        elif isinstance(other, Coord):
             target = other
         elif isinstance(other, tuple):
-            target = Point(*other)
+            target = Coord(*other)
         else:
-            raise TypeError(f"Expected Cell, Point, or tuple, got {type(other).__name__}")
+            raise TypeError(f"Expected Cell, Coord, or tuple, got {type(other).__name__}")
         return self.center.distance_to(target)
 
     @property

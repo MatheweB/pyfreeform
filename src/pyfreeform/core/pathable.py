@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 if TYPE_CHECKING:
-    from .point import Point
+    from .coord import Coord
 
 
 @runtime_checkable
@@ -35,17 +35,17 @@ class Pathable(Protocol):
         Create custom paths by implementing point_at():
 
         >>> class Spiral:
-        ...     def point_at(self, t: float) -> Point:
+        ...     def point_at(self, t: float) -> Coord:
         ...         angle = t * 2 * math.pi * 3  # 3 turns
         ...         radius = t * 20
-        ...         return Point(self.center.x + radius * cos(angle),
+        ...         return Coord(self.center.x + radius * cos(angle),
         ...                     self.center.y + radius * sin(angle))
         >>>
         >>> spiral = Spiral(center=cell.center)
         >>> cell.add_dot(along=spiral, t=0.5)  # Works!
     """
 
-    def point_at(self, t: float) -> Point:
+    def point_at(self, t: float) -> Coord:
         """
         Get a point at parameter t along the path.
 
@@ -55,7 +55,7 @@ class Pathable(Protocol):
                Values outside 0-1 may extrapolate or wrap depending on implementation.
 
         Returns:
-            Point at position t along the path.
+            Coord at position t along the path.
 
         Note:
             The interpretation of t is path-specific:

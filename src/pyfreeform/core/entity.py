@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
 from weakref import WeakSet
 
-from .point import Point
+from .coord import Coord, CoordLike
 
 if TYPE_CHECKING:
     from .surface import Surface
@@ -41,7 +41,7 @@ class Entity(ABC):
             y: Initial y coordinate.
             z_index: Layer ordering (higher = on top). Default 0.
         """
-        self._position = Point(x, y)
+        self._position = Coord(x, y)
         self._cell: Surface | None = None
         self._connections: WeakSet[Connection] = WeakSet()
         self._data: dict[str, Any] = {}
@@ -57,15 +57,15 @@ class Entity(ABC):
         self._z_index = value
     
     @property
-    def position(self) -> Point:
+    def position(self) -> Coord:
         """Current position of the entity."""
         return self._position
     
     @position.setter
-    def position(self, value: Point | tuple[float, float]) -> None:
-        """Set position (accepts Point or tuple)."""
+    def position(self, value: CoordLike) -> None:
+        """Set position (accepts Coord or tuple)."""
         if isinstance(value, tuple):
-            value = Point(*value)
+            value = Coord(*value)
         self._position = value
     
     @property
@@ -108,23 +108,23 @@ class Entity(ABC):
     
     # --- Movement methods ---
     
-    def move_to(self, x: float | Point, y: float | None = None) -> Entity:
+    def move_to(self, x: float | Coord, y: float | None = None) -> Entity:
         """
         Move entity to absolute position.
-        
+
         Args:
-            x: X coordinate, or a Point.
-            y: Y coordinate (required if x is not a Point).
+            x: X coordinate, or a Coord.
+            y: Y coordinate (required if x is not a Coord).
         
         Returns:
             self, for method chaining.
         """
-        if isinstance(x, Point):
+        if isinstance(x, Coord):
             self._position = x
         elif y is not None:
-            self._position = Point(x, y)
+            self._position = Coord(x, y)
         else:
-            raise ValueError("Must provide both x and y, or a Point")
+            raise ValueError("Must provide both x and y, or a Coord")
         return self
     
     def move_by(self, dx: float = 0, dy: float = 0) -> Entity:
@@ -138,7 +138,7 @@ class Entity(ABC):
         Returns:
             self, for method chaining.
         """
-        self._position = Point(self._position.x + dx, self._position.y + dy)
+        self._position = Coord(self._position.x + dx, self._position.y + dy)
         return self
     
     def move_to_cell(self, cell: Cell, at: tuple[float, float] | str = "center") -> Entity:
@@ -193,7 +193,7 @@ class Entity(ABC):
     
     # --- Transform methods ---
     
-    def rotate(self, angle: float, origin: Point | tuple[float, float] | None = None) -> Entity:
+    def rotate(self, angle: float, origin: CoordLike | None = None) -> Entity:
         """
         Rotate entity around a point.
         
@@ -214,7 +214,7 @@ class Entity(ABC):
             return self
         
         if isinstance(origin, tuple):
-            origin = Point(*origin)
+            origin = Coord(*origin)
         
         angle_rad = math.radians(angle)
         cos_a = math.cos(angle_rad)
@@ -225,11 +225,11 @@ class Entity(ABC):
         dy = self._position.y - origin.y
         new_x = dx * cos_a - dy * sin_a + origin.x
         new_y = dx * sin_a + dy * cos_a + origin.y
-        self._position = Point(new_x, new_y)
+        self._position = Coord(new_x, new_y)
         
         return self
     
-    def scale(self, factor: float, origin: Point | tuple[float, float] | None = None) -> Entity:
+    def scale(self, factor: float, origin: CoordLike | None = None) -> Entity:
         """
         Scale entity around a point.
         
@@ -247,11 +247,11 @@ class Entity(ABC):
             return self
         
         if isinstance(origin, tuple):
-            origin = Point(*origin)
+            origin = Coord(*origin)
         
         new_x = origin.x + (self._position.x - origin.x) * factor
         new_y = origin.y + (self._position.y - origin.y) * factor
-        self._position = Point(new_x, new_y)
+        self._position = Coord(new_x, new_y)
         
         return self
     
@@ -268,11 +268,11 @@ class Entity(ABC):
         """
         return self.move_by(dx, dy)
 
-    def offset_from(self, anchor_name: str, dx: float = 0, dy: float = 0) -> Point:
+    def offset_from(self, anchor_name: str, dx: float = 0, dy: float = 0) -> Coord:
         """
         Get a point offset from a named anchor.
 
-        Sugar for ``entity.anchor(name) + Point(dx, dy)``.
+        Sugar for ``entity.anchor(name) + Coord(dx, dy)``.
 
         Args:
             anchor_name: Name of the anchor (e.g., "center", "top_left").
@@ -282,7 +282,7 @@ class Entity(ABC):
         Returns:
             The offset point.
         """
-        return self.anchor(anchor_name) + Point(dx, dy)
+        return self.anchor(anchor_name) + Coord(dx, dy)
 
     def place_beside(self, other: Entity, side: str = "right", gap: float = 0) -> Entity:
         """
@@ -328,15 +328,15 @@ class Entity(ABC):
         pass
     
     @abstractmethod
-    def anchor(self, name: str) -> Point:
+    def anchor(self, name: str) -> Coord:
         """
         Get anchor point by name.
-        
+
         Args:
             name: Anchor name (e.g., "center", "start", "end").
-        
+
         Returns:
-            The anchor position as a Point.
+            The anchor position as a Coord.
         
         Raises:
             ValueError: If anchor name is not valid for this entity.
@@ -445,7 +445,7 @@ class Entity(ABC):
             scale_y = available_h / entity_h if entity_h > 0 else 1.0
             factor = min(scale_x, scale_y)
 
-            entity_center = Point(
+            entity_center = Coord(
                 (e_min_x + e_max_x) / 2, (e_min_y + e_max_y) / 2,
             )
             if abs(factor - 1.0) > 0.001:
@@ -482,7 +482,7 @@ class Entity(ABC):
         entity_cy = (e_min_y + e_max_y) / 2
 
         if abs(factor - 1.0) > 0.001:
-            self.scale(factor, origin=Point(entity_cx, entity_cy))
+            self.scale(factor, origin=Coord(entity_cx, entity_cy))
 
         # Recenter within target
         if recenter:
@@ -582,7 +582,7 @@ class Entity(ABC):
             factor = min(scale_x, scale_y)
 
             # Scale around entity center if needed
-            entity_center = Point(
+            entity_center = Coord(
                 (e_min_x + e_max_x) / 2,
                 (e_min_y + e_max_y) / 2,
             )
@@ -632,7 +632,7 @@ class Entity(ABC):
         if abs(scale_factor - 1.0) < 0.001:  # Allow small floating point error
             if recenter:
                 # Just recenter without scaling
-                cell_center = Point(
+                cell_center = Coord(
                     cell_x + cell_width / 2,
                     cell_y + cell_height / 2
                 )
@@ -644,7 +644,7 @@ class Entity(ABC):
             return self
 
         # Calculate entity's current center (before scaling)
-        entity_center = Point(
+        entity_center = Coord(
             (entity_min_x + entity_max_x) / 2,
             (entity_min_y + entity_max_y) / 2
         )

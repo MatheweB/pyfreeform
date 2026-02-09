@@ -3,31 +3,48 @@
 from __future__ import annotations
 
 import math
+from typing import Union
 from ..color import Color
 from ..core.entity import Entity
-from ..core.point import Point
+from ..core.coord import Coord, CoordLike
+
+# A vertex can be a static coordinate, an Entity (uses its position),
+# or (Entity, anchor_name) to track a specific anchor.
+VertexInput = Union[CoordLike, Entity, tuple[Entity, str]]
 
 
 class Polygon(Entity):
     """
     A closed polygon defined by a list of vertices.
 
+    Vertices can be static coordinates or entity references. Entity-reference
+    vertices track the referenced entity's position at render time — when
+    the entity moves, the polygon deforms automatically.
+
     Polygons can be filled, stroked, or both. Use classmethods like
     ``Polygon.star()``, ``Polygon.hexagon()`` for common shapes.
 
     Attributes:
-        vertices: List of Point objects defining the polygon
+        vertices: List of resolved Coord objects (computed at access time)
         fill: Fill color (or None for no fill)
         stroke: Stroke color (or None for no stroke)
         stroke_width: Stroke width
 
     Anchors:
         - "center": Centroid of the polygon
-        - "v0", "v1", ...: Individual vertices
+        - "v0", "v1", ...: Individual vertices (resolved from specs)
 
     Examples:
-        >>> # Triangle from points
+        >>> # Triangle from static points
         >>> tri = Polygon([(0, 0), (50, 100), (100, 0)], fill="blue")
+
+        >>> # Entity-reference vertices (reactive)
+        >>> a, b, c = Point(0, 0), Point(100, 0), Point(50, 80)
+        >>> tri = Polygon([a, b, c], fill="coral")
+        >>> b.move_to(120, 30)  # triangle deforms automatically
+
+        >>> # Mixed static and entity-reference
+        >>> tri = Polygon([(0, 0), dot, (rect, "top_right")], fill="teal")
 
         >>> # In a cell (relative coordinates 0-1)
         >>> cell.add_polygon([(0.5, 0), (1, 1), (0, 1)], fill="red")
@@ -35,10 +52,10 @@ class Polygon(Entity):
         >>> # Using shape classmethods
         >>> cell.add_polygon(Polygon.hexagon(), fill="purple")
     """
-    
+
     def __init__(
         self,
-        vertices: list[Point | tuple[float, float]],
+        vertices: list[VertexInput],
         fill: str | tuple[int, int, int] | None = "black",
         stroke: str | tuple[int, int, int] | None = None,
         stroke_width: float = 1,
@@ -51,7 +68,10 @@ class Polygon(Entity):
         Create a polygon from vertices.
 
         Args:
-            vertices: List of points (at least 3).
+            vertices: List of vertex specs (at least 3). Each can be:
+                - ``(x, y)`` tuple or ``Coord`` — static vertex
+                - ``Entity`` — tracks the entity's position
+                - ``(Entity, "anchor_name")`` — tracks a specific anchor
             fill: Fill color (None for transparent).
             stroke: Stroke color (None for no stroke).
             stroke_width: Stroke width in pixels.
@@ -63,11 +83,18 @@ class Polygon(Entity):
         if len(vertices) < 3:
             raise ValueError("Polygon requires at least 3 vertices")
 
-        # Convert to Points
-        self._vertices = [
-            Point(*v) if isinstance(v, tuple) else v
-            for v in vertices
-        ]
+        # Normalize vertex specs:
+        #   tuple[float, float] → Coord (static)
+        #   Entity → kept as-is (reactive)
+        #   (Entity, str) → kept as-is (reactive + anchor)
+        self._vertex_specs: list[Coord | Entity | tuple[Entity, str]] = []
+        for v in vertices:
+            if isinstance(v, Entity):
+                self._vertex_specs.append(v)
+            elif isinstance(v, tuple) and len(v) == 2 and isinstance(v[0], Entity):
+                self._vertex_specs.append(v)  # (Entity, anchor_name)
+            else:
+                self._vertex_specs.append(Coord(*v))  # CoordLike → Coord
 
         # Position is centroid
         centroid = self._calculate_centroid()
@@ -79,18 +106,28 @@ class Polygon(Entity):
         self.opacity = float(opacity)
         self.fill_opacity = fill_opacity
         self.stroke_opacity = stroke_opacity
-    
-    def _calculate_centroid(self) -> Point:
+
+    def _resolve_vertex(self, spec: Coord | Entity | tuple[Entity, str]) -> Coord:
+        """Resolve a single vertex spec to a Coord."""
+        if isinstance(spec, Coord):
+            return spec
+        if isinstance(spec, Entity):
+            return spec.position
+        # (Entity, anchor_name)
+        return spec[0].anchor(spec[1])
+
+    def _calculate_centroid(self) -> Coord:
         """Calculate the centroid (center of mass) of the polygon."""
-        x = sum(v.x for v in self._vertices) / len(self._vertices)
-        y = sum(v.y for v in self._vertices) / len(self._vertices)
-        return Point(x, y)
-    
+        resolved = [self._resolve_vertex(s) for s in self._vertex_specs]
+        x = sum(v.x for v in resolved) / len(resolved)
+        y = sum(v.y for v in resolved) / len(resolved)
+        return Coord(x, y)
+
     @property
-    def vertices(self) -> list[Point]:
-        """The polygon vertices."""
-        return list(self._vertices)
-    
+    def vertices(self) -> list[Coord]:
+        """The polygon vertices (resolved from specs at access time)."""
+        return [self._resolve_vertex(s) for s in self._vertex_specs]
+
     @property
     def fill(self) -> str | None:
         """Fill color as string, or None."""
@@ -112,83 +149,92 @@ class Polygon(Entity):
     @property
     def anchor_names(self) -> list[str]:
         """Available anchors: center and vertices."""
-        return ["center"] + [f"v{i}" for i in range(len(self._vertices))]
-    
-    def anchor(self, name: str = "center") -> Point:
-        """Get anchor point by name."""
+        return ["center"] + [f"v{i}" for i in range(len(self._vertex_specs))]
+
+    def anchor(self, name: str = "center") -> Coord:
+        """Get anchor point by name (resolved from specs)."""
         if name == "center":
             return self._calculate_centroid()
         if name.startswith("v") and name[1:].isdigit():
             idx = int(name[1:])
-            if 0 <= idx < len(self._vertices):
-                return self._vertices[idx]
+            if 0 <= idx < len(self._vertex_specs):
+                return self._resolve_vertex(self._vertex_specs[idx])
         raise ValueError(f"Polygon has no anchor '{name}'. Available: {self.anchor_names}")
     
-    def rotate(self, angle: float, origin: Point | None = None) -> Polygon:
+    def rotate(self, angle: float, origin: Coord | None = None) -> Polygon:
         """
         Rotate the polygon around a point.
-        
+
+        Only static (Coord) vertices are rotated. Entity-reference vertices
+        follow their entity and are not affected by polygon transforms.
+
         Args:
             angle: Rotation angle in degrees (counterclockwise).
             origin: Center of rotation (default: polygon centroid).
-        
+
         Returns:
             self, for method chaining.
         """
         if origin is None:
             origin = self._calculate_centroid()
-        
+
         angle_rad = math.radians(angle)
         cos_a = math.cos(angle_rad)
         sin_a = math.sin(angle_rad)
-        
-        new_vertices = []
-        for v in self._vertices:
-            # Translate to origin
-            dx = v.x - origin.x
-            dy = v.y - origin.y
-            # Rotate
-            new_x = dx * cos_a - dy * sin_a + origin.x
-            new_y = dx * sin_a + dy * cos_a + origin.y
-            new_vertices.append(Point(new_x, new_y))
-        
-        self._vertices = new_vertices
-        # Update position to new centroid
+
+        new_specs = []
+        for spec in self._vertex_specs:
+            if isinstance(spec, Coord):
+                dx = spec.x - origin.x
+                dy = spec.y - origin.y
+                new_x = dx * cos_a - dy * sin_a + origin.x
+                new_y = dx * sin_a + dy * cos_a + origin.y
+                new_specs.append(Coord(new_x, new_y))
+            else:
+                new_specs.append(spec)  # Entity refs untouched
+
+        self._vertex_specs = new_specs
         centroid = self._calculate_centroid()
         self._position = centroid
         return self
     
-    def scale(self, factor: float, origin: Point | None = None) -> Polygon:
+    def scale(self, factor: float, origin: Coord | None = None) -> Polygon:
         """
         Scale the polygon around a point.
-        
+
+        Only static (Coord) vertices are scaled. Entity-reference vertices
+        follow their entity and are not affected by polygon transforms.
+
         Args:
             factor: Scale factor (1.0 = no change, 2.0 = double size).
             origin: Center of scaling (default: polygon centroid).
-        
+
         Returns:
             self, for method chaining.
         """
         if origin is None:
             origin = self._calculate_centroid()
-        
-        new_vertices = []
-        for v in self._vertices:
-            new_x = origin.x + (v.x - origin.x) * factor
-            new_y = origin.y + (v.y - origin.y) * factor
-            new_vertices.append(Point(new_x, new_y))
-        
-        self._vertices = new_vertices
+
+        new_specs = []
+        for spec in self._vertex_specs:
+            if isinstance(spec, Coord):
+                new_x = origin.x + (spec.x - origin.x) * factor
+                new_y = origin.y + (spec.y - origin.y) * factor
+                new_specs.append(Coord(new_x, new_y))
+            else:
+                new_specs.append(spec)  # Entity refs untouched
+
+        self._vertex_specs = new_specs
         centroid = self._calculate_centroid()
         self._position = centroid
         return self
     
     def move_by(self, dx: float = 0, dy: float = 0) -> Polygon:
         """
-        Move the polygon by an offset, updating vertices.
+        Move the polygon by an offset, updating static vertices.
 
-        Overrides Entity.move_by to also translate vertex data so that
-        bounds() stays consistent with the entity position.
+        Only static (Coord) vertices are translated. Entity-reference vertices
+        follow their entity and are not affected by polygon transforms.
 
         Args:
             dx: Horizontal offset.
@@ -197,8 +243,14 @@ class Polygon(Entity):
         Returns:
             self, for method chaining.
         """
-        self._vertices = [Point(v.x + dx, v.y + dy) for v in self._vertices]
-        self._position = Point(self._position.x + dx, self._position.y + dy)
+        new_specs = []
+        for spec in self._vertex_specs:
+            if isinstance(spec, Coord):
+                new_specs.append(Coord(spec.x + dx, spec.y + dy))
+            else:
+                new_specs.append(spec)  # Entity refs untouched
+        self._vertex_specs = new_specs
+        self._position = Coord(self._position.x + dx, self._position.y + dy)
         return self
 
     def translate(self, dx: float, dy: float) -> Polygon:
@@ -215,16 +267,17 @@ class Polygon(Entity):
         return self.move_by(dx, dy)
     
     def bounds(self) -> tuple[float, float, float, float]:
-        """Get bounding box."""
-        min_x = min(v.x for v in self._vertices)
-        min_y = min(v.y for v in self._vertices)
-        max_x = max(v.x for v in self._vertices)
-        max_y = max(v.y for v in self._vertices)
+        """Get bounding box (resolved from specs)."""
+        verts = self.vertices
+        min_x = min(v.x for v in verts)
+        min_y = min(v.y for v in verts)
+        max_x = max(v.x for v in verts)
+        max_y = max(v.y for v in verts)
         return (min_x, min_y, max_x, max_y)
-    
+
     def to_svg(self) -> str:
         """Render to SVG polygon element."""
-        points_str = " ".join(f"{v.x},{v.y}" for v in self._vertices)
+        points_str = " ".join(f"{v.x},{v.y}" for v in self.vertices)
         
         parts = [f'<polygon points="{points_str}"']
         

@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 from ..color import Color
 from ..core.entity import Entity
-from ..core.point import Point
+from ..core.coord import Coord, CoordLike
 from ..core.pathable import Pathable
 from ..core.stroked_path_mixin import StrokedPathMixin
 
@@ -38,14 +38,14 @@ class Path(StrokedPathMixin, Entity):
         - "end": The last point (t=1, or same as start if closed)
 
     Examples:
-        >>> from pyfreeform import Path, Point
+        >>> from pyfreeform import Path, Coord
         >>> # Render a custom Wave path:
-        >>> wave = Wave(start=Point(0, 50), end=Point(200, 50), amplitude=20, frequency=3)
+        >>> wave = Wave(start=Coord(0, 50), end=Coord(200, 50), amplitude=20, frequency=3)
         >>> path = Path(wave, width=2, color="blue")
         >>> scene.add(path)
 
         >>> # Closed Lissajous with fill:
-        >>> liss = Lissajous(center=Point(100, 100), a=3, b=2, delta=math.pi/2, size=80)
+        >>> liss = Lissajous(center=Coord(100, 100), a=3, b=2, delta=math.pi/2, size=80)
         >>> path = Path(liss, closed=True, color="navy", fill="lightblue", width=1.5)
 
         >>> # Sub-path (arc) of an ellipse:
@@ -159,7 +159,7 @@ class Path(StrokedPathMixin, Entity):
         """Available anchors."""
         return ["start", "center", "end"]
 
-    def anchor(self, name: str = "center") -> Point:
+    def anchor(self, name: str = "center") -> Coord:
         """Get anchor point by name."""
         if name == "start":
             return self.point_at(0.0)
@@ -169,7 +169,7 @@ class Path(StrokedPathMixin, Entity):
             return self.point_at(1.0)
         raise ValueError(f"Path has no anchor '{name}'. Available: {self.anchor_names}")
 
-    def point_at(self, t: float) -> Point:
+    def point_at(self, t: float) -> Coord:
         """
         Get a point along the path.
 
@@ -179,7 +179,7 @@ class Path(StrokedPathMixin, Entity):
             t: Parameter from 0 (start) to 1 (end).
 
         Returns:
-            Point on the path at parameter t.
+            Coord on the path at parameter t.
         """
         n = len(self._bezier_segments)
         if n == 0:
@@ -297,19 +297,19 @@ class Path(StrokedPathMixin, Entity):
         Returns:
             self, for method chaining.
         """
-        self._position = Point(self._position.x + dx, self._position.y + dy)
+        self._position = Coord(self._position.x + dx, self._position.y + dy)
         self._bezier_segments = [
             (
-                Point(p0.x + dx, p0.y + dy),
-                Point(cp1.x + dx, cp1.y + dy),
-                Point(cp2.x + dx, cp2.y + dy),
-                Point(p3.x + dx, p3.y + dy),
+                Coord(p0.x + dx, p0.y + dy),
+                Coord(cp1.x + dx, cp1.y + dy),
+                Coord(cp2.x + dx, cp2.y + dy),
+                Coord(p3.x + dx, p3.y + dy),
             )
             for p0, cp1, cp2, p3 in self._bezier_segments
         ]
         return self
 
-    def rotate(self, angle: float, origin: Point | tuple[float, float] | None = None) -> Path:
+    def rotate(self, angle: float, origin: CoordLike | None = None) -> Path:
         """
         Rotate the path around a point.
 
@@ -323,16 +323,16 @@ class Path(StrokedPathMixin, Entity):
         if origin is None:
             origin = self.point_at(0.5)
         elif isinstance(origin, tuple):
-            origin = Point(*origin)
+            origin = Coord(*origin)
 
         angle_rad = math.radians(angle)
         cos_a = math.cos(angle_rad)
         sin_a = math.sin(angle_rad)
 
-        def rot(p: Point) -> Point:
+        def rot(p: Coord) -> Coord:
             dx = p.x - origin.x
             dy = p.y - origin.y
-            return Point(
+            return Coord(
                 dx * cos_a - dy * sin_a + origin.x,
                 dx * sin_a + dy * cos_a + origin.y,
             )
@@ -345,7 +345,7 @@ class Path(StrokedPathMixin, Entity):
             self._position = self._bezier_segments[0][0]
         return self
 
-    def scale(self, factor: float, origin: Point | tuple[float, float] | None = None) -> Path:
+    def scale(self, factor: float, origin: CoordLike | None = None) -> Path:
         """
         Scale the path around a point.
 
@@ -359,10 +359,10 @@ class Path(StrokedPathMixin, Entity):
         if origin is None:
             origin = self.point_at(0.5)
         elif isinstance(origin, tuple):
-            origin = Point(*origin)
+            origin = Coord(*origin)
 
-        def sc(p: Point) -> Point:
-            return Point(
+        def sc(p: Coord) -> Coord:
+            return Coord(
                 origin.x + (p.x - origin.x) * factor,
                 origin.y + (p.y - origin.y) * factor,
             )
@@ -457,7 +457,7 @@ def _fit_cubic_beziers(
     closed: bool,
     start_t: float = 0.0,
     end_t: float = 1.0,
-) -> list[tuple[Point, Point, Point, Point]]:
+) -> list[tuple[Coord, Coord, Coord, Coord]]:
     """
     Fit cubic Bézier segments to a Pathable using Hermite interpolation.
 
@@ -499,8 +499,8 @@ def _fit_cubic_beziers(
             tx3, ty3 = tangents[j]
 
             # Hermite-to-Bézier: scale tangent by dt/3
-            cp1 = Point(p0.x + tx0 * dt / 3, p0.y + ty0 * dt / 3)
-            cp2 = Point(p3.x - tx3 * dt / 3, p3.y - ty3 * dt / 3)
+            cp1 = Coord(p0.x + tx0 * dt / 3, p0.y + ty0 * dt / 3)
+            cp2 = Coord(p3.x - tx3 * dt / 3, p3.y - ty3 * dt / 3)
             cp1, cp2 = _clamp_control_points(p0, cp1, cp2, p3)
             result.append((p0, cp1, cp2, p3))
 
@@ -527,8 +527,8 @@ def _fit_cubic_beziers(
             tx0, ty0 = tangents[i]
             tx3, ty3 = tangents[i + 1]
 
-            cp1 = Point(p0.x + tx0 * dt / 3, p0.y + ty0 * dt / 3)
-            cp2 = Point(p3.x - tx3 * dt / 3, p3.y - ty3 * dt / 3)
+            cp1 = Coord(p0.x + tx0 * dt / 3, p0.y + ty0 * dt / 3)
+            cp2 = Coord(p3.x - tx3 * dt / 3, p3.y - ty3 * dt / 3)
             cp1, cp2 = _clamp_control_points(p0, cp1, cp2, p3)
             result.append((p0, cp1, cp2, p3))
 
@@ -536,9 +536,9 @@ def _fit_cubic_beziers(
 
 
 def _clamp_control_points(
-    p0: Point, cp1: Point, cp2: Point, p3: Point,
+    p0: Coord, cp1: Coord, cp2: Coord, p3: Coord,
     max_ratio: float = 0.75,
-) -> tuple[Point, Point]:
+) -> tuple[Coord, Coord]:
     """
     Clamp control point offsets to a fraction of the chord length.
 
@@ -556,19 +556,19 @@ def _clamp_control_points(
     d1_sq = dx1 * dx1 + dy1 * dy1
     if d1_sq > max_dist_sq and d1_sq > 0:
         s = math.sqrt(max_dist_sq / d1_sq)
-        cp1 = Point(p0.x + dx1 * s, p0.y + dy1 * s)
+        cp1 = Coord(p0.x + dx1 * s, p0.y + dy1 * s)
 
     # Clamp cp2 distance from p3
     dx2, dy2 = cp2.x - p3.x, cp2.y - p3.y
     d2_sq = dx2 * dx2 + dy2 * dy2
     if d2_sq > max_dist_sq and d2_sq > 0:
         s = math.sqrt(max_dist_sq / d2_sq)
-        cp2 = Point(p3.x + dx2 * s, p3.y + dy2 * s)
+        cp2 = Coord(p3.x + dx2 * s, p3.y + dy2 * s)
 
     return cp1, cp2
 
 
-def _eval_cubic(p0: Point, cp1: Point, cp2: Point, p3: Point, t: float) -> Point:
+def _eval_cubic(p0: Coord, cp1: Coord, cp2: Coord, p3: Coord, t: float) -> Coord:
     """Evaluate a cubic Bézier at parameter t."""
     mt = 1 - t
     mt2 = mt * mt
@@ -578,10 +578,10 @@ def _eval_cubic(p0: Point, cp1: Point, cp2: Point, p3: Point, t: float) -> Point
 
     x = mt3 * p0.x + 3 * mt2 * t * cp1.x + 3 * mt * t2 * cp2.x + t3 * p3.x
     y = mt3 * p0.y + 3 * mt2 * t * cp1.y + 3 * mt * t2 * cp2.y + t3 * p3.y
-    return Point(x, y)
+    return Coord(x, y)
 
 
-def _eval_cubic_derivative(p0: Point, cp1: Point, cp2: Point, p3: Point, t: float) -> tuple[float, float]:
+def _eval_cubic_derivative(p0: Coord, cp1: Coord, cp2: Coord, p3: Coord, t: float) -> tuple[float, float]:
     """Evaluate the derivative of a cubic Bézier at parameter t."""
     mt = 1 - t
     mt2 = mt * mt

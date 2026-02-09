@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 from ..color import Color
 from ..core.entity import Entity
-from ..core.point import Point
+from ..core.coord import Coord, CoordLike
 from ..core.stroked_path_mixin import StrokedPathMixin
 
 
@@ -82,7 +82,7 @@ class Curve(StrokedPathMixin, Entity):
             opacity: Opacity (0.0 transparent to 1.0 opaque).
         """
         super().__init__(x1, y1, z_index)
-        self._end = Point(x2, y2)
+        self._end = Coord(x2, y2)
         self._curvature = float(curvature)
         self.width = float(width)
         self._color = Color(color)
@@ -90,13 +90,13 @@ class Curve(StrokedPathMixin, Entity):
         self.start_cap = start_cap
         self.end_cap = end_cap
         self.opacity = float(opacity)
-        self._control: Point | None = None  # Calculated lazily
+        self._control: Coord | None = None  # Calculated lazily
 
     @classmethod
     def from_points(
         cls,
-        start: Point | tuple[float, float],
-        end: Point | tuple[float, float],
+        start: CoordLike,
+        end: CoordLike,
         curvature: float = 0.5,
         width: float = DEFAULT_WIDTH,
         color: str | tuple[int, int, int] = DEFAULT_COLOR,
@@ -108,26 +108,26 @@ class Curve(StrokedPathMixin, Entity):
     ) -> Curve:
         """Create a curve from two points."""
         if isinstance(start, tuple):
-            start = Point(*start)
+            start = Coord(*start)
         if isinstance(end, tuple):
-            end = Point(*end)
+            end = Coord(*end)
         return cls(start.x, start.y, end.x, end.y, curvature, width, color, z_index,
                    cap, start_cap, end_cap, opacity)
 
     @property
-    def start(self) -> Point:
+    def start(self) -> Coord:
         """The starting point."""
         return self.position
 
     @property
-    def end(self) -> Point:
+    def end(self) -> Coord:
         """The ending point."""
         return self._end
 
     @end.setter
-    def end(self, value: Point | tuple[float, float]) -> None:
+    def end(self, value: CoordLike) -> None:
         if isinstance(value, tuple):
-            value = Point(*value)
+            value = Coord(*value)
         self._end = value
         self._control = None  # Invalidate cached control point
 
@@ -142,7 +142,7 @@ class Curve(StrokedPathMixin, Entity):
         self._control = None  # Invalidate cached control point
 
     @property
-    def control(self) -> Point:
+    def control(self) -> Coord:
         """
         The Bezier control point.
 
@@ -153,7 +153,7 @@ class Curve(StrokedPathMixin, Entity):
             self._control = self._calculate_control()
         return self._control
 
-    def _calculate_control(self) -> Point:
+    def _calculate_control(self) -> Coord:
         """Calculate control point from curvature."""
         # Midpoint of the line
         mid = self.start.midpoint(self.end)
@@ -176,7 +176,7 @@ class Curve(StrokedPathMixin, Entity):
         # Offset by curvature * half the length
         offset = self._curvature * length * 0.5
 
-        return Point(mid.x + perp_x * offset, mid.y + perp_y * offset)
+        return Coord(mid.x + perp_x * offset, mid.y + perp_y * offset)
 
     @property
     def color(self) -> str:
@@ -192,7 +192,7 @@ class Curve(StrokedPathMixin, Entity):
         """Available anchors."""
         return ["start", "center", "end", "control"]
 
-    def anchor(self, name: str = "center") -> Point:
+    def anchor(self, name: str = "center") -> Coord:
         """Get anchor point by name."""
         if name == "start":
             return self.start
@@ -204,7 +204,7 @@ class Curve(StrokedPathMixin, Entity):
             return self.control
         raise ValueError(f"Curve has no anchor '{name}'. Available: {self.anchor_names}")
 
-    def point_at(self, t: float) -> Point:
+    def point_at(self, t: float) -> Coord:
         """
         Get a point along the curve.
 
@@ -214,7 +214,7 @@ class Curve(StrokedPathMixin, Entity):
             t: Parameter from 0 (start) to 1 (end).
 
         Returns:
-            Point on the curve at parameter t.
+            Coord on the curve at parameter t.
 
         Example:
             >>> curve = cell.add_curve(curvature=0.5)
@@ -232,7 +232,7 @@ class Curve(StrokedPathMixin, Entity):
         x = mt2 * p0.x + 2 * mt * t * p1.x + t2 * p2.x
         y = mt2 * p0.y + 2 * mt * t * p1.y + t2 * p2.y
 
-        return Point(x, y)
+        return Coord(x, y)
 
     def arc_length(self, segments: int = 100) -> float:
         """
@@ -303,12 +303,12 @@ class Curve(StrokedPathMixin, Entity):
         Returns:
             self, for method chaining.
         """
-        self._position = Point(self._position.x + dx, self._position.y + dy)
-        self._end = Point(self._end.x + dx, self._end.y + dy)
+        self._position = Coord(self._position.x + dx, self._position.y + dy)
+        self._end = Coord(self._end.x + dx, self._end.y + dy)
         self._control = None  # Invalidate cached control point
         return self
 
-    def rotate(self, angle: float, origin: Point | tuple[float, float] | None = None) -> Curve:
+    def rotate(self, angle: float, origin: CoordLike | None = None) -> Curve:
         """
         Rotate the curve around a point.
 
@@ -322,16 +322,16 @@ class Curve(StrokedPathMixin, Entity):
         if origin is None:
             origin = self.point_at(0.5)
         elif isinstance(origin, tuple):
-            origin = Point(*origin)
+            origin = Coord(*origin)
 
         angle_rad = math.radians(angle)
         cos_a = math.cos(angle_rad)
         sin_a = math.sin(angle_rad)
 
-        def rotate_point(p: Point) -> Point:
+        def rotate_point(p: Coord) -> Coord:
             dx = p.x - origin.x
             dy = p.y - origin.y
-            return Point(
+            return Coord(
                 dx * cos_a - dy * sin_a + origin.x,
                 dx * sin_a + dy * cos_a + origin.y,
             )
@@ -341,7 +341,7 @@ class Curve(StrokedPathMixin, Entity):
         self._control = None
         return self
 
-    def scale(self, factor: float, origin: Point | tuple[float, float] | None = None) -> Curve:
+    def scale(self, factor: float, origin: CoordLike | None = None) -> Curve:
         """
         Scale the curve around a point.
 
@@ -355,13 +355,13 @@ class Curve(StrokedPathMixin, Entity):
         if origin is None:
             origin = self.point_at(0.5)
         elif isinstance(origin, tuple):
-            origin = Point(*origin)
+            origin = Coord(*origin)
 
-        new_start = Point(
+        new_start = Coord(
             origin.x + (self.start.x - origin.x) * factor,
             origin.y + (self.start.y - origin.y) * factor,
         )
-        new_end = Point(
+        new_end = Coord(
             origin.x + (self.end.x - origin.x) * factor,
             origin.y + (self.end.y - origin.y) * factor,
         )

@@ -2,8 +2,8 @@
 
 from .connection import Connection
 from .entity import Entity
-from .point import Point
+from .coord import Coord, CoordLike
 from .tangent import get_angle_at
 from .stroked_path_mixin import StrokedPathMixin
 
-__all__ = ["Point", "Entity", "Connection", "get_angle_at", "StrokedPathMixin"]
+__all__ = ["Coord", "CoordLike", "Entity", "Connection", "get_angle_at", "StrokedPathMixin"]

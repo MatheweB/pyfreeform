@@ -6,7 +6,7 @@ import math
 
 from ..color import Color
 from ..core.entity import Entity
-from ..core.point import Point
+from ..core.coord import Coord, CoordLike
 from ..core.stroked_path_mixin import StrokedPathMixin
 
 
@@ -31,7 +31,7 @@ class Line(StrokedPathMixin, Entity):
 
     Examples:
         >>> line = Line(0, 0, 100, 100)  # From (0,0) to (100,100)
-        >>> line = Line.from_points(Point(0, 0), Point(100, 100))
+        >>> line = Line.from_points(Coord(0, 0), Coord(100, 100))
         >>> midpoint = line.anchor("center")
         >>> line = Line(0, 0, 100, 0, end_cap="arrow")  # Arrow at end
     """
@@ -69,7 +69,7 @@ class Line(StrokedPathMixin, Entity):
             opacity: Opacity (0.0 transparent to 1.0 opaque).
         """
         super().__init__(x1, y1, z_index)
-        self._end_offset = Point(x2 - x1, y2 - y1)
+        self._end_offset = Coord(x2 - x1, y2 - y1)
         self.width = float(width)
         self._color = Color(color)
         self.cap = cap
@@ -80,8 +80,8 @@ class Line(StrokedPathMixin, Entity):
     @classmethod
     def from_points(
         cls,
-        start: Point | tuple[float, float],
-        end: Point | tuple[float, float],
+        start: CoordLike,
+        end: CoordLike,
         width: float = DEFAULT_WIDTH,
         color: str | tuple[int, int, int] = DEFAULT_COLOR,
         z_index: int = 0,
@@ -108,27 +108,27 @@ class Line(StrokedPathMixin, Entity):
             A new Line entity.
         """
         if isinstance(start, tuple):
-            start = Point(*start)
+            start = Coord(*start)
         if isinstance(end, tuple):
-            end = Point(*end)
+            end = Coord(*end)
         return cls(start.x, start.y, end.x, end.y, width, color, z_index, cap,
                    start_cap, end_cap, opacity)
 
     @property
-    def start(self) -> Point:
+    def start(self) -> Coord:
         """The starting point (same as position)."""
         return self.position
 
     @property
-    def end(self) -> Point:
+    def end(self) -> Coord:
         """The ending point."""
         return self.position + self._end_offset
 
     @end.setter
-    def end(self, value: Point | tuple[float, float]) -> None:
+    def end(self, value: CoordLike) -> None:
         """Set the ending point."""
         if isinstance(value, tuple):
-            value = Point(*value)
+            value = Coord(*value)
         self._end_offset = value - self.position
 
     @property
@@ -150,7 +150,7 @@ class Line(StrokedPathMixin, Entity):
         """Available anchors: start, center, end."""
         return ["start", "center", "end"]
 
-    def anchor(self, name: str = "center") -> Point:
+    def anchor(self, name: str = "center") -> Coord:
         """Get anchor point by name."""
         if name == "start":
             return self.start
@@ -160,7 +160,7 @@ class Line(StrokedPathMixin, Entity):
             return self.end
         raise ValueError(f"Line has no anchor '{name}'. Available: {self.anchor_names}")
 
-    def point_at(self, t: float) -> Point:
+    def point_at(self, t: float) -> Coord:
         """
         Get a point along the line.
 
@@ -169,7 +169,7 @@ class Line(StrokedPathMixin, Entity):
                Values outside 0-1 extrapolate beyond the line.
 
         Returns:
-            Point at that position along the line.
+            Coord at that position along the line.
         """
         return self.start.lerp(self.end, t)
 
@@ -202,15 +202,15 @@ class Line(StrokedPathMixin, Entity):
         s, e = self.start, self.end
         return f"M {s.x} {s.y} L {e.x} {e.y}"
 
-    def move_to(self, x: float | Point, y: float | None = None) -> Line:
+    def move_to(self, x: float | Coord, y: float | None = None) -> Line:
         """
         Move the line's start point to a new position.
 
         The end point moves to maintain the same relative offset.
 
         Args:
-            x: X coordinate, or a Point.
-            y: Y coordinate (required if x is not a Point).
+            x: X coordinate, or a Coord.
+            y: Y coordinate (required if x is not a Coord).
 
         Returns:
             self, for method chaining.
@@ -221,8 +221,8 @@ class Line(StrokedPathMixin, Entity):
 
     def set_endpoints(
         self,
-        start: Point | tuple[float, float],
-        end: Point | tuple[float, float],
+        start: CoordLike,
+        end: CoordLike,
     ) -> Line:
         """
         Set both endpoints of the line.
@@ -235,15 +235,15 @@ class Line(StrokedPathMixin, Entity):
             self, for method chaining.
         """
         if isinstance(start, tuple):
-            start = Point(*start)
+            start = Coord(*start)
         if isinstance(end, tuple):
-            end = Point(*end)
+            end = Coord(*end)
 
         self._position = start
         self._end_offset = end - start
         return self
 
-    def rotate(self, angle: float, origin: Point | tuple[float, float] | None = None) -> Line:
+    def rotate(self, angle: float, origin: CoordLike | None = None) -> Line:
         """
         Rotate the line around a point.
 
@@ -259,7 +259,7 @@ class Line(StrokedPathMixin, Entity):
         if origin is None:
             origin = self.anchor("center")
         elif isinstance(origin, tuple):
-            origin = Point(*origin)
+            origin = Coord(*origin)
 
         angle_rad = math.radians(angle)
         cos_a = math.cos(angle_rad)
@@ -269,10 +269,10 @@ class Line(StrokedPathMixin, Entity):
         start = self.start
         end = self.end
 
-        def rotate_point(p: Point) -> Point:
+        def rotate_point(p: Coord) -> Coord:
             dx = p.x - origin.x
             dy = p.y - origin.y
-            return Point(
+            return Coord(
                 dx * cos_a - dy * sin_a + origin.x,
                 dx * sin_a + dy * cos_a + origin.y,
             )
@@ -284,7 +284,7 @@ class Line(StrokedPathMixin, Entity):
         self._end_offset = new_end - new_start
         return self
 
-    def scale(self, factor: float, origin: Point | tuple[float, float] | None = None) -> Line:
+    def scale(self, factor: float, origin: CoordLike | None = None) -> Line:
         """
         Scale the line around a point.
 
@@ -298,16 +298,16 @@ class Line(StrokedPathMixin, Entity):
         if origin is None:
             origin = self.anchor("center")
         elif isinstance(origin, tuple):
-            origin = Point(*origin)
+            origin = Coord(*origin)
 
         start = self.start
         end = self.end
 
-        new_start = Point(
+        new_start = Coord(
             origin.x + (start.x - origin.x) * factor,
             origin.y + (start.y - origin.y) * factor,
         )
-        new_end = Point(
+        new_end = Coord(
             origin.x + (end.x - origin.x) * factor,
             origin.y + (end.y - origin.y) * factor,
         )

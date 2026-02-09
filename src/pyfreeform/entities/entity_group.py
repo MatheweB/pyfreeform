@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from ..core.entity import Entity
-from ..core.point import Point
+from ..core.coord import Coord, CoordLike
 
 if TYPE_CHECKING:
     pass
@@ -95,7 +95,7 @@ class EntityGroup(Entity):
         """Available anchor names."""
         return ["center"]
 
-    def anchor(self, name: str) -> Point:
+    def anchor(self, name: str) -> Coord:
         """
         Get anchor point by name.
 
@@ -110,7 +110,7 @@ class EntityGroup(Entity):
         """
         if name == "center":
             b = self.bounds()
-            return Point((b[0] + b[2]) / 2, (b[1] + b[3]) / 2)
+            return Coord((b[0] + b[2]) / 2, (b[1] + b[3]) / 2)
         raise ValueError(
             f"EntityGroup has no anchor '{name}'. "
             f"Available: {self.anchor_names}"
@@ -171,7 +171,7 @@ class EntityGroup(Entity):
     def scale(
         self,
         factor: float,
-        origin: Point | tuple[float, float] | None = None,
+        origin: CoordLike | None = None,
     ) -> EntityGroup:
         """
         Scale the group.

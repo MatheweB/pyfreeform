@@ -1,0 +1,4816 @@
+<!DOCTYPE html><html lang="en" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Turn images into art with Python">
+      
+      
+      
+        <link rel="canonical" href="https://pyfreeform.github.io/pyfreeform/api-surface/">
+      
+      
+        <link rel="prev" href="../recipes/06-advanced-compositions/">
+      
+      
+        <link rel="next" href="../developer-guide/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>API Surface - PyFreeform</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../_css/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  <link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#api-reference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="PyFreeform" class="md-header__button md-logo" aria-label="PyFreeform" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            PyFreeform
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              API Surface
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber" aria-label="Switch to dark mode" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="amber" aria-label="Switch to light mode" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/pyfreeform/pyfreeform" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    pyfreeform/pyfreeform
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../getting-started/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../guide/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../recipes/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Recipes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Surface
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../developer-guide/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Developer Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../gallery/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Gallery
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="PyFreeform" class="md-nav__button md-logo" aria-label="PyFreeform" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+
+    </a>
+    PyFreeform
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/pyfreeform/pyfreeform" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    pyfreeform/pyfreeform
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../getting-started/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/01-installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/02-your-first-artwork/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Your First Artwork
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/03-how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How PyFreeform Works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../guide/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guide
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/01-scenes-and-grids/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scenes &amp; Grids
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/02-working-with-cells/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Working with Cells
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/03-drawing-with-entities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Drawing with Entities
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/04-colors-styles-palettes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Colors, Styles &amp; Palettes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/05-paths-and-parametric/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Paths &amp; Parametric Positioning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/06-shapes-and-polygons/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shapes &amp; Polygons
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/07-text-and-typography/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Text &amp; Typography
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/08-transforms-and-layout/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transforms &amp; Layout
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../recipes/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recipes
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Recipes
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../recipes/01-image-to-art/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Image-to-Art Portraits
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../recipes/02-geometric-patterns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Geometric Patterns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../recipes/03-flowing-curves/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Flowing Curves &amp; Waves
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../recipes/04-connected-networks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Connected Networks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../recipes/05-typographic-art/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Typographic Art
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../recipes/06-advanced-compositions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advanced Compositions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Surface
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Surface
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-the-entry-point-scene" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. The Entry Point: Scene
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. The Entry Point: Scene">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#three-ways-to-create-a-scene" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Three Ways to Create a Scene
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scene-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scene Properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scene-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scene Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#from_image-full-signature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        from_image() Full Signature
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with_grid-full-signature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        with_grid() Full Signature
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-grid-structure-and-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The Grid: Structure and Selection
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. The Grid: Structure and Selection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#grid-construction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Grid Construction
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grid-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Grid Properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cell-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cell Access
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#row-column-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Row &amp; Column Access
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#region-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Region Selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cell-merging-cellgroup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cell Merging (CellGroup)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern Selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-loading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data Loading
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-the-cell-your-creative-unit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. The Cell: Your Creative Unit
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. The Cell: Your Creative Unit">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#typed-data-properties-from-loaded-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Typed Data Properties (from loaded image)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#position-properties-inherited-from-surface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Position Properties (inherited from Surface)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grid-position" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Grid Position
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neighbors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Neighbors
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sub-cell-image-sampling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sub-Cell Image Sampling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#utility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Utility
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-the-surface-protocol-builder-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. The Surface Protocol: Builder Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. The Surface Protocol: Builder Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#named-positions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Named Positions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parametric-positioning-along-t-align" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parametric Positioning: along / t / align
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complete-builder-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete Builder Reference
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-entities-the-drawing-primitives" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Entities: The Drawing Primitives
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Entities: The Drawing Primitives">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#entity-base-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entity Base Class
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#movement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Movement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transforms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transforms
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relationships" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relationships
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#abstract-methods-implemented-by-each-entity-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Abstract Methods (implemented by each entity type)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5a-dot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5a. Dot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5b-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5b. Line
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5c-curve" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5c. Curve
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5d-ellipse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5d. Ellipse
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5e-polygon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5e. Polygon
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5f-rect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5f. Rect
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5g-text" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5g. Text
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5h-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5h. Path
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5i-entitygroup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5i. EntityGroup
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-the-pathable-protocol" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. The Pathable Protocol
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. The Pathable Protocol">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#built-in-pathables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Built-in Pathables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-pathable-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional Pathable Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-pathables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Pathables
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-connections" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Connections
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-transforms-and-fitting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Transforms and Fitting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Transforms and Fitting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#entity-transforms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entity Transforms
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fit_to_cellscale10-recentertrue-atnone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fit_to_cell(scale=1.0, recenter=True, *, at=None)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fit_withintarget-scale10-recentertrue-atnone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fit_within(target, scale=1.0, recenter=True, *, at=None)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-color-and-styling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Color and Styling
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Color and Styling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-color-parameter-split" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Color Parameter Split
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#color-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Color Formats
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opacity-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Opacity System
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#style-classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Style Classes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#palettes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Palettes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-cap-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Cap System
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-the-point-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. The Point Type
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-image-processing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Image Processing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12. Image Processing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#image-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Image Class
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layer-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layer Class
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-utility-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Utility Functions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="13. Utility Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#map_rangevalue-in_min0-in_max1-out_min0-out_max1-clampfalse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        map_range(value, in_min=0, in_max=1, out_min=0, out_max=1, clamp=False)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_angle_atpathable-t" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_angle_at(pathable, t)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#displayscene_or_svg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        display(scene_or_svg)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-relationship-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14. Relationship Map
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="14. Relationship Map">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-design-principles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Design Principles
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../developer-guide/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developer Guide
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Developer Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../developer-guide/01-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../developer-guide/02-creating-entities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Creating Custom Entities
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../developer-guide/03-pathable-protocol/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Pathable Protocol
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gallery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gallery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-the-entry-point-scene" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. The Entry Point: Scene
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. The Entry Point: Scene">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#three-ways-to-create-a-scene" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Three Ways to Create a Scene
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scene-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scene Properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scene-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scene Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#from_image-full-signature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        from_image() Full Signature
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with_grid-full-signature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        with_grid() Full Signature
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-grid-structure-and-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The Grid: Structure and Selection
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. The Grid: Structure and Selection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#grid-construction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Grid Construction
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grid-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Grid Properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cell-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cell Access
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#row-column-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Row &amp; Column Access
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#region-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Region Selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cell-merging-cellgroup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cell Merging (CellGroup)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern Selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-loading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data Loading
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-the-cell-your-creative-unit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. The Cell: Your Creative Unit
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. The Cell: Your Creative Unit">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#typed-data-properties-from-loaded-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Typed Data Properties (from loaded image)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#position-properties-inherited-from-surface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Position Properties (inherited from Surface)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grid-position" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Grid Position
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neighbors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Neighbors
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sub-cell-image-sampling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sub-Cell Image Sampling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#utility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Utility
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-the-surface-protocol-builder-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. The Surface Protocol: Builder Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. The Surface Protocol: Builder Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#named-positions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Named Positions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parametric-positioning-along-t-align" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parametric Positioning: along / t / align
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complete-builder-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete Builder Reference
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-entities-the-drawing-primitives" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Entities: The Drawing Primitives
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Entities: The Drawing Primitives">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#entity-base-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entity Base Class
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#movement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Movement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transforms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transforms
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relationships" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relationships
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#abstract-methods-implemented-by-each-entity-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Abstract Methods (implemented by each entity type)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5a-dot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5a. Dot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5b-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5b. Line
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5c-curve" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5c. Curve
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5d-ellipse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5d. Ellipse
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5e-polygon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5e. Polygon
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5f-rect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5f. Rect
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5g-text" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5g. Text
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5h-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5h. Path
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5i-entitygroup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5i. EntityGroup
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-the-pathable-protocol" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. The Pathable Protocol
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. The Pathable Protocol">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#built-in-pathables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Built-in Pathables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-pathable-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional Pathable Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-pathables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Pathables
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-connections" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Connections
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-transforms-and-fitting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Transforms and Fitting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Transforms and Fitting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#entity-transforms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entity Transforms
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fit_to_cellscale10-recentertrue-atnone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fit_to_cell(scale=1.0, recenter=True, *, at=None)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fit_withintarget-scale10-recentertrue-atnone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fit_within(target, scale=1.0, recenter=True, *, at=None)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-color-and-styling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Color and Styling
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Color and Styling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-color-parameter-split" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Color Parameter Split
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#color-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Color Formats
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opacity-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Opacity System
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#style-classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Style Classes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#palettes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Palettes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-cap-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Cap System
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-the-point-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. The Point Type
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-image-processing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Image Processing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12. Image Processing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#image-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Image Class
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layer-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layer Class
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-utility-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Utility Functions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="13. Utility Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#map_rangevalue-in_min0-in_max1-out_min0-out_max1-clampfalse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        map_range(value, in_min=0, in_max=1, out_min=0, out_max=1, clamp=False)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_angle_atpathable-t" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_angle_at(pathable, t)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#displayscene_or_svg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        display(scene_or_svg)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-relationship-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14. Relationship Map
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="14. Relationship Map">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-design-principles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Design Principles
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">¶</a></h1>
+<p>This is the comprehensive API reference for PyFreeform v0.3.0. Every class, method, property, and concept is documented here on a single page, organized to follow the natural discovery flow -- from creating your first Scene to building complex generative art.</p>
+<div class="admonition tip">
+<p class="admonition-title">How to use this reference</p>
+<p>This page is designed as a <strong>lookup reference</strong>. For learning-oriented walkthroughs with visual examples, see the <a href="../guide/">Guide</a> section. For copy-paste starting points, see <a href="../recipes/">Recipes</a>.</p>
+</div>
+<hr>
+<h2 id="1-the-entry-point-scene">1. The Entry Point: Scene<a class="headerlink" href="#1-the-entry-point-scene" title="Permanent link">¶</a></h2>
+<p>Everything starts with a <code>Scene</code>. It is the canvas -- it holds your artwork and renders it to SVG.</p>
+<div class="admonition info">
+<p class="admonition-title">See also</p>
+<p>For a hands-on walkthrough of creating scenes, see <a href="../guide/01-scenes-and-grids/">Scenes and Grids</a>.</p>
+</div>
+<h3 id="three-ways-to-create-a-scene">Three Ways to Create a Scene<a class="headerlink" href="#three-ways-to-create-a-scene" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Constructor</th>
+<th>Use Case</th>
+<th>Returns</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Scene(width, height, background=None)</code></td>
+<td>Manual canvas, no grid</td>
+<td>Scene</td>
+</tr>
+<tr>
+<td><code>Scene.from_image(source, *, grid_size=40, cell_size=10, ...)</code></td>
+<td>Image-based art</td>
+<td>Scene with grid</td>
+</tr>
+<tr>
+<td><code>Scene.with_grid(*, cols=30, rows=None, cell_size=10, ...)</code></td>
+<td>Grid-based art, no image</td>
+<td>Scene with grid</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>Scene.from_image()</code></strong> is the flagship -- load a photo, get a grid where every cell knows the color and brightness of the pixel it overlays.</p>
+<p><strong><code>Scene.with_grid()</code></strong> gives you the same grid structure but with no image data (cells default to brightness 0.5, color "#808080").</p>
+<p><strong><code>Scene(w, h)</code></strong> is for freeform art -- you place entities at absolute positions, no grid involved.</p>
+<h3 id="scene-properties">Scene Properties<a class="headerlink" href="#scene-properties" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>scene.width</code></td>
+<td><code>int</code></td>
+<td>Canvas width in pixels</td>
+</tr>
+<tr>
+<td><code>scene.height</code></td>
+<td><code>int</code></td>
+<td>Canvas height in pixels</td>
+</tr>
+<tr>
+<td><code>scene.background</code></td>
+<td><code>str \| None</code></td>
+<td>Background color (default: <code>"#1a1a2e"</code> midnight blue)</td>
+</tr>
+<tr>
+<td><code>scene.grid</code></td>
+<td><code>Grid</code></td>
+<td>The primary grid (raises <code>ValueError</code> if none)</td>
+</tr>
+<tr>
+<td><code>scene.grids</code></td>
+<td><code>list[Grid]</code></td>
+<td>All grids in the scene</td>
+</tr>
+<tr>
+<td><code>scene.entities</code></td>
+<td><code>list[Entity]</code></td>
+<td>All entities (including those inside grid cells)</td>
+</tr>
+<tr>
+<td><code>scene.connections</code></td>
+<td><code>list[Connection]</code></td>
+<td>All connections</td>
+</tr>
+</tbody>
+</table>
+<h3 id="scene-methods">Scene Methods<a class="headerlink" href="#scene-methods" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>scene.add(*objects)</code></td>
+<td>Add entities, connections, or grids. Returns last added.</td>
+</tr>
+<tr>
+<td><code>scene.remove(obj)</code></td>
+<td>Remove an object. Returns <code>True</code> if found.</td>
+</tr>
+<tr>
+<td><code>scene.clear()</code></td>
+<td>Remove everything.</td>
+</tr>
+<tr>
+<td><code>scene.to_svg()</code></td>
+<td>Render to SVG string.</td>
+</tr>
+<tr>
+<td><code>scene.save(path)</code></td>
+<td>Save to <code>.svg</code> file (adds extension if missing).</td>
+</tr>
+</tbody>
+</table>
+<h3 id="from_image-full-signature"><code>from_image()</code> Full Signature<a class="headerlink" href="#from_image-full-signature" title="Permanent link">¶</a></h3>
+<details class="note">
+<summary>Expand full signature</summary>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">Scene</span><span class="o">.</span><span class="n">from_image</span><span class="p">(</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">source</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="n">Image</span><span class="p">,</span>   <span class="c1"># File path or Image object</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="o">*</span><span class="p">,</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">grid_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span>   <span class="c1"># Columns (rows auto from aspect ratio)</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">cell_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>          <span class="c1"># Base cell size in pixels</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">cell_ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>      <span class="c1"># Width-to-height ratio (2.0 = domino)</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">cell_width</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>     <span class="c1"># Explicit cell width (overrides cell_size)</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">cell_height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>    <span class="c1"># Explicit cell height (overrides cell_size)</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">background</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>       <span class="c1"># Background color (default "#1a1a2e")</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Scene</span>
+</span></code></pre></div>
+</details>
+<p>Two modes:</p>
+<ul>
+<li><strong><code>grid_size=N</code></strong> (default): N columns, rows calculated from image aspect ratio. Scene dimensions = grid * cell_size.</li>
+<li><strong><code>grid_size=None</code></strong>: Grid fits the image dimensions. Columns/rows derived from <code>image.width / cell_size</code>.</li>
+</ul>
+<h3 id="with_grid-full-signature"><code>with_grid()</code> Full Signature<a class="headerlink" href="#with_grid-full-signature" title="Permanent link">¶</a></h3>
+<details class="note">
+<summary>Expand full signature</summary>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">Scene</span><span class="o">.</span><span class="n">with_grid</span><span class="p">(</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="o">*</span><span class="p">,</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="n">cols</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>               <span class="c1"># Columns</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="n">rows</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>      <span class="c1"># Rows (defaults to cols for square)</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="n">cell_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>          <span class="c1"># Base cell size in pixels</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">cell_width</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>     <span class="c1"># Explicit cell width</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="n">cell_height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>    <span class="c1"># Explicit cell height</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="n">background</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>       <span class="c1"># Background color (default "#1a1a2e")</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Scene</span>
+</span></code></pre></div>
+</details>
+<hr>
+<h2 id="2-the-grid-structure-and-selection">2. The Grid: Structure and Selection<a class="headerlink" href="#2-the-grid-structure-and-selection" title="Permanent link">¶</a></h2>
+<p>A <code>Grid</code> divides the scene into rows and columns of <code>Cell</code> objects. It provides powerful selection methods for targeting specific cells.</p>
+<div class="admonition info">
+<p class="admonition-title">See also</p>
+<p>For grid creation patterns and cell access techniques, see <a href="../guide/01-scenes-and-grids/">Scenes and Grids</a>.</p>
+</div>
+<h3 id="grid-construction">Grid Construction<a class="headerlink" href="#grid-construction" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Constructor</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Grid(cols, rows, cell_size=None, cell_width=None, cell_height=None)</code></td>
+<td>Manual grid</td>
+</tr>
+<tr>
+<td><code>Grid.from_image(image, cols=None, rows=None, cell_size=10, ...)</code></td>
+<td>Grid sized to image</td>
+</tr>
+</tbody>
+</table>
+<h3 id="grid-properties">Grid Properties<a class="headerlink" href="#grid-properties" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>grid.cols</code></td>
+<td><code>int</code></td>
+<td>Number of columns</td>
+</tr>
+<tr>
+<td><code>grid.rows</code></td>
+<td><code>int</code></td>
+<td>Number of rows</td>
+</tr>
+<tr>
+<td><code>grid.cell_width</code></td>
+<td><code>float</code></td>
+<td>Cell width in pixels</td>
+</tr>
+<tr>
+<td><code>grid.cell_height</code></td>
+<td><code>float</code></td>
+<td>Cell height in pixels</td>
+</tr>
+<tr>
+<td><code>grid.cell_size</code></td>
+<td><code>(float, float)</code></td>
+<td><code>(cell_width, cell_height)</code> tuple</td>
+</tr>
+<tr>
+<td><code>grid.pixel_width</code></td>
+<td><code>float</code></td>
+<td>Total width = cols * cell_width</td>
+</tr>
+<tr>
+<td><code>grid.pixel_height</code></td>
+<td><code>float</code></td>
+<td>Total height = rows * cell_height</td>
+</tr>
+<tr>
+<td><code>grid.origin</code></td>
+<td><code>Point</code></td>
+<td>Top-left corner position</td>
+</tr>
+<tr>
+<td><code>grid.source_image</code></td>
+<td><code>Image \| None</code></td>
+<td>Original source image (if from_image)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cell-access">Cell Access<a class="headerlink" href="#cell-access" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>grid[row, col]</code></td>
+<td>Access by (row, col) index</td>
+</tr>
+<tr>
+<td><code>for cell in grid:</code></td>
+<td>Iterate row-by-row, left-to-right</td>
+</tr>
+<tr>
+<td><code>len(grid)</code></td>
+<td>Total number of cells</td>
+</tr>
+<tr>
+<td><code>grid.cell_at(x, y)</code></td>
+<td>Get cell at pixel position (or None)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="row-column-access">Row &amp; Column Access<a class="headerlink" href="#row-column-access" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Returns</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>grid.row(i)</code></td>
+<td><code>list[Cell]</code></td>
+<td>All cells in row i</td>
+</tr>
+<tr>
+<td><code>grid.column(i)</code></td>
+<td><code>list[Cell]</code></td>
+<td>All cells in column i</td>
+</tr>
+<tr>
+<td><code>grid.all_rows</code></td>
+<td><code>Iterator[list[Cell]]</code></td>
+<td>Iterate over all rows</td>
+</tr>
+<tr>
+<td><code>grid.all_columns</code></td>
+<td><code>Iterator[list[Cell]]</code></td>
+<td>Iterate over all columns</td>
+</tr>
+</tbody>
+</table>
+<h3 id="region-selection">Region Selection<a class="headerlink" href="#region-selection" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Returns</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>grid.region(row_start, row_end, col_start, col_end)</code></td>
+<td><code>Iterator[Cell]</code></td>
+<td>Rectangular region</td>
+</tr>
+<tr>
+<td><code>grid.border(thickness=1)</code></td>
+<td><code>Iterator[Cell]</code></td>
+<td>Cells on the grid border</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cell-merging-cellgroup">Cell Merging (CellGroup)<a class="headerlink" href="#cell-merging-cellgroup" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Returns</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>grid.merge(row_start, row_end, col_start, col_end)</code></td>
+<td><code>CellGroup</code></td>
+<td>Merge region into single surface</td>
+</tr>
+<tr>
+<td><code>grid.merge_row(i)</code></td>
+<td><code>CellGroup</code></td>
+<td>Merge full row</td>
+</tr>
+<tr>
+<td><code>grid.merge_col(i)</code></td>
+<td><code>CellGroup</code></td>
+<td>Merge full column</td>
+</tr>
+</tbody>
+</table>
+<p>A <code>CellGroup</code> is a virtual surface -- it has all the same <code>add_*</code> builder methods as a Cell, and averaged data properties from its constituent cells.</p>
+<h3 id="pattern-selection">Pattern Selection<a class="headerlink" href="#pattern-selection" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>grid.every(n, offset=0)</code></td>
+<td>Every Nth cell (linear count)</td>
+</tr>
+<tr>
+<td><code>grid.checkerboard("black" \| "white")</code></td>
+<td>Checkerboard pattern</td>
+</tr>
+<tr>
+<td><code>grid.where(predicate)</code></td>
+<td>Filter by lambda: <code>grid.where(lambda c: c.brightness &gt; 0.5)</code></td>
+</tr>
+<tr>
+<td><code>grid.diagonal(direction="down", offset=0)</code></td>
+<td>Main or offset diagonals</td>
+</tr>
+</tbody>
+</table>
+<h3 id="data-loading">Data Loading<a class="headerlink" href="#data-loading" title="Permanent link">¶</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">grid</span><span class="o">.</span><span class="n">load_layer</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"value"</span><span class="p">)</span>
+</span></code></pre></div>
+<p>Modes: <code>"value"</code> (raw), <code>"normalized"</code> (0-1), <code>"hex"</code> (color string). Normally handled automatically by <code>Scene.from_image()</code>.</p>
+<hr>
+<h2 id="3-the-cell-your-creative-unit">3. The Cell: Your Creative Unit<a class="headerlink" href="#3-the-cell-your-creative-unit" title="Permanent link">¶</a></h2>
+<p><code>Cell</code> extends <code>Surface</code> -- it inherits all 12+ builder methods plus has image data, position helpers, and neighbor access.</p>
+<div class="admonition info">
+<p class="admonition-title">See also</p>
+<p>For practical cell usage patterns, see <a href="../guide/02-working-with-cells/">Working with Cells</a>.</p>
+</div>
+<h3 id="typed-data-properties-from-loaded-image">Typed Data Properties (from loaded image)<a class="headerlink" href="#typed-data-properties-from-loaded-image" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cell.brightness</code></td>
+<td><code>float</code></td>
+<td><code>0.5</code></td>
+<td>0.0 (black) to 1.0 (white)</td>
+</tr>
+<tr>
+<td><code>cell.color</code></td>
+<td><code>str</code></td>
+<td><code>"#808080"</code></td>
+<td>Hex color string</td>
+</tr>
+<tr>
+<td><code>cell.rgb</code></td>
+<td><code>(int, int, int)</code></td>
+<td><code>(128, 128, 128)</code></td>
+<td>RGB tuple (0-255 each)</td>
+</tr>
+<tr>
+<td><code>cell.alpha</code></td>
+<td><code>float</code></td>
+<td><code>1.0</code></td>
+<td>0.0 (transparent) to 1.0 (opaque)</td>
+</tr>
+<tr>
+<td><code>cell.data</code></td>
+<td><code>dict</code></td>
+<td><code>{}</code></td>
+<td>Raw data dict for custom layers</td>
+</tr>
+</tbody>
+</table>
+<h3 id="position-properties-inherited-from-surface">Position Properties (inherited from Surface)<a class="headerlink" href="#position-properties-inherited-from-surface" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cell.x</code>, <code>cell.y</code></td>
+<td><code>float</code></td>
+<td>Top-left corner</td>
+</tr>
+<tr>
+<td><code>cell.width</code>, <code>cell.height</code></td>
+<td><code>float</code></td>
+<td>Cell dimensions</td>
+</tr>
+<tr>
+<td><code>cell.bounds</code></td>
+<td><code>(x, y, w, h)</code></td>
+<td>Bounding tuple</td>
+</tr>
+<tr>
+<td><code>cell.center</code></td>
+<td><code>Point</code></td>
+<td>Center position</td>
+</tr>
+<tr>
+<td><code>cell.top_left</code></td>
+<td><code>Point</code></td>
+<td>Top-left corner</td>
+</tr>
+<tr>
+<td><code>cell.top_right</code></td>
+<td><code>Point</code></td>
+<td>Top-right corner</td>
+</tr>
+<tr>
+<td><code>cell.bottom_left</code></td>
+<td><code>Point</code></td>
+<td>Bottom-left corner</td>
+</tr>
+<tr>
+<td><code>cell.bottom_right</code></td>
+<td><code>Point</code></td>
+<td>Bottom-right corner</td>
+</tr>
+</tbody>
+</table>
+<h3 id="grid-position">Grid Position<a class="headerlink" href="#grid-position" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cell.row</code></td>
+<td><code>int</code></td>
+<td>Row index (0-based)</td>
+</tr>
+<tr>
+<td><code>cell.col</code></td>
+<td><code>int</code></td>
+<td>Column index (0-based)</td>
+</tr>
+<tr>
+<td><code>cell.grid</code></td>
+<td><code>Grid</code></td>
+<td>Parent grid</td>
+</tr>
+<tr>
+<td><code>cell.normalized_position</code></td>
+<td><code>(float, float)</code></td>
+<td>(nx, ny) normalized to 0.0-1.0 within grid</td>
+</tr>
+</tbody>
+</table>
+<h3 id="neighbors">Neighbors<a class="headerlink" href="#neighbors" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Returns</th>
+<th>Direction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cell.above</code></td>
+<td><code>Cell \| None</code></td>
+<td>North</td>
+</tr>
+<tr>
+<td><code>cell.below</code></td>
+<td><code>Cell \| None</code></td>
+<td>South</td>
+</tr>
+<tr>
+<td><code>cell.left</code></td>
+<td><code>Cell \| None</code></td>
+<td>West</td>
+</tr>
+<tr>
+<td><code>cell.right</code></td>
+<td><code>Cell \| None</code></td>
+<td>East</td>
+</tr>
+<tr>
+<td><code>cell.above_left</code></td>
+<td><code>Cell \| None</code></td>
+<td>Northwest</td>
+</tr>
+<tr>
+<td><code>cell.above_right</code></td>
+<td><code>Cell \| None</code></td>
+<td>Northeast</td>
+</tr>
+<tr>
+<td><code>cell.below_left</code></td>
+<td><code>Cell \| None</code></td>
+<td>Southwest</td>
+</tr>
+<tr>
+<td><code>cell.below_right</code></td>
+<td><code>Cell \| None</code></td>
+<td>Southeast</td>
+</tr>
+<tr>
+<td><code>cell.neighbors</code></td>
+<td><code>dict[str, Cell \| None]</code></td>
+<td>4 cardinal directions</td>
+</tr>
+<tr>
+<td><code>cell.neighbors_all</code></td>
+<td><code>dict[str, Cell \| None]</code></td>
+<td>All 8 directions</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Neighbor properties return Cells, not positions</p>
+<p><code>cell.left</code>, <code>cell.right</code>, <code>cell.above</code>, <code>cell.below</code> return <code>Cell | None</code>, <strong>not</strong> position coordinates. Use <code>cell.center</code>, <code>cell.top_left</code>, etc. for positions.</p>
+</div>
+<h3 id="sub-cell-image-sampling">Sub-Cell Image Sampling<a class="headerlink" href="#sub-cell-image-sampling" title="Permanent link">¶</a></h3>
+<p>For finer-grained access to the original source image within a cell's area:</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Returns</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cell.sample_image(rx, ry)</code></td>
+<td><code>(int, int, int)</code></td>
+<td>RGB at relative position within cell</td>
+</tr>
+<tr>
+<td><code>cell.sample_brightness(rx, ry)</code></td>
+<td><code>float</code></td>
+<td>Brightness at relative position</td>
+</tr>
+<tr>
+<td><code>cell.sample_hex(rx, ry)</code></td>
+<td><code>str</code></td>
+<td>Hex color at relative position</td>
+</tr>
+</tbody>
+</table>
+<p>Where <code>rx</code> and <code>ry</code> are 0.0-1.0 within the cell (0.5, 0.5 = center).</p>
+<h3 id="utility">Utility<a class="headerlink" href="#utility" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Returns</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cell.distance_to(other)</code></td>
+<td><code>float</code></td>
+<td>Pixel distance to Cell, Point, or tuple</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="4-the-surface-protocol-builder-methods">4. The Surface Protocol: Builder Methods<a class="headerlink" href="#4-the-surface-protocol-builder-methods" title="Permanent link">¶</a></h2>
+<p><code>Surface</code> is the base class for <code>Cell</code>, <code>Scene</code>, and <code>CellGroup</code>. It provides <strong>12 builder methods</strong> that all work identically across these three surfaces.</p>
+<div class="admonition info">
+<p class="admonition-title">See also</p>
+<p>For creative examples of all builder methods, see <a href="../guide/03-drawing-with-entities/">Drawing with Entities</a>.</p>
+</div>
+<h3 id="named-positions">Named Positions<a class="headerlink" href="#named-positions" title="Permanent link">¶</a></h3>
+<p>All <code>at</code> parameters accept named positions or <code>(rx, ry)</code> relative coordinates:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Relative</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"center"</code></td>
+<td><code>(0.5, 0.5)</code></td>
+<td>Center of surface</td>
+</tr>
+<tr>
+<td><code>"top_left"</code></td>
+<td><code>(0.0, 0.0)</code></td>
+<td>Top-left corner</td>
+</tr>
+<tr>
+<td><code>"top_right"</code></td>
+<td><code>(1.0, 0.0)</code></td>
+<td>Top-right corner</td>
+</tr>
+<tr>
+<td><code>"bottom_left"</code></td>
+<td><code>(0.0, 1.0)</code></td>
+<td>Bottom-left corner</td>
+</tr>
+<tr>
+<td><code>"bottom_right"</code></td>
+<td><code>(1.0, 1.0)</code></td>
+<td>Bottom-right corner</td>
+</tr>
+<tr>
+<td><code>"top"</code></td>
+<td><code>(0.5, 0.0)</code></td>
+<td>Top center</td>
+</tr>
+<tr>
+<td><code>"bottom"</code></td>
+<td><code>(0.5, 1.0)</code></td>
+<td>Bottom center</td>
+</tr>
+<tr>
+<td><code>"left"</code></td>
+<td><code>(0.0, 0.5)</code></td>
+<td>Left center</td>
+</tr>
+<tr>
+<td><code>"right"</code></td>
+<td><code>(1.0, 0.5)</code></td>
+<td>Right center</td>
+</tr>
+</tbody>
+</table>
+<h3 id="parametric-positioning-along-t-align">Parametric Positioning: <code>along</code> / <code>t</code> / <code>align</code><a class="headerlink" href="#parametric-positioning-along-t-align" title="Permanent link">¶</a></h3>
+<p>All builder methods (except <code>add_fill</code>, <code>add_border</code>) support parametric positioning:</p>
+<ul>
+<li><strong><code>along</code></strong>: Any <code>Pathable</code> object (Line, Curve, Ellipse, Path, Connection, or custom)</li>
+<li><strong><code>t</code></strong>: Parameter 0.0 (start) to 1.0 (end) along the path</li>
+<li><strong><code>align</code></strong>: If <code>True</code>, rotate the entity to follow the path's tangent direction</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Killer feature</p>
+<p>This is PyFreeform's most powerful concept -- position any element along any path:
+</p><div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">line</span> <span class="o">=</span> <span class="n">cell</span><span class="o">.</span><span class="n">add_diagonal</span><span class="p">()</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">cell</span><span class="o">.</span><span class="n">add_dot</span><span class="p">(</span><span class="n">along</span><span class="o">=</span><span class="n">line</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">cell</span><span class="o">.</span><span class="n">brightness</span><span class="p">)</span>  <span class="c1"># Dot slides along diagonal</span>
+</span></code></pre></div>
+See <a href="../guide/05-paths-and-parametric/">Paths and Parametric Positioning</a> for in-depth examples.<p></p>
+</div>
+<h3 id="complete-builder-reference">Complete Builder Reference<a class="headerlink" href="#complete-builder-reference" title="Permanent link">¶</a></h3>
+<h4 id="add_dot"><code>add_dot</code><a class="headerlink" href="#add_dot" title="Permanent link">¶</a></h4>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">add_dot</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">at</span><span class="p">,</span> <span class="n">along</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">z_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">DotStyle</span><span class="p">)</span>
+</span></code></pre></div>
+<p>Creates a filled circle. Default position: center.</p>
+<h4 id="add_line"><code>add_line</code><a class="headerlink" href="#add_line" title="Permanent link">¶</a></h4>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">add_line</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">along</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">align</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">z_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>         <span class="n">cap</span><span class="o">=</span><span class="s2">"round"</span><span class="p">,</span> <span class="n">start_cap</span><span class="p">,</span> <span class="n">end_cap</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">LineStyle</span><span class="p">)</span>
+</span></code></pre></div>
+<p>Creates a line segment. Default: center to center (zero-length).</p>
+<h4 id="add_diagonal"><code>add_diagonal</code><a class="headerlink" href="#add_diagonal" title="Permanent link">¶</a></h4>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">add_diagonal</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s2">"bottom_left"</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">"top_right"</span><span class="p">,</span> <span class="n">along</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">align</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>             <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">z_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">cap</span><span class="o">=</span><span class="s2">"round"</span><span class="p">,</span> <span class="n">start_cap</span><span class="p">,</span> <span class="n">end_cap</span><span class="p">,</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>             <span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">LineStyle</span><span class="p">)</span>
+</span></code></pre></div>
+<p>Convenience for corner-to-corner lines. Delegates to <code>add_line()</code>.</p>
+<h4 id="add_curve"><code>add_curve</code><a class="headerlink" href="#add_curve" title="Permanent link">¶</a></h4>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">add_curve</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s2">"bottom_left"</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">"top_right"</span><span class="p">,</span> <span class="n">curvature</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">along</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">align</span><span class="p">,</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>          <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">z_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">cap</span><span class="o">=</span><span class="s2">"round"</span><span class="p">,</span> <span class="n">start_cap</span><span class="p">,</span> <span class="n">end_cap</span><span class="p">,</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>          <span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">LineStyle</span><span class="p">)</span>
+</span></code></pre></div>
+<p>Creates a quadratic Bezier curve. <code>curvature</code>: 0 = straight, positive = bows left, negative = bows right.</p>
+<h4 id="add_path"><code>add_path</code><a class="headerlink" href="#add_path" title="Permanent link">¶</a></h4>
+<details class="note">
+<summary>Expand full signature</summary>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">add_path</span><span class="p">(</span><span class="n">pathable</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">segments</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">start_t</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">end_t</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>         <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">z_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">cap</span><span class="o">=</span><span class="s2">"round"</span><span class="p">,</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>         <span class="n">start_cap</span><span class="p">,</span> <span class="n">end_cap</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">fill_opacity</span><span class="p">,</span> <span class="n">stroke_opacity</span><span class="p">,</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>         <span class="n">style</span><span class="o">=</span><span class="n">LineStyle</span><span class="p">)</span>
+</span></code></pre></div>
+</details>
+<p>Renders any Pathable as a smooth SVG <code>&lt;path&gt;</code> using cubic Bezier approximation. Supports arcs via <code>start_t</code>/<code>end_t</code>, closed paths with fill, and dual opacity.</p>
+<h4 id="add_ellipse"><code>add_ellipse</code><a class="headerlink" href="#add_ellipse" title="Permanent link">¶</a></h4>
+<details class="note">
+<summary>Expand full signature</summary>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">add_ellipse</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">at</span><span class="p">,</span> <span class="n">along</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">align</span><span class="p">,</span> <span class="n">rx</span><span class="p">,</span> <span class="n">ry</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>            <span class="n">stroke</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stroke_width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">z_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>            <span class="n">fill_opacity</span><span class="p">,</span> <span class="n">stroke_opacity</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">ShapeStyle</span><span class="p">)</span>
+</span></code></pre></div>
+</details>
+<p>Creates an ellipse. Default radii: 40% of surface dimensions. The ellipse itself is a Pathable -- you can position other elements along it.</p>
+<h4 id="add_polygon"><code>add_polygon</code><a class="headerlink" href="#add_polygon" title="Permanent link">¶</a></h4>
+<details class="note">
+<summary>Expand full signature</summary>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">add_polygon</span><span class="p">(</span><span class="n">vertices</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">along</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">align</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">stroke</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>            <span class="n">stroke_width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">z_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">fill_opacity</span><span class="p">,</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>            <span class="n">stroke_opacity</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">ShapeStyle</span><span class="p">)</span>
+</span></code></pre></div>
+</details>
+<p>Creates a polygon from relative-coordinate vertices (0-1). Use <code>Polygon.hexagon()</code>, <code>Polygon.star()</code>, etc. for common shapes. See <a href="../guide/06-shapes-and-polygons/">Shapes and Polygons</a> for shape classmethods.</p>
+<h4 id="add_rect"><code>add_rect</code><a class="headerlink" href="#add_rect" title="Permanent link">¶</a></h4>
+<details class="note">
+<summary>Expand full signature</summary>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">add_rect</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">at</span><span class="p">,</span> <span class="n">along</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">align</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>         <span class="n">stroke</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stroke_width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">fill_opacity</span><span class="p">,</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>         <span class="n">stroke_opacity</span><span class="p">,</span> <span class="n">z_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">ShapeStyle</span><span class="p">)</span>
+</span></code></pre></div>
+</details>
+<p>Creates a rectangle. <code>at</code> specifies the <strong>center</strong> position. Default size: 60% of surface.</p>
+<h4 id="add_text"><code>add_text</code><a class="headerlink" href="#add_text" title="Permanent link">¶</a></h4>
+<details class="note">
+<summary>Expand full signature</summary>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">add_text</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">at</span><span class="p">,</span> <span class="n">along</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">align</span><span class="p">,</span> <span class="n">font_size</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>         <span class="n">font_family</span><span class="o">=</span><span class="s2">"sans-serif"</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">italic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">text_anchor</span><span class="p">,</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>         <span class="n">baseline</span><span class="o">=</span><span class="s2">"middle"</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">z_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>         <span class="n">start_offset</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">end_offset</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">TextStyle</span><span class="p">)</span>
+</span></code></pre></div>
+</details>
+<p>Creates text. Two modes with <code>along</code>:</p>
+<ul>
+<li><strong><code>along</code> + <code>t</code></strong>: Position text at a point on the path, optionally align to tangent.</li>
+<li><strong><code>along</code> without <code>t</code></strong>: Warp text along the path using SVG <code>&lt;textPath&gt;</code> (auto-sizes font to fill path).</li>
+</ul>
+<p>See <a href="../guide/07-text-and-typography/">Text and Typography</a> for text layout techniques.</p>
+<h4 id="add_fill"><code>add_fill</code><a class="headerlink" href="#add_fill" title="Permanent link">¶</a></h4>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">add_fill</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">z_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">FillStyle</span><span class="p">)</span>
+</span></code></pre></div>
+<p>Fill the entire surface with a solid color.</p>
+<h4 id="add_border"><code>add_border</code><a class="headerlink" href="#add_border" title="Permanent link">¶</a></h4>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">add_border</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#cccccc"</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">z_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">BorderStyle</span><span class="p">)</span>
+</span></code></pre></div>
+<p>Add a stroke-only border around the surface.</p>
+<h4 id="place-add_entity"><code>place</code> / <code>add_entity</code><a class="headerlink" href="#place-add_entity" title="Permanent link">¶</a></h4>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">place</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span> <span class="n">at</span><span class="o">=</span><span class="s2">"center"</span><span class="p">)</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="n">add_entity</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span> <span class="n">at</span><span class="o">=</span><span class="s2">"center"</span><span class="p">)</span>
+</span></code></pre></div>
+<p>Place an existing entity into this surface. Works for any entity type including <code>EntityGroup</code>.</p>
+<hr>
+<h2 id="5-entities-the-drawing-primitives">5. Entities: The Drawing Primitives<a class="headerlink" href="#5-entities-the-drawing-primitives" title="Permanent link">¶</a></h2>
+<p>All entities inherit from <code>Entity</code> and share these common capabilities.</p>
+<div class="admonition info">
+<p class="admonition-title">See also</p>
+<p>For creative examples of each entity type, see <a href="../guide/03-drawing-with-entities/">Drawing with Entities</a>.</p>
+</div>
+<h3 id="entity-base-class">Entity Base Class<a class="headerlink" href="#entity-base-class" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Property/Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>entity.position</code></td>
+<td>Current position (<code>Point</code>)</td>
+</tr>
+<tr>
+<td><code>entity.x</code>, <code>entity.y</code></td>
+<td>Position coordinates</td>
+</tr>
+<tr>
+<td><code>entity.z_index</code></td>
+<td>Layer ordering (higher = on top)</td>
+</tr>
+<tr>
+<td><code>entity.cell</code></td>
+<td>Containing Surface (if placed)</td>
+</tr>
+<tr>
+<td><code>entity.connections</code></td>
+<td>Set of connections involving this entity</td>
+</tr>
+<tr>
+<td><code>entity.data</code></td>
+<td>Custom data dictionary</td>
+</tr>
+</tbody>
+</table>
+<h3 id="movement">Movement<a class="headerlink" href="#movement" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>entity.move_to(x, y)</code></td>
+<td>Move to absolute position</td>
+</tr>
+<tr>
+<td><code>entity.move_by(dx, dy)</code></td>
+<td>Move by relative offset</td>
+</tr>
+<tr>
+<td><code>entity.translate(dx, dy)</code></td>
+<td>Alias for <code>move_by()</code></td>
+</tr>
+<tr>
+<td><code>entity.move_to_cell(cell, at="center")</code></td>
+<td>Move to position within a cell</td>
+</tr>
+</tbody>
+</table>
+<h3 id="transforms">Transforms<a class="headerlink" href="#transforms" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>entity.rotate(angle, origin=None)</code></td>
+<td>Rotate in degrees (counterclockwise)</td>
+</tr>
+<tr>
+<td><code>entity.scale(factor, origin=None)</code></td>
+<td>Scale (2.0 = double size)</td>
+</tr>
+<tr>
+<td><code>entity.fit_to_cell(scale=1.0, recenter=True, *, at=None)</code></td>
+<td>Auto-scale to fit within containing cell</td>
+</tr>
+<tr>
+<td><code>entity.fit_within(target, scale=1.0, recenter=True, *, at=None)</code></td>
+<td>Auto-scale to fit within another entity's inner bounds</td>
+</tr>
+</tbody>
+</table>
+<p>See <a href="../guide/08-transforms-and-layout/">Transforms and Layout</a> for detailed transform examples.</p>
+<h3 id="relationships">Relationships<a class="headerlink" href="#relationships" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>entity.connect(other, style, start_anchor, end_anchor)</code></td>
+<td>Create a Connection to another entity</td>
+</tr>
+<tr>
+<td><code>entity.anchor(name)</code></td>
+<td>Get named anchor point</td>
+</tr>
+<tr>
+<td><code>entity.anchor_names</code></td>
+<td>List of available anchor names</td>
+</tr>
+<tr>
+<td><code>entity.offset_from(anchor_name, dx, dy)</code></td>
+<td>Point offset from an anchor</td>
+</tr>
+<tr>
+<td><code>entity.place_beside(other, side="right", gap=0)</code></td>
+<td>Position beside another entity using bounding boxes</td>
+</tr>
+</tbody>
+</table>
+<h3 id="abstract-methods-implemented-by-each-entity-type">Abstract Methods (implemented by each entity type)<a class="headerlink" href="#abstract-methods-implemented-by-each-entity-type" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>entity.to_svg()</code></td>
+<td>Render to SVG element string</td>
+</tr>
+<tr>
+<td><code>entity.bounds()</code></td>
+<td>Bounding box: <code>(min_x, min_y, max_x, max_y)</code></td>
+</tr>
+<tr>
+<td><code>entity.inner_bounds()</code></td>
+<td>Inscribed rectangle (default: same as bounds)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="5a-dot">5a. Dot<a class="headerlink" href="#5a-dot" title="Permanent link">¶</a></h3>
+<p><strong>A filled circle.</strong> The simplest entity.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="n">Dot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">z_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+</span></code></pre></div>
+<ul>
+<li><strong>Anchors</strong>: <code>"center"</code></li>
+<li><strong><code>color=</code></strong> parameter (not <code>fill=</code>)</li>
+<li><code>inner_bounds()</code> returns inscribed square</li>
+</ul>
+<hr>
+<h3 id="5b-line">5b. Line<a class="headerlink" href="#5b-line" title="Permanent link">¶</a></h3>
+<p><strong>A line segment between two points.</strong> Implements the Pathable protocol.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="n">Line</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">z_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">cap</span><span class="o">=</span><span class="s2">"round"</span><span class="p">,</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>     <span class="n">start_cap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_cap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="n">Line</span><span class="o">.</span><span class="n">from_points</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</span></code></pre></div>
+<ul>
+<li><strong>Anchors</strong>: <code>"start"</code>, <code>"center"</code>, <code>"end"</code></li>
+<li><strong>Pathable</strong>: <code>line.point_at(t)</code> returns a point along the line</li>
+<li><strong>Properties</strong>: <code>line.start</code>, <code>line.end</code>, <code>line.length</code></li>
+<li><strong>Methods</strong>: <code>line.set_endpoints(start, end)</code>, <code>line.arc_length()</code>, <code>line.angle_at(t)</code>, <code>line.to_svg_path_d()</code></li>
+<li>Cap values: <code>"round"</code>, <code>"square"</code>, <code>"butt"</code>, <code>"arrow"</code>, <code>"arrow_in"</code></li>
+</ul>
+<hr>
+<h3 id="5c-curve">5c. Curve<a class="headerlink" href="#5c-curve" title="Permanent link">¶</a></h3>
+<p><strong>A quadratic Bezier curve.</strong> Implements the Pathable protocol.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="n">Curve</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">curvature</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">z_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>      <span class="n">cap</span><span class="o">=</span><span class="s2">"round"</span><span class="p">,</span> <span class="n">start_cap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_cap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="n">Curve</span><span class="o">.</span><span class="n">from_points</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">curvature</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</span></code></pre></div>
+<ul>
+<li><strong>Anchors</strong>: <code>"start"</code>, <code>"center"</code>, <code>"end"</code>, <code>"control"</code></li>
+<li><strong>Pathable</strong>: <code>curve.point_at(t)</code> returns a point along the Bezier curve</li>
+<li><strong>Curvature</strong>: 0 = straight, positive = bows left, negative = bows right, typical range -1 to 1</li>
+<li><strong>Properties</strong>: <code>curve.start</code>, <code>curve.end</code>, <code>curve.curvature</code>, <code>curve.control</code></li>
+<li><strong>Methods</strong>: <code>curve.arc_length()</code>, <code>curve.angle_at(t)</code>, <code>curve.to_svg_path_d()</code></li>
+</ul>
+<p>See <a href="../guide/05-paths-and-parametric/">Paths and Parametric Positioning</a> for Bezier curve techniques.</p>
+<hr>
+<h3 id="5d-ellipse">5d. Ellipse<a class="headerlink" href="#5d-ellipse" title="Permanent link">¶</a></h3>
+<p><strong>An ellipse (oval).</strong> Implements the Pathable protocol.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="n">Ellipse</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">rx</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">ry</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">stroke</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>        <span class="n">stroke_width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">z_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">fill_opacity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stroke_opacity</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="n">Ellipse</span><span class="o">.</span><span class="n">at_center</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">rx</span><span class="p">,</span> <span class="n">ry</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</span></code></pre></div>
+<ul>
+<li><strong>Anchors</strong>: <code>"center"</code>, <code>"right"</code>, <code>"top"</code>, <code>"left"</code>, <code>"bottom"</code></li>
+<li><strong>Pathable</strong>: <code>ellipse.point_at(t)</code> -- t=0 rightmost, t=0.25 top, t=0.5 left, t=0.75 bottom</li>
+<li><strong><code>fill=</code></strong> parameter (not <code>color=</code>)</li>
+<li><strong>Dual opacity</strong>: <code>fill_opacity</code> and <code>stroke_opacity</code> override <code>opacity</code></li>
+<li><strong>Methods</strong>: <code>point_at_angle(degrees)</code>, <code>arc_length()</code>, <code>angle_at(t)</code>, <code>to_svg_path_d()</code>, <code>inner_bounds()</code></li>
+</ul>
+<hr>
+<h3 id="5e-polygon">5e. Polygon<a class="headerlink" href="#5e-polygon" title="Permanent link">¶</a></h3>
+<p><strong>A closed polygon from vertices.</strong> Includes shape classmethods for common shapes.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="n">Polygon</span><span class="p">(</span><span class="n">vertices</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">stroke</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stroke_width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">z_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>        <span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">fill_opacity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stroke_opacity</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</span></code></pre></div>
+<ul>
+<li><strong>Anchors</strong>: <code>"center"</code> + <code>"v0"</code>, <code>"v1"</code>, <code>"v2"</code>, ...</li>
+<li><strong><code>fill=</code></strong> parameter (not <code>color=</code>)</li>
+<li><strong>Dual opacity</strong>: <code>fill_opacity</code> and <code>stroke_opacity</code></li>
+<li>Position is centroid of vertices</li>
+</ul>
+<div class="admonition info">
+<p class="admonition-title">See also</p>
+<p>For all shape classmethods and polygon techniques, see <a href="../guide/06-shapes-and-polygons/">Shapes and Polygons</a>.</p>
+</div>
+<h4 id="shape-classmethods">Shape Classmethods<a class="headerlink" href="#shape-classmethods" title="Permanent link">¶</a></h4>
+<p>All return <code>list[tuple[float, float]]</code> in relative coordinates (0-1), ready for <code>add_polygon()</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Polygon.triangle(size=1.0, center=(0.5, 0.5))</code></td>
+<td>Equilateral triangle (pointing up)</td>
+</tr>
+<tr>
+<td><code>Polygon.square(size=0.8, center=(0.5, 0.5))</code></td>
+<td>Axis-aligned square</td>
+</tr>
+<tr>
+<td><code>Polygon.diamond(size=0.8, center=(0.5, 0.5))</code></td>
+<td>Rotated square (45 degrees)</td>
+</tr>
+<tr>
+<td><code>Polygon.hexagon(size=0.8, center=(0.5, 0.5))</code></td>
+<td>Regular hexagon</td>
+</tr>
+<tr>
+<td><code>Polygon.star(points=5, size=0.8, inner_ratio=0.4, center=(0.5, 0.5))</code></td>
+<td>Star with N points</td>
+</tr>
+<tr>
+<td><code>Polygon.regular_polygon(sides, size=0.8, center=(0.5, 0.5))</code></td>
+<td>Regular N-gon</td>
+</tr>
+<tr>
+<td><code>Polygon.squircle(size=0.8, center=(0.5, 0.5), n=4, points=32)</code></td>
+<td>Superellipse (n=2 circle, n=4 squircle)</td>
+</tr>
+<tr>
+<td><code>Polygon.rounded_rect(size=0.8, center=(0.5, 0.5), corner_radius=0.2, points_per_corner=8)</code></td>
+<td>Rectangle with rounded corners</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="5f-rect">5f. Rect<a class="headerlink" href="#5f-rect" title="Permanent link">¶</a></h3>
+<p><strong>A rectangle with optional rotation.</strong></p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="n">Rect</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">stroke</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stroke_width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>     <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">z_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">fill_opacity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stroke_opacity</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="n">Rect</span><span class="o">.</span><span class="n">at_center</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</span></code></pre></div>
+<ul>
+<li><strong>Anchors</strong>: <code>"center"</code>, <code>"top_left"</code>, <code>"top_right"</code>, <code>"bottom_left"</code>, <code>"bottom_right"</code>, <code>"top"</code>, <code>"bottom"</code>, <code>"left"</code>, <code>"right"</code></li>
+<li><strong><code>fill=</code></strong> parameter (not <code>color=</code>)</li>
+<li><strong>Dual opacity</strong>: <code>fill_opacity</code> and <code>stroke_opacity</code></li>
+<li><code>x, y</code> is top-left corner; <code>Rect.at_center()</code> positions by center</li>
+<li>Rotation: stored as <code>rotation</code> attribute, emits SVG <code>transform="rotate()"</code></li>
+<li>Rotation-aware anchors (anchors account for rotation angle)</li>
+</ul>
+<hr>
+<h3 id="5g-text">5g. Text<a class="headerlink" href="#5g-text" title="Permanent link">¶</a></h3>
+<p><strong>A text label with rich formatting.</strong></p>
+<details class="note">
+<summary>Expand full constructor</summary>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="n">Text</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span>
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>     <span class="n">font_family</span><span class="o">=</span><span class="s2">"sans-serif"</span><span class="p">,</span> <span class="n">font_style</span><span class="o">=</span><span class="s2">"normal"</span><span class="p">,</span> <span class="n">font_weight</span><span class="o">=</span><span class="s2">"normal"</span><span class="p">,</span>
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>     <span class="n">bold</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">italic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">text_anchor</span><span class="o">=</span><span class="s2">"middle"</span><span class="p">,</span> <span class="n">baseline</span><span class="o">=</span><span class="s2">"middle"</span><span class="p">,</span>
+</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>     <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">z_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+</span></code></pre></div>
+</details>
+<ul>
+<li><strong>Anchors</strong>: <code>"center"</code></li>
+<li><strong><code>color=</code></strong> parameter</li>
+<li><strong>Sugar</strong>: <code>bold=True</code> sets <code>font_weight="bold"</code>, <code>italic=True</code> sets <code>font_style="italic"</code></li>
+<li><strong>Text alignment</strong>: <code>text_anchor</code> = <code>"start"</code> / <code>"middle"</code> / <code>"end"</code>, <code>baseline</code> = <code>"auto"</code> / <code>"middle"</code> / <code>"hanging"</code> / etc.</li>
+<li><strong>Rotation</strong>: <code>rotation</code> attribute, SVG <code>transform="rotate()"</code></li>
+<li><strong>Bounds</strong>: Uses Pillow for accurate font measurement; heuristic fallback</li>
+<li><strong>TextPath</strong>: <code>text.set_textpath(path_id, path_d, start_offset, text_length)</code> for warping along paths</li>
+</ul>
+<p>See <a href="../guide/07-text-and-typography/">Text and Typography</a> for text layout and textpath examples.</p>
+<hr>
+<h3 id="5h-path">5h. Path<a class="headerlink" href="#5h-path" title="Permanent link">¶</a></h3>
+<p><strong>Renders any Pathable as a smooth SVG path.</strong> Implements the Pathable protocol itself.</p>
+<details class="note">
+<summary>Expand full constructor</summary>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="n">Path</span><span class="p">(</span>
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>    <span class="n">pathable</span><span class="p">,</span>           <span class="c1"># Any object with point_at(t)</span>
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>    <span class="o">*</span><span class="p">,</span>
+</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>    <span class="n">segments</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>        <span class="c1"># Number of cubic Bezier segments</span>
+</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a>    <span class="n">closed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>       <span class="c1"># Close path smoothly (enables fill)</span>
+</span><span id="__span-23-6"><a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a>    <span class="n">start_t</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>        <span class="c1"># Start parameter (for arcs/sub-paths)</span>
+</span><span id="__span-23-7"><a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a>    <span class="n">end_t</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>          <span class="c1"># End parameter (for arcs/sub-paths)</span>
+</span><span id="__span-23-8"><a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a>    <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>            <span class="c1"># Stroke width</span>
+</span><span id="__span-23-9"><a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a>    <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span>      <span class="c1"># Stroke color</span>
+</span><span id="__span-23-10"><a id="__codelineno-23-10" name="__codelineno-23-10" href="#__codelineno-23-10"></a>    <span class="n">fill</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>          <span class="c1"># Fill color (only if closed)</span>
+</span><span id="__span-23-11"><a id="__codelineno-23-11" name="__codelineno-23-11" href="#__codelineno-23-11"></a>    <span class="n">z_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+</span><span id="__span-23-12"><a id="__codelineno-23-12" name="__codelineno-23-12" href="#__codelineno-23-12"></a>    <span class="n">cap</span><span class="o">=</span><span class="s2">"round"</span><span class="p">,</span>
+</span><span id="__span-23-13"><a id="__codelineno-23-13" name="__codelineno-23-13" href="#__codelineno-23-13"></a>    <span class="n">start_cap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-23-14"><a id="__codelineno-23-14" name="__codelineno-23-14" href="#__codelineno-23-14"></a>    <span class="n">end_cap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-23-15"><a id="__codelineno-23-15" name="__codelineno-23-15" href="#__codelineno-23-15"></a>    <span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+</span><span id="__span-23-16"><a id="__codelineno-23-16" name="__codelineno-23-16" href="#__codelineno-23-16"></a>    <span class="n">fill_opacity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-23-17"><a id="__codelineno-23-17" name="__codelineno-23-17" href="#__codelineno-23-17"></a>    <span class="n">stroke_opacity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-23-18"><a id="__codelineno-23-18" name="__codelineno-23-18" href="#__codelineno-23-18"></a><span class="p">)</span>
+</span></code></pre></div>
+</details>
+<ul>
+<li><strong>Anchors</strong>: <code>"start"</code>, <code>"center"</code>, <code>"end"</code></li>
+<li><strong>Pathable</strong>: <code>path.point_at(t)</code> evaluates the stored Bezier segments</li>
+<li><strong>Algorithm</strong>: Hermite interpolation to cubic Bezier fitting with C1 continuity</li>
+<li><strong>Sub-paths</strong>: Use <code>start_t</code>/<code>end_t</code> to render a portion of any path (e.g., quarter of an ellipse)</li>
+<li><strong>Methods</strong>: <code>arc_length()</code>, <code>angle_at(t)</code>, <code>to_svg_path_d()</code></li>
+</ul>
+<p>See <a href="../guide/05-paths-and-parametric/">Paths and Parametric Positioning</a> for path rendering techniques.</p>
+<hr>
+<h3 id="5i-entitygroup">5i. EntityGroup<a class="headerlink" href="#5i-entitygroup" title="Permanent link">¶</a></h3>
+<p><strong>A reusable composite entity.</strong> Children positioned relative to (0,0), rendered as SVG <code>&lt;g&gt;</code>.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="n">EntityGroup</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">z_index</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span></code></pre></div>
+<ul>
+<li><strong><code>group.add(entity)</code></strong>: Add child (positioned relative to local origin)</li>
+<li><strong><code>group.children</code></strong>: List of children (copy)</li>
+<li><strong><code>group._scale</code></strong>: Internal scale factor, modified by <code>scale()</code></li>
+<li><strong>Placement</strong>: <code>cell.place(group)</code> / <code>cell.add_entity(group)</code> -- centers in cell</li>
+<li><strong>Fitting</strong>: <code>group.fit_to_cell(fraction)</code> -- auto-scales to fit cell bounds</li>
+<li><strong>SVG</strong>: <code>&lt;g transform="translate(x,y) scale(s)"&gt;</code> -- children never mutated</li>
+<li><strong>Reuse</strong>: Wrap creation in a factory function; each call returns new instance</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">EntityGroup vs CellGroup</p>
+<p><code>EntityGroup</code> inherits <code>Entity</code> and is used for reusable composite shapes. <code>CellGroup</code> inherits <code>Surface</code> and represents merged multi-cell regions. They serve different purposes.</p>
+</div>
+<p>See <a href="../guide/08-transforms-and-layout/">Transforms and Layout</a> for EntityGroup composition patterns.</p>
+<hr>
+<h2 id="6-the-pathable-protocol">6. The Pathable Protocol<a class="headerlink" href="#6-the-pathable-protocol" title="Permanent link">¶</a></h2>
+<p>The <code>Pathable</code> protocol defines a single method:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">Pathable</span><span class="p">:</span>
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">point_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Point</span>
+</span></code></pre></div>
+<p>Where <code>t</code> ranges from 0.0 (start) to 1.0 (end). This enables the <code>along</code>/<code>t</code> parametric positioning system.</p>
+<div class="admonition info">
+<p class="admonition-title">See also</p>
+<p>For a deep dive into parametric positioning, see <a href="../guide/05-paths-and-parametric/">Paths and Parametric Positioning</a>.</p>
+</div>
+<h3 id="built-in-pathables">Built-in Pathables<a class="headerlink" href="#built-in-pathables" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Entity</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Line</code></td>
+<td>Linear interpolation start to end</td>
+</tr>
+<tr>
+<td><code>Curve</code></td>
+<td>Quadratic Bezier</td>
+</tr>
+<tr>
+<td><code>Ellipse</code></td>
+<td>Parametric ellipse (t=0 right, t=0.25 top, t=0.5 left, t=0.75 bottom)</td>
+</tr>
+<tr>
+<td><code>Path</code></td>
+<td>Evaluates stored cubic Bezier segments</td>
+</tr>
+<tr>
+<td><code>Connection</code></td>
+<td>Dynamic path between entities</td>
+</tr>
+</tbody>
+</table>
+<h3 id="optional-pathable-methods">Optional Pathable Methods<a class="headerlink" href="#optional-pathable-methods" title="Permanent link">¶</a></h3>
+<p>These methods enable additional features when present:</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Used By</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>arc_length()</code></td>
+<td><code>add_text(along=)</code></td>
+<td>Total path length for text sizing</td>
+</tr>
+<tr>
+<td><code>angle_at(t)</code></td>
+<td><code>get_angle_at()</code></td>
+<td>Tangent angle for alignment</td>
+</tr>
+<tr>
+<td><code>to_svg_path_d()</code></td>
+<td><code>add_text(along=)</code></td>
+<td>SVG path for <code>&lt;textPath&gt;</code> warping</td>
+</tr>
+</tbody>
+</table>
+<h3 id="custom-pathables">Custom Pathables<a class="headerlink" href="#custom-pathables" title="Permanent link">¶</a></h3>
+<p>Any object with <code>point_at(t: float) -&gt; Point</code> works:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">Wave</span><span class="p">:</span>
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">point_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+</span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">end</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+</span><span id="__span-26-4"><a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a>        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_y</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">amplitude</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequency</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+</span><span id="__span-26-5"><a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a>        <span class="k">return</span> <span class="n">Point</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</span></code></pre></div>
+<hr>
+<h2 id="7-connections">7. Connections<a class="headerlink" href="#7-connections" title="Permanent link">¶</a></h2>
+<p><strong>Links between entities</strong> that auto-update when entities move.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="n">Connection</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">start_anchor</span><span class="o">=</span><span class="s2">"center"</span><span class="p">,</span> <span class="n">end_anchor</span><span class="o">=</span><span class="s2">"center"</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</span></code></pre></div>
+<p>Or via the entity method:
+</p><div class="language-python highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="n">connection</span> <span class="o">=</span> <span class="n">entity1</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>    <span class="n">entity2</span><span class="p">,</span>
+</span><span id="__span-28-3"><a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a>    <span class="n">style</span><span class="o">=</span><span class="n">ConnectionStyle</span><span class="p">(</span><span class="o">...</span><span class="p">),</span>
+</span><span id="__span-28-4"><a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a>    <span class="n">start_anchor</span><span class="o">=</span><span class="s2">"center"</span><span class="p">,</span>
+</span><span id="__span-28-5"><a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a>    <span class="n">end_anchor</span><span class="o">=</span><span class="s2">"center"</span>
+</span><span id="__span-28-6"><a id="__codelineno-28-6" name="__codelineno-28-6" href="#__codelineno-28-6"></a><span class="p">)</span>
+</span></code></pre></div><p></p>
+<ul>
+<li><strong><code>style</code></strong> accepts <code>ConnectionStyle</code> or <code>dict</code> with <code>width</code>, <code>color</code>, <code>z_index</code>, <code>cap</code> keys</li>
+<li>Connections are rendered as lines between anchor points</li>
+<li>Added to scene via <code>scene.add(connection)</code> (entity.connect() does not auto-add)</li>
+<li>Support cap system (arrow, arrow_in, custom)</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Connections must be added to the scene</p>
+<p>Calling <code>entity.connect(other)</code> creates a <code>Connection</code> object but does <strong>not</strong> add it to the scene. You must call <code>scene.add(connection)</code> separately.</p>
+</div>
+<hr>
+<h2 id="8-transforms-and-fitting">8. Transforms and Fitting<a class="headerlink" href="#8-transforms-and-fitting" title="Permanent link">¶</a></h2>
+<div class="admonition info">
+<p class="admonition-title">See also</p>
+<p>For hands-on transform examples including <code>fit_to_cell</code> and <code>fit_within</code>, see <a href="../guide/08-transforms-and-layout/">Transforms and Layout</a>.</p>
+</div>
+<h3 id="entity-transforms">Entity Transforms<a class="headerlink" href="#entity-transforms" title="Permanent link">¶</a></h3>
+<p>All entities support:</p>
+<ul>
+<li><strong><code>rotate(angle, origin)</code></strong> -- Degrees counterclockwise. Default origin varies by entity type.</li>
+<li><strong><code>scale(factor, origin)</code></strong> -- 2.0 = double size. Scales both geometry and position.</li>
+</ul>
+<p>Each entity type handles transforms appropriately:</p>
+<ul>
+<li><strong>Dot</strong>: Scales radius</li>
+<li><strong>Line/Curve</strong>: Rotates/scales both endpoints</li>
+<li><strong>Ellipse</strong>: Scales radii, updates intrinsic rotation</li>
+<li><strong>Polygon</strong>: Transforms all vertices</li>
+<li><strong>Text</strong>: Scales font_size</li>
+<li><strong>Path</strong>: Transforms all Bezier control points</li>
+<li><strong>EntityGroup</strong>: Accumulates internal <code>_scale</code> factor</li>
+</ul>
+<h3 id="fit_to_cellscale10-recentertrue-atnone"><code>fit_to_cell(scale=1.0, recenter=True, *, at=None)</code><a class="headerlink" href="#fit_to_cellscale10-recentertrue-atnone" title="Permanent link">¶</a></h3>
+<p>Auto-scales and positions any entity to fit within its containing cell.</p>
+<ul>
+<li><strong><code>scale</code></strong>: Fraction of cell to fill (0.0-1.0). Default 1.0 fills entire cell.</li>
+<li><strong><code>recenter</code></strong>: If True, centers in cell after scaling.</li>
+<li><strong><code>at=(rx, ry)</code></strong>: Position-aware mode. Entity is placed at relative position within cell, with available space constrained by nearest edges.</li>
+</ul>
+<h3 id="fit_withintarget-scale10-recentertrue-atnone"><code>fit_within(target, scale=1.0, recenter=True, *, at=None)</code><a class="headerlink" href="#fit_withintarget-scale10-recentertrue-atnone" title="Permanent link">¶</a></h3>
+<p>Same concept, but fits within another entity's <code>inner_bounds()</code> instead of the cell.</p>
+<hr>
+<h2 id="9-color-and-styling">9. Color and Styling<a class="headerlink" href="#9-color-and-styling" title="Permanent link">¶</a></h2>
+<div class="admonition info">
+<p class="admonition-title">See also</p>
+<p>For creative styling techniques and palette usage, see <a href="../guide/04-colors-styles-palettes/">Colors, Styles, and Palettes</a>.</p>
+</div>
+<h3 id="the-color-parameter-split">The Color Parameter Split<a class="headerlink" href="#the-color-parameter-split" title="Permanent link">¶</a></h3>
+<div class="admonition danger">
+<p class="admonition-title">Critical API distinction: <code>fill=</code> vs <code>color=</code></p>
+<p>This is the most common source of errors. Using the wrong parameter will raise a <code>TypeError</code>.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Used by</th>
+<th>Entity property</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><code>color=</code></strong></td>
+<td>Dot, Line, Curve, Text, add_dot, add_line, add_curve, add_text, add_fill, add_border, all style classes</td>
+<td><code>.color</code></td>
+</tr>
+<tr>
+<td><strong><code>fill=</code></strong></td>
+<td>Rect, Ellipse, Polygon, add_rect, add_ellipse, add_polygon, Path (for closed paths)</td>
+<td><code>.fill</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>ShapeStyle.color</code> maps to <code>fill=</code> when applied to shapes.</p>
+<h3 id="color-formats">Color Formats<a class="headerlink" href="#color-formats" title="Permanent link">¶</a></h3>
+<p>The <code>Color</code> utility accepts:</p>
+<ul>
+<li><strong>Named colors</strong>: <code>"red"</code>, <code>"coral"</code>, <code>"navy"</code>, etc.</li>
+<li><strong>Hex</strong>: <code>"#ff0000"</code>, <code>"#f00"</code>, <code>"#FF0000"</code></li>
+<li><strong>RGB tuple</strong>: <code>(255, 0, 0)</code></li>
+</ul>
+<h3 id="opacity-system">Opacity System<a class="headerlink" href="#opacity-system" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong><code>opacity</code></strong> on every entity and style: 0.0 (transparent) to 1.0 (opaque). Default 1.0 emits no SVG attribute.</li>
+<li><strong><code>fill_opacity</code> / <code>stroke_opacity</code></strong> on shapes (Rect, Ellipse, Polygon, Path, ShapeStyle): optional overrides for independent control.</li>
+<li>Simple entities (Dot, Line, Curve, Text, Connection): SVG <code>opacity</code> attribute.</li>
+<li>Shapes: SVG <code>fill-opacity</code> + <code>stroke-opacity</code> attributes.</li>
+</ul>
+<h3 id="style-classes">Style Classes<a class="headerlink" href="#style-classes" title="Permanent link">¶</a></h3>
+<p>7 immutable dataclasses with <code>.with_*()</code> builder methods:</p>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>For</th>
+<th>Key Fields</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DotStyle</code></td>
+<td><code>add_dot()</code></td>
+<td><code>radius</code>, <code>color</code>, <code>z_index</code>, <code>opacity</code></td>
+</tr>
+<tr>
+<td><code>LineStyle</code></td>
+<td><code>add_line()</code>, <code>add_diagonal()</code>, <code>add_curve()</code>, <code>add_path()</code></td>
+<td><code>width</code>, <code>color</code>, <code>z_index</code>, <code>cap</code>, <code>start_cap</code>, <code>end_cap</code>, <code>opacity</code></td>
+</tr>
+<tr>
+<td><code>FillStyle</code></td>
+<td><code>add_fill()</code></td>
+<td><code>color</code>, <code>opacity</code>, <code>z_index</code></td>
+</tr>
+<tr>
+<td><code>BorderStyle</code></td>
+<td><code>add_border()</code></td>
+<td><code>width</code>, <code>color</code>, <code>z_index</code>, <code>opacity</code></td>
+</tr>
+<tr>
+<td><code>ShapeStyle</code></td>
+<td><code>add_ellipse()</code>, <code>add_polygon()</code>, <code>add_rect()</code></td>
+<td><code>color</code>, <code>stroke</code>, <code>stroke_width</code>, <code>z_index</code>, <code>opacity</code>, <code>fill_opacity</code>, <code>stroke_opacity</code></td>
+</tr>
+<tr>
+<td><code>TextStyle</code></td>
+<td><code>add_text()</code></td>
+<td><code>font_size</code>, <code>color</code>, <code>font_family</code>, <code>bold</code>, <code>italic</code>, <code>text_anchor</code>, <code>baseline</code>, <code>rotation</code>, <code>z_index</code>, <code>opacity</code></td>
+</tr>
+<tr>
+<td><code>ConnectionStyle</code></td>
+<td><code>Connection</code>, <code>entity.connect()</code></td>
+<td><code>width</code>, <code>color</code>, <code>z_index</code>, <code>cap</code>, <code>start_cap</code>, <code>end_cap</code>, <code>opacity</code></td>
+</tr>
+</tbody>
+</table>
+<p>Example builder pattern:
+</p><div class="language-python highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="n">base_style</span> <span class="o">=</span> <span class="n">LineStyle</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"coral"</span><span class="p">)</span>
+</span><span id="__span-29-2"><a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="n">thick_style</span> <span class="o">=</span> <span class="n">base_style</span><span class="o">.</span><span class="n">with_width</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</span><span id="__span-29-3"><a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a><span class="n">arrow_style</span> <span class="o">=</span> <span class="n">base_style</span><span class="o">.</span><span class="n">with_end_cap</span><span class="p">(</span><span class="s2">"arrow"</span><span class="p">)</span>
+</span></code></pre></div><p></p>
+<h3 id="palettes">Palettes<a class="headerlink" href="#palettes" title="Permanent link">¶</a></h3>
+<p>8 pre-built color palettes with 6 named colors each:</p>
+<table>
+<thead>
+<tr>
+<th>Palette</th>
+<th>Background</th>
+<th>Vibe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Palette.midnight()</code></td>
+<td><code>#1a1a2e</code></td>
+<td>Dark blue with coral accent</td>
+</tr>
+<tr>
+<td><code>Palette.sunset()</code></td>
+<td><code>#2d1b4e</code></td>
+<td>Warm oranges and purples</td>
+</tr>
+<tr>
+<td><code>Palette.ocean()</code></td>
+<td><code>#0a1628</code></td>
+<td>Cool blues and teals</td>
+</tr>
+<tr>
+<td><code>Palette.forest()</code></td>
+<td><code>#1a2e1a</code></td>
+<td>Natural greens and earth</td>
+</tr>
+<tr>
+<td><code>Palette.monochrome()</code></td>
+<td><code>#0a0a0a</code></td>
+<td>Black, white, grays</td>
+</tr>
+<tr>
+<td><code>Palette.paper()</code></td>
+<td><code>#fafafa</code></td>
+<td>Light, clean, minimalist</td>
+</tr>
+<tr>
+<td><code>Palette.neon()</code></td>
+<td><code>#0d0d0d</code></td>
+<td>Vibrant neon electric</td>
+</tr>
+<tr>
+<td><code>Palette.pastel()</code></td>
+<td><code>#fef6e4</code></td>
+<td>Soft, gentle pastels</td>
+</tr>
+</tbody>
+</table>
+<p>Named colors: <code>background</code>, <code>primary</code>, <code>secondary</code>, <code>accent</code>, <code>line</code>, <code>grid</code>.</p>
+<p>Methods: <code>with_background(color)</code>, <code>inverted()</code>, <code>all_colors()</code>, iteration.</p>
+<hr>
+<h2 id="10-cap-system">10. Cap System<a class="headerlink" href="#10-cap-system" title="Permanent link">¶</a></h2>
+<p>Line/Curve/Connection endpoints support custom caps:</p>
+<table>
+<thead>
+<tr>
+<th>Built-in Cap</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"round"</code></td>
+<td>Standard SVG round cap</td>
+</tr>
+<tr>
+<td><code>"square"</code></td>
+<td>SVG square cap</td>
+</tr>
+<tr>
+<td><code>"butt"</code></td>
+<td>SVG butt cap (flat)</td>
+</tr>
+<tr>
+<td><code>"arrow"</code></td>
+<td>Arrowhead marker at endpoint</td>
+</tr>
+<tr>
+<td><code>"arrow_in"</code></td>
+<td>Inward-pointing arrowhead</td>
+</tr>
+</tbody>
+</table>
+<p>Per-end caps: <code>start_cap</code> and <code>end_cap</code> override the base <code>cap</code>:
+</p><div class="language-python highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="n">cell</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="s2">"left"</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">"right"</span><span class="p">,</span> <span class="n">cap</span><span class="o">=</span><span class="s2">"round"</span><span class="p">,</span> <span class="n">end_cap</span><span class="o">=</span><span class="s2">"arrow"</span><span class="p">)</span>
+</span></code></pre></div><p></p>
+<p>Custom caps via registry:
+</p><div class="language-python highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pyfreeform</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_cap</span>
+</span><span id="__span-31-2"><a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a><span class="n">register_cap</span><span class="p">(</span><span class="s2">"diamond"</span><span class="p">,</span> <span class="n">my_diamond_generator</span><span class="p">)</span>
+</span></code></pre></div><p></p>
+<hr>
+<h2 id="11-the-point-type">11. The Point Type<a class="headerlink" href="#11-the-point-type" title="Permanent link">¶</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pyfreeform</span><span class="w"> </span><span class="kn">import</span> <span class="n">Point</span>
+</span></code></pre></div>
+<p><code>Point</code> is a <code>NamedTuple</code> with <code>x</code> and <code>y</code> fields. Subscriptable: <code>point[0]</code>, <code>point[1]</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Point(x, y)</code></td>
+<td>Create a point</td>
+</tr>
+<tr>
+<td><code>point.x</code>, <code>point.y</code></td>
+<td>Access coordinates</td>
+</tr>
+<tr>
+<td><code>point[0]</code>, <code>point[1]</code></td>
+<td>Subscript access</td>
+</tr>
+<tr>
+<td><code>point.distance_to(other)</code></td>
+<td>Euclidean distance</td>
+</tr>
+<tr>
+<td><code>point.midpoint(other)</code></td>
+<td>Midpoint between two points</td>
+</tr>
+<tr>
+<td><code>point.lerp(other, t)</code></td>
+<td>Linear interpolation</td>
+</tr>
+<tr>
+<td><code>point + Point(dx, dy)</code></td>
+<td>Addition</td>
+</tr>
+<tr>
+<td><code>point - Point(dx, dy)</code></td>
+<td>Subtraction</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="12-image-processing">12. Image Processing<a class="headerlink" href="#12-image-processing" title="Permanent link">¶</a></h2>
+<h3 id="image-class">Image Class<a class="headerlink" href="#image-class" title="Permanent link">¶</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pyfreeform</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+</span><span id="__span-33-2"><a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a><span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">"photo.jpg"</span><span class="p">)</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Method/Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Image.load(path)</code></td>
+<td>Load from file</td>
+</tr>
+<tr>
+<td><code>Image.from_pil(pil_image)</code></td>
+<td>Create from PIL Image</td>
+</tr>
+<tr>
+<td><code>image.width</code>, <code>image.height</code></td>
+<td>Dimensions</td>
+</tr>
+<tr>
+<td><code>image.has_alpha</code></td>
+<td>Whether image has alpha channel</td>
+</tr>
+<tr>
+<td><code>image["brightness"]</code></td>
+<td>Get brightness Layer</td>
+</tr>
+<tr>
+<td><code>image["red"]</code>, <code>["green"]</code>, <code>["blue"]</code>, <code>["alpha"]</code></td>
+<td>Channel layers</td>
+</tr>
+<tr>
+<td><code>image.rgb_at(x, y)</code></td>
+<td>RGB at pixel position</td>
+</tr>
+<tr>
+<td><code>image.hex_at(x, y)</code></td>
+<td>Hex color at pixel position</td>
+</tr>
+<tr>
+<td><code>image.resize(width, height)</code></td>
+<td>Resize image</td>
+</tr>
+<tr>
+<td><code>image.fit(max_dim)</code></td>
+<td>Fit within max dimension</td>
+</tr>
+<tr>
+<td><code>image.quantize(levels)</code></td>
+<td>Reduce to N levels</td>
+</tr>
+<tr>
+<td><code>image.downscale(factor)</code></td>
+<td>Downscale by factor</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition info">
+<p class="admonition-title">See also</p>
+<p>For image-to-art workflows, see <a href="../recipes/01-image-to-art/">Image to Art</a>.</p>
+</div>
+<h3 id="layer-class">Layer Class<a class="headerlink" href="#layer-class" title="Permanent link">¶</a></h3>
+<p>A single-channel grayscale array (used for brightness, individual color channels, etc.):</p>
+<table>
+<thead>
+<tr>
+<th>Property/Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>layer.width</code>, <code>layer.height</code></td>
+<td>Dimensions</td>
+</tr>
+<tr>
+<td><code>layer[x, y]</code></td>
+<td>Value at position (0-255)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="13-utility-functions">13. Utility Functions<a class="headerlink" href="#13-utility-functions" title="Permanent link">¶</a></h2>
+<h3 id="map_rangevalue-in_min0-in_max1-out_min0-out_max1-clampfalse"><code>map_range(value, in_min=0, in_max=1, out_min=0, out_max=1, clamp=False)</code><a class="headerlink" href="#map_rangevalue-in_min0-in_max1-out_min0-out_max1-clampfalse" title="Permanent link">¶</a></h3>
+<p>Map a value from one range to another. Convenience for creative coding.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pyfreeform</span><span class="w"> </span><span class="kn">import</span> <span class="n">map_range</span>
+</span><span id="__span-34-2"><a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a>
+</span><span id="__span-34-3"><a id="__codelineno-34-3" name="__codelineno-34-3" href="#__codelineno-34-3"></a><span class="n">rotation</span> <span class="o">=</span> <span class="n">map_range</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">brightness</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">360</span><span class="p">)</span>
+</span><span id="__span-34-4"><a id="__codelineno-34-4" name="__codelineno-34-4" href="#__codelineno-34-4"></a><span class="n">radius</span> <span class="o">=</span> <span class="n">map_range</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">brightness</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="get_angle_atpathable-t"><code>get_angle_at(pathable, t)</code><a class="headerlink" href="#get_angle_atpathable-t" title="Permanent link">¶</a></h3>
+<p>Compute the tangent angle at parameter <code>t</code> on a Pathable. Used internally by the <code>align</code> system.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pyfreeform</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_angle_at</span>
+</span><span id="__span-35-2"><a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a><span class="n">angle</span> <span class="o">=</span> <span class="n">get_angle_at</span><span class="p">(</span><span class="n">curve</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># Angle in degrees at midpoint</span>
+</span></code></pre></div>
+<h3 id="displayscene_or_svg"><code>display(scene_or_svg)</code><a class="headerlink" href="#displayscene_or_svg" title="Permanent link">¶</a></h3>
+<p>Display an SVG in the current environment (Jupyter notebook, etc.).</p>
+<hr>
+<h2 id="14-relationship-map">14. Relationship Map<a class="headerlink" href="#14-relationship-map" title="Permanent link">¶</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>Scene ──has──&gt; Grid ──has──&gt; Cell (Surface)
+</span><span id="__span-36-2"><a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>  |              |              |
+</span><span id="__span-36-3"><a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a>  | (Surface)    | selections   | builder methods
+</span><span id="__span-36-4"><a id="__codelineno-36-4" name="__codelineno-36-4" href="#__codelineno-36-4"></a>  | add_*()      | .where()     | add_dot(), add_line(), ...
+</span><span id="__span-36-5"><a id="__codelineno-36-5" name="__codelineno-36-5" href="#__codelineno-36-5"></a>  |              | .border()    |
+</span><span id="__span-36-6"><a id="__codelineno-36-6" name="__codelineno-36-6" href="#__codelineno-36-6"></a>  |              | .merge() ──&gt; CellGroup (Surface)
+</span><span id="__span-36-7"><a id="__codelineno-36-7" name="__codelineno-36-7" href="#__codelineno-36-7"></a>  |              |
+</span><span id="__span-36-8"><a id="__codelineno-36-8" name="__codelineno-36-8" href="#__codelineno-36-8"></a>  | add()        | from_image() loads Image
+</span><span id="__span-36-9"><a id="__codelineno-36-9" name="__codelineno-36-9" href="#__codelineno-36-9"></a>  v              v
+</span><span id="__span-36-10"><a id="__codelineno-36-10" name="__codelineno-36-10" href="#__codelineno-36-10"></a>Entity &lt;── Dot, Line, Curve, Ellipse, Polygon, Rect, Text, Path, EntityGroup
+</span><span id="__span-36-11"><a id="__codelineno-36-11" name="__codelineno-36-11" href="#__codelineno-36-11"></a>  |
+</span><span id="__span-36-12"><a id="__codelineno-36-12" name="__codelineno-36-12" href="#__codelineno-36-12"></a>  | connect()
+</span><span id="__span-36-13"><a id="__codelineno-36-13" name="__codelineno-36-13" href="#__codelineno-36-13"></a>  v
+</span><span id="__span-36-14"><a id="__codelineno-36-14" name="__codelineno-36-14" href="#__codelineno-36-14"></a>Connection
+</span><span id="__span-36-15"><a id="__codelineno-36-15" name="__codelineno-36-15" href="#__codelineno-36-15"></a>  |
+</span><span id="__span-36-16"><a id="__codelineno-36-16" name="__codelineno-36-16" href="#__codelineno-36-16"></a>  | Pathable protocol: point_at(t)
+</span><span id="__span-36-17"><a id="__codelineno-36-17" name="__codelineno-36-17" href="#__codelineno-36-17"></a>  v
+</span><span id="__span-36-18"><a id="__codelineno-36-18" name="__codelineno-36-18" href="#__codelineno-36-18"></a>Line, Curve, Ellipse, Path, Connection  &lt;── any custom class with point_at(t)
+</span></code></pre></div>
+<h3 id="key-design-principles">Key Design Principles<a class="headerlink" href="#key-design-principles" title="Permanent link">¶</a></h3>
+<ol>
+<li><strong>Surface protocol</strong>: Cell, Scene, CellGroup all share identical <code>add_*</code> methods</li>
+<li><strong>Pathable protocol</strong>: Position anything along anything with <code>along</code>/<code>t</code></li>
+<li><strong><code>fill=</code> vs <code>color=</code></strong>: Shapes use <code>fill</code>, everything else uses <code>color</code></li>
+<li><strong>Immutable styles</strong>: Style classes with <code>.with_*()</code> builder methods</li>
+<li><strong>z_index layering</strong>: Higher values render on top, same values preserve add-order</li>
+<li><strong>Everything returns self</strong>: Transform methods chain: <code>entity.rotate(45).scale(0.5).move_by(10, 0)</code></li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.top", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "content.tabs.link", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>

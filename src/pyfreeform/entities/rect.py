@@ -6,7 +6,7 @@ import math
 
 from ..color import Color
 from ..core.entity import Entity
-from ..core.point import Point
+from ..core.coord import Coord, CoordLike
 
 
 class Rect(Entity):
@@ -83,7 +83,7 @@ class Rect(Entity):
     @classmethod
     def at_center(
         cls,
-        center: Point | tuple[float, float],
+        center: CoordLike,
         width: float = 10,
         height: float = 10,
         rotation: float = 0,
@@ -99,7 +99,7 @@ class Rect(Entity):
         Create a rectangle positioned by its center.
 
         Args:
-            center: Center position as Point or (x, y) tuple.
+            center: Center position as Coord or (x, y) tuple.
             width: Rectangle width.
             height: Rectangle height.
             rotation: Rotation in degrees.
@@ -115,7 +115,7 @@ class Rect(Entity):
             A new Rect entity.
         """
         if isinstance(center, tuple):
-            center = Point(*center)
+            center = Coord(*center)
         return cls(
             center.x - width / 2, center.y - height / 2,
             width, height, fill=fill, stroke=stroke,
@@ -125,9 +125,9 @@ class Rect(Entity):
         )
 
     @property
-    def _center(self) -> Point:
+    def _center(self) -> Coord:
         """Center of the rectangle (computed from top-left + dimensions)."""
-        return Point(self.x + self.width / 2, self.y + self.height / 2)
+        return Coord(self.x + self.width / 2, self.y + self.height / 2)
 
     @property
     def fill(self) -> str | None:
@@ -156,21 +156,21 @@ class Rect(Entity):
             "top", "bottom", "left", "right",
         ]
 
-    def anchor(self, name: str = "center") -> Point:
+    def anchor(self, name: str = "center") -> Coord:
         """Get anchor point by name (rotation-aware)."""
         x, y = self.x, self.y
         w, h = self.width, self.height
 
         anchors = {
-            "center": Point(x + w / 2, y + h / 2),
-            "top_left": Point(x, y),
-            "top_right": Point(x + w, y),
-            "bottom_left": Point(x, y + h),
-            "bottom_right": Point(x + w, y + h),
-            "top": Point(x + w / 2, y),
-            "bottom": Point(x + w / 2, y + h),
-            "left": Point(x, y + h / 2),
-            "right": Point(x + w, y + h / 2),
+            "center": Coord(x + w / 2, y + h / 2),
+            "top_left": Coord(x, y),
+            "top_right": Coord(x + w, y),
+            "bottom_left": Coord(x, y + h),
+            "bottom_right": Coord(x + w, y + h),
+            "top": Coord(x + w / 2, y),
+            "bottom": Coord(x + w / 2, y + h),
+            "left": Coord(x, y + h / 2),
+            "right": Coord(x + w, y + h / 2),
         }
 
         if name not in anchors:
@@ -186,7 +186,7 @@ class Rect(Entity):
 
         return point
 
-    def rotate(self, angle: float, origin: Point | tuple[float, float] | None = None) -> Rect:
+    def rotate(self, angle: float, origin: CoordLike | None = None) -> Rect:
         """
         Rotate the rectangle around a point.
 
@@ -203,7 +203,7 @@ class Rect(Entity):
         else:
             # Rotate position around external origin
             if isinstance(origin, tuple):
-                origin = Point(*origin)
+                origin = Coord(*origin)
 
             angle_rad = math.radians(angle)
             cos_a = math.cos(angle_rad)
@@ -217,14 +217,14 @@ class Rect(Entity):
             new_cy = dx * sin_a + dy * cos_a + origin.y
 
             # Update position (top-left) from new center
-            self._position = Point(new_cx - self.width / 2, new_cy - self.height / 2)
+            self._position = Coord(new_cx - self.width / 2, new_cy - self.height / 2)
 
             # Also update intrinsic rotation
             self.rotation = (self.rotation + angle) % 360
 
         return self
 
-    def scale(self, factor: float, origin: Point | tuple[float, float] | None = None) -> Rect:
+    def scale(self, factor: float, origin: CoordLike | None = None) -> Rect:
         """
         Scale the rectangle around a point.
 
@@ -242,13 +242,13 @@ class Rect(Entity):
 
         if origin is not None:
             if isinstance(origin, tuple):
-                origin = Point(*origin)
+                origin = Coord(*origin)
             new_cx = origin.x + (old_center.x - origin.x) * factor
             new_cy = origin.y + (old_center.y - origin.y) * factor
-            self._position = Point(new_cx - self.width / 2, new_cy - self.height / 2)
+            self._position = Coord(new_cx - self.width / 2, new_cy - self.height / 2)
         else:
             # Keep center fixed
-            self._position = Point(old_center.x - self.width / 2, old_center.y - self.height / 2)
+            self._position = Coord(old_center.x - self.width / 2, old_center.y - self.height / 2)
 
         return self
 

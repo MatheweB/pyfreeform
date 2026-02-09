@@ -1,0 +1,115 @@
+site_name: PyFreeform
+site_description: Turn images into art with Python
+site_url: https://pyfreeform.github.io/pyfreeform/
+repo_url: https://github.com/pyfreeform/pyfreeform
+repo_name: pyfreeform/pyfreeform
+
+docs_dir: wiki_v2
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Inter
+    code: JetBrains Mono
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - toc.follow
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search
+  - glightbox:
+      touchNavigation: true
+      loop: false
+      effect: zoom
+      slide_effect: slide
+      width: 100%
+      height: auto
+      zoomable: true
+      draggable: true
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.mark
+  - pymdownx.keys
+  - attr_list
+  - md_in_html
+  - def_list
+  - footnotes
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 3
+
+extra_css:
+  - _css/custom.css
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - getting-started/index.md
+    - Installation: getting-started/01-installation.md
+    - Your First Artwork: getting-started/02-your-first-artwork.md
+    - How PyFreeform Works: getting-started/03-how-it-works.md
+  - Guide:
+    - guide/index.md
+    - Scenes & Grids: guide/01-scenes-and-grids.md
+    - Working with Cells: guide/02-working-with-cells.md
+    - Drawing with Entities: guide/03-drawing-with-entities.md
+    - Colors, Styles & Palettes: guide/04-colors-styles-palettes.md
+    - Paths & Parametric Positioning: guide/05-paths-and-parametric.md
+    - Shapes & Polygons: guide/06-shapes-and-polygons.md
+    - Text & Typography: guide/07-text-and-typography.md
+    - Transforms & Layout: guide/08-transforms-and-layout.md
+    - Connections & Anchors: guide/09-connections-and-anchors.md
+  - Recipes:
+    - recipes/index.md
+    - Image-to-Art Portraits: recipes/01-image-to-art.md
+    - Geometric Patterns: recipes/02-geometric-patterns.md
+    - Flowing Curves & Waves: recipes/03-flowing-curves.md
+    - Connected Networks: recipes/04-connected-networks.md
+    - Typographic Art: recipes/05-typographic-art.md
+    - Advanced Compositions: recipes/06-advanced-compositions.md
+  - API Surface: api-surface/index.md
+  - Developer Guide:
+    - developer-guide/index.md
+    - Architecture Overview: developer-guide/01-architecture.md
+    - Creating Custom Entities: developer-guide/02-creating-entities.md
+    - The Pathable Protocol: developer-guide/03-pathable-protocol.md
+  - Gallery: gallery/index.md

@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING, Any
 
-from .point import Point
+from .coord import Coord, CoordLike
 from .stroked_path_mixin import StrokedPathMixin
 
 if TYPE_CHECKING:
@@ -32,10 +32,10 @@ class Connection(StrokedPathMixin):
         >>> dot2 = Dot(200, 200)
         >>> conn = dot1.connect(dot2, style={"width": 2, "color": "red"})
         >>> conn.start_point  # Always current position
-        Point(100, 100)
+        Coord(100, 100)
         >>> dot1.move_to(150, 150)
         >>> conn.start_point  # Updated automatically
-        Point(150, 150)
+        Coord(150, 150)
     """
     
     DEFAULT_STYLE = {
@@ -100,12 +100,12 @@ class Connection(StrokedPathMixin):
         return self._end_anchor
     
     @property
-    def start_point(self) -> Point:
+    def start_point(self) -> Coord:
         """Current position of the start anchor (always up-to-date)."""
         return self._start.anchor(self._start_anchor)
     
     @property
-    def end_point(self) -> Point:
+    def end_point(self) -> Coord:
         """Current position of the end anchor (always up-to-date)."""
         return self._end.anchor(self._end_anchor)
     
@@ -165,7 +165,7 @@ class Connection(StrokedPathMixin):
     def opacity(self, value: float) -> None:
         self._style["opacity"] = value
 
-    def point_at(self, t: float) -> Point:
+    def point_at(self, t: float) -> Coord:
         """
         Get a point along the connection.
         
@@ -173,7 +173,7 @@ class Connection(StrokedPathMixin):
             t: Parameter from 0 (start) to 1 (end).
         
         Returns:
-            Point at that position along the connection.
+            Coord at that position along the connection.
         """
         return self.start_point.lerp(self.end_point, t)
 

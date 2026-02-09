@@ -8,7 +8,7 @@ from PIL import ImageFont
 
 from ..color import Color
 from ..core.entity import Entity
-from ..core.point import Point
+from ..core.coord import Coord, CoordLike
 
 # ---------------------------------------------------------------------------
 # Font measurement via Pillow
@@ -205,7 +205,7 @@ class Text(Entity):
         """Available anchors: just 'center' for text."""
         return ["center"]
 
-    def anchor(self, name: str = "center") -> Point:
+    def anchor(self, name: str = "center") -> Coord:
         """Get anchor point by name."""
         if name == "center":
             return self.position
@@ -245,7 +245,7 @@ class Text(Entity):
             self.y + y_offset + text_height,
         )
 
-    def rotate(self, angle: float, origin: Point | tuple[float, float] | None = None) -> Text:
+    def rotate(self, angle: float, origin: CoordLike | None = None) -> Text:
         """
         Rotate the text around a point.
 
@@ -262,13 +262,13 @@ class Text(Entity):
         # If origin is specified and different from position, also move the position
         if origin is not None:
             if isinstance(origin, tuple):
-                origin = Point(*origin)
+                origin = Coord(*origin)
             if origin != self.position:
                 super().rotate(angle, origin)
 
         return self
 
-    def scale(self, factor: float, origin: Point | tuple[float, float] | None = None) -> Text:
+    def scale(self, factor: float, origin: CoordLike | None = None) -> Text:
         """
         Scale the text (changes font size and optionally position).
 

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Iterator, Callable
 
-from ..core.point import Point
+from ..core.coord import Coord
 from .cell import Cell
 from .cell_group import CellGroup
 
@@ -65,7 +65,7 @@ class Grid:
         self._rows = rows
         self._cell_width = cell_width or cell_size or 10
         self._cell_height = cell_height or cell_size or 10
-        self._origin = Point(*origin)
+        self._origin = Coord(*origin)
         self._source_image: Image | None = None
 
         # Create cells
@@ -208,7 +208,7 @@ class Grid:
         return self._rows * self._cell_height
     
     @property
-    def origin(self) -> Point:
+    def origin(self) -> Coord:
         """Top-left corner of the grid."""
         return self._origin
 
