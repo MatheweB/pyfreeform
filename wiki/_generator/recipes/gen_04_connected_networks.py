@@ -2,7 +2,7 @@
 
 import math
 
-from pyfreeform import Scene, Palette, ConnectionStyle
+from pyfreeform import Scene, Palette, Line, ConnectionStyle
 
 from wiki._generator import save, sample_image
 
@@ -30,7 +30,7 @@ def generate():
         for dr, dc in [(0, 1), (1, 0)]:
             key = (r + dr, c + dc)
             if key in dots:
-                conn = dot.connect(dots[key], style=conn_style)
+                conn = dot.connect(dots[key], shape=Line(), style=conn_style)
                 scene.add(conn)
     save(scene, "recipes/network-bright-dots.svg")
 
@@ -57,7 +57,7 @@ def generate():
                     color=colors.secondary,
                     opacity=opacity,
                 )
-                conn = dots[key1].connect(dots[key2], style=style)
+                conn = dots[key1].connect(dots[key2], shape=Line(), style=style)
                 scene.add(conn)
     save(scene, "recipes/network-distance.svg")
 
@@ -78,7 +78,7 @@ def generate():
         for dr, dc in [(0, 2), (2, 0)]:
             key = (r + dr, c + dc)
             if key in dots:
-                conn = dot.connect(dots[key], style=arrow_style)
+                conn = dot.connect(dots[key], shape=Line(), style=arrow_style)
                 scene.add(conn)
     save(scene, "recipes/network-arrows.svg")
 
@@ -108,6 +108,6 @@ def generate():
         for dr, dc in [(0, 1), (1, 0), (1, 1)]:
             key = (r + dr, c + dc)
             if key in dots:
-                conn = dot.connect(dots[key], style=conn_style)
+                conn = dot.connect(dots[key], shape=Line(), style=conn_style)
                 scene.add(conn)
     save(scene, "recipes/network-overlay.svg")

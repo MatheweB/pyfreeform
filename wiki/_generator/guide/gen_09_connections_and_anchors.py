@@ -4,7 +4,7 @@ import math
 import random
 
 from pyfreeform import (
-    Scene, Palette, Dot, Rect, Polygon, Ellipse, Line, Text,
+    Scene, Palette, Dot, Rect, Polygon, Ellipse, Line, Curve, Path, Text,
     Connection, ConnectionStyle, Coord,
 )
 
@@ -21,7 +21,7 @@ def generate():
     d1 = Dot(50, 50, radius=10, color=colors.primary)
     d2 = Dot(250, 50, radius=10, color=colors.secondary)
     scene.add(d1, d2)
-    conn = d1.connect(d2, style=ConnectionStyle(width=2, color=colors.line))
+    conn = d1.connect(d2, shape=Line(), style=ConnectionStyle(width=2, color=colors.line))
     scene.add(conn)
     # Labels
     scene.add(Text(50, 85, "dot1", font_size=10, color="#aaaacc"))
@@ -60,7 +60,7 @@ def generate():
 
         # 4 edges
         for i in range(4):
-            conn = dots[i].connect(dots[(i + 1) % 4], style=conn_style)
+            conn = dots[i].connect(dots[(i + 1) % 4], shape=Line(), style=conn_style)
             scene.add(conn)
 
         # Highlight the moving corner with accent
@@ -72,9 +72,9 @@ def generate():
             ghost_style = ConnectionStyle(width=1, color=colors.grid, opacity=0.3)
             orig_tr = Dot(cx + sq_half, cy - sq_half, radius=0, color=colors.background, opacity=0)
             scene.add(orig_tr)
-            ghost = dots[0].connect(orig_tr, style=ghost_style)
+            ghost = dots[0].connect(orig_tr, shape=Line(), style=ghost_style)
             scene.add(ghost)
-            ghost2 = orig_tr.connect(dots[2], style=ghost_style)
+            ghost2 = orig_tr.connect(dots[2], shape=Line(), style=ghost_style)
             scene.add(ghost2)
 
         # Frame label
@@ -113,7 +113,7 @@ def generate():
         scene.add(label_dot)
 
         # Connection from rect anchor to label dot
-        conn = rect.connect(label_dot, start_anchor=name, style=anchor_style)
+        conn = rect.connect(label_dot, shape=Line(), start_anchor=name, style=anchor_style)
         scene.add(conn)
 
         # Text label
@@ -148,11 +148,11 @@ def generate():
     arrow_style = ConnectionStyle(width=1.5, color=colors.line, opacity=0.7, end_cap="arrow")
 
     # Dot → Rect.left
-    conn1 = dot.connect(rect, end_anchor="left", style=link_style)
+    conn1 = dot.connect(rect, shape=Line(), end_anchor="left", style=link_style)
     # Rect.right → Polygon.v0
-    conn2 = rect.connect(poly, start_anchor="right", end_anchor="v0", style=arrow_style)
+    conn2 = rect.connect(poly, shape=Line(), start_anchor="right", end_anchor="v0", style=arrow_style)
     # Polygon.v3 → Ellipse.left
-    conn3 = poly.connect(ell, start_anchor="v3", end_anchor="left", style=link_style)
+    conn3 = poly.connect(ell, shape=Line(), start_anchor="v3", end_anchor="left", style=link_style)
     scene.add(conn1, conn2, conn3)
 
     # Labels
@@ -181,7 +181,7 @@ def generate():
             width=3, color=colors.secondary, opacity=0.8,
             start_cap=cap, end_cap=cap,
         )
-        conn = d1.connect(d2, style=style)
+        conn = d1.connect(d2, shape=Line(), style=style)
         scene.add(conn)
 
         # Label
@@ -208,7 +208,7 @@ def generate():
     edge_style = ConnectionStyle(width=2, color=colors.line, opacity=0.5)
     edges = []
     for i in range(3):
-        conn = tri_dots[i].connect(tri_dots[(i + 1) % 3], style=edge_style)
+        conn = tri_dots[i].connect(tri_dots[(i + 1) % 3], shape=Line(), style=edge_style)
         scene.add(conn)
         edges.append(conn)
 
@@ -250,7 +250,7 @@ def generate():
                 style = ConnectionStyle(
                     width=width, color="#a78bfa", opacity=opacity,
                 )
-                conn = d1.connect(d2, style=style)
+                conn = d1.connect(d2, shape=Line(), style=style)
                 scene.add(conn)
 
                 # Midpoint marker on longer connections
@@ -265,3 +265,146 @@ def generate():
         d.opacity = 0.8
 
     save(scene, "guide/connections-constellation.svg")
+
+    # --- 8. Shape comparison ---
+    class Wave:
+        """A simple wave pathable in unit space (0→1)."""
+        def __init__(self, amp=0.3, freq=3):
+            self.amp, self.freq = amp, freq
+
+        def point_at(self, t):
+            return Coord(t, self.amp * math.sin(t * self.freq * 2 * math.pi))
+
+    scene = Scene(540, 160, background=colors.background)
+
+    shapes = [
+        ("Line", Line()),
+        ("Curve", Curve(curvature=0.4)),
+        ("Path (wave)", Path(Wave(), segments=32)),
+    ]
+
+    for i, (label, shape) in enumerate(shapes):
+        ox = 20 + i * 180
+        d1 = Dot(ox + 20, 75, radius=8, color=colors.primary)
+        d2 = Dot(ox + 150, 75, radius=8, color=colors.secondary)
+        scene.add(d1, d2)
+        conn = d1.connect(d2, shape=shape,
+                          style=ConnectionStyle(width=2.5, color=colors.accent))
+        scene.add(conn)
+        scene.add(Text(ox + 85, 135, label, font_size=11, color="#aaaacc"))
+        # Subtle code hint
+        code = f"shape={label.split()[0]}()"
+        if "wave" in label.lower():
+            code = "shape=Path(wave)"
+        scene.add(Text(ox + 85, 25, code, font_size=9, color="#888899"))
+
+    save(scene, "guide/connections-shape-comparison.svg")
+
+    # --- 9. Invisible connections demo ---
+    scene = Scene(400, 150, background=colors.background)
+
+    d1 = Dot(50, 65, radius=12, color=colors.primary)
+    d2 = Dot(350, 65, radius=12, color=colors.secondary)
+    scene.add(d1, d2)
+
+    # Invisible connection (no shape)
+    conn = d1.connect(d2)
+    scene.add(conn)
+
+    # Ghost hint line (this is a separate entity, NOT the connection)
+    hint = Line(50, 65, 350, 65, width=0.8, color=colors.grid, opacity=0.25)
+    scene.add(hint)
+
+    # Place markers via point_at(t) on the invisible connection
+    for i in range(9):
+        t = i / 8
+        pt = conn.point_at(t)
+        r = 5 if i in (0, 8) else 3
+        scene.add(Dot(pt.x, pt.y, radius=r, color=colors.accent, opacity=0.85))
+        if 0 < t < 1:
+            scene.add(Text(pt.x, pt.y - 14, f"t={t:.2f}", font_size=7, color="#aaaacc"))
+
+    scene.add(Text(200, 130, "shape=None — invisible, but point_at(t) still works",
+                   font_size=10, color="#aaaacc"))
+
+    save(scene, "guide/connections-invisible.svg")
+
+    # --- 10. Arc network (curved constellation) ---
+    random.seed(42)
+    scene = Scene(440, 320, background="#0f0f23")
+
+    positions = [(random.uniform(30, 410), random.uniform(30, 290)) for _ in range(25)]
+    arc_dots = []
+    for (x, y) in positions:
+        d = Dot(x, y, radius=3, color="#e0c3fc", opacity=0.9)
+        scene.add(d)
+        arc_dots.append(d)
+
+    for i, d1 in enumerate(arc_dots):
+        p1 = d1.position
+        for j, d2 in enumerate(arc_dots[i + 1:], start=i + 1):
+            p2 = d2.position
+            dist = math.hypot(p1.x - p2.x, p1.y - p2.y)
+            if dist < 130:
+                opacity = 0.5 * (1 - dist / 130)
+                width = 0.4 + (1 - dist / 130) * 1.2
+                # Vary curvature by angle for organic feel
+                angle = math.atan2(p2.y - p1.y, p2.x - p1.x)
+                curvature = 0.3 * math.sin(angle * 3 + i * 0.5)
+                style = ConnectionStyle(width=width, color="#a78bfa", opacity=opacity)
+                conn = d1.connect(d2, shape=Curve(curvature=curvature), style=style)
+                scene.add(conn)
+
+                if dist > 90:
+                    mid = conn.point_at(0.5)
+                    scene.add(Dot(mid.x, mid.y, radius=1.5, color="#ffd700", opacity=0.6))
+
+    for d in arc_dots[:3]:
+        d.radius = 5
+        d.color = "#ffd700"
+        d.opacity = 0.8
+
+    save(scene, "guide/connections-arc-network.svg")
+
+    # --- 11. Flowing tree ---
+    scene = Scene(440, 280, background=colors.background)
+
+    # Tree layout: root → 2 children → 4 grandchildren
+    levels = [
+        [(220, 45)],
+        [(120, 135), (320, 135)],
+        [(70, 235), (170, 235), (270, 235), (370, 235)],
+    ]
+    level_colors = [colors.accent, colors.primary, colors.secondary]
+    node_dots = []
+
+    for level_idx, level_positions in enumerate(levels):
+        level_dots = []
+        for (x, y) in level_positions:
+            r = 10 - level_idx * 2
+            d = Dot(x, y, radius=r, color=level_colors[level_idx])
+            scene.add(d)
+            level_dots.append(d)
+        node_dots.append(level_dots)
+
+    arc_style = ConnectionStyle(width=2, color=colors.line, opacity=0.6)
+
+    # Root → children
+    for child in node_dots[1]:
+        curvature = 0.25 if child.position.x < 220 else -0.25
+        conn = node_dots[0][0].connect(child, shape=Curve(curvature=curvature),
+                                       style=arc_style)
+        scene.add(conn)
+
+    # Children → grandchildren
+    for parent_idx, parent in enumerate(node_dots[1]):
+        for child in node_dots[2][parent_idx * 2: parent_idx * 2 + 2]:
+            curvature = 0.2 if child.position.x < parent.position.x else -0.2
+            conn = parent.connect(child, shape=Curve(curvature=curvature),
+                                  style=arc_style)
+            scene.add(conn)
+
+    scene.add(Text(220, 270, "Flowing tree with curved connections",
+                   font_size=10, color="#aaaacc"))
+
+    save(scene, "guide/connections-flowing-tree.svg")

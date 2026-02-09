@@ -8,7 +8,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from pyfreeform import Scene
-from pyfreeform.core.point import Point
+from pyfreeform.entities.point import Point
 from pyfreeform.entities.dot import Dot
 
 

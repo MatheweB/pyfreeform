@@ -23,7 +23,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from pyfreeform import Scene, Palette, Polygon
+from pyfreeform import Scene, Palette, Polygon, Line
 
 # =============================================================================
 # Configuration
@@ -125,7 +125,7 @@ if corner_stars and center_dots:
         # Find the nearest center dot
         center_dot = center_dots[i % len(center_dots)]
         
-        conn = star.connect(center_dot, style={
+        conn = star.connect(center_dot, shape=Line(), style={
             "width": 1,
             "color": colors.line,
             "z_index": 1,

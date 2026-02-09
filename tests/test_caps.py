@@ -122,7 +122,7 @@ def test_line_required_markers():
 
 
 def test_line_from_points_with_caps():
-    from pyfreeform.core.point import Point
+    from pyfreeform.entities.point import Point
     line = Line.from_points(Point(0, 0), Point(100, 0), end_cap="arrow")
     assert line.effective_end_cap == "arrow"
     assert "marker-end" in line.to_svg()

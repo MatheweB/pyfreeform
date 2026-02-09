@@ -775,10 +775,11 @@ class Wave:
 
 ## 7. Connections
 
-**Links between entities** that auto-update when entities move.
+**Links between entities** that auto-update when entities move. By default, connections are **invisible** — they encode a relationship without rendering anything. Pass a `shape` to give them visual form.
 
 ```python
-Connection(start, end, start_anchor="center", end_anchor="center", style=None)
+Connection(start, end, start_anchor="center", end_anchor="center",
+           style=None, shape=None, segments=32)
 ```
 
 Or via the entity method:
@@ -787,14 +788,30 @@ connection = entity1.connect(
     entity2,
     style=ConnectionStyle(...),
     start_anchor="center",
-    end_anchor="center"
+    end_anchor="center",
+    shape=Line(),       # or Curve(), Path(pathable), or None
+    segments=32,
 )
 ```
 
+### Shape Options
+
+| Shape | SVG Output | Notes |
+|---|---|---|
+| `None` (default) | Nothing (`to_svg()` returns `""`) | Pure relationship — supports `point_at(t)` |
+| `Line()` | `<line>` element | Straight connection |
+| `Curve(curvature=0.3)` | Single cubic Bezier `<path>` | Arc; curvature controls bow direction and amount |
+| `Path(pathable)` | Fitted Bezier `<path>` | Any Pathable — wave, spiral, custom shape |
+
+!!! info "Shape coordinates are auto-mapped"
+    Shape objects define a template curve in their own coordinate space (e.g. `Line()` defaults to `(0,0)→(1,0)`). An affine transform maps the shape's start→end chord onto the actual anchor positions at render time.
+
 - **`style`** accepts `ConnectionStyle` or `dict` with `width`, `color`, `z_index`, `cap` keys
-- Connections are rendered as lines between anchor points
-- Added to scene via `scene.add(connection)` (entity.connect() does not auto-add)
-- Support cap system (arrow, arrow_in, custom)
+- **`shape=None`** (default) = invisible — `point_at(t)` still works (linear interpolation)
+- **`segments`** controls Bezier fitting resolution for `Path` shapes (default 32; ignored for Line/Curve)
+- Added to scene via `scene.add(connection)` (`entity.connect()` does not auto-add)
+- Supports cap system (arrow, arrow_in, custom) on all visible shapes
+- Closed paths (`Path(pathable, closed=True)`) cannot be used as shapes — raises `ValueError`
 
 !!! warning "Connections must be added to the scene"
     Calling `entity.connect(other)` creates a `Connection` object but does **not** add it to the scene. You must call `scene.add(connection)` separately.

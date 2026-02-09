@@ -43,7 +43,7 @@ for row_idx in range(0, GRID_SIZE, 2):
         
         # Connect to previous dot (crosses cell boundary!)
         if prev_dot:
-            conn = prev_dot.connect(dot, style={
+            conn = prev_dot.connect(dot, shape=Line(), style={
                 "width": 1,
                 "color": colors.line,
                 "z_index": 1,

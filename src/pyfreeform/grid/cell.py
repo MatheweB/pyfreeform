@@ -279,14 +279,17 @@ class Cell(Surface):
             Distance in pixels.
         """
         from ..core.coord import Coord
+        from ..core.entity import Entity
         if isinstance(other, Cell):
             target = other.center
         elif isinstance(other, Coord):
             target = other
+        elif isinstance(other, Entity):
+            target = Coord(other.x, other.y)
         elif isinstance(other, tuple):
             target = Coord(*other)
         else:
-            raise TypeError(f"Expected Cell, Coord, or tuple, got {type(other).__name__}")
+            raise TypeError(f"Expected Cell, Coord, Entity, or tuple, got {type(other).__name__}")
         return self.center.distance_to(target)
 
     @property

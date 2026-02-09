@@ -253,6 +253,16 @@ Entity connections use `WeakSet` so that deleting a connection does not require 
 self._connections: WeakSet[Connection] = WeakSet()
 ```
 
+### Shaped connections
+
+Connections optionally carry a `shape` — a `Line`, `Curve`, or `Path` entity that defines the visual form. The shape is processed at construction time based on its type:
+
+- **Line**: No pre-computation. Rendered as a direct `<line>` between the live anchor positions.
+- **Curve**: The quadratic Bezier control point is degree-elevated to a single exact cubic Bezier segment (no approximation loss).
+- **Path**: The pathable is sampled and fitted into cubic Bezier segments using Hermite interpolation via `fit_cubic_beziers()` in `core/bezier.py`.
+
+At render time, an affine transform (scale + rotation + translation) maps the shape's source chord (`point_at(0)` → `point_at(1)`) onto the actual entity anchor endpoints. When `shape=None` (the default), `to_svg()` returns an empty string — the connection is invisible but still trackable via `entity._connections` and queryable via `point_at(t)`.
+
 ### Entity-reference vertices
 
 Polygon vertices can be static `Coord` values or live entity references (`Entity` or `(Entity, "anchor_name")`). Internally, the Polygon stores a `_vertex_specs` list and resolves references at render time via `_resolve_vertex()`. This gives polygons reactive behavior — when a referenced entity moves, the polygon deforms automatically. The `Point` entity (which renders nothing) exists specifically to serve as an invisible positional anchor for these vertex references.

@@ -51,7 +51,7 @@ class Curve(StrokedPathMixin, Entity):
         self,
         x1: float = 0,
         y1: float = 0,
-        x2: float = 0,
+        x2: float = 1,
         y2: float = 0,
         curvature: float = 0.5,
         width: float = DEFAULT_WIDTH,

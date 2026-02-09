@@ -127,7 +127,7 @@ def generate():
         for dr, dc in [(0, 1), (1, 0)]:
             key = (r + dr, c + dc)
             if key in dots:
-                scene.add(dot.connect(dots[key], style=conn_style))
+                scene.add(dot.connect(dots[key], shape=Line(), style=conn_style))
 
     # Title overlay
     title = scene.grid.merge(0, 2, 0, scene.grid.cols)

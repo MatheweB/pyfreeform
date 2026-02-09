@@ -17,7 +17,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from pyfreeform import Scene, Palette
+from pyfreeform import Scene, Palette, Line
 
 # =============================================================================
 # Configuration
@@ -91,7 +91,7 @@ for cell in scene.grid.where(lambda c: c.brightness > BRIGHT_THRESHOLD):
         if cell.entities and cell.right.entities:
             my_dot = cell.entities[-1]  # Last added was highlight
             neighbor_dot = cell.right.entities[-1]
-            conn = my_dot.connect(neighbor_dot, style={
+            conn = my_dot.connect(neighbor_dot, shape=Line(), style={
                 "width": 1,
                 "color": colors.accent,
                 "z_index": Z_HIGHLIGHTS,

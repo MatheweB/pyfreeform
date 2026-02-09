@@ -19,7 +19,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from pyfreeform import Scene, Palette, Polygon
+from pyfreeform import Scene, Palette, Polygon, Line
 
 # =============================================================================
 # Configuration
@@ -127,7 +127,7 @@ for i, (cell1, dot1) in enumerate(bright_dots):
         col_diff = abs(cell1.col - cell2.col)
         
         if row_diff <= 1 and col_diff <= 1 and (row_diff + col_diff) > 0:
-            conn = dot1.connect(dot2, style={
+            conn = dot1.connect(dot2, shape=Line(), style={
                 "width": 1,
                 "color": colors.accent,
                 "z_index": Z_CONNECTIONS,

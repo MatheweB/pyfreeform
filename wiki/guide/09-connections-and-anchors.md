@@ -7,23 +7,91 @@ Connections are live links between entities. Unlike static lines that store coor
 Create two entities, connect them, and add the connection to the scene:
 
 ```python
-from pyfreeform import Scene, Dot, ConnectionStyle
+from pyfreeform import Scene, Dot, Line, ConnectionStyle
 
 scene = Scene(300, 100, background="#1a1a2e")
 dot1 = Dot(50, 50, radius=10, color="#ff6b6b")
 dot2 = Dot(250, 50, radius=10, color="#4ecdc4")
 scene.add(dot1, dot2)
 
-conn = dot1.connect(dot2, style=ConnectionStyle(width=2, color="#666688"))
+conn = dot1.connect(dot2, shape=Line(), style=ConnectionStyle(width=2, color="#666688"))
 scene.add(conn)  # (1)!
 ```
 
 1. Connections must be added to the scene explicitly — they're not auto-added when created.
 
+!!! info "Why `shape=Line()`?"
+    By default, connections are **invisible** — they encode a relationship without drawing anything. Passing `shape=Line()` makes them render as a straight line. You can also use `Curve()` for arcs or `Path(pathable)` for any custom shape. See [Connection Shapes](#connection-shapes) below.
+
 <figure markdown>
 ![Basic connection](../_images/guide/connections-basic.svg){ width="300" }
 <figcaption>Two dots linked by a connection.</figcaption>
 </figure>
+
+---
+
+## Connection Shapes
+
+Connections support three visual shapes — or no shape at all:
+
+| Shape | Renders As | Use Case |
+|---|---|---|
+| `None` (default) | Nothing — invisible | Pure relationships, `point_at()` queries |
+| `Line()` | Straight `<line>` | Classic connections |
+| `Curve(curvature=0.3)` | Cubic Bezier arc | Organic, flowing links |
+| `Path(pathable)` | Fitted Bezier path | Wave, spiral, any custom shape |
+
+```python
+from pyfreeform import Line, Curve, Path
+
+# Straight line
+d1.connect(d2, shape=Line())
+
+# Arc — curvature controls how much the connection bows
+d1.connect(d2, shape=Curve(curvature=0.4))
+
+# Custom path — any Pathable works
+d1.connect(d2, shape=Path(my_wave, segments=32))
+```
+
+<figure markdown>
+![Shape comparison](../_images/guide/connections-shape-comparison.svg){ width="520" }
+<figcaption>The same two dots connected three ways: Line (straight), Curve (arc), and Path (wave).</figcaption>
+</figure>
+
+!!! tip "Shape coordinates are auto-mapped"
+    The shape you pass defines a **template**. `Line()` defaults to `(0,0)→(1,0)` and `Curve()` to `(0,0)→(1,0)` with curvature — you never position them manually. An affine transform maps the shape's start→end chord onto the connection's actual anchor positions at render time.
+
+---
+
+## Invisible Connections
+
+The default `shape=None` creates a connection that renders nothing — `to_svg()` returns an empty string. But the connection still:
+
+- Tracks the relationship via each entity's connection set
+- Supports `point_at(t)` for positioning (linear interpolation between anchors)
+- Can be queried for `start_point`, `end_point`, and `angle_at(t)`
+
+This is useful for layout, graph traversal, or placing entities along an invisible path:
+
+```python
+# Invisible — no shape, no rendering
+conn = d1.connect(d2)
+scene.add(conn)
+
+# But point_at(t) still works
+for t in [0.25, 0.5, 0.75]:
+    pt = conn.point_at(t)
+    scene.add(Dot(pt.x, pt.y, radius=3, color="gold"))
+```
+
+<figure markdown>
+![Invisible connections](../_images/guide/connections-invisible.svg){ width="400" }
+<figcaption>An invisible connection between two dots — markers placed via `point_at(t)` reveal the hidden relationship. The faint line is drawn separately for illustration; the connection itself renders nothing.</figcaption>
+</figure>
+
+!!! warning "Invisible connections still need `scene.add()`"
+    Even invisible connections should be added to the scene. The scene won't render them (empty SVG), but adding them keeps your object graph consistent.
 
 ---
 
@@ -44,7 +112,7 @@ for d in corners:
 
 # Connect into a square (4 edges)
 for i in range(4):
-    conn = corners[i].connect(corners[(i + 1) % 4], style=conn_style)
+    conn = corners[i].connect(corners[(i + 1) % 4], shape=Line(), style=conn_style)
     scene.add(conn)
 
 # Move the top-right corner toward center
@@ -92,7 +160,7 @@ rect = Rect.at_center(Coord(200, 150), width=140, height=90, fill="navy")
 label = Dot(350, 50, radius=5, color="coral")
 scene.add(rect, label)
 
-conn = rect.connect(label, start_anchor="top_right", style=style)  # (1)!
+conn = rect.connect(label, shape=Line(), start_anchor="top_right", style=style)  # (1)!
 scene.add(conn)
 ```
 
@@ -121,9 +189,9 @@ ell = Ellipse(460, 100, rx=30, ry=20, fill="coral")
 scene.add(dot, rect, poly, ell)
 
 # Chain different entity types with specific anchors
-scene.add(dot.connect(rect, end_anchor="left", style=style))
-scene.add(rect.connect(poly, start_anchor="right", end_anchor="v0", style=arrow_style))
-scene.add(poly.connect(ell, start_anchor="v3", end_anchor="left", style=style))
+scene.add(dot.connect(rect, shape=Line(), end_anchor="left", style=style))
+scene.add(rect.connect(poly, shape=Line(), start_anchor="right", end_anchor="v0", style=arrow_style))
+scene.add(poly.connect(ell, shape=Line(), start_anchor="v3", end_anchor="left", style=style))
 ```
 
 <figure markdown>
@@ -165,7 +233,7 @@ bidirectional = ConnectionStyle(width=2, color="coral", start_cap="arrow", end_c
 Connections implement `point_at(t)` and `angle_at(t)`, so you can position entities along them:
 
 ```python
-conn = dot1.connect(dot2, style=conn_style)
+conn = dot1.connect(dot2, shape=Line(), style=conn_style)
 scene.add(conn)
 
 # Place markers along the connection
@@ -206,7 +274,7 @@ for i, d1 in enumerate(dots):
                           d1.position.y - d2.position.y)
         if dist < 130:
             opacity = 0.5 * (1 - dist / 130)
-            conn = d1.connect(d2, style=ConnectionStyle(
+            conn = d1.connect(d2, shape=Line(), style=ConnectionStyle(
                 width=0.4 + (1 - dist / 130) * 1.2,
                 color="#a78bfa", opacity=opacity,
             ))
@@ -221,6 +289,90 @@ for i, d1 in enumerate(dots):
 <figure markdown>
 ![Constellation pattern](../_images/guide/connections-constellation.svg){ width="420" }
 <figcaption>A constellation network — connections fade with distance, midpoint markers glow on the longest links.</figcaption>
+</figure>
+
+---
+
+## Creative Pattern: Arc Network
+
+Replace the straight lines with curved connections for an organic, flowing feel. The curvature varies by angle between each pair, creating visual rhythm:
+
+```python
+random.seed(42)
+scene = Scene(440, 320, background="#0f0f23")
+
+dots = [Dot(random.uniform(30, 410), random.uniform(30, 290),
+            radius=3, color="#e0c3fc") for _ in range(25)]
+for d in dots:
+    scene.add(d)
+
+for i, d1 in enumerate(dots):
+    for d2 in dots[i + 1:]:
+        dist = math.hypot(d1.position.x - d2.position.x,
+                          d1.position.y - d2.position.y)
+        if dist < 130:
+            angle = math.atan2(d2.position.y - d1.position.y,
+                               d2.position.x - d1.position.x)
+            curvature = 0.3 * math.sin(angle * 3 + i * 0.5)  # (1)!
+            opacity = 0.5 * (1 - dist / 130)
+            conn = d1.connect(d2, shape=Curve(curvature=curvature),
+                              style=ConnectionStyle(
+                                  width=0.4 + (1 - dist / 130) * 1.2,
+                                  color="#a78bfa", opacity=opacity))
+            scene.add(conn)
+```
+
+1. Varying curvature by angle creates arcs that flow in different directions — some bow left, some right.
+
+<figure markdown>
+![Arc network](../_images/guide/connections-arc-network.svg){ width="420" }
+<figcaption>The same constellation with curved connections — `shape=Curve()` gives the network an organic, flowing quality.</figcaption>
+</figure>
+
+---
+
+## Creative Pattern: Flowing Tree
+
+A hierarchy with curved connections creates elegant, organic branching. Left children arc one way, right children arc the other:
+
+```python
+scene = Scene(440, 280, background="#1a1a2e")
+
+# Three levels: root, 2 children, 4 grandchildren
+positions = [
+    [(220, 45)],
+    [(120, 135), (320, 135)],
+    [(70, 235), (170, 235), (270, 235), (370, 235)],
+]
+
+nodes = []
+for level, pts in enumerate(positions):
+    level_nodes = []
+    for (x, y) in pts:
+        d = Dot(x, y, radius=10 - level * 2, color=["#ffe66d", "#ff6b6b", "#4ecdc4"][level])
+        scene.add(d)
+        level_nodes.append(d)
+    nodes.append(level_nodes)
+
+style = ConnectionStyle(width=2, color="#666688", opacity=0.6)
+
+# Root → children
+for child in nodes[1]:
+    curvature = 0.25 if child.position.x < 220 else -0.25  # (1)!
+    scene.add(nodes[0][0].connect(child, shape=Curve(curvature=curvature), style=style))
+
+# Children → grandchildren
+for i, parent in enumerate(nodes[1]):
+    for child in nodes[2][i * 2: i * 2 + 2]:
+        curvature = 0.2 if child.position.x < parent.position.x else -0.2
+        scene.add(parent.connect(child, shape=Curve(curvature=curvature), style=style))
+```
+
+1. Positive curvature arcs left, negative arcs right — mirroring the tree structure.
+
+<figure markdown>
+![Flowing tree](../_images/guide/connections-flowing-tree.svg){ width="420" }
+<figcaption>A binary tree with curved connections — left branches arc left, right branches arc right.</figcaption>
 </figure>
 
 ---

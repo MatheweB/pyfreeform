@@ -166,6 +166,8 @@ class Entity(ABC):
         style: Any | None = None,
         start_anchor: str = "center",
         end_anchor: str = "center",
+        shape: Any | None = None,
+        segments: int = 32,
     ) -> Connection:
         """
         Create a connection to another entity.
@@ -176,6 +178,9 @@ class Entity(ABC):
                    "width", "color", "z_index" keys.
             start_anchor: Anchor name on this entity.
             end_anchor: Anchor name on the other entity.
+            shape: Visual shape — Line(), Curve(), Path(), or None
+                   for invisible.
+            segments: Number of Bézier segments for shape rendering.
 
         Returns:
             The created Connection.
@@ -188,6 +193,8 @@ class Entity(ABC):
             start_anchor=start_anchor,
             end_anchor=end_anchor,
             style=style,
+            shape=shape,
+            segments=segments,
         )
         return connection
     

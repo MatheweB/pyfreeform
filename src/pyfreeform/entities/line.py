@@ -44,7 +44,7 @@ class Line(StrokedPathMixin, Entity):
         self,
         x1: float = 0,
         y1: float = 0,
-        x2: float = 0,
+        x2: float = 1,
         y2: float = 0,
         width: float = DEFAULT_WIDTH,
         color: str | tuple[int, int, int] = DEFAULT_COLOR,
