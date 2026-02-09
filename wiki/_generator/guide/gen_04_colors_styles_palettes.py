@@ -100,8 +100,8 @@ def generate():
     scene = Scene.with_grid(cols=12, rows=8, cell_size=22, background=colors.background)
 
     # Define reusable styles
-    dot_small = DotStyle(radius=0.15, color=colors.primary, opacity=0.6)
-    dot_large = DotStyle(radius=0.30, color=colors.accent, opacity=0.9)
+    dot_small = DotStyle(color=colors.primary, opacity=0.6)
+    dot_large = DotStyle(color=colors.accent, opacity=0.9)
     line_thin = LineStyle(width=1, color=colors.line, opacity=0.4)
     shape_hex = ShapeStyle(color=colors.secondary, opacity=0.5)
 
@@ -110,12 +110,12 @@ def generate():
         t = (nx + ny) / 2
         # Apply different styles based on position
         if t < 0.33:
-            cell.add_dot(style=dot_small)
+            cell.add_dot(radius=0.15, style=dot_small)
             cell.add_line(start="top_left", end="bottom_right", style=line_thin)
         elif t < 0.66:
             cell.add_polygon(Polygon.hexagon(size=0.5), style=shape_hex)
         else:
-            cell.add_dot(style=dot_large)
+            cell.add_dot(radius=0.30, style=dot_large)
     save(scene, "guide/styles-reuse.svg")
 
     # --- 5. fill_opacity vs stroke_opacity ---

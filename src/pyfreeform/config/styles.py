@@ -11,41 +11,32 @@ class DotStyle:
     """
     Configuration for dot appearance.
 
-    Use with Dot entities or cell.add_dot():
+    Use with cell.add_dot():
 
-        style = DotStyle(radius=0.05, color="coral")
-        cell.add_dot(style=style)
-
-        # Or inline
-        cell.add_dot(radius=0.05, color="coral")
+        style = DotStyle(color="coral")
+        cell.add_dot(radius=0.05, style=style)
 
     Attributes:
-        radius: Dot radius as fraction of min(surface width, height) (default: 0.05)
         color: Fill color as hex, name, or RGB tuple (default: "black")
         z_index: Layer order - higher renders on top (default: 0)
         opacity: Opacity 0.0-1.0 (default: 1.0, fully opaque)
     """
 
-    radius: float = 0.05
     color: str = "black"
     z_index: int = 0
     opacity: float = 1.0
 
-    def with_radius(self, radius: float) -> DotStyle:
-        """Return new style with different radius."""
-        return DotStyle(radius=radius, color=self.color, z_index=self.z_index, opacity=self.opacity)
-
     def with_color(self, color: str) -> DotStyle:
         """Return new style with different color."""
-        return DotStyle(radius=self.radius, color=color, z_index=self.z_index, opacity=self.opacity)
+        return DotStyle(color=color, z_index=self.z_index, opacity=self.opacity)
 
     def with_z_index(self, z_index: int) -> DotStyle:
         """Return new style with different z_index."""
-        return DotStyle(radius=self.radius, color=self.color, z_index=z_index, opacity=self.opacity)
+        return DotStyle(color=self.color, z_index=z_index, opacity=self.opacity)
 
     def with_opacity(self, opacity: float) -> DotStyle:
         """Return new style with different opacity."""
-        return DotStyle(radius=self.radius, color=self.color, z_index=self.z_index, opacity=opacity)
+        return DotStyle(color=self.color, z_index=self.z_index, opacity=opacity)
 
 
 @dataclass
@@ -262,11 +253,10 @@ class TextStyle:
 
     Use with cell.add_text():
 
-        style = TextStyle(font_size=0.20, color="navy", bold=True)
-        cell.add_text("Hello", style=style)
+        style = TextStyle(color="navy", bold=True)
+        cell.add_text("Hello", font_size=0.20, style=style)
 
     Attributes:
-        font_size: Font size as fraction of surface height (default: 0.25)
         color: Text color (default: "black")
         font_family: Font family (default: "sans-serif")
         bold: Bold text (default: False)
@@ -278,7 +268,6 @@ class TextStyle:
         opacity: Opacity 0.0-1.0 (default: 1.0, fully opaque)
     """
 
-    font_size: float = 0.25
     color: str = "black"
     font_family: str = "sans-serif"
     bold: bool = False
@@ -291,49 +280,42 @@ class TextStyle:
 
     def with_color(self, color: str) -> TextStyle:
         """Return new style with different color."""
-        return TextStyle(font_size=self.font_size, color=color, font_family=self.font_family,
-                         bold=self.bold, italic=self.italic, text_anchor=self.text_anchor,
-                         baseline=self.baseline, rotation=self.rotation, z_index=self.z_index,
-                         opacity=self.opacity)
-
-    def with_font_size(self, font_size: float) -> TextStyle:
-        """Return new style with different font size."""
-        return TextStyle(font_size=font_size, color=self.color, font_family=self.font_family,
+        return TextStyle(color=color, font_family=self.font_family,
                          bold=self.bold, italic=self.italic, text_anchor=self.text_anchor,
                          baseline=self.baseline, rotation=self.rotation, z_index=self.z_index,
                          opacity=self.opacity)
 
     def with_font_family(self, font_family: str) -> TextStyle:
         """Return new style with different font family."""
-        return TextStyle(font_size=self.font_size, color=self.color, font_family=font_family,
+        return TextStyle(color=self.color, font_family=font_family,
                          bold=self.bold, italic=self.italic, text_anchor=self.text_anchor,
                          baseline=self.baseline, rotation=self.rotation, z_index=self.z_index,
                          opacity=self.opacity)
 
     def with_bold(self, bold: bool = True) -> TextStyle:
         """Return new style with bold enabled/disabled."""
-        return TextStyle(font_size=self.font_size, color=self.color, font_family=self.font_family,
+        return TextStyle(color=self.color, font_family=self.font_family,
                          bold=bold, italic=self.italic, text_anchor=self.text_anchor,
                          baseline=self.baseline, rotation=self.rotation, z_index=self.z_index,
                          opacity=self.opacity)
 
     def with_italic(self, italic: bool = True) -> TextStyle:
         """Return new style with italic enabled/disabled."""
-        return TextStyle(font_size=self.font_size, color=self.color, font_family=self.font_family,
+        return TextStyle(color=self.color, font_family=self.font_family,
                          bold=self.bold, italic=italic, text_anchor=self.text_anchor,
                          baseline=self.baseline, rotation=self.rotation, z_index=self.z_index,
                          opacity=self.opacity)
 
     def with_z_index(self, z_index: int) -> TextStyle:
         """Return new style with different z_index."""
-        return TextStyle(font_size=self.font_size, color=self.color, font_family=self.font_family,
+        return TextStyle(color=self.color, font_family=self.font_family,
                          bold=self.bold, italic=self.italic, text_anchor=self.text_anchor,
                          baseline=self.baseline, rotation=self.rotation, z_index=z_index,
                          opacity=self.opacity)
 
     def with_opacity(self, opacity: float) -> TextStyle:
         """Return new style with different opacity."""
-        return TextStyle(font_size=self.font_size, color=self.color, font_family=self.font_family,
+        return TextStyle(color=self.color, font_family=self.font_family,
                          bold=self.bold, italic=self.italic, text_anchor=self.text_anchor,
                          baseline=self.baseline, rotation=self.rotation, z_index=self.z_index,
                          opacity=opacity)

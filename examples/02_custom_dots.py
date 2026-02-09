@@ -30,7 +30,7 @@ CELL_SIZE = 10
 colors = Palette.ocean()
 
 # Base dot style (we'll vary the radius based on brightness)
-dot_style = DotStyle(radius=0.3, color=colors.primary, z_index=1)
+dot_style = DotStyle(color=colors.primary, z_index=1)
 
 # =============================================================================
 # Create Art

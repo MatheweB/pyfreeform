@@ -278,7 +278,6 @@ class Surface:
         from ..entities.dot import Dot
 
         if style:
-            radius = style.radius
             color = style.color
             z_index = style.z_index
             opacity = style.opacity
@@ -903,8 +902,6 @@ class Surface:
         from ..entities.text import Text
 
         if style:
-            if style.font_size != 0.25:
-                font_size = style.font_size
             color = style.color
             font_family = style.font_family
             bold = style.bold

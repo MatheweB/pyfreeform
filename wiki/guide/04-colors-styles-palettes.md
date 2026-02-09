@@ -76,13 +76,13 @@ Instead of repeating parameters, define a **style object** once and reuse it:
 ```python
 from pyfreeform import DotStyle, LineStyle, ShapeStyle
 
-dot_small = DotStyle(radius=0.15, color="coral", opacity=0.6)
-dot_large = DotStyle(radius=0.30, color="gold", opacity=0.9)
+dot_small = DotStyle(color="coral", opacity=0.6)
+dot_large = DotStyle(color="gold", opacity=0.9)
 line_thin = LineStyle(width=1, color="#666688", opacity=0.4)
 shape_hex = ShapeStyle(color="teal", opacity=0.5)
 
 for cell in scene.grid:
-    cell.add_dot(style=dot_small)               # Apply directly
+    cell.add_dot(radius=0.15, style=dot_small)  # Apply directly
     cell.add_line(start="top", end="bottom", style=line_thin)
 ```
 
@@ -95,12 +95,12 @@ for cell in scene.grid:
 
 | Class | For Methods | Key Fields |
 |---|---|---|
-| `DotStyle` | `add_dot()` | `radius`, `color`, `opacity` |
+| `DotStyle` | `add_dot()` | `color`, `opacity` |
 | `LineStyle` | `add_line()`, `add_diagonal()`, `add_curve()`, `add_path()` | `width`, `color`, `cap`, `start_cap`, `end_cap` |
 | `FillStyle` | `add_fill()` | `color`, `opacity` |
 | `BorderStyle` | `add_border()` | `width`, `color`, `opacity` |
 | `ShapeStyle` | `add_ellipse()`, `add_polygon()`, `add_rect()` | `color` (→ fill), `stroke`, `stroke_width` |
-| `TextStyle` | `add_text()` | `font_size`, `color`, `font_family`, `bold`, `italic` |
+| `TextStyle` | `add_text()` | `color`, `font_family`, `bold`, `italic` |
 | `ConnectionStyle` | `Connection` | `width`, `color`, `cap` |
 
 ### Builder Methods

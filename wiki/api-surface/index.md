@@ -928,12 +928,12 @@ The `Color` utility accepts:
 
 | Class | For | Key Fields |
 |---|---|---|
-| `DotStyle` | `add_dot()` | `radius`, `color`, `z_index`, `opacity` |
+| `DotStyle` | `add_dot()` | `color`, `z_index`, `opacity` |
 | `LineStyle` | `add_line()`, `add_diagonal()`, `add_curve()`, `add_path()` | `width`, `color`, `z_index`, `cap`, `start_cap`, `end_cap`, `opacity` |
 | `FillStyle` | `add_fill()` | `color`, `opacity`, `z_index` |
 | `BorderStyle` | `add_border()` | `width`, `color`, `z_index`, `opacity` |
 | `ShapeStyle` | `add_ellipse()`, `add_polygon()`, `add_rect()` | `color`, `stroke`, `stroke_width`, `z_index`, `opacity`, `fill_opacity`, `stroke_opacity` |
-| `TextStyle` | `add_text()` | `font_size`, `color`, `font_family`, `bold`, `italic`, `text_anchor`, `baseline`, `rotation`, `z_index`, `opacity` |
+| `TextStyle` | `add_text()` | `color`, `font_family`, `bold`, `italic`, `text_anchor`, `baseline`, `rotation`, `z_index`, `opacity` |
 | `ConnectionStyle` | `Connection`, `entity.connect()` | `width`, `color`, `z_index`, `cap`, `start_cap`, `end_cap`, `opacity` |
 
 Example builder pattern:
