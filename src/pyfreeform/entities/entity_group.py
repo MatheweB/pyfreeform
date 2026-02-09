@@ -52,6 +52,7 @@ class EntityGroup(Entity):
         x: float = 0,
         y: float = 0,
         z_index: int = 0,
+        opacity: float = 1.0,
     ) -> None:
         """
         Create an EntityGroup.
@@ -60,11 +61,13 @@ class EntityGroup(Entity):
             x: Initial x position (default 0).
             y: Initial y position (default 0).
             z_index: Layer ordering (higher = on top).
+            opacity: Group-level opacity (0.0 transparent to 1.0 opaque).
         """
         super().__init__(x, y, z_index)
         self._children: list[Entity] = []
         self._scale: float = 1.0
         self._rotation: float = 0.0  # degrees
+        self.opacity: float = float(opacity)
 
     def add(self, entity: Entity) -> Entity:
         """
@@ -191,7 +194,8 @@ class EntityGroup(Entity):
         transform_str = " ".join(transforms)
 
         sorted_children = sorted(self._children, key=lambda e: e.z_index)
-        parts = [f'<g transform="{transform_str}">']
+        opacity_attr = f' opacity="{self.opacity}"' if self.opacity < 1.0 else ""
+        parts = [f'<g transform="{transform_str}"{opacity_attr}>']
         for child in sorted_children:
             parts.append(f"  {child.to_svg()}")
         parts.append("</g>")
@@ -268,8 +272,15 @@ class EntityGroup(Entity):
 
     def __repr__(self) -> str:
         n = len(self._children)
+        extras = []
+        if self._scale != 1.0:
+            extras.append(f"scale={self._scale:.2f}")
+        if self._rotation != 0:
+            extras.append(f"rotation={self._rotation:.1f}")
+        if self.opacity < 1.0:
+            extras.append(f"opacity={self.opacity:.2f}")
+        extra_str = f", {', '.join(extras)}" if extras else ""
         return (
             f"EntityGroup({n} children, "
-            f"pos=({self.x:.1f}, {self.y:.1f}), "
-            f"scale={self._scale:.2f})"
+            f"pos=({self.x:.1f}, {self.y:.1f}){extra_str})"
         )

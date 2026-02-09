@@ -537,15 +537,17 @@ Path(
 **A reusable composite entity.** Children positioned relative to (0,0), rendered as SVG `<g>`.
 
 ```python
-EntityGroup(x=0, y=0, z_index=0)
+EntityGroup(x=0, y=0, z_index=0, opacity=1.0)
 ```
 
 - **`group.add(entity)`**: Add child (positioned relative to local origin)
 - **`group.children`**: List of children (copy)
-- **`group._scale`**: Internal scale factor, modified by `scale()`
+- **`group.rotate(angle, origin=None)`**: Accumulate rotation (degrees). With `origin`, also orbits position.
+- **`group.scale(factor, origin=None)`**: Accumulate scale factor.
+- **`group.opacity`**: Group-level opacity (applies to entire `<g>` element)
 - **Placement**: `cell.place(group)` / `cell.add_entity(group)` — centers in cell
 - **Fitting**: `group.fit_to_cell(fraction)` — auto-scales to fit cell bounds
-- **SVG**: `<g transform="translate(x,y) scale(s)">` — children never mutated
+- **SVG**: `<g transform="translate(x,y) rotate(r) scale(s)" opacity="o">` — children never mutated
 - **Reuse**: Wrap creation in a factory function; each call returns new instance
 
 ---

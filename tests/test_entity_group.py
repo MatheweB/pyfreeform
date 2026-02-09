@@ -1,4 +1,4 @@
-"""Tests for EntityGroup, particularly rotation support."""
+"""Tests for EntityGroup: rotation and opacity support."""
 
 import math
 import pytest
@@ -174,3 +174,35 @@ def test_group_rotate_method_chaining():
 
     result = group.rotate(45)
     assert result is group
+
+
+# =========================================================================
+# Opacity tests
+# =========================================================================
+
+
+def test_group_opacity_default():
+    """Default opacity is 1.0 and not emitted in SVG."""
+    group = EntityGroup()
+    group.add(Dot(0, 0, radius=5, color="red"))
+
+    assert group.opacity == 1.0
+    assert "opacity" not in group.to_svg()
+
+
+def test_group_opacity_in_svg():
+    """Non-default opacity should appear on the <g> element."""
+    group = EntityGroup(opacity=0.5)
+    group.add(Dot(0, 0, radius=5, color="red"))
+
+    svg = group.to_svg()
+    assert 'opacity="0.5"' in svg
+
+
+def test_group_opacity_settable():
+    """opacity should be settable after construction."""
+    group = EntityGroup()
+    group.add(Dot(0, 0, radius=5, color="red"))
+
+    group.opacity = 0.3
+    assert 'opacity="0.3"' in group.to_svg()
