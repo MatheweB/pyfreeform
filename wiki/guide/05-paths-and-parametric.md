@@ -25,7 +25,7 @@ Curves make the positioning non-linear and organic:
 ```python
 curve = cell.add_curve(start="bottom_left", end="top_right", curvature=0.6, ...)
 for t_val in [0.25, 0.5, 0.75]:
-    cell.add_dot(along=curve, t=t_val, radius=2, color=colors.primary)
+    cell.add_dot(along=curve, t=t_val, radius=0.10, color=colors.primary)
 ```
 
 <figure markdown>
@@ -46,7 +46,7 @@ Ellipses are closed paths — `t=0` is the rightmost point, going counterclockwi
 
 ```python
 ellipse = cell.add_ellipse(at="center", rx=0.4, ry=0.25, fill="none", stroke=colors.line)
-cell.add_dot(along=ellipse, t=ny, radius=3, color=colors.accent)
+cell.add_dot(along=ellipse, t=ny, radius=0.10, color=colors.accent)
 ```
 
 <figure markdown>
@@ -126,7 +126,7 @@ Pass a path to `add_text(along=)` **without** `t` to warp text along the full pa
 
 ```python
 curve = cell.add_curve(start=(0.05, 0.7), end=(0.95, 0.3), curvature=0.5, ...)
-cell.add_text("Text flows along any path", along=curve, font_size=14, color=colors.accent)
+cell.add_text("Text flows along any path", along=curve, font_size=0.05, color=colors.accent)
 ```
 
 <figure markdown>

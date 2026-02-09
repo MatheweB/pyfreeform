@@ -26,8 +26,8 @@ The most classic effect — bright areas get larger marks:
 scene = Scene.from_image("MonaLisa.jpg", grid_size=40, cell_size=10)
 
 for cell in scene.grid:
-    r = cell.brightness * scene.grid.cell_width * 0.48
-    if r > 0.3:
+    r = cell.brightness * 0.48
+    if r > 0.03:
         cell.add_dot(radius=r, color="#ffffff")
 ```
 
@@ -99,7 +99,7 @@ for cell in scene.grid:
         edge += abs(cell.brightness - cell.below.brightness)
     edge = min(edge * 3, 1.0)  # Amplify
     if edge > 0.1:
-        cell.add_dot(radius=edge * 3.5, color="#00d9ff", opacity=edge)
+        cell.add_dot(radius=edge * 0.4375, color="#00d9ff", opacity=edge)
 ```
 
 <figure markdown>
@@ -122,7 +122,7 @@ max_d = center.distance_to(scene.grid[0, 0])
 for cell in scene.grid:
     d = cell.distance_to(center)
     t = 1 - (d / max_d)  # 1 at center, 0 at corners
-    cell.add_dot(radius=t * 7, color=colors.primary, opacity=0.3 + t * 0.7)
+    cell.add_dot(radius=t * 0.4375, color=colors.primary, opacity=0.3 + t * 0.7)
 ```
 
 <figure markdown>
@@ -162,7 +162,7 @@ for cell in scene.grid:
     ]:
         color = cell.sample_hex(rx, ry)      # (1)!
         brightness = cell.sample_brightness(rx, ry)
-        cell.add_dot(at=pos, radius=brightness * 3.5, color=color)
+        cell.add_dot(at=pos, radius=brightness * 0.219, color=color)
 ```
 
 1. `sample_hex(rx, ry)` reads the pixel at relative position (rx, ry) within the cell. Only works with `from_image()`.

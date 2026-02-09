@@ -96,6 +96,9 @@ class Polygon(Entity):
             else:
                 self._vertex_specs.append(Coord(*v))  # CoordLike → Coord
 
+        # Relative vertices (set by Surface.add_polygon in Phase 1C)
+        self._relative_vertices: list[tuple[float, float]] | None = None
+
         # Position is centroid
         centroid = self._calculate_centroid()
         super().__init__(centroid.x, centroid.y, z_index)
@@ -126,7 +129,28 @@ class Polygon(Entity):
     @property
     def vertices(self) -> list[Coord]:
         """The polygon vertices (resolved from specs at access time)."""
+        if self._relative_vertices is not None:
+            ref = self._reference or self._cell
+            if ref is not None:
+                if isinstance(ref, Entity):
+                    min_x, min_y, max_x, max_y = ref.bounds()
+                    rw, rh = max_x - min_x, max_y - min_y
+                    return [Coord(min_x + rx * rw, min_y + ry * rh)
+                            for rx, ry in self._relative_vertices]
+                else:
+                    return [Coord(ref._x + rx * ref._width,
+                                  ref._y + ry * ref._height)
+                            for rx, ry in self._relative_vertices]
         return [self._resolve_vertex(s) for s in self._vertex_specs]
+
+    def _to_pixel_mode(self) -> None:
+        """Resolve relative vertices to pixel Coords."""
+        if self._relative_vertices is not None:
+            self._vertex_specs = self.vertices  # resolve all
+            self._relative_vertices = None
+            centroid = self._calculate_centroid()
+            self._position = centroid
+        super()._to_pixel_mode()
 
     @property
     def fill(self) -> str | None:
@@ -175,6 +199,8 @@ class Polygon(Entity):
         Returns:
             self, for method chaining.
         """
+        if self._relative_vertices is not None:
+            self._to_pixel_mode()
         if origin is None:
             origin = self._calculate_centroid()
 
@@ -212,6 +238,8 @@ class Polygon(Entity):
         Returns:
             self, for method chaining.
         """
+        if self._relative_vertices is not None:
+            self._to_pixel_mode()
         if origin is None:
             origin = self._calculate_centroid()
 
@@ -243,6 +271,8 @@ class Polygon(Entity):
         Returns:
             self, for method chaining.
         """
+        if self._relative_vertices is not None:
+            self._to_pixel_mode()
         new_specs = []
         for spec in self._vertex_specs:
             if isinstance(spec, Coord):

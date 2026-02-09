@@ -14,7 +14,7 @@ PyFreeform gives you two ways to create art: from an image or from scratch. Both
     scene = Scene.from_image("MonaLisa.jpg", grid_size=35, cell_size=12)
 
     for cell in scene.grid:
-        cell.add_dot(radius=3, color=cell.color)  # (1)!
+        cell.add_dot(radius=0.25, color=cell.color)  # (1)!
 
     scene.save("artwork.svg")
     ```
@@ -32,8 +32,8 @@ PyFreeform gives you two ways to create art: from an image or from scratch. Both
 
     ```python
     for cell in scene.grid:
-        radius = cell.brightness * 5  # (1)!
-        if radius > 0.3:
+        radius = cell.brightness * 0.42  # (1)!
+        if radius > 0.025:
             cell.add_dot(radius=radius, color=cell.color)
     ```
 
@@ -52,8 +52,8 @@ PyFreeform gives you two ways to create art: from an image or from scratch. Both
     scene = Scene.from_image("MonaLisa.jpg", grid_size=40, cell_size=11)
 
     for cell in scene.grid:
-        radius = cell.brightness * 5
-        if radius > 0.3:
+        radius = cell.brightness * 0.45
+        if radius > 0.027:
             cell.add_dot(
                 radius=radius,
                 color=cell.color,

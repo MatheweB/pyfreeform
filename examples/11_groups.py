@@ -90,7 +90,7 @@ for cell in scene.grid.region(
     col_start=center_start,
     col_end=center_start + 4,
 ):
-    dot = cell.add_dot(radius=4, color=colors.secondary, z_index=1)
+    dot = cell.add_dot(radius=0.16, color=colors.secondary, z_index=1)
     center_dots.append(dot)
 
 # =============================================================================

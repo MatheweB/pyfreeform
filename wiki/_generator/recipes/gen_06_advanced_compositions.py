@@ -39,7 +39,7 @@ def generate():
     for cell in scene.grid.every(3):
         nx, ny = cell.normalized_position
         cell.add_dot(
-            radius=3 + nx * 4,
+            radius=0.15 + nx * 0.2,
             color=colors.accent, opacity=0.7, z_index=3,
         )
     save(scene, "recipes/adv-multi-layer.svg")
@@ -82,7 +82,7 @@ def generate():
     feature.add_text(
         "FEATURED",
         at="center",
-        font_size=16,
+        font_size=0.10,
         color=colors.accent,
         bold=True,
     )
@@ -90,7 +90,7 @@ def generate():
     # Merge top for title
     title = scene.grid.merge_row(0)
     title.add_fill(color=colors.primary, opacity=0.2)
-    title.add_text("COMPOSITION", at="center", font_size=12, color=colors.accent)
+    title.add_text("COMPOSITION", at="center", font_size=0.55, color=colors.accent)
     save(scene, "recipes/adv-cell-groups.svg")
 
     # --- 4. Combined: image + geometry + connections ---
@@ -118,7 +118,7 @@ def generate():
     for cell in scene.grid:
         if cell.brightness > 0.55:
             dot = cell.add_dot(
-                radius=2, color="#ffffff", opacity=0.7, z_index=2,
+                radius=0.15, color="#ffffff", opacity=0.7, z_index=2,
             )
             dots[(cell.row, cell.col)] = dot
 
@@ -132,5 +132,5 @@ def generate():
     # Title overlay
     title = scene.grid.merge((0, 0), (1, scene.grid.cols - 1))
     title.add_fill(color="#000000", opacity=0.5, z_index=3)
-    title.add_text("LAYERED ART", at="center", font_size=14, color="#ffffff", bold=True, z_index=4)
+    title.add_text("LAYERED ART", at="center", font_size=0.45, color="#ffffff", bold=True, z_index=4)
     save(scene, "recipes/adv-combined.svg")

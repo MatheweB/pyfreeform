@@ -30,7 +30,7 @@ class Cell(Surface):
         ...         cell.add_dot(color=cell.color)
 
     Builder methods:
-        >>> cell.add_dot(radius=4, color="red")
+        >>> cell.add_dot(radius=0.4, color="red")
         >>> cell.add_line(start="top_left", end="bottom_right")
         >>> cell.add_diagonal(direction="up")  # SW to NE
         >>> cell.add_fill(color="blue")

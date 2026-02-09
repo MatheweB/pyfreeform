@@ -70,8 +70,10 @@ class Rect(Entity):
             stroke_opacity: Override opacity for stroke only (None = use opacity).
         """
         super().__init__(x, y, z_index)
-        self.width = float(width)
-        self.height = float(height)
+        self._pixel_width = float(width)
+        self._pixel_height = float(height)
+        self._relative_width: float | None = None
+        self._relative_height: float | None = None
         self.rotation = float(rotation)
         self._fill = Color(fill) if fill else None
         self._stroke = Color(stroke) if stroke else None
@@ -123,6 +125,44 @@ class Rect(Entity):
             z_index=z_index, opacity=opacity,
             fill_opacity=fill_opacity, stroke_opacity=stroke_opacity,
         )
+
+    @property
+    def width(self) -> float:
+        """Width in pixels (resolved from relative fraction if set)."""
+        if self._relative_width is not None:
+            resolved = self._resolve_size(self._relative_width, "width")
+            if resolved is not None:
+                return resolved
+        return self._pixel_width
+
+    @width.setter
+    def width(self, value: float) -> None:
+        self._pixel_width = float(value)
+        self._relative_width = None
+
+    @property
+    def height(self) -> float:
+        """Height in pixels (resolved from relative fraction if set)."""
+        if self._relative_height is not None:
+            resolved = self._resolve_size(self._relative_height, "height")
+            if resolved is not None:
+                return resolved
+        return self._pixel_height
+
+    @height.setter
+    def height(self, value: float) -> None:
+        self._pixel_height = float(value)
+        self._relative_height = None
+
+    def _to_pixel_mode(self) -> None:
+        """Resolve dimensions and position to pixels."""
+        if self._relative_width is not None:
+            self._pixel_width = self.width
+            self._relative_width = None
+        if self._relative_height is not None:
+            self._pixel_height = self.height
+            self._relative_height = None
+        super()._to_pixel_mode()
 
     @property
     def _center(self) -> Coord:
@@ -201,7 +241,9 @@ class Rect(Entity):
             # Rotate around own center: just update rotation angle
             self.rotation = (self.rotation + angle) % 360
         else:
-            # Rotate position around external origin
+            # Rotate position around external origin — switch to pixel mode
+            self._to_pixel_mode()
+
             if isinstance(origin, tuple):
                 origin = Coord(*origin)
 
@@ -209,17 +251,13 @@ class Rect(Entity):
             cos_a = math.cos(angle_rad)
             sin_a = math.sin(angle_rad)
 
-            # Rotate the center point around origin
             center = self._center
             dx = center.x - origin.x
             dy = center.y - origin.y
             new_cx = dx * cos_a - dy * sin_a + origin.x
             new_cy = dx * sin_a + dy * cos_a + origin.y
 
-            # Update position (top-left) from new center
             self._position = Coord(new_cx - self.width / 2, new_cy - self.height / 2)
-
-            # Also update intrinsic rotation
             self.rotation = (self.rotation + angle) % 360
 
         return self
@@ -237,10 +275,12 @@ class Rect(Entity):
         """
         old_center = self._center
 
+        # Scale dimensions (property setters clear relative bindings)
         self.width *= factor
         self.height *= factor
 
         if origin is not None:
+            self._to_pixel_mode()
             if isinstance(origin, tuple):
                 origin = Coord(*origin)
             new_cx = origin.x + (old_center.x - origin.x) * factor

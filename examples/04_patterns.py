@@ -40,7 +40,7 @@ for cell in scene.grid.checkerboard("black"):
 
 # --- Pattern 2: Border highlight ---
 for cell in scene.grid.border(thickness=2):
-    cell.add_dot(radius=3, color=colors.secondary, z_index=2)
+    cell.add_dot(radius=0.15, color=colors.secondary, z_index=2)
 
 # --- Pattern 3: Center cross (middle row and column) ---
 mid_row = GRID_SIZE // 2
@@ -60,11 +60,11 @@ corners = [
     scene.grid[GRID_SIZE - 1, GRID_SIZE - 1],
 ]
 for cell in corners:
-    cell.add_dot(radius=8, color=colors.accent, z_index=3)
+    cell.add_dot(radius=0.4, color=colors.accent, z_index=3)
 
 # --- Pattern 5: Diagonal stripe using where() ---
 for cell in scene.grid.where(lambda c: c.row == c.col):
-    cell.add_dot(radius=4, color=colors.primary, z_index=2)
+    cell.add_dot(radius=0.2, color=colors.primary, z_index=2)
 
 # =============================================================================
 # Save

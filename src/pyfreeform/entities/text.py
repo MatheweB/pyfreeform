@@ -154,7 +154,8 @@ class Text(Entity):
         """
         super().__init__(x, y, z_index)
         self.content = content
-        self.font_size = float(font_size)
+        self._pixel_font_size = float(font_size)
+        self._relative_font_size: float | None = None
         self._color = Color(color)
         self.font_family = font_family
 
@@ -173,6 +174,27 @@ class Text(Entity):
         self.rotation = float(rotation)
         self.opacity = float(opacity)
         self._textpath_info: dict | None = None
+
+    @property
+    def font_size(self) -> float:
+        """Font size in pixels (resolved from relative fraction if set)."""
+        if self._relative_font_size is not None:
+            resolved = self._resolve_size(self._relative_font_size, "height")
+            if resolved is not None:
+                return resolved
+        return self._pixel_font_size
+
+    @font_size.setter
+    def font_size(self, value: float) -> None:
+        self._pixel_font_size = float(value)
+        self._relative_font_size = None
+
+    def _to_pixel_mode(self) -> None:
+        """Resolve font size and position to pixels."""
+        if self._relative_font_size is not None:
+            self._pixel_font_size = self.font_size
+            self._relative_font_size = None
+        super()._to_pixel_mode()
 
     @property
     def color(self) -> str:

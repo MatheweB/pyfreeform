@@ -17,13 +17,13 @@ def generate():
         cell.add_border(color=colors.grid, width=0.5)
 
     # Highlight a few cells with different entities to show variety
-    scene.grid[1, 1].add_dot(radius=12, color=colors.primary)
-    scene.grid[1, 2].add_dot(radius=8, color=colors.secondary)
+    scene.grid[1, 1].add_dot(radius=0.3, color=colors.primary)
+    scene.grid[1, 2].add_dot(radius=0.2, color=colors.secondary)
     scene.grid[2, 1].add_line(
         start="bottom_left", end="top_right", width=2, color=colors.accent
     )
     scene.grid[2, 2].add_fill(color=colors.primary, opacity=0.3)
-    scene.grid[2, 2].add_dot(radius=6, color=colors.accent)
+    scene.grid[2, 2].add_dot(radius=0.15, color=colors.accent)
     scene.grid[3, 3].add_polygon(
         Polygon.hexagon(size=0.7), fill=colors.secondary, opacity=0.7
     )
@@ -41,22 +41,22 @@ def generate():
     cell = scene.grid[0, 0]
     cell.add_border(color=colors.grid, width=1)
     positions = [
-        ("center", colors.primary, 6),
-        ("top_left", colors.accent, 5),
-        ("top_right", colors.accent, 5),
-        ("bottom_left", colors.accent, 5),
-        ("bottom_right", colors.accent, 5),
-        ("top", colors.secondary, 4),
-        ("bottom", colors.secondary, 4),
-        ("left", colors.secondary, 4),
-        ("right", colors.secondary, 4),
+        ("center", colors.primary, 0.05),
+        ("top_left", colors.accent, 0.05),
+        ("top_right", colors.accent, 0.05),
+        ("bottom_left", colors.accent, 0.05),
+        ("bottom_right", colors.accent, 0.05),
+        ("top", colors.secondary, 0.05),
+        ("bottom", colors.secondary, 0.05),
+        ("left", colors.secondary, 0.05),
+        ("right", colors.secondary, 0.05),
     ]
     for pos_name, color, radius in positions:
         cell.add_dot(at=pos_name, radius=radius, color=color)
         cell.add_text(
             pos_name,
             at=pos_name,
-            font_size=9,
+            font_size=0.05,
             color="#aaaacc",
         )
     save(scene, "getting-started/how-named-positions.svg")
@@ -71,7 +71,7 @@ def generate():
     for cell in scene.grid.region(0, 3, 0, 4):
         nx, ny = cell.normalized_position
         t = (nx + ny) / 2
-        cell.add_dot(radius=4 + t * 6, color=colors.primary, opacity=0.5 + t * 0.5)
+        cell.add_dot(radius=0.15 + t * 0.2, color=colors.primary, opacity=0.5 + t * 0.5)
 
     # Scene-level: place entities directly
     from pyfreeform import Dot, Line
@@ -95,9 +95,9 @@ def generate():
         fill=colors.accent, opacity=0.7, z_index=2,
     )
     # Small dot on top
-    cell.add_dot(at="center", radius=15, color="#ffffff", z_index=3)
+    cell.add_dot(at="center", radius=0.10, color="#ffffff", z_index=3)
     # Text on very top
     cell.add_text(
-        "z=3", at="center", font_size=10, color=colors.background, z_index=4,
+        "z=3", at="center", font_size=0.05, color=colors.background, z_index=4,
     )
     save(scene, "getting-started/how-z-index.svg")

@@ -22,7 +22,7 @@ def generate():
             cell.add_text(
                 char,
                 at="center",
-                font_size=7,
+                font_size=0.90,
                 color="#ffffff",
                 font_family="monospace",
                 opacity=0.6 + cell.brightness * 0.4,
@@ -49,7 +49,7 @@ def generate():
         cell.add_text(
             text,
             along=curve,
-            font_size=14,
+            font_size=0.05,
             color=[colors.primary, colors.accent, colors.secondary][i],
         )
     save(scene, "recipes/typo-along-curves.svg")
@@ -63,7 +63,7 @@ def generate():
     word = "MONSTER"
     for i, cell in enumerate(scene.grid):
         char = word[i % len(word)]
-        size = 8 + cell.brightness * 8
+        size = 0.50 + cell.brightness * 0.50
         cell.add_text(
             char,
             at="center",
@@ -81,8 +81,8 @@ def generate():
         cell_size=12,
     )
     for cell in scene.grid:
-        r = cell.brightness * scene.grid.cell_width * 0.4
-        if r > 0.3:
+        r = cell.brightness * 0.4
+        if r > 0.025:
             cell.add_dot(radius=r, color=cell.color, opacity=0.6)
 
     # Title overlay
@@ -91,7 +91,7 @@ def generate():
     title.add_text(
         "MONA LISA",
         at="center",
-        font_size=18,
+        font_size=0.50,
         color="#ffffff",
         bold=True,
     )
@@ -102,7 +102,7 @@ def generate():
     sub.add_text(
         "Leonardo da Vinci",
         at="center",
-        font_size=11,
+        font_size=0.45,
         color="#cccccc",
         italic=True,
     )

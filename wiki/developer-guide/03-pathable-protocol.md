@@ -170,7 +170,7 @@ scene = Scene.with_grid(cols=20, rows=20, cell_size=15)
 liss = Lissajous(center=scene.grid[10][10].center, a=3, b=2, size=80)
 
 for cell in scene.grid:
-    cell.add_dot(along=liss, t=cell.brightness, color="coral", radius=2)
+    cell.add_dot(along=liss, t=cell.brightness, color="coral", radius=0.15)
 ```
 
 ### Step 2: Add angle_at() for alignment
@@ -194,7 +194,7 @@ Now `align=True` uses the exact tangent rather than numeric approximation:
 ```python
 curve_path = cell.add_curve()
 # Small rectangles aligned to the Lissajous tangent
-cell.add_rect(width=8, height=3, along=liss, t=0.25, align=True)
+cell.add_rect(width=0.15, height=0.05, along=liss, t=0.25, align=True)
 ```
 
 ### Step 3: Add arc_length() for text sizing
@@ -360,7 +360,7 @@ scene.add_path(liss, closed=True, color="#334155", width=1)
 # Place 50 dots along it
 for i in range(50):
     t = i / 50
-    scene.add_dot(along=liss, t=t, color="coral", radius=3)
+    scene.add_dot(along=liss, t=t, color="coral", radius=0.01)
 
 scene.save("lissajous.svg")
 ```
@@ -385,7 +385,7 @@ scene.add_text(
     "Hello Lissajous! ",
     along=liss,
     color="white",
-    font_size=14,
+    font_size=0.035,
 )
 ```
 

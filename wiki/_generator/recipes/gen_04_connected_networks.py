@@ -19,7 +19,7 @@ def generate():
     for cell in scene.grid:
         if cell.brightness > 0.35:
             dot = cell.add_dot(
-                radius=2 + cell.brightness * 3,
+                radius=0.15 + cell.brightness * 0.20,
                 color=cell.color,
                 opacity=0.7,
             )
@@ -40,7 +40,7 @@ def generate():
     dots = {}
     for cell in scene.grid:
         if (cell.row + cell.col) % 3 == 0:
-            dot = cell.add_dot(radius=4, color=colors.primary, opacity=0.8)
+            dot = cell.add_dot(radius=0.15, color=colors.primary, opacity=0.8)
             dots[(cell.row, cell.col)] = dot
 
     conn_style = ConnectionStyle(width=0.8, color=colors.line, opacity=0.3)
@@ -67,7 +67,7 @@ def generate():
     dots = {}
     for cell in scene.grid:
         if (cell.row + cell.col) % 2 == 0:
-            dot = cell.add_dot(radius=6, color=colors.accent, opacity=0.8)
+            dot = cell.add_dot(radius=0.15, color=colors.accent, opacity=0.8)
             dots[(cell.row, cell.col)] = dot
 
     arrow_style = ConnectionStyle(
@@ -97,7 +97,7 @@ def generate():
     for cell in scene.grid:
         if cell.brightness > 0.4:
             dot = cell.add_dot(
-                radius=3,
+                radius=0.20,
                 color="#ffffff",
                 opacity=0.8,
             )

@@ -85,8 +85,10 @@ class Ellipse(Entity):
             stroke_opacity: Override opacity for stroke only (None = use opacity).
         """
         super().__init__(x, y, z_index)
-        self.rx = float(rx)
-        self.ry = float(ry)
+        self._pixel_rx = float(rx)
+        self._pixel_ry = float(ry)
+        self._relative_rx: float | None = None
+        self._relative_ry: float | None = None
         self.rotation = float(rotation)
         self.stroke_width = float(stroke_width)
         self.opacity = float(opacity)
@@ -134,6 +136,44 @@ class Ellipse(Entity):
             center = Coord(*center)
         return cls(center.x, center.y, rx, ry, rotation, fill, stroke, stroke_width,
                    z_index, opacity, fill_opacity, stroke_opacity)
+
+    @property
+    def rx(self) -> float:
+        """Horizontal radius in pixels (resolved from relative fraction if set)."""
+        if self._relative_rx is not None:
+            resolved = self._resolve_size(self._relative_rx, "width")
+            if resolved is not None:
+                return resolved
+        return self._pixel_rx
+
+    @rx.setter
+    def rx(self, value: float) -> None:
+        self._pixel_rx = float(value)
+        self._relative_rx = None
+
+    @property
+    def ry(self) -> float:
+        """Vertical radius in pixels (resolved from relative fraction if set)."""
+        if self._relative_ry is not None:
+            resolved = self._resolve_size(self._relative_ry, "height")
+            if resolved is not None:
+                return resolved
+        return self._pixel_ry
+
+    @ry.setter
+    def ry(self, value: float) -> None:
+        self._pixel_ry = float(value)
+        self._relative_ry = None
+
+    def _to_pixel_mode(self) -> None:
+        """Resolve radii and position to pixels."""
+        if self._relative_rx is not None:
+            self._pixel_rx = self.rx
+            self._relative_rx = None
+        if self._relative_ry is not None:
+            self._pixel_ry = self.ry
+            self._relative_ry = None
+        super()._to_pixel_mode()
 
     @property
     def fill(self) -> str | None:
@@ -326,7 +366,9 @@ class Ellipse(Entity):
             # Rotate around own center: just update rotation angle
             self.rotation = (self.rotation + angle) % 360
         else:
-            # Rotate position around external origin
+            # Rotate position around external origin — switch to pixel mode
+            self._to_pixel_mode()
+
             if isinstance(origin, tuple):
                 origin = Coord(*origin)
 
@@ -334,14 +376,12 @@ class Ellipse(Entity):
             cos_a = math.cos(angle_rad)
             sin_a = math.sin(angle_rad)
 
-            # Rotate position
             dx = self.position.x - origin.x
             dy = self.position.y - origin.y
             new_x = dx * cos_a - dy * sin_a + origin.x
             new_y = dx * sin_a + dy * cos_a + origin.y
             self._position = Coord(new_x, new_y)
 
-            # Also update intrinsic rotation
             self.rotation = (self.rotation + angle) % 360
 
         return self
@@ -357,12 +397,12 @@ class Ellipse(Entity):
         Returns:
             self, for method chaining.
         """
-        # Scale the radii
+        # Scale the radii (property setters clear relative bindings)
         self.rx *= factor
         self.ry *= factor
 
         if origin is not None:
-            # Also scale position relative to origin
+            self._to_pixel_mode()
             if isinstance(origin, tuple):
                 origin = Coord(*origin)
 

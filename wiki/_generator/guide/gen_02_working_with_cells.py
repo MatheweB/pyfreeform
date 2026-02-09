@@ -17,8 +17,8 @@ def generate():
         cell_size=10,
     )
     for cell in scene.grid:
-        r = cell.brightness * scene.grid.cell_width * 0.48
-        if r > 0.3:
+        r = cell.brightness * 0.48
+        if r > 0.03:
             cell.add_dot(radius=r, color="#ffffff")
     save(scene, "guide/cells-brightness-radius.svg")
 
@@ -64,7 +64,7 @@ def generate():
             edge += abs(cell.brightness - cell.below.brightness)
         edge = min(edge * 3, 1.0)  # Amplify
         if edge > 0.1:
-            cell.add_dot(radius=edge * 3.5, color="#00d9ff", opacity=edge)
+            cell.add_dot(radius=edge * 0.4375, color="#00d9ff", opacity=edge)
     save(scene, "guide/cells-edge-detection.svg")
 
     # --- 5. Radial effect with distance_to ---
@@ -75,8 +75,8 @@ def generate():
     for cell in scene.grid:
         d = cell.distance_to(center)
         t = 1 - (d / max_d)
-        radius = t * 7
-        if radius > 0.5:
+        radius = t * 0.4375
+        if radius > 0.03125:
             cell.add_dot(radius=radius, color=colors_ocean.primary, opacity=0.3 + t * 0.7)
     save(scene, "guide/cells-distance-radial.svg")
 
@@ -118,8 +118,8 @@ def generate():
             try:
                 color = cell.sample_hex(rx, ry)
                 brightness = cell.sample_brightness(rx, ry)
-                r = brightness * 3.5
-                if r > 0.3:
+                r = brightness * 0.219
+                if r > 0.019:
                     cell.add_dot(at=pos, radius=r, color=color)
             except (IndexError, AttributeError):
                 # Cell may not have image data

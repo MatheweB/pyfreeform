@@ -39,7 +39,7 @@ def generate():
         label,
         fill,
         *,
-        font_size=13,
+        font_size=0.20,
         text_color="#ffffff",
         fill_opacity=0.25,
         stroke_opacity=0.7,
@@ -74,7 +74,7 @@ def generate():
         area.add_text(
             "Surface",
             at=(0.5, 0.74),
-            font_size=8,
+            font_size=0.10,
             bold=True,
             color="#1a1a2e",
         )
@@ -129,7 +129,7 @@ def generate():
         image_area,
         "Image",
         colors.grid,
-        font_size=12,
+        font_size=0.15,
         text_color=LABEL,
         fill_opacity=0.3,
         stroke_opacity=0.5,
@@ -143,7 +143,7 @@ def generate():
     surface_badge(cell_area)
 
     cg_area = g.merge((2, 7), (2, 9))
-    cg_box = class_box(cg_area, "CellGroup", colors.primary, font_size=12)
+    cg_box = class_box(cg_area, "CellGroup", colors.primary, font_size=0.15)
     surface_badge(cg_area)
 
     # ═══════════════════════════════════════════════════════════
@@ -179,7 +179,7 @@ def generate():
             width=min(0.9, 52 / cell.width),
             height=22 / cell.height,
         )
-        fs = 7 if len(name) > 7 else 10
+        fs = 0.10 if len(name) > 7 else 0.15
         cell.add_text(name, font_size=fs, color=colors.secondary)
         sub_rects.append(r)
 
@@ -187,12 +187,12 @@ def generate():
     for idx in [2, 3, 4, 8]:
         g[4, idx].add_dot(
             at=(0.5, 0.82),
-            radius=3,
+            radius=0.05,
             color=colors.accent,
             opacity=0.7,
         )
     # Small annotation
-    g[4, 3].add_text("Pathable", at=(0.5, 0.95), font_size=7, color=DIM)
+    g[4, 3].add_text("Pathable", at=(0.5, 0.95), font_size=0.10, color=DIM)
 
     # Connection — right side of the same row
     conn_area = g.merge((4, 10), (4, 11))
@@ -200,13 +200,13 @@ def generate():
         conn_area,
         "Connection",
         colors.secondary,
-        font_size=11,
+        font_size=0.15,
     )
     # StrokedPathMixin annotation
     conn_area.add_text(
         "StrokedPathMixin",
         at=(0.5, 0.78),
-        font_size=7,
+        font_size=0.10,
         color=DIM,
     )
 
@@ -226,14 +226,14 @@ def generate():
     path_area.add_text(
         "Pathable protocol: point_at(t)",
         at=(0.5, 0.35),
-        font_size=11,
+        font_size=0.15,
         bold=True,
         color=colors.accent,
     )
     path_area.add_text(
         "Line  \u00b7  Curve  \u00b7  Ellipse  \u00b7  Path  \u00b7  Connection",
         at=(0.5, 0.65),
-        font_size=9,
+        font_size=0.15,
         color=LABEL,
     )
 

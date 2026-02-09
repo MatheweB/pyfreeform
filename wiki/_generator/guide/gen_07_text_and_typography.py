@@ -24,7 +24,7 @@ def generate():
             cell.add_text(
                 char,
                 at="center",
-                font_size=9,
+                font_size=0.90,
                 color=cell.color,
                 font_family="monospace",
             )
@@ -38,14 +38,14 @@ def generate():
         cell.add_text(
             "PyFreeform",
             at=(0.5, 0.35),
-            font_size=14,
+            font_size=0.10,
             color=colors.primary,
             font_family=family,
         )
         cell.add_text(
             family,
             at=(0.5, 0.65),
-            font_size=10,
+            font_size=0.10,
             color="#aaaacc",
         )
         cell.add_border(color=colors.grid, width=0.5, opacity=0.3)
@@ -64,7 +64,7 @@ def generate():
         cell.add_text(
             "Art",
             at=(0.5, 0.35),
-            font_size=24,
+            font_size=0.25,
             color=colors.primary,
             bold=bold,
             italic=italic,
@@ -72,7 +72,7 @@ def generate():
         cell.add_text(
             label,
             at=(0.5, 0.7),
-            font_size=10,
+            font_size=0.10,
             color="#aaaacc",
         )
         cell.add_border(color=colors.grid, width=0.5, opacity=0.3)
@@ -89,7 +89,7 @@ def generate():
     cell.add_text(
         "Text warps along curves beautifully",
         along=curve,
-        font_size=14,
+        font_size=0.05,
         color=colors.accent,
     )
     save(scene, "guide/text-along-curve.svg")
@@ -108,7 +108,7 @@ def generate():
     cell.add_text(
         "Text flows around an ellipse path",
         along=ellipse,
-        font_size=13,
+        font_size=0.05,
         color=colors.primary,
     )
     save(scene, "guide/text-along-ellipse.svg")
@@ -122,7 +122,7 @@ def generate():
         cell.add_text(
             "AB",
             at="center",
-            font_size=12,
+            font_size=0.40,
             color=colors_sunset.primary,
             rotation=rotation,
             opacity=0.4 + nx * 0.6,
@@ -136,8 +136,8 @@ def generate():
         cell_size=12,
     )
     for cell in scene.grid:
-        r = cell.brightness * scene.grid.cell_width * 0.45
-        if r > 0.3:
+        r = cell.brightness * 0.45
+        if r > 0.025:
             cell.add_dot(radius=r, color=cell.color, opacity=0.7)
     # Merge bottom 2 rows for title overlay
     title = scene.grid.merge(
@@ -148,7 +148,7 @@ def generate():
     title.add_text(
         "FRANK",
         at="center",
-        font_size=20,
+        font_size=0.55,
         color="#ffffff",
         bold=True,
     )

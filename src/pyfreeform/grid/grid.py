@@ -409,7 +409,7 @@ class Grid:
         Example:
             >>> for col_idx, col in enumerate(grid.all_columns):
             ...     for cell in col:
-            ...         cell.add_dot(radius=col_idx + 1)
+            ...         cell.add_dot(radius=0.02 * (col_idx + 1))
         """
         for col in range(self._cols):
             yield [self._cells[row][col] for row in range(self._rows)]
@@ -623,7 +623,7 @@ class Grid:
         Examples:
             >>> # Bright cells
             >>> for cell in grid.where(lambda c: c.brightness > 0.7):
-            ...     cell.add_dot(radius=6)
+            ...     cell.add_dot(radius=0.3)
             
             >>> # Top half
             >>> for cell in grid.where(lambda c: c.row < grid.rows // 2):

@@ -18,8 +18,8 @@ def generate():
             cell_size=10,
         )
         for cell in scene.grid:
-            r = cell.brightness * scene.grid.cell_width * 0.45
-            if r > 0.3:
+            r = cell.brightness * 0.45
+            if r > 0.03:
                 cell.add_dot(radius=r, color=cell.color)
         save(scene, f"guide/scenes-grid-size-{grid_size}.svg")
 
@@ -39,7 +39,7 @@ def generate():
     scene = Scene.with_grid(cols=15, rows=15, cell_size=22, background=colors.background)
     for cell in scene.grid:
         nx, ny = cell.normalized_position
-        radius = 2 + (nx * ny) * 8
+        radius = 0.10 + (nx * ny) * 0.35
         cell.add_dot(radius=radius, color=colors.primary, opacity=0.5 + nx * 0.5)
     save(scene, "guide/scenes-with-grid-basic.svg")
 
@@ -49,7 +49,7 @@ def generate():
         cell.add_fill(color=colors.background)
     for cell in scene.grid.border(thickness=2):
         cell.add_fill(color=colors.accent, opacity=0.7)
-        cell.add_dot(radius=3, color=colors.primary)
+        cell.add_dot(radius=0.15, color=colors.primary)
     save(scene, "guide/scenes-border-selection.svg")
 
     # --- 5. Checkerboard selection ---
@@ -61,7 +61,7 @@ def generate():
             fill=colors_ocean.primary, opacity=0.7,
         )
     for cell in scene.grid.checkerboard("white"):
-        cell.add_dot(radius=4, color=colors_ocean.accent, opacity=0.5)
+        cell.add_dot(radius=0.15, color=colors_ocean.accent, opacity=0.5)
     save(scene, "guide/scenes-checkerboard.svg")
 
     # --- 6. Diagonal selection ---
@@ -85,7 +85,7 @@ def generate():
         cell.add_fill(color=colors.accent, opacity=0.4)
     # Intersection gets both — brighter
     scene.grid[3, 6].add_fill(color="#ffffff", opacity=0.3)
-    scene.grid[3, 6].add_dot(radius=6, color=colors.accent)
+    scene.grid[3, 6].add_dot(radius=0.25, color=colors.accent)
     save(scene, "guide/scenes-row-column.svg")
 
     # --- 8. Region selection ---
@@ -107,7 +107,7 @@ def generate():
         cell.add_border(color=colors.grid, width=0.3, opacity=0.2)
         nx, ny = cell.normalized_position
         cell.add_dot(
-            radius=2 + nx * 4,
+            radius=0.05 + nx * 0.15,
             color=colors.secondary, opacity=0.3,
         )
     # Merge top row for a title bar
@@ -116,7 +116,7 @@ def generate():
     title_bar.add_text(
         "TITLE BAR",
         at="center",
-        font_size=14,
+        font_size=0.50,
         color=colors.accent,
         bold=True,
     )

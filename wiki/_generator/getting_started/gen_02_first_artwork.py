@@ -17,7 +17,7 @@ def generate():
         cell_size=12,
     )
     for cell in scene.grid:
-        cell.add_dot(radius=3, color=cell.color)
+        cell.add_dot(radius=0.25, color=cell.color)
     save(scene, "getting-started/first-image-step1.svg")
 
     # Step 2: Size dots by brightness
@@ -27,8 +27,8 @@ def generate():
         cell_size=12,
     )
     for cell in scene.grid:
-        radius = cell.brightness * 5
-        if radius > 0.3:
+        radius = cell.brightness * 0.42
+        if radius > 0.025:
             cell.add_dot(radius=radius, color=cell.color)
     save(scene, "getting-started/first-image-step2.svg")
 
@@ -39,8 +39,8 @@ def generate():
         cell_size=11,
     )
     for cell in scene.grid:
-        radius = cell.brightness * 5
-        if radius > 0.3:
+        radius = cell.brightness * 0.45
+        if radius > 0.027:
             cell.add_dot(
                 radius=radius,
                 color=cell.color,

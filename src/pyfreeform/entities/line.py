@@ -70,6 +70,7 @@ class Line(StrokedPathMixin, Entity):
         """
         super().__init__(x1, y1, z_index)
         self._end_offset = Coord(x2 - x1, y2 - y1)
+        self._relative_end: tuple[float, float] | None = None
         self.width = float(width)
         self._color = Color(color)
         self.cap = cap
@@ -121,15 +122,30 @@ class Line(StrokedPathMixin, Entity):
 
     @property
     def end(self) -> Coord:
-        """The ending point."""
+        """The ending point (resolved from relative fraction if set)."""
+        if self._relative_end is not None:
+            result = self._resolve_relative(*self._relative_end)
+            if result is not None:
+                return result
         return self.position + self._end_offset
 
     @end.setter
     def end(self, value: CoordLike) -> None:
-        """Set the ending point."""
+        """Set the ending point (clears relative binding)."""
         if isinstance(value, tuple):
             value = Coord(*value)
         self._end_offset = value - self.position
+        self._relative_end = None
+
+    def _to_pixel_mode(self) -> None:
+        """Resolve both endpoints to pixels."""
+        if self._relative_end is not None or self._relative_at is not None or self._along_path is not None:
+            current_end = self.end
+            super()._to_pixel_mode()
+            self._end_offset = current_end - self._position
+            self._relative_end = None
+        else:
+            super()._to_pixel_mode()
 
     @property
     def color(self) -> str:
@@ -241,6 +257,9 @@ class Line(StrokedPathMixin, Entity):
 
         self._position = start
         self._end_offset = end - start
+        self._relative_at = None
+        self._along_path = None
+        self._relative_end = None
         return self
 
     def rotate(self, angle: float, origin: CoordLike | None = None) -> Line:
@@ -282,6 +301,9 @@ class Line(StrokedPathMixin, Entity):
 
         self._position = new_start
         self._end_offset = new_end - new_start
+        self._relative_at = None
+        self._along_path = None
+        self._relative_end = None
         return self
 
     def scale(self, factor: float, origin: CoordLike | None = None) -> Line:
@@ -314,7 +336,27 @@ class Line(StrokedPathMixin, Entity):
 
         self._position = new_start
         self._end_offset = new_end - new_start
+        self._relative_at = None
+        self._along_path = None
+        self._relative_end = None
         return self
+
+    def move_by(self, dx: float = 0, dy: float = 0) -> Line:
+        """Move both endpoints by a pixel offset."""
+        if self._relative_end is not None:
+            # Adjust end fractions in tandem with start
+            ref = self._reference or self._cell
+            if ref is not None:
+                if isinstance(ref, Entity):
+                    min_x, min_y, max_x, max_y = ref.bounds()
+                    ref_w, ref_h = max_x - min_x, max_y - min_y
+                else:
+                    ref_w, ref_h = ref._width, ref._height
+                drx = dx / ref_w if ref_w > 0 else 0
+                dry = dy / ref_h if ref_h > 0 else 0
+                erx, ery = self._relative_end
+                self._relative_end = (erx + drx, ery + dry)
+        return super().move_by(dx, dy)
 
     def bounds(self) -> tuple[float, float, float, float]:
         """Get bounding box."""

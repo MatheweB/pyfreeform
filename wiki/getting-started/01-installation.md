@@ -20,7 +20,7 @@ scene = Scene.with_grid(cols=8, rows=8, cell_size=30, background=colors.backgrou
 
 for cell in scene.grid:
     nx, ny = cell.normalized_position
-    radius = (nx + ny) / 2 * 12
+    radius = (nx + ny) / 2 * 0.4
     cell.add_dot(radius=radius, color=colors.primary)
 
 scene.save("hello.svg")

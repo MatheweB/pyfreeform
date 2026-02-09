@@ -70,7 +70,7 @@ scene = Scene.with_grid(cols=15, rows=15, cell_size=22, background=colors.backgr
 
 for cell in scene.grid:
     nx, ny = cell.normalized_position
-    radius = 2 + (nx * ny) * 8
+    radius = 0.091 + (nx * ny) * 0.364
     cell.add_dot(radius=radius, color=colors.primary, opacity=0.5 + nx * 0.5)
 ```
 
@@ -135,7 +135,7 @@ for cell in scene.grid.checkerboard("black"):
     cell.add_polygon(Polygon.diamond(size=0.7), fill=colors.primary)
 
 for cell in scene.grid.checkerboard("white"):
-    cell.add_dot(radius=4, color=colors.accent)
+    cell.add_dot(radius=0.15, color=colors.accent)
 ```
 
 <div class="image-row" markdown>
@@ -161,7 +161,7 @@ Merge a row, column, or rectangular region into a single **CellGroup** — a vir
 ```python
 title_bar = scene.grid.merge_row(0)
 title_bar.add_fill(color=colors.primary, opacity=0.2)
-title_bar.add_text("TITLE BAR", at="center", font_size=14, color=colors.accent, bold=True)
+title_bar.add_text("TITLE BAR", at="center", font_size=0.50, color=colors.accent, bold=True)
 ```
 
 <figure markdown>

@@ -17,7 +17,7 @@ def generate():
         cell_size=12,
     )
     for cell in scene.grid:
-        r = 1 + cell.brightness * 5
+        r = 0.083 + cell.brightness * 0.417
         cell.add_dot(
             radius=r,
             color=cell.color,

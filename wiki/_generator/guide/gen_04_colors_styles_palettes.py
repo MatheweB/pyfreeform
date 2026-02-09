@@ -35,7 +35,7 @@ def generate():
                 )
             else:
                 cell.add_dot(
-                    radius=2 + t * 5,
+                    radius=0.10 + t * 0.25,
                     color=colors.accent,
                     opacity=0.4 + t * 0.6,
                 )
@@ -69,18 +69,18 @@ def generate():
     for i, cell in enumerate(scene.grid.row(0)):
         cell.add_border(color=colors.grid, width=0.3, opacity=0.3)
         if i == 0:
-            cell.add_dot(radius=12, color=colors.primary)
+            cell.add_dot(radius=0.25, color=colors.primary)
         elif i == 1:
             cell.add_line(start="bottom_left", end="top_right", width=3, color=colors.primary)
         elif i == 2:
             cell.add_curve(start="bottom_left", end="top_right", curvature=0.5, width=2, color=colors.primary)
         elif i == 3:
-            cell.add_text("Aa", at="center", font_size=20, color=colors.primary, bold=True)
+            cell.add_text("Aa", at="center", font_size=0.45, color=colors.primary, bold=True)
         elif i == 4:
             cell.add_fill(color=colors.primary, opacity=0.5)
         elif i == 5:
             cell.add_border(color=colors.primary, width=2)
-        cell.add_text(labels_color[i], at="bottom", font_size=8, color="#aaaacc")
+        cell.add_text(labels_color[i], at="bottom", font_size=0.20, color="#aaaacc")
 
     # Row 1: entities that use fill=
     labels_fill = ["Rect", "Ellipse", "Polygon", "  ", "  ", "  "]
@@ -92,7 +92,7 @@ def generate():
             cell.add_ellipse(at="center", rx=0.36, ry=0.27, fill=colors.accent)
         elif i == 2:
             cell.add_polygon(Polygon.hexagon(size=0.6), fill=colors.accent)
-        cell.add_text(labels_fill[i], at="bottom", font_size=8, color="#aaaacc")
+        cell.add_text(labels_fill[i], at="bottom", font_size=0.20, color="#aaaacc")
     save(scene, "guide/styles-fill-vs-color.svg")
 
     # --- 4. Style reuse example ---
@@ -100,8 +100,8 @@ def generate():
     scene = Scene.with_grid(cols=12, rows=8, cell_size=22, background=colors.background)
 
     # Define reusable styles
-    dot_small = DotStyle(radius=3, color=colors.primary, opacity=0.6)
-    dot_large = DotStyle(radius=7, color=colors.accent, opacity=0.9)
+    dot_small = DotStyle(radius=0.15, color=colors.primary, opacity=0.6)
+    dot_large = DotStyle(radius=0.30, color=colors.accent, opacity=0.9)
     line_thin = LineStyle(width=1, color=colors.line, opacity=0.4)
     shape_hex = ShapeStyle(color=colors.secondary, opacity=0.5)
 
@@ -136,7 +136,7 @@ def generate():
         cell.add_text(
             f"{op:.1f}",
             at="bottom",
-            font_size=10,
+            font_size=0.15,
             color="#aaaacc",
         )
     save(scene, "guide/styles-fill-stroke-opacity.svg")

@@ -15,8 +15,8 @@ def generate():
         cell_size=10,
     )
     for cell in scene.grid:
-        r = cell.brightness * scene.grid.cell_width * 0.48
-        if r > 0.5:
+        r = cell.brightness * 0.48
+        if r > 0.05:
             cell.add_dot(radius=r, color=cell.color)
     save(scene, "home/hero-mona-lisa.svg")
 

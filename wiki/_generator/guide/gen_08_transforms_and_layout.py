@@ -36,7 +36,7 @@ def generate():
         group.add(Line(-10, -10, 10, 10, width=2, color=colors.accent))
         cell.add(group)
         group.fit_to_cell(s)
-        cell.add_text(f"{s:.1f}", at="bottom", font_size=9, color="#aaaacc")
+        cell.add_text(f"{s:.1f}", at="bottom", font_size=0.25, color="#aaaacc")
         cell.add_border(color=colors.grid, width=0.3, opacity=0.3)
     save(scene, "guide/transforms-scale.svg")
 
@@ -54,7 +54,7 @@ def generate():
         group.add(Line(-12, 0, 12, 0, width=2, color=colors.accent))
         cell.add(group)
         group.fit_to_cell(0.5, at=at_pos)
-        cell.add_text(label, at="bottom", font_size=9, color="#aaaacc")
+        cell.add_text(label, at="bottom", font_size=0.25, color="#aaaacc")
         cell.add_border(color=colors.grid, width=0.5, opacity=0.3)
     save(scene, "guide/transforms-fit-at.svg")
 
@@ -65,7 +65,7 @@ def generate():
     dots = {}
     for cell in scene.grid:
         if (cell.row + cell.col) % 2 == 0:
-            dot = cell.add_dot(radius=5, color=colors_ocean.primary, opacity=0.8)
+            dot = cell.add_dot(radius=0.15, color=colors_ocean.primary, opacity=0.8)
             dots[(cell.row, cell.col)] = dot
 
     conn_style = ConnectionStyle(width=1, color=colors_ocean.line, opacity=0.4)
@@ -85,7 +85,7 @@ def generate():
     dots_arr = {}
     for cell in scene.grid:
         if (cell.row + cell.col) % 2 == 0:
-            dot = cell.add_dot(radius=6, color=colors.accent, opacity=0.8)
+            dot = cell.add_dot(radius=0.12, color=colors.accent, opacity=0.8)
             dots_arr[(cell.row, cell.col)] = dot
 
     arrow_style = ConnectionStyle(
@@ -119,7 +119,7 @@ def generate():
         fill=colors.accent, opacity=0.6, z_index=2,
     )
     # Layer 3: central dot
-    cell.add_dot(at="center", radius=12, color="#ffffff", opacity=0.9, z_index=3)
+    cell.add_dot(at="center", radius=0.06, color="#ffffff", opacity=0.9, z_index=3)
     save(scene, "guide/transforms-z-index.svg")
 
     # --- 7. map_range utility ---

@@ -42,7 +42,7 @@ from pyfreeform import Scene
 
 scene = Scene.from_image("photo.jpg", grid_size=40)
 for cell in scene.grid:
-    cell.add_dot(radius=cell.brightness * 4, color=cell.color)
+    cell.add_dot(radius=cell.brightness * 0.4, color=cell.color)
 scene.save("artwork.svg")
 ```
 

@@ -5,7 +5,7 @@ Text in PyFreeform supports font families, bold/italic, rotation, and text-along
 ## Basic Text
 
 ```python
-cell.add_text("Hello", at="center", font_size=16, color="white")
+cell.add_text("Hello", at="center", font_size=0.25, color="white")
 ```
 
 ### Font Families
@@ -18,9 +18,9 @@ cell.add_text("Hello", at="center", font_size=16, color="white")
 ### Bold & Italic
 
 ```python
-cell.add_text("Art", font_size=24, color=colors.primary, bold=True)
-cell.add_text("Art", font_size=24, color=colors.primary, italic=True)
-cell.add_text("Art", font_size=24, color=colors.primary, bold=True, italic=True)
+cell.add_text("Art", font_size=0.25, color=colors.primary, bold=True)
+cell.add_text("Art", font_size=0.25, color=colors.primary, italic=True)
+cell.add_text("Art", font_size=0.25, color=colors.primary, bold=True, italic=True)
 ```
 
 <figure markdown>
@@ -42,7 +42,7 @@ for cell in scene.grid:
     idx = int(cell.brightness * (len(chars) - 1))
     char = chars[idx]
     if char != " ":
-        cell.add_text(char, at="center", font_size=9, color=cell.color, font_family="monospace")
+        cell.add_text(char, at="center", font_size=0.90, color=cell.color, font_family="monospace")
 ```
 
 <figure markdown>
@@ -58,7 +58,7 @@ for cell in scene.grid:
 for cell in scene.grid:
     nx, ny = cell.normalized_position
     rotation = (nx + ny) * 90
-    cell.add_text("AB", at="center", font_size=12, color=colors.primary, rotation=rotation)
+    cell.add_text("AB", at="center", font_size=0.40, color=colors.primary, rotation=rotation)
 ```
 
 <figure markdown>
@@ -76,7 +76,7 @@ Use `along=` with a path to warp text along its shape:
 
 ```python
 curve = cell.add_curve(start=(0.05, 0.7), end=(0.95, 0.3), curvature=0.5, ...)
-cell.add_text("Text warps along curves beautifully", along=curve, font_size=14, color=colors.accent)
+cell.add_text("Text warps along curves beautifully", along=curve, font_size=0.05, color=colors.accent)
 ```
 
 <figure markdown>
@@ -88,7 +88,7 @@ cell.add_text("Text warps along curves beautifully", along=curve, font_size=14, 
 
 ```python
 ellipse = cell.add_ellipse(at="center", rx=0.4, ry=0.25, fill="none", stroke=colors.line)
-cell.add_text("Text flows around an ellipse path", along=ellipse, font_size=13, color=colors.primary)
+cell.add_text("Text flows around an ellipse path", along=ellipse, font_size=0.05, color=colors.primary)
 ```
 
 <figure markdown>
@@ -108,12 +108,12 @@ Merge cells and overlay text on an artwork:
 ```python
 scene = Scene.from_image("FrankMonster.png", grid_size=30, cell_size=12)
 for cell in scene.grid:
-    cell.add_dot(radius=cell.brightness * 5, color=cell.color, opacity=0.7)
+    cell.add_dot(radius=cell.brightness * 0.42, color=cell.color, opacity=0.7)
 
 # Merge bottom rows for a title bar
 title = scene.grid.merge((scene.grid.rows - 3, 0), (scene.grid.rows - 1, scene.grid.cols - 1))
 title.add_fill(color="#000000", opacity=0.5)
-title.add_text("FRANK", at="center", font_size=20, color="#ffffff", bold=True)
+title.add_text("FRANK", at="center", font_size=0.55, color="#ffffff", bold=True)
 ```
 
 <figure markdown>

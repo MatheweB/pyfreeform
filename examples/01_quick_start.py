@@ -33,7 +33,7 @@ scene = Scene.from_image(image_path, grid_size=30, cell_size=12)
 
 # 3. Add a dot to each cell, colored by the image
 for cell in scene.grid:
-    cell.add_dot(color=cell.color, radius=4)
+    cell.add_dot(color=cell.color, radius=0.33)
 
 # 4. Save
 scene.save(Path(__file__).parent / "01_quick_start.svg")

@@ -13,7 +13,7 @@ for cell in scene.grid:
     idx = int(cell.brightness * (len(chars) - 1))
     char = chars[idx]
     if char != " ":
-        cell.add_text(char, at="center", font_size=7, color="#ffffff", font_family="monospace")
+        cell.add_text(char, at="center", font_size=0.90, color="#ffffff", font_family="monospace")
 ```
 
 <figure markdown>
@@ -27,7 +27,7 @@ Warp multiple text lines along curves with different curvatures:
 
 ```python
 curve = cell.add_curve(start=(0.05, 0.2), end=(0.95, 0.25), curvature=0.4, ...)
-cell.add_text("Create beautiful art with code", along=curve, font_size=14, color=colors.primary)
+cell.add_text("Create beautiful art with code", along=curve, font_size=0.05, color=colors.primary)
 ```
 
 <figure markdown>
@@ -43,7 +43,7 @@ Replace dots with repeated characters from a word:
 word = "MONSTER"
 for i, cell in enumerate(scene.grid):
     char = word[i % len(word)]
-    size = 8 + cell.brightness * 8
+    size = 0.60 + cell.brightness * 0.35
     cell.add_text(char, at="center", font_size=size, color=cell.color, bold=True)
 ```
 
@@ -59,12 +59,12 @@ Layer dot art with text overlays using merged CellGroups:
 ```python
 # Dot art layer
 for cell in scene.grid:
-    cell.add_dot(radius=cell.brightness * 5, color=cell.color, opacity=0.6)
+    cell.add_dot(radius=cell.brightness * 0.42, color=cell.color, opacity=0.6)
 
 # Title overlay
 title = scene.grid.merge((0, 0), (2, scene.grid.cols - 1))
 title.add_fill(color="#000000", opacity=0.6)
-title.add_text("MONA LISA", at="center", font_size=18, color="#ffffff", bold=True)
+title.add_text("MONA LISA", at="center", font_size=0.50, color="#ffffff", bold=True)
 ```
 
 <figure markdown>

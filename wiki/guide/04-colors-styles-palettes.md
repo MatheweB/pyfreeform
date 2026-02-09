@@ -34,7 +34,7 @@ All color parameters accept:
 Every entity supports `opacity` (0.0 transparent → 1.0 opaque, default 1.0):
 
 ```python
-cell.add_dot(radius=10, color="coral", opacity=0.5)
+cell.add_dot(radius=0.1, color="coral", opacity=0.5)
 cell.add_fill(color="navy", opacity=0.3)
 ```
 
@@ -76,8 +76,8 @@ Instead of repeating parameters, define a **style object** once and reuse it:
 ```python
 from pyfreeform import DotStyle, LineStyle, ShapeStyle
 
-dot_small = DotStyle(radius=3, color="coral", opacity=0.6)
-dot_large = DotStyle(radius=7, color="gold", opacity=0.9)
+dot_small = DotStyle(radius=0.15, color="coral", opacity=0.6)
+dot_large = DotStyle(radius=0.30, color="gold", opacity=0.9)
 line_thin = LineStyle(width=1, color="#666688", opacity=0.4)
 shape_hex = ShapeStyle(color="teal", opacity=0.5)
 

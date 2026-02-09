@@ -24,7 +24,7 @@ def display(target: Scene | str | Path) -> None:
     Examples:
         >>> from pyfreeform import Scene, Dot, display
         >>> scene = Scene(200, 200)
-        >>> scene.add(Dot(100, 100, radius=50, color="coral"))
+        >>> scene.add(Dot(100, 100, radius=50, color="coral"))  # Dot() uses pixels
         >>> display(scene)  # Opens in browser
         
         >>> display("my_art.svg")  # Opens existing file

@@ -67,7 +67,7 @@ for cell in scene.grid:
     if ring == 0:
         cell.add_polygon(Polygon.hexagon(size=0.7), fill=colors.primary)
     else:
-        cell.add_dot(radius=3, color=colors.secondary)
+        cell.add_dot(radius=0.20, color=colors.secondary)
 ```
 
 <figure markdown>

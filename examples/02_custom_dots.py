@@ -30,7 +30,7 @@ CELL_SIZE = 10
 colors = Palette.ocean()
 
 # Base dot style (we'll vary the radius based on brightness)
-dot_style = DotStyle(radius=3, color=colors.primary, z_index=1)
+dot_style = DotStyle(radius=0.3, color=colors.primary, z_index=1)
 
 # =============================================================================
 # Create Art
@@ -45,7 +45,7 @@ scene.background = colors.background
 
 for cell in scene.grid:
     # Size varies with brightness: brighter = larger
-    radius = 1 + cell.brightness * 4  # Range: 1 to 5
+    radius = 0.1 + cell.brightness * 0.4  # Range: 0.1 to 0.5
     
     cell.add_dot(
         color=cell.color,  # Use image color

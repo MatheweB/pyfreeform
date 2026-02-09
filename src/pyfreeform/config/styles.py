@@ -13,20 +13,20 @@ class DotStyle:
 
     Use with Dot entities or cell.add_dot():
 
-        style = DotStyle(radius=5, color="coral")
+        style = DotStyle(radius=0.05, color="coral")
         cell.add_dot(style=style)
 
         # Or inline
-        cell.add_dot(radius=5, color="coral")
+        cell.add_dot(radius=0.05, color="coral")
 
     Attributes:
-        radius: Dot radius in pixels (default: 5)
+        radius: Dot radius as fraction of min(surface width, height) (default: 0.05)
         color: Fill color as hex, name, or RGB tuple (default: "black")
         z_index: Layer order - higher renders on top (default: 0)
         opacity: Opacity 0.0-1.0 (default: 1.0, fully opaque)
     """
 
-    radius: float = 5
+    radius: float = 0.05
     color: str = "black"
     z_index: int = 0
     opacity: float = 1.0
@@ -262,11 +262,11 @@ class TextStyle:
 
     Use with cell.add_text():
 
-        style = TextStyle(font_size=12, color="navy", bold=True)
+        style = TextStyle(font_size=0.20, color="navy", bold=True)
         cell.add_text("Hello", style=style)
 
     Attributes:
-        font_size: Font size in pixels (default: 16)
+        font_size: Font size as fraction of surface height (default: 0.25)
         color: Text color (default: "black")
         font_family: Font family (default: "sans-serif")
         bold: Bold text (default: False)
@@ -278,7 +278,7 @@ class TextStyle:
         opacity: Opacity 0.0-1.0 (default: 1.0, fully opaque)
     """
 
-    font_size: float = 16
+    font_size: float = 0.25
     color: str = "black"
     font_family: str = "sans-serif"
     bold: bool = False

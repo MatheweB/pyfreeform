@@ -17,7 +17,7 @@ cell.add_polygon(Polygon.hexagon(size=0.6), fill=colors.secondary, opacity=0.15,
 cell.add_diagonal(width=0.5 + nx * 1.5, color=colors.primary, opacity=0.25, z_index=2)
 
 # Layer 3: accent dots on every 3rd cell
-cell.add_dot(radius=4, color=colors.accent, opacity=0.7, z_index=3)
+cell.add_dot(radius=0.2, color=colors.accent, opacity=0.7, z_index=3)
 ```
 
 <figure markdown>
@@ -59,12 +59,12 @@ Use `grid.merge()` to create distinct regions with different treatments:
 feature = scene.grid.merge((2, 3), (7, 8))
 feature.add_fill(color=colors.primary, opacity=0.15)
 feature.add_border(color=colors.accent, width=1.5)
-feature.add_text("FEATURED", at="center", font_size=16, color=colors.accent, bold=True)
+feature.add_text("FEATURED", at="center", font_size=0.10, color=colors.accent, bold=True)
 
 # Title bar
 title = scene.grid.merge_row(0)
 title.add_fill(color=colors.primary, opacity=0.2)
-title.add_text("COMPOSITION", at="center", font_size=12, color=colors.accent)
+title.add_text("COMPOSITION", at="center", font_size=0.55, color=colors.accent)
 ```
 
 <figure markdown>

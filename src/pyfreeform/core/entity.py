@@ -11,6 +11,7 @@ from .coord import Coord, CoordLike
 if TYPE_CHECKING:
     from .surface import Surface
     from .connection import Connection
+    from .pathable import Pathable
 
 
 class Entity(ABC):
@@ -46,38 +47,131 @@ class Entity(ABC):
         self._connections: WeakSet[Connection] = WeakSet()
         self._data: dict[str, Any] = {}
         self._z_index = z_index
+
+        # Relative coordinate storage
+        self._relative_at: tuple[float, float] | None = None
+        self._reference: Surface | Entity | None = None
+        self._along_path: Pathable | None = None
+        self._along_t: float = 0.5
+        self._resolving: bool = False
     
     @property
     def z_index(self) -> int:
         """Layer ordering (higher values render on top)."""
         return self._z_index
-    
+
     @z_index.setter
     def z_index(self, value: int) -> None:
         self._z_index = value
-    
+
+    # --- Position resolution ---
+
+    def _resolve_relative(self, rx: float, ry: float) -> Coord | None:
+        """Resolve (rx, ry) fractions against this entity's reference frame.
+
+        Returns None if no reference frame is available.
+        """
+        ref = self._reference or self._cell
+        if ref is None:
+            return None
+        if self._resolving:
+            raise ValueError("Circular position reference detected")
+        self._resolving = True
+        try:
+            if isinstance(ref, Entity):
+                min_x, min_y, max_x, max_y = ref.bounds()
+                return Coord(
+                    min_x + rx * (max_x - min_x),
+                    min_y + ry * (max_y - min_y),
+                )
+            else:
+                # Surface protocol (Cell, Scene, CellGroup)
+                return Coord(
+                    ref._x + rx * ref._width,
+                    ref._y + ry * ref._height,
+                )
+        finally:
+            self._resolving = False
+
+    def _resolve_size(self, fraction: float, dimension: str = "min") -> float | None:
+        """Resolve a size fraction against this entity's reference frame.
+
+        Args:
+            fraction: Size as fraction of reference dimension.
+            dimension: "width", "height", or "min" (min of both).
+
+        Returns None if no reference frame is available.
+        """
+        ref = self._reference or self._cell
+        if ref is None:
+            return None
+        if isinstance(ref, Entity):
+            min_x, min_y, max_x, max_y = ref.bounds()
+            ref_w = max_x - min_x
+            ref_h = max_y - min_y
+        else:
+            ref_w = ref._width
+            ref_h = ref._height
+        if dimension == "width":
+            return fraction * ref_w
+        elif dimension == "height":
+            return fraction * ref_h
+        else:  # "min"
+            return fraction * min(ref_w, ref_h)
+
+    def _resolve_position(self) -> Coord:
+        """Resolve position from the most specific mode (along > relative > pixel)."""
+        if self._along_path is not None:
+            return self._along_path.point_at(self._along_t)
+        if self._relative_at is not None:
+            result = self._resolve_relative(*self._relative_at)
+            if result is not None:
+                return result
+        return self._position
+
+    def _to_pixel_mode(self) -> None:
+        """Resolve current position to pixels and clear relative bindings."""
+        if self._relative_at is not None or self._along_path is not None:
+            self._position = self._resolve_position()
+            self._relative_at = None
+            self._along_path = None
+
     @property
     def position(self) -> Coord:
-        """Current position of the entity."""
-        return self._position
-    
+        """Current position of the entity (computed from relative coords if set)."""
+        return self._resolve_position()
+
     @position.setter
     def position(self, value: CoordLike) -> None:
-        """Set position (accepts Coord or tuple)."""
+        """Set position in pixels (clears relative bindings)."""
         if isinstance(value, tuple):
             value = Coord(*value)
         self._position = value
-    
+        self._relative_at = None
+        self._along_path = None
+
     @property
     def x(self) -> float:
         """X coordinate of position."""
-        return self._position.x
-    
+        return self._resolve_position().x
+
     @property
     def y(self) -> float:
         """Y coordinate of position."""
-        return self._position.y
-    
+        return self._resolve_position().y
+
+    @property
+    def at(self) -> tuple[float, float] | None:
+        """Relative position as (rx, ry) fractions, or None if pixel mode."""
+        return self._relative_at
+
+    @at.setter
+    def at(self, value: tuple[float, float] | None) -> None:
+        """Set relative position (clears along binding)."""
+        self._relative_at = value
+        if value is not None:
+            self._along_path = None
+
     @property
     def cell(self) -> Surface | None:
         """The surface (Cell, Scene, or CellGroup) containing this entity, if any."""
@@ -110,12 +204,12 @@ class Entity(ABC):
     
     def move_to(self, x: float | Coord, y: float | None = None) -> Entity:
         """
-        Move entity to absolute position.
+        Move entity to absolute pixel position (clears relative bindings).
 
         Args:
             x: X coordinate, or a Coord.
             y: Y coordinate (required if x is not a Coord).
-        
+
         Returns:
             self, for method chaining.
         """
@@ -125,37 +219,70 @@ class Entity(ABC):
             self._position = Coord(x, y)
         else:
             raise ValueError("Must provide both x and y, or a Coord")
+        self._relative_at = None
+        self._along_path = None
         return self
     
     def move_by(self, dx: float = 0, dy: float = 0) -> Entity:
         """
-        Move entity by a relative offset.
-        
+        Move entity by a pixel offset.
+
+        In relative mode, converts the pixel offset to a fraction adjustment.
+        In along mode, resolves to pixels first, then applies offset.
+
         Args:
-            dx: Horizontal offset.
-            dy: Vertical offset.
-        
+            dx: Horizontal offset in pixels.
+            dy: Vertical offset in pixels.
+
         Returns:
             self, for method chaining.
         """
+        if self._along_path is not None:
+            # Resolve to pixels, apply offset, switch to pixel mode
+            current = self._resolve_position()
+            self._position = Coord(current.x + dx, current.y + dy)
+            self._along_path = None
+            self._relative_at = None
+            return self
+        if self._relative_at is not None:
+            ref = self._reference or self._cell
+            if ref is not None:
+                # Convert pixel offset to fraction offset
+                if isinstance(ref, Entity):
+                    min_x, min_y, max_x, max_y = ref.bounds()
+                    ref_w = max_x - min_x
+                    ref_h = max_y - min_y
+                else:
+                    ref_w = ref._width
+                    ref_h = ref._height
+                drx = dx / ref_w if ref_w > 0 else 0
+                dry = dy / ref_h if ref_h > 0 else 0
+                rx, ry = self._relative_at
+                self._relative_at = (rx + drx, ry + dry)
+                return self
         self._position = Coord(self._position.x + dx, self._position.y + dy)
         return self
     
-    def move_to_cell(self, cell: Cell, at: tuple[float, float] | str = "center") -> Entity:
+    def move_to_cell(self, cell: Surface, at: tuple[float, float] | str = "center") -> Entity:
         """
-        Move entity to a position within a cell.
-        
+        Move entity to a position within a cell (stores relative coords).
+
         Args:
-            cell: The target cell.
+            cell: The target cell/surface.
             at: Position within cell - either a relative (rx, ry) tuple
                 where (0,0) is top-left and (1,1) is bottom-right,
                 or a named position like "center", "top_left", etc.
-        
+
         Returns:
             self, for method chaining.
         """
+        from .surface import NAMED_POSITIONS
         self._cell = cell
-        self._position = cell.relative_to_absolute(at)
+        if isinstance(at, str):
+            at = NAMED_POSITIONS[at]
+        self._relative_at = at
+        self._along_path = None
+        self._reference = None
         return self
     
     # --- Connection methods ---
@@ -202,64 +329,66 @@ class Entity(ABC):
     
     def rotate(self, angle: float, origin: CoordLike | None = None) -> Entity:
         """
-        Rotate entity around a point.
-        
+        Rotate entity around a point (switches to pixel mode).
+
         For simple entities (Dot), this just rotates the position.
         Complex entities (Line, Polygon) override this to rotate their geometry.
-        
+
         Args:
             angle: Rotation angle in degrees (counterclockwise).
             origin: Center of rotation (default: entity position).
-        
+
         Returns:
             self, for method chaining.
         """
         import math
-        
+
         if origin is None:
-            # Default: rotate around own position (no visible change for simple entities)
             return self
-        
+
         if isinstance(origin, tuple):
             origin = Coord(*origin)
-        
+
+        self._to_pixel_mode()
+
         angle_rad = math.radians(angle)
         cos_a = math.cos(angle_rad)
         sin_a = math.sin(angle_rad)
-        
-        # Rotate position around origin
+
         dx = self._position.x - origin.x
         dy = self._position.y - origin.y
         new_x = dx * cos_a - dy * sin_a + origin.x
         new_y = dx * sin_a + dy * cos_a + origin.y
         self._position = Coord(new_x, new_y)
-        
+
         return self
     
     def scale(self, factor: float, origin: CoordLike | None = None) -> Entity:
         """
-        Scale entity around a point.
-        
+        Scale entity around a point (switches to pixel mode).
+
         For simple entities, this scales the position relative to origin.
         Complex entities override this to scale their geometry.
-        
+
         Args:
             factor: Scale factor (1.0 = no change, 2.0 = double distance from origin).
             origin: Center of scaling (default: entity position).
-        
+
         Returns:
             self, for method chaining.
         """
         if origin is None:
             return self
-        
+
         if isinstance(origin, tuple):
             origin = Coord(*origin)
-        
+
+        self._to_pixel_mode()
+
         new_x = origin.x + (self._position.x - origin.x) * factor
         new_y = origin.y + (self._position.y - origin.y) * factor
         self._position = Coord(new_x, new_y)
-        
+
         return self
     
     def translate(self, dx: float, dy: float) -> Entity:
@@ -407,7 +536,7 @@ class Entity(ABC):
             self, for method chaining.
 
         Example:
-            >>> dot = cell.add_dot(radius=15, color="navy")
+            >>> dot = cell.add_dot(radius=0.5, color="navy")
             >>> label = cell.add_text("0.5", color="white", font_size=50)
             >>> label.fit_within(dot)
             >>> # Position in top-left of a rect's inner bounds:
@@ -538,7 +667,7 @@ class Entity(ABC):
         Example:
             >>> ellipse = cell.add_ellipse(rx=2.0, ry=1.2, rotation=45)
             >>> ellipse.fit_to_cell(0.85)  # Auto-constrain to 85% of cell
-            >>> dot = cell.add_dot(radius=200)
+            >>> dot = cell.add_dot(radius=0.8)
             >>> dot.fit_to_cell(1.0, at=(0.25, 0.25))  # Fit in top-left quadrant
         """
         # Validation

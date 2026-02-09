@@ -39,7 +39,7 @@ scene.background = colors.background
 for row_idx in range(0, GRID_SIZE, 2):
     prev_dot = None
     for cell in scene.grid.row(row_idx):
-        dot = cell.add_dot(radius=4, color=colors.primary, z_index=2)
+        dot = cell.add_dot(radius=0.13, color=colors.primary, z_index=2)
         
         # Connect to previous dot (crosses cell boundary!)
         if prev_dot:
@@ -64,7 +64,7 @@ for col_idx in range(GRID_SIZE):
             # Place dot with offset (not confined to cell!)
             cell.add_dot(
                 at="center",
-                radius=2,
+                radius=0.07,
                 color=colors.secondary,
                 z_index=2,
             )
@@ -89,7 +89,7 @@ corner_cells = [
 ]
 for cell in corner_cells:
     # Dot larger than cell size creates deliberate overlap
-    cell.add_dot(radius=CELL_SIZE * 0.8, color=colors.primary, z_index=0)
+    cell.add_dot(radius=0.8, color=colors.primary, z_index=0)
 
 # =============================================================================
 # Save

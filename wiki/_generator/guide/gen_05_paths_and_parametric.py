@@ -22,7 +22,7 @@ def generate():
         )
         cell.add_dot(
             along=diag, t=cell.brightness,
-            radius=2 + cell.brightness * 4,
+            radius=0.15 + cell.brightness * 0.25,
             color=cell.color,
         )
     save(scene, "guide/paths-along-diagonal.svg")
@@ -39,7 +39,7 @@ def generate():
         )
         # Place 3 dots along the curve
         for t_val in [0.25, 0.5, 0.75]:
-            r = 1 + (nx + t_val) * 2
+            r = 0.05 + (nx + t_val) * 0.10
             cell.add_dot(
                 along=curve, t=t_val,
                 radius=r,
@@ -66,7 +66,7 @@ def generate():
         # Place dot at position driven by ny
         cell.add_dot(
             along=ellipse, t=ny,
-            radius=3,
+            radius=0.10,
             color=colors_sunset.accent,
             opacity=0.8,
         )
@@ -85,7 +85,7 @@ def generate():
     for t_val in t_values:
         cell.add_dot(
             along=curve, t=t_val,
-            radius=8,
+            radius=0.05,
             color=colors.primary,
             opacity=0.8,
         )
@@ -93,7 +93,7 @@ def generate():
         cell.add_text(
             f"t={t_val:.2f}",
             at=((pt.x - cell.x) / cell.width, (pt.y - cell.y) / cell.height + 0.06),
-            font_size=11,
+            font_size=0.04,
             color="#aaaacc",
         )
     save(scene, "guide/paths-t-values.svg")
@@ -169,7 +169,7 @@ def generate():
     cell.add_text(
         "Text flows along any path in PyFreeform",
         along=curve,
-        font_size=14,
+        font_size=0.05,
         color=colors.accent,
     )
     save(scene, "guide/paths-textpath.svg")

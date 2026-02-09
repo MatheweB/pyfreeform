@@ -10,7 +10,7 @@ Connect dots that appear in bright areas of an image:
 dots = {}
 for cell in scene.grid:
     if cell.brightness > 0.35:
-        dot = cell.add_dot(radius=2 + cell.brightness * 3, color=cell.color)
+        dot = cell.add_dot(radius=0.15 + cell.brightness * 0.20, color=cell.color)
         dots[(cell.row, cell.col)] = dot
 
 for (r, c), dot in dots.items():

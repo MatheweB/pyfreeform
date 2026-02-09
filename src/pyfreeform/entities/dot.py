@@ -52,10 +52,32 @@ class Dot(Entity):
             opacity: Opacity (0.0 transparent to 1.0 opaque).
         """
         super().__init__(x, y, z_index)
-        self.radius = float(radius)
+        self._pixel_radius = float(radius)
+        self._relative_radius: float | None = None
         self._color = Color(color)
         self.opacity = float(opacity)
     
+    @property
+    def radius(self) -> float:
+        """Radius in pixels (resolved from relative fraction if set)."""
+        if self._relative_radius is not None:
+            resolved = self._resolve_size(self._relative_radius, "min")
+            if resolved is not None:
+                return resolved
+        return self._pixel_radius
+
+    @radius.setter
+    def radius(self, value: float) -> None:
+        self._pixel_radius = float(value)
+        self._relative_radius = None
+
+    def _to_pixel_mode(self) -> None:
+        """Resolve radius and position to pixels."""
+        if self._relative_radius is not None:
+            self._pixel_radius = self.radius
+            self._relative_radius = None
+        super()._to_pixel_mode()
+
     @property
     def color(self) -> str:
         """The fill color as a string."""

@@ -213,6 +213,15 @@ class Surface:
             return position, tangent_angle + user_rotation
         return position, user_rotation
 
+    def _get_ref_frame(
+        self, within: Entity | None
+    ) -> tuple[float, float, float, float]:
+        """Get (x, y, width, height) of the reference frame."""
+        if within is not None:
+            min_x, min_y, max_x, max_y = within.bounds()
+            return (min_x, min_y, max_x - min_x, max_y - min_y)
+        return (self._x, self._y, self._width, self._height)
+
     # =========================================================================
     # BUILDER METHODS
     # =========================================================================
@@ -221,9 +230,10 @@ class Surface:
         self,
         *,
         at: Position = "center",
+        within: Entity | None = None,
         along: Pathable | None = None,
         t: float | None = None,
-        radius: float = 5,
+        radius: float = 0.05,
         color: str = "black",
         z_index: int = 0,
         opacity: float = 1.0,
@@ -251,7 +261,7 @@ class Surface:
 
         Examples:
             >>> cell.add_dot()  # Centered, default style
-            >>> cell.add_dot(color="red", radius=6)
+            >>> cell.add_dot(color="red", radius=0.3)
             >>> cell.add_dot(at="top_left")
             >>> cell.add_dot(at=(0.25, 0.75))  # 25% across, 75% down
 
@@ -273,13 +283,28 @@ class Surface:
             z_index = style.z_index
             opacity = style.opacity
 
+        ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
+        ref_min = min(ref_w, ref_h)
+        pixel_radius = radius * ref_min if ref_min > 0 else radius
+
         if along is not None:
             position, _ = self._resolve_along(along, t, False, 0)
+            dot = Dot(position.x, position.y, radius=pixel_radius, color=color, z_index=z_index,
+                      opacity=opacity)
+            dot._along_path = along
+            dot._along_t = t if t is not None else 0.5
         else:
-            position = self.relative_to_absolute(at)
+            if isinstance(at, str):
+                at = NAMED_POSITIONS[at]
+            rx, ry = at
+            position = Coord(ref_x + rx * ref_w, ref_y + ry * ref_h)
+            dot = Dot(position.x, position.y, radius=pixel_radius, color=color, z_index=z_index,
+                      opacity=opacity)
+            dot._relative_at = at
 
-        dot = Dot(position.x, position.y, radius=radius, color=color, z_index=z_index,
-                  opacity=opacity)
+        dot._relative_radius = radius
+        if within is not None:
+            dot._reference = within
         self._register_entity(dot)
         return dot
 
@@ -288,6 +313,7 @@ class Surface:
         *,
         start: Position = "center",
         end: Position = "center",
+        within: Entity | None = None,
         along: Pathable | None = None,
         t: float | None = None,
         align: bool = False,
@@ -342,8 +368,13 @@ class Surface:
             end_cap = style.end_cap
             opacity = style.opacity
 
-        start_pos = self.relative_to_absolute(start)
-        end_pos = self.relative_to_absolute(end)
+        ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
+        if isinstance(start, str):
+            start = NAMED_POSITIONS[start]
+        if isinstance(end, str):
+            end = NAMED_POSITIONS[end]
+        start_pos = Coord(ref_x + start[0] * ref_w, ref_y + start[1] * ref_h)
+        end_pos = Coord(ref_x + end[0] * ref_w, ref_y + end[1] * ref_h)
 
         line = Line.from_points(
             start_pos, end_pos,
@@ -357,7 +388,12 @@ class Surface:
             line.move_by(target.x - midpoint.x, target.y - midpoint.y)
             if align:
                 line.rotate(rotation, origin=target)
+        else:
+            line._relative_at = start
+            line._relative_end = end
 
+        if within is not None:
+            line._reference = within
         self._register_entity(line)
         return line
 
@@ -366,6 +402,7 @@ class Surface:
         *,
         start: Literal["top_left", "top_right", "bottom_left", "bottom_right"] = "bottom_left",
         end: Literal["top_left", "top_right", "bottom_left", "bottom_right"] = "top_right",
+        within: Entity | None = None,
         along: Pathable | None = None,
         t: float | None = None,
         align: bool = False,
@@ -406,7 +443,7 @@ class Surface:
             >>> cell.add_dot(along=line, t=cell.brightness)  # Dot slides along
         """
         return self.add_line(
-            start=start, end=end, along=along, t=t, align=align,
+            start=start, end=end, within=within, along=along, t=t, align=align,
             width=width, color=color, z_index=z_index, cap=cap,
             start_cap=start_cap, end_cap=end_cap, opacity=opacity, style=style,
         )
@@ -417,6 +454,7 @@ class Surface:
         start: Position = "bottom_left",
         end: Position = "top_right",
         curvature: float = 0.5,
+        within: Entity | None = None,
         along: Pathable | None = None,
         t: float | None = None,
         align: bool = False,
@@ -474,8 +512,13 @@ class Surface:
             end_cap = style.end_cap
             opacity = style.opacity
 
-        start_pos = self.relative_to_absolute(start)
-        end_pos = self.relative_to_absolute(end)
+        ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
+        if isinstance(start, str):
+            start = NAMED_POSITIONS[start]
+        if isinstance(end, str):
+            end = NAMED_POSITIONS[end]
+        start_pos = Coord(ref_x + start[0] * ref_w, ref_y + start[1] * ref_h)
+        end_pos = Coord(ref_x + end[0] * ref_w, ref_y + end[1] * ref_h)
 
         curve = Curve.from_points(
             start_pos, end_pos,
@@ -490,7 +533,12 @@ class Surface:
             curve.move_by(target.x - midpoint.x, target.y - midpoint.y)
             if align:
                 curve.rotate(rotation, origin=target)
+        else:
+            curve._relative_at = start
+            curve._relative_end = end
 
+        if within is not None:
+            curve._reference = within
         self._register_entity(curve)
         return curve
 
@@ -589,6 +637,7 @@ class Surface:
         self,
         *,
         at: Position = "center",
+        within: Entity | None = None,
         along: Pathable | None = None,
         t: float | None = None,
         align: bool = False,
@@ -646,17 +695,22 @@ class Surface:
             fill_opacity = style.fill_opacity
             stroke_opacity = style.stroke_opacity
 
+        ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
+
         if along is not None:
             position, rotation = self._resolve_along(along, t, align, rotation)
         else:
-            position = self.relative_to_absolute(at)
+            if isinstance(at, str):
+                at = NAMED_POSITIONS[at]
+            rx_pos, ry_pos = at
+            position = Coord(ref_x + rx_pos * ref_w, ref_y + ry_pos * ref_h)
 
         if rx is None:
             rx = 0.4
         if ry is None:
             ry = 0.4
-        rx_px = rx * self._width
-        ry_px = ry * self._height
+        rx_px = rx * ref_w
+        ry_px = ry * ref_h
 
         ellipse = Ellipse(
             position.x, position.y,
@@ -665,6 +719,18 @@ class Surface:
             z_index=z_index, opacity=opacity,
             fill_opacity=fill_opacity, stroke_opacity=stroke_opacity,
         )
+
+        if along is not None:
+            ellipse._along_path = along
+            ellipse._along_t = t if t is not None else 0.5
+        else:
+            ellipse._relative_at = at
+
+        ellipse._relative_rx = rx
+        ellipse._relative_ry = ry
+
+        if within is not None:
+            ellipse._reference = within
         self._register_entity(ellipse)
         return ellipse
 
@@ -672,6 +738,7 @@ class Surface:
         self,
         vertices: list[tuple[float, float]],
         *,
+        within: Entity | None = None,
         along: Pathable | None = None,
         t: float | None = None,
         align: bool = False,
@@ -730,7 +797,10 @@ class Surface:
             fill_opacity = style.fill_opacity
             stroke_opacity = style.stroke_opacity
 
-        absolute_vertices = [self.relative_to_absolute(v) for v in vertices]
+        ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
+        absolute_vertices = [
+            Coord(ref_x + v[0] * ref_w, ref_y + v[1] * ref_h) for v in vertices
+        ]
 
         polygon = Polygon(
             absolute_vertices,
@@ -743,6 +813,8 @@ class Surface:
             stroke_opacity=stroke_opacity,
         )
 
+        polygon._relative_vertices = list(vertices)
+
         if along is not None:
             target, effective_rotation = self._resolve_along(along, t, align, rotation)
             center = polygon.position
@@ -752,6 +824,8 @@ class Surface:
         elif rotation != 0:
             polygon.rotate(rotation)
 
+        if within is not None:
+            polygon._reference = within
         self._register_entity(polygon)
         return polygon
 
@@ -760,6 +834,7 @@ class Surface:
         content: str,
         *,
         at: Position = "center",
+        within: Entity | None = None,
         along: Pathable | None = None,
         t: float | None = None,
         align: bool = False,
@@ -794,9 +869,9 @@ class Surface:
             t: Parameter on the path (0.0 to 1.0). If omitted with
                ``along``, text warps along the full path.
             align: Rotate text to follow path tangent (only with ``t``).
-            font_size: Font size in pixels. When omitted, auto-sizes to
-                25% of the surface's smallest dimension. For textPath
-                mode, auto-sizes to fill the path (bounded by 25%).
+            font_size: Font size as fraction of surface height (e.g. 0.25
+                = 25% of cell height). When omitted, defaults to 0.25.
+                For textPath mode, auto-sizes to fill the path.
             color: Text color.
             font_family: Font family.
             bold: Bold text.
@@ -816,7 +891,7 @@ class Surface:
 
         Examples:
             >>> cell.add_text("A")  # Centered letter
-            >>> cell.add_text("Label", at="top", font_size=10)
+            >>> cell.add_text("Label", at="top", font_size=0.15)
             >>> # Position text along a curve
             >>> curve = cell.add_curve()
             >>> cell.add_text("Hi", along=curve, t=0.5, align=True)
@@ -828,7 +903,7 @@ class Surface:
         from ..entities.text import Text
 
         if style:
-            if style.font_size != 16:
+            if style.font_size != 0.25:
                 font_size = style.font_size
             color = style.color
             font_family = style.font_family
@@ -844,34 +919,42 @@ class Surface:
         is_textpath = along is not None and t is None
         if text_anchor is None:
             text_anchor = "start" if is_textpath else "middle"
+        ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
+
         if along is not None and t is not None:
             position, rotation = self._resolve_along(along, t, align, rotation)
         elif along is not None:
             # TextPath warp mode — position at path midpoint (used as fallback)
             position, rotation = self._resolve_along(along, 0.5, align, rotation)
         else:
-            position = self.relative_to_absolute(at)
+            if isinstance(at, str):
+                at = NAMED_POSITIONS[at]
+            rx, ry = at
+            position = Coord(ref_x + rx * ref_w, ref_y + ry * ref_h)
 
         # Compute the span fraction for textPath mode
         span = end_offset - start_offset
 
-        # Auto-size font when not explicitly set
+        # Resolve font_size: fraction of reference height → pixels
         if font_size is None:
-            surface_bound = min(self._width, self._height)
             if is_textpath and hasattr(along, 'arc_length'):
-                # Size to fill the spanned portion of the path
+                # Auto-size to fill the spanned portion of the path
                 arc_len = along.arc_length() * span
                 chars = max(len(content), 1)
-                font_size = arc_len / (chars * 0.6)
-                # Bound by 25% of the surface
-                font_size = min(font_size, surface_bound * 0.25)
+                pixel_font_size = arc_len / (chars * 0.6)
+                pixel_font_size = min(pixel_font_size, ref_h * 0.25)
+                rel_font_size = pixel_font_size / ref_h if ref_h > 0 else 0.25
             else:
-                font_size = surface_bound * 0.25
+                rel_font_size = 0.25
+                pixel_font_size = rel_font_size * ref_h if ref_h > 0 else 0.25
+        else:
+            rel_font_size = font_size
+            pixel_font_size = font_size * ref_h if ref_h > 0 else font_size
 
         text = Text(
             position.x, position.y,
             content=content,
-            font_size=font_size,
+            font_size=pixel_font_size,
             color=color,
             font_family=font_family,
             bold=bold,
@@ -882,6 +965,18 @@ class Surface:
             z_index=z_index,
             opacity=opacity,
         )
+
+        # Store relative position and font size
+        text._relative_font_size = rel_font_size
+        if along is not None and t is not None:
+            text._along_path = along
+            text._along_t = t
+        elif along is None:
+            text._relative_at = at
+        # textpath mode (along without t): stays pixel
+
+        if within is not None:
+            text._reference = within
 
         # TextPath warp mode: along provided without t
         if is_textpath:
@@ -912,6 +1007,7 @@ class Surface:
         self,
         *,
         at: Position = "center",
+        within: Entity | None = None,
         along: Pathable | None = None,
         t: float | None = None,
         align: bool = False,
@@ -977,17 +1073,22 @@ class Surface:
             fill_opacity = style.fill_opacity
             stroke_opacity = style.stroke_opacity
 
+        ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
+
         if along is not None:
             center_pos, rotation = self._resolve_along(along, t, align, rotation)
         else:
-            center_pos = self.relative_to_absolute(at)
+            if isinstance(at, str):
+                at = NAMED_POSITIONS[at]
+            center_rx, center_ry = at
+            center_pos = Coord(ref_x + center_rx * ref_w, ref_y + center_ry * ref_h)
 
         if width is None:
             width = 0.6
         if height is None:
             height = 0.6
-        width_px = width * self._width
-        height_px = height * self._height
+        width_px = width * ref_w
+        height_px = height * ref_h
 
         top_left_x = center_pos.x - width_px / 2
         top_left_y = center_pos.y - height_px / 2
@@ -999,6 +1100,15 @@ class Surface:
             rotation=rotation, opacity=opacity, z_index=z_index,
             fill_opacity=fill_opacity, stroke_opacity=stroke_opacity,
         )
+
+        if along is None:
+            rect._relative_at = (center_rx - width / 2, center_ry - height / 2)
+
+        rect._relative_width = width
+        rect._relative_height = height
+
+        if within is not None:
+            rect._reference = within
         self._register_entity(rect)
         return rect
 
@@ -1104,7 +1214,11 @@ class Surface:
             The added entity (for chaining).
         """
         position = self.relative_to_absolute(at)
-        entity.position = position
+        entity._position = position
+        if isinstance(at, str):
+            at = NAMED_POSITIONS[at]
+        entity._relative_at = at
+        entity._along_path = None
         self._register_entity(entity)
         return entity
 

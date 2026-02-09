@@ -7,7 +7,7 @@ PyFreeform has **9 entity types**, each with a unique creative personality. This
 The fundamental mark. A filled circle defined by radius and color.
 
 ```python
-cell.add_dot(radius=cell.brightness * 5, color=cell.color, opacity=0.6)
+cell.add_dot(radius=cell.brightness * 0.42, color=cell.color, opacity=0.6)
 ```
 
 <figure markdown>
@@ -16,7 +16,7 @@ cell.add_dot(radius=cell.brightness * 5, color=cell.color, opacity=0.6)
 </figure>
 
 !!! info "Key parameter"
-    Dots use **`color=`** (not `fill=`). Default radius is 5.
+    Dots use **`color=`** (not `fill=`). Default radius is 0.05.
 
 ---
 
@@ -131,7 +131,7 @@ cell.add_polygon(verts, fill=cell.color, opacity=0.8)
 Labels, characters, and typography. Supports font families, bold, italic, rotation.
 
 ```python
-cell.add_text("A", at="center", font_size=20, color=colors.primary, bold=True, opacity=0.7)
+cell.add_text("A", at="center", font_size=0.25, color=colors.primary, bold=True, opacity=0.7)
 ```
 
 <figure markdown>

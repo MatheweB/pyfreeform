@@ -83,6 +83,7 @@ class Curve(StrokedPathMixin, Entity):
         """
         super().__init__(x1, y1, z_index)
         self._end = Coord(x2, y2)
+        self._relative_end: tuple[float, float] | None = None
         self._curvature = float(curvature)
         self.width = float(width)
         self._color = Color(color)
@@ -121,7 +122,11 @@ class Curve(StrokedPathMixin, Entity):
 
     @property
     def end(self) -> Coord:
-        """The ending point."""
+        """The ending point (resolved from relative fraction if set)."""
+        if self._relative_end is not None:
+            result = self._resolve_relative(*self._relative_end)
+            if result is not None:
+                return result
         return self._end
 
     @end.setter
@@ -129,7 +134,19 @@ class Curve(StrokedPathMixin, Entity):
         if isinstance(value, tuple):
             value = Coord(*value)
         self._end = value
+        self._relative_end = None
         self._control = None  # Invalidate cached control point
+
+    def _to_pixel_mode(self) -> None:
+        """Resolve both endpoints to pixels."""
+        if self._relative_end is not None or self._relative_at is not None or self._along_path is not None:
+            current_end = self.end
+            super()._to_pixel_mode()
+            self._end = current_end
+            self._relative_end = None
+            self._control = None
+        else:
+            super()._to_pixel_mode()
 
     @property
     def curvature(self) -> float:
@@ -303,9 +320,25 @@ class Curve(StrokedPathMixin, Entity):
         Returns:
             self, for method chaining.
         """
+        if self._relative_end is not None:
+            # Adjust end fractions in tandem with start
+            ref = self._reference or self._cell
+            if ref is not None:
+                from ..core.entity import Entity as _Entity
+                if isinstance(ref, _Entity):
+                    min_x, min_y, max_x, max_y = ref.bounds()
+                    ref_w, ref_h = max_x - min_x, max_y - min_y
+                else:
+                    ref_w, ref_h = ref._width, ref._height
+                drx = dx / ref_w if ref_w > 0 else 0
+                dry = dy / ref_h if ref_h > 0 else 0
+                erx, ery = self._relative_end
+                self._relative_end = (erx + drx, ery + dry)
+            self._control = None
+            return super().move_by(dx, dy)
         self._position = Coord(self._position.x + dx, self._position.y + dy)
         self._end = Coord(self._end.x + dx, self._end.y + dy)
-        self._control = None  # Invalidate cached control point
+        self._control = None
         return self
 
     def rotate(self, angle: float, origin: CoordLike | None = None) -> Curve:
@@ -338,6 +371,9 @@ class Curve(StrokedPathMixin, Entity):
 
         self._position = rotate_point(self.start)
         self._end = rotate_point(self.end)
+        self._relative_at = None
+        self._along_path = None
+        self._relative_end = None
         self._control = None
         return self
 
@@ -368,6 +404,9 @@ class Curve(StrokedPathMixin, Entity):
 
         self._position = new_start
         self._end = new_end
+        self._relative_at = None
+        self._along_path = None
+        self._relative_end = None
         self._control = None
         return self
 

@@ -53,7 +53,7 @@ for cell in scene.grid:
 Cells have convenient builder methods:
 
 ```python
-cell.add_dot(radius=4, color="red")
+cell.add_dot(radius=0.4, color="red")
 cell.add_line(start="top_left", end="bottom_right")
 cell.add_diagonal(direction="up")  # SW to NE
 cell.add_curve(curvature=0.5)      # Bézier curve
@@ -208,7 +208,7 @@ for cell in scene.grid:
 
 ```python
 # Dots
-dot = cell.add_dot(radius=100).fit_to_cell(0.9)
+dot = cell.add_dot(radius=0.9).fit_to_cell(0.9)
 
 # Text
 text = cell.add_text("Hi", font_size=200).fit_to_cell(0.8)

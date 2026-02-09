@@ -288,20 +288,43 @@ All builder methods (except `add_fill`, `add_border`) support parametric positio
     ```
     See [Paths and Parametric Positioning](../guide/05-paths-and-parametric.md) for in-depth examples.
 
+### Entity-Relative Positioning: `within`
+
+All builder methods (except `add_fill`, `add_border`, `add_path`) support `within=`:
+
+```python
+rect = cell.add_rect(fill="blue", width=0.5, height=0.5)
+dot = cell.add_dot(within=rect, at="center", color="red")
+```
+
+When `within=` is set, all relative coordinates (`at`, `start`/`end`, `radius`, `rx`/`ry`, `width`/`height`) are resolved against the referenced entity's bounding box instead of the cell. This is reactive -- if the reference entity moves, dependent entities follow automatically.
+
+### The `.at` Property
+
+Every entity has a read/write `.at` property:
+
+```python
+dot = cell.add_dot(at=(0.25, 0.75), color="red")
+print(dot.at)       # (0.25, 0.75)
+dot.at = (0.5, 0.5) # Reposition to center
+```
+
+Returns `None` if the entity was created with pixel coordinates (via `place()` or direct constructor).
+
 ### Complete Builder Reference
 
 #### `add_dot`
 
 ```python
-add_dot(*, at, along, t, radius=5, color="black", z_index=0, opacity=1.0, style=DotStyle)
+add_dot(*, at, within, along, t, radius=0.05, color="black", z_index=0, opacity=1.0, style=DotStyle)
 ```
 
-Creates a filled circle. Default position: center.
+Creates a filled circle. `radius` is a fraction of the cell's smaller dimension (0.05 = 5%). Default position: center.
 
 #### `add_line`
 
 ```python
-add_line(*, start, end, along, t, align, width=1, color="black", z_index=0,
+add_line(*, start, end, within, along, t, align, width=1, color="black", z_index=0,
          cap="round", start_cap, end_cap, opacity=1.0, style=LineStyle)
 ```
 
@@ -310,7 +333,7 @@ Creates a line segment. Default: center to center (zero-length).
 #### `add_diagonal`
 
 ```python
-add_diagonal(*, start="bottom_left", end="top_right", along, t, align, width=1,
+add_diagonal(*, start="bottom_left", end="top_right", within, along, t, align, width=1,
              color="black", z_index=0, cap="round", start_cap, end_cap,
              opacity=1.0, style=LineStyle)
 ```
@@ -320,7 +343,7 @@ Convenience for corner-to-corner lines. Delegates to `add_line()`.
 #### `add_curve`
 
 ```python
-add_curve(*, start="bottom_left", end="top_right", curvature=0.5, along, t, align,
+add_curve(*, start="bottom_left", end="top_right", curvature=0.5, within, along, t, align,
           width=1, color="black", z_index=0, cap="round", start_cap, end_cap,
           opacity=1.0, style=LineStyle)
 ```
@@ -345,7 +368,7 @@ Renders any Pathable as a smooth SVG `<path>` using cubic Bezier approximation. 
 ??? note "Expand full signature"
 
     ```python
-    add_ellipse(*, at, along, t, align, rx, ry, rotation=0, fill="black",
+    add_ellipse(*, at, within, along, t, align, rx, ry, rotation=0, fill="black",
                 stroke=None, stroke_width=1, z_index=0, opacity=1.0,
                 fill_opacity, stroke_opacity, style=ShapeStyle)
     ```
@@ -357,7 +380,7 @@ Creates an ellipse. Default radii: 40% of surface dimensions. The ellipse itself
 ??? note "Expand full signature"
 
     ```python
-    add_polygon(vertices, *, along, t, align, fill="black", stroke=None,
+    add_polygon(vertices, *, within, along, t, align, fill="black", stroke=None,
                 stroke_width=1, z_index=0, opacity=1.0, fill_opacity,
                 stroke_opacity, rotation=0, style=ShapeStyle)
     ```
@@ -369,7 +392,7 @@ Creates a polygon from relative-coordinate vertices (0-1). Use `Polygon.hexagon(
 ??? note "Expand full signature"
 
     ```python
-    add_rect(*, at, along, t, align, width, height, rotation=0, fill="black",
+    add_rect(*, at, within, along, t, align, width, height, rotation=0, fill="black",
              stroke=None, stroke_width=1, opacity=1.0, fill_opacity,
              stroke_opacity, z_index=0, style=ShapeStyle)
     ```
@@ -381,7 +404,7 @@ Creates a rectangle. `at` specifies the **center** position. Default size: 60% o
 ??? note "Expand full signature"
 
     ```python
-    add_text(content, *, at, along, t, align, font_size, color="black",
+    add_text(content, *, at, within, along, t, align, font_size, color="black",
              font_family="sans-serif", bold=False, italic=False, text_anchor,
              baseline="middle", rotation=0, z_index=0, opacity=1.0,
              start_offset=0.0, end_offset=1.0, style=TextStyle)
@@ -439,8 +462,9 @@ All entities inherit from `Entity` and share these common capabilities.
 
 | Property/Method | Description |
 |---|---|
-| `entity.position` | Current position (`Coord`) |
-| `entity.x`, `entity.y` | Position coordinates |
+| `entity.position` | Current position (`Coord`) -- computed from relative coords if set |
+| `entity.x`, `entity.y` | Position coordinates (lazily resolved) |
+| `entity.at` | Read/write relative position as `(rx, ry)` tuple, or `None` if pixel-mode |
 | `entity.z_index` | Layer ordering (higher = on top) |
 | `entity.cell` | Containing Surface (if placed) |
 | `entity.connections` | Set of connections involving this entity |

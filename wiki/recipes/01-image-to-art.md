@@ -10,8 +10,8 @@ Map brightness to dot radius — the fundamental image-to-art technique:
 scene = Scene.from_image("MonaLisa.jpg", grid_size=45, cell_size=9)
 
 for cell in scene.grid:
-    r = cell.brightness * scene.grid.cell_width * 0.48
-    if r > 0.3:
+    r = cell.brightness * 0.48
+    if r > 0.033:
         cell.add_dot(radius=r, color="#ffffff")
 ```
 
@@ -26,8 +26,8 @@ Preserve the original image colors for a vibrant result:
 
 ```python
 for cell in scene.grid:
-    r = cell.brightness * scene.grid.cell_width * 0.45
-    if r > 0.3:
+    r = cell.brightness * 0.45
+    if r > 0.025:
         cell.add_dot(radius=r, color=cell.color, opacity=0.7 + cell.brightness * 0.3)
 ```
 
@@ -43,8 +43,8 @@ Invert the mapping — dark areas get large dots, simulating print halftone:
 ```python
 scene.background = "#0a0a0a"
 for cell in scene.grid:
-    r = (1 - cell.brightness) * scene.grid.cell_width * 0.5  # Inverted!
-    if r > 0.3:
+    r = (1 - cell.brightness) * 0.5  # Inverted!
+    if r > 0.0375:
         cell.add_dot(radius=r, color="#e0e0e0")
 ```
 

@@ -276,6 +276,6 @@ Surface builder methods accept named positions (`"center"`, `"top_left"`) or rel
 Every entity knows which surface it lives in via `entity.cell`. This enables `fit_to_cell()` to work without passing the cell explicitly:
 
 ```python
-dot = cell.add_dot(radius=200)
+dot = cell.add_dot(radius=2.0)
 dot.fit_to_cell(0.85)  # Knows its cell, scales to fit
 ```

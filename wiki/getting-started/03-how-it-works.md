@@ -23,7 +23,7 @@ scene = Scene.from_image("photo.jpg")  # or Scene.with_grid(...)
 for cell in scene.grid:
     # Read data from the cell
     # Add entities based on that data
-    cell.add_dot(radius=cell.brightness * 5, color=cell.color)
+    cell.add_dot(radius=cell.brightness * 0.45, color=cell.color)
 
 scene.save("output.svg")
 ```
@@ -70,6 +70,33 @@ cell.add_dot(at=(0.25, 0.75))  # Quarter from left, three-quarters down
 ![Surface protocol in action](../_images/getting-started/how-surface-protocol.svg){ width="280" }
 <figcaption>Entities added at the cell level (dots) and scene level (large dot, line) coexist.</figcaption>
 </figure>
+
+## Everything is Relative
+
+All `add_*()` builder methods use **fractions of the cell** for sizes and positions -- not pixels. This makes your art resolution-independent.
+
+| Parameter | Meaning | Example |
+|---|---|---|
+| `at=(0.5, 0.5)` | Position: 50% across, 50% down | center of cell |
+| `radius=0.25` | Size: 25% of cell's smaller dimension | medium dot |
+| `width=0.6` | Size: 60% of cell width | default rect width |
+| `rx=0.4` | Size: 40% of cell width | default ellipse radius |
+
+```python
+cell.add_dot(radius=0.40)                  # 40% of cell size
+cell.add_rect(width=0.80, height=0.50)     # 80% wide, 50% tall
+cell.add_ellipse(rx=0.35, ry=0.20)         # 35% x 20% radii
+```
+
+This means the same code produces proportional output regardless of cell size -- whether your cells are 10px or 100px.
+
+!!! tip "Pixel escape hatch"
+    If you need absolute pixel positioning, use `place()` with direct constructors:
+    ```python
+    from pyfreeform import Dot, Rect
+    scene.place(Dot(100, 200, radius=5))   # 5 pixels, absolute position
+    scene.place(Rect(50, 50, 100, 60))     # 100x60 pixels at (50, 50)
+    ```
 
 ## Layering with z_index
 

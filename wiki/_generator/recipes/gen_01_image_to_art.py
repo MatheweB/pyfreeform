@@ -15,8 +15,8 @@ def generate():
         cell_size=9,
     )
     for cell in scene.grid:
-        r = cell.brightness * scene.grid.cell_width * 0.48
-        if r > 0.3:
+        r = cell.brightness * 0.48
+        if r > 0.033:
             cell.add_dot(radius=r, color="#ffffff")
     save(scene, "recipes/image-classic-dots.svg")
 
@@ -27,8 +27,8 @@ def generate():
         cell_size=12,
     )
     for cell in scene.grid:
-        r = cell.brightness * scene.grid.cell_width * 0.45
-        if r > 0.3:
+        r = cell.brightness * 0.45
+        if r > 0.025:
             cell.add_dot(
                 radius=r,
                 color=cell.color,
@@ -45,8 +45,8 @@ def generate():
     scene.background = "#0a0a0a"
     for cell in scene.grid:
         # Invert: dark areas get large dots (halftone convention)
-        r = (1 - cell.brightness) * scene.grid.cell_width * 0.5
-        if r > 0.3:
+        r = (1 - cell.brightness) * 0.5
+        if r > 0.0375:
             cell.add_dot(radius=r, color="#e0e0e0")
     save(scene, "recipes/image-halftone.svg")
 

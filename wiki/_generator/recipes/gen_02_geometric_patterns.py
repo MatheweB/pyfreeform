@@ -71,7 +71,7 @@ def generate():
                 fill=colors.primary, opacity=0.4 + (1 - t) * 0.5,
             )
         else:
-            cell.add_dot(radius=2 + (1 - t) * 3, color=colors.secondary, opacity=0.5)
+            cell.add_dot(radius=0.15 + (1 - t) * 0.20, color=colors.secondary, opacity=0.5)
     save(scene, "recipes/geo-concentric.svg")
 
     # --- 5. Star grid with position-driven parameters ---

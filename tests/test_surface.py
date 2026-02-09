@@ -64,7 +64,7 @@ def test_scene_add_curve():
 
 def test_scene_add_text():
     scene = Scene(200, 100)
-    text = scene.add_text("Hello", at="center", font_size=20, color="white")
+    text = scene.add_text("Hello", at="center", font_size=0.20, color="white")
     assert text is not None
     assert text.content == "Hello"
     assert text.x == 100.0
@@ -91,7 +91,7 @@ def test_scene_add_rect():
 def test_scene_entities_in_svg():
     """Scene builder entities should appear in rendered SVG."""
     scene = Scene(100, 100)
-    scene.add_dot(at="center", color="red", radius=5)
+    scene.add_dot(at="center", color="red", radius=0.05)
     svg = scene.to_svg()
     assert "<circle" in svg
     assert 'fill="red"' in svg
@@ -207,7 +207,7 @@ def test_cell_group_add_line():
 def test_cell_group_add_text():
     scene = Scene.with_grid(cols=6, rows=2, cell_size=10)
     group = scene.grid.merge_row(0)
-    text = group.add_text("Title", at="center", font_size=14, color="white")
+    text = group.add_text("Title", at="center", font_size=0.50, color="white")
     assert text.x == 30.0  # center of 60-wide row
     assert text.y == 5.0   # center of 10-high row
 
@@ -229,7 +229,7 @@ def test_cell_group_entities_in_svg():
     """Entities added to a CellGroup should appear in the scene's SVG."""
     scene = Scene.with_grid(cols=4, rows=4, cell_size=10)
     group = scene.grid.merge((0, 0), (1, 1))
-    group.add_dot(at="center", color="coral", radius=3)
+    group.add_dot(at="center", color="coral", radius=0.15)
     svg = scene.to_svg()
     assert "<circle" in svg
     assert 'fill="coral"' in svg
@@ -269,7 +269,7 @@ def test_fit_to_cell_on_cell_group():
     scene = Scene.with_grid(cols=4, rows=4, cell_size=10)
     group = scene.grid.merge((0, 0), (1, 1))
     # 20x20 group, add a huge dot
-    dot = group.add_dot(radius=100, color="red")
+    dot = group.add_dot(radius=5.0, color="red")
     dot.fit_to_cell(1.0)
     # Should be scaled to fit 20x20 → radius 10
     assert dot.radius <= 10.0 + 0.1
@@ -279,7 +279,7 @@ def test_fit_to_cell_on_cell_group():
 def test_fit_to_cell_on_scene():
     """fit_to_cell should work for entities added directly to Scene."""
     scene = Scene(100, 100)
-    dot = scene.add_dot(radius=200, color="red")
+    dot = scene.add_dot(radius=2.0, color="red")
     dot.fit_to_cell(1.0)
     # Should be scaled to fit 100x100 → radius 50
     assert dot.radius <= 50.0 + 0.1
