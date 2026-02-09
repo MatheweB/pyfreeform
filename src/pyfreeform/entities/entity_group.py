@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from typing import TYPE_CHECKING
 
 from ..core.entity import Entity
@@ -63,6 +64,7 @@ class EntityGroup(Entity):
         super().__init__(x, y, z_index)
         self._children: list[Entity] = []
         self._scale: float = 1.0
+        self._rotation: float = 0.0  # degrees
 
     def add(self, entity: Entity) -> Entity:
         """
@@ -120,9 +122,9 @@ class EntityGroup(Entity):
         """
         Bounding box in absolute coordinates.
 
-        Accounts for the group's position and scale factor.
+        Accounts for the group's position, scale factor, and rotation.
         Children's bounds are in local coordinates, transformed by
-        ``translate(position) scale(factor)``.
+        ``translate(position) rotate(angle) scale(factor)``.
 
         Returns:
             (min_x, min_y, max_x, max_y) in absolute coordinates.
@@ -131,12 +133,41 @@ class EntityGroup(Entity):
             return (self.x, self.y, self.x, self.y)
 
         all_bounds = [child.bounds() for child in self._children]
-        # absolute = position + local * scale
+        # Local bounds after scale
+        local_min_x = min(b[0] for b in all_bounds) * self._scale
+        local_min_y = min(b[1] for b in all_bounds) * self._scale
+        local_max_x = max(b[2] for b in all_bounds) * self._scale
+        local_max_y = max(b[3] for b in all_bounds) * self._scale
+
+        if self._rotation == 0:
+            return (
+                self.x + local_min_x,
+                self.y + local_min_y,
+                self.x + local_max_x,
+                self.y + local_max_y,
+            )
+
+        # Rotate corners around local origin and find AABB
+        angle_rad = math.radians(self._rotation)
+        cos_a = math.cos(angle_rad)
+        sin_a = math.sin(angle_rad)
+
+        corners = [
+            (local_min_x, local_min_y),
+            (local_max_x, local_min_y),
+            (local_max_x, local_max_y),
+            (local_min_x, local_max_y),
+        ]
+        rotated = [
+            (x * cos_a - y * sin_a, x * sin_a + y * cos_a)
+            for x, y in corners
+        ]
+
         return (
-            self.x + min(b[0] for b in all_bounds) * self._scale,
-            self.y + min(b[1] for b in all_bounds) * self._scale,
-            self.x + max(b[2] for b in all_bounds) * self._scale,
-            self.y + max(b[3] for b in all_bounds) * self._scale,
+            self.x + min(rx for rx, _ in rotated),
+            self.y + min(ry for _, ry in rotated),
+            self.x + max(rx for rx, _ in rotated),
+            self.y + max(ry for _, ry in rotated),
         )
 
     def to_svg(self) -> str:
@@ -153,6 +184,8 @@ class EntityGroup(Entity):
             return ""
 
         transforms = [f"translate({self.x}, {self.y})"]
+        if self._rotation != 0:
+            transforms.append(f"rotate({self._rotation})")
         if self._scale != 1.0:
             transforms.append(f"scale({self._scale})")
         transform_str = " ".join(transforms)
@@ -165,8 +198,34 @@ class EntityGroup(Entity):
         return "\n".join(parts)
 
     # =========================================================================
-    # SCALE OVERRIDE
+    # TRANSFORM OVERRIDES
     # =========================================================================
+
+    def rotate(
+        self,
+        angle: float,
+        origin: CoordLike | None = None,
+    ) -> EntityGroup:
+        """
+        Rotate the group.
+
+        Accumulates an internal rotation angle used by the SVG transform.
+        If origin is provided, also orbits the group's position around
+        that point.
+
+        Args:
+            angle: Rotation angle in degrees (counterclockwise).
+            origin: Center of rotation in absolute coordinates.
+                    If None, rotates in place (children rotate around
+                    the group's local origin).
+
+        Returns:
+            self, for method chaining.
+        """
+        self._rotation += angle
+        if origin is not None:
+            super().rotate(angle, origin)
+        return self
 
     def scale(
         self,

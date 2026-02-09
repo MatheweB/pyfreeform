@@ -311,10 +311,6 @@ def generate():
     conn = d1.connect(d2)
     scene.add(conn)
 
-    # Ghost hint line (this is a separate entity, NOT the connection)
-    hint = Line(50, 65, 350, 65, width=0.8, color=colors.grid, opacity=0.25)
-    scene.add(hint)
-
     # Place markers via point_at(t) on the invisible connection
     for i in range(9):
         t = i / 8
