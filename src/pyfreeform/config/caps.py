@@ -99,35 +99,55 @@ def get_marker(
 
 
 # ---------------------------------------------------------------------------
-# Built-in marker cap: arrow
+# Built-in marker caps: arrow, arrow_in
 # ---------------------------------------------------------------------------
+#
+# Arrow shapes:
+#   FORWARD  = "M 0 0 L 10 5 L 0 10 z"   (points right → outward)
+#   REVERSE  = "M 10 0 L 0 5 L 10 10 z"   (points left  → inward)
+#
+# Positioning rule — refX must always align the marker's reference point
+# with the path endpoint it's attached to:
+#   marker-end   → refX="10"  (right edge = path endpoint)
+#   marker-start → refX="0"   (left edge  = path endpoint)
+#
+# This means each (shape × position) combination needs its own generator:
+#
+#   cap        position     shape      refX
+#   ─────────  ──────────   ─────────  ────
+#   arrow      end          FORWARD    10
+#   arrow      start        REVERSE     0
+#   arrow_in   end          REVERSE    10
+#   arrow_in   start        FORWARD     0
 
-def _arrow_marker(marker_id: str, color: str, size: float) -> str:
-    """End-cap arrow: centered on the vertex, body covers the stroke."""
-    return (
-        f'<marker id="{marker_id}" viewBox="0 0 10 10" '
-        f'refX="5" refY="5" '
-        f'markerWidth="{size}" markerHeight="{size}" '
-        f'orient="auto" overflow="visible">'
-        f'<path d="M 0 0 L 10 5 L 0 10 z" fill="{color}" />'
-        f'</marker>'
-    )
-
-
-def _arrow_marker_start(marker_id: str, color: str, size: float) -> str:
-    """Start-cap arrow: reversed shape, centered on the vertex."""
-    return (
-        f'<marker id="{marker_id}" viewBox="0 0 10 10" '
-        f'refX="5" refY="5" '
-        f'markerWidth="{size}" markerHeight="{size}" '
-        f'orient="auto" overflow="visible">'
-        f'<path d="M 10 0 L 0 5 L 10 10 z" fill="{color}" />'
-        f'</marker>'
-    )
+_FORWARD = "M 0 0 L 10 5 L 0 10 z"
+_REVERSE = "M 10 0 L 0 5 L 10 10 z"
 
 
-register_cap("arrow", _arrow_marker, start_generator=_arrow_marker_start)
+def _make_arrow_gen(path_d: str, ref_x: int):
+    """Create an arrow marker generator with the given shape and refX."""
+    def _gen(marker_id: str, color: str, size: float) -> str:
+        return (
+            f'<marker id="{marker_id}" viewBox="0 0 10 10" '
+            f'refX="{ref_x}" refY="5" '
+            f'markerWidth="{size}" markerHeight="{size}" '
+            f'orient="auto" overflow="visible">'
+            f'<path d="{path_d}" fill="{color}" />'
+            f'</marker>'
+        )
+    return _gen
 
-# "arrow_in" — inward-facing arrow (points into the path, opposite of "arrow").
-# Swaps the generators: end position gets the backward shape, start gets the forward shape.
-register_cap("arrow_in", _arrow_marker_start, start_generator=_arrow_marker)
+
+# "arrow" — outward-facing (default): tip points away from the path.
+register_cap(
+    "arrow",
+    _make_arrow_gen(_FORWARD, ref_x=10),          # end: → at endpoint
+    start_generator=_make_arrow_gen(_REVERSE, ref_x=0),  # start: ← at startpoint
+)
+
+# "arrow_in" — inward-facing: tip points into the path.
+register_cap(
+    "arrow_in",
+    _make_arrow_gen(_REVERSE, ref_x=10),           # end: ← at endpoint
+    start_generator=_make_arrow_gen(_FORWARD, ref_x=0),  # start: → at startpoint
+)

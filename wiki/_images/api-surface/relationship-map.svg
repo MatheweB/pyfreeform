@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="672" height="504" viewBox="0 0 672 504">
+  <defs>
+    <marker id="cap-arrow-666688-4_5" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto" overflow="visible"><path d="M 0 0 L 10 5 L 0 10 z" fill="#666688" /></marker>
+    <marker id="cap-arrow-666688-3_0" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="3.0" markerHeight="3.0" orient="auto" overflow="visible"><path d="M 0 0 L 10 5 L 0 10 z" fill="#666688" /></marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#1a1a2e" />
+  <line x1="280.0" y1="52.0" x2="224.0" y2="92.0" stroke="#666688" stroke-width="1.5" stroke-linecap="butt" marker-end="url(#cap-arrow-666688-4_5)" opacity="0.7" />
+  <line x1="454.72" y1="108.0" x2="273.28" y2="108.0" stroke="#666688" stroke-width="1" stroke-linecap="butt" marker-end="url(#cap-arrow-666688-3_0)" opacity="0.35" />
+  <line x1="174.72" y1="124.0" x2="112.0" y2="164.0" stroke="#666688" stroke-width="1.5" stroke-linecap="butt" marker-end="url(#cap-arrow-666688-4_5)" opacity="0.7" />
+  <path d="M 273.28 124.0 C 344.8533333333333 117.06133333333334 412.4266666666667 130.39466666666667 476.0 164.0" fill="none" stroke="#666688" stroke-width="1.5" stroke-linecap="butt" stroke-linejoin="round" marker-end="url(#cap-arrow-666688-4_5)" opacity="0.7" />
+  <line x1="112.0" y1="196.0" x2="174.72" y2="236.0" stroke="#666688" stroke-width="1.5" stroke-linecap="butt" marker-end="url(#cap-arrow-666688-4_5)" opacity="0.7" />
+  <line x1="224.0" y1="268.0" x2="28.0" y2="313.0" stroke="#4ecdc4" stroke-width="0.8" stroke-linecap="round" opacity="0.15" />
+  <line x1="224.0" y1="268.0" x2="84.0" y2="313.0" stroke="#4ecdc4" stroke-width="0.8" stroke-linecap="round" opacity="0.15" />
+  <line x1="224.0" y1="268.0" x2="140.0" y2="313.0" stroke="#4ecdc4" stroke-width="0.8" stroke-linecap="round" opacity="0.15" />
+  <line x1="224.0" y1="268.0" x2="196.0" y2="313.0" stroke="#4ecdc4" stroke-width="0.8" stroke-linecap="round" opacity="0.15" />
+  <line x1="224.0" y1="268.0" x2="252.0" y2="313.0" stroke="#4ecdc4" stroke-width="0.8" stroke-linecap="round" opacity="0.15" />
+  <line x1="224.0" y1="268.0" x2="308.0" y2="313.0" stroke="#4ecdc4" stroke-width="0.8" stroke-linecap="round" opacity="0.15" />
+  <line x1="224.0" y1="268.0" x2="364.0" y2="313.0" stroke="#4ecdc4" stroke-width="0.8" stroke-linecap="round" opacity="0.15" />
+  <line x1="224.0" y1="268.0" x2="420.0" y2="313.0" stroke="#4ecdc4" stroke-width="0.8" stroke-linecap="round" opacity="0.15" />
+  <line x1="224.0" y1="268.0" x2="476.0" y2="313.0" stroke="#4ecdc4" stroke-width="0.8" stroke-linecap="round" opacity="0.15" />
+  <line x1="224.0" y1="268.0" x2="532.0" y2="313.0" stroke="#4ecdc4" stroke-width="0.8" stroke-linecap="round" opacity="0.15" />
+  <path d="M 273.28 252.0 C 395.91999999999996 219.25866666666667 510.15999999999997 237.92533333333336 616.0 308.0" fill="none" stroke="#666688" stroke-width="1.5" stroke-linecap="butt" stroke-linejoin="round" marker-end="url(#cap-arrow-666688-4_5)" opacity="0.7" />
+  <line x1="616.0" y1="340.0" x2="616.0" y2="442.8" stroke="#666688" stroke-width="1.5" stroke-linecap="butt" marker-end="url(#cap-arrow-666688-4_5)" opacity="0.7" />
+  <text x="234.0" y="72.0" font-size="9.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">has</text>
+  <text x="364.0" y="96.0" font-size="9.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">from_image()</text>
+  <text x="125.36000000000001" y="144.0" font-size="9.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">has</text>
+  <text x="379.248" y="125.40416" font-size="9.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">.merge()</text>
+  <text x="115.36000000000001" y="216.0" font-size="9.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">add_*()</text>
+  <text x="357.856" y="228.52416" font-size="9.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">.connect()</text>
+  <text x="581.0" y="391.4" font-size="9.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">point_at(t)</text>
+  <rect x="2.8000000000000007" y="313.0" width="50.4" height="22.0" fill="#4ecdc4" stroke="#4ecdc4" stroke-width="1.0" fill-opacity="0.15" stroke-opacity="0.5" />
+  <text x="28.0" y="324.0" font-size="10.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#4ecdc4" text-anchor="middle" dominant-baseline="middle">Dot</text>
+  <rect x="58.8" y="313.0" width="50.4" height="22.0" fill="#4ecdc4" stroke="#4ecdc4" stroke-width="1.0" fill-opacity="0.15" stroke-opacity="0.5" />
+  <text x="84.0" y="324.0" font-size="10.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#4ecdc4" text-anchor="middle" dominant-baseline="middle">Point</text>
+  <rect x="114.8" y="313.0" width="50.4" height="22.0" fill="#4ecdc4" stroke="#4ecdc4" stroke-width="1.0" fill-opacity="0.15" stroke-opacity="0.5" />
+  <text x="140.0" y="324.0" font-size="10.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#4ecdc4" text-anchor="middle" dominant-baseline="middle">Line</text>
+  <circle cx="140.0" cy="347.04" r="3.0" fill="#ffe66d" opacity="0.7" />
+  <rect x="170.8" y="313.0" width="50.4" height="22.0" fill="#4ecdc4" stroke="#4ecdc4" stroke-width="1.0" fill-opacity="0.15" stroke-opacity="0.5" />
+  <text x="196.0" y="324.0" font-size="10.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#4ecdc4" text-anchor="middle" dominant-baseline="middle">Curve</text>
+  <circle cx="196.0" cy="347.04" r="3.0" fill="#ffe66d" opacity="0.7" />
+  <text x="196.0" y="356.4" font-size="7.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#888899" text-anchor="middle" dominant-baseline="middle">Pathable</text>
+  <rect x="226.8" y="313.0" width="50.4" height="22.0" fill="#4ecdc4" stroke="#4ecdc4" stroke-width="1.0" fill-opacity="0.15" stroke-opacity="0.5" />
+  <text x="252.0" y="324.0" font-size="10.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#4ecdc4" text-anchor="middle" dominant-baseline="middle">Ellipse</text>
+  <circle cx="252.0" cy="347.04" r="3.0" fill="#ffe66d" opacity="0.7" />
+  <rect x="282.8" y="313.0" width="50.4" height="22.0" fill="#4ecdc4" stroke="#4ecdc4" stroke-width="1.0" fill-opacity="0.15" stroke-opacity="0.5" />
+  <text x="308.0" y="324.0" font-size="10.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#4ecdc4" text-anchor="middle" dominant-baseline="middle">Rect</text>
+  <rect x="338.8" y="313.0" width="50.4" height="22.0" fill="#4ecdc4" stroke="#4ecdc4" stroke-width="1.0" fill-opacity="0.15" stroke-opacity="0.5" />
+  <text x="364.0" y="324.0" font-size="10.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#4ecdc4" text-anchor="middle" dominant-baseline="middle">Polygon</text>
+  <rect x="394.8" y="313.0" width="50.4" height="22.0" fill="#4ecdc4" stroke="#4ecdc4" stroke-width="1.0" fill-opacity="0.15" stroke-opacity="0.5" />
+  <text x="420.0" y="324.0" font-size="10.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#4ecdc4" text-anchor="middle" dominant-baseline="middle">Text</text>
+  <rect x="450.8" y="313.0" width="50.4" height="22.0" fill="#4ecdc4" stroke="#4ecdc4" stroke-width="1.0" fill-opacity="0.15" stroke-opacity="0.5" />
+  <text x="476.0" y="324.0" font-size="10.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#4ecdc4" text-anchor="middle" dominant-baseline="middle">Path</text>
+  <circle cx="476.0" cy="347.04" r="3.0" fill="#ffe66d" opacity="0.7" />
+  <rect x="506.8" y="313.0" width="50.4" height="22.0" fill="#4ecdc4" stroke="#4ecdc4" stroke-width="1.0" fill-opacity="0.15" stroke-opacity="0.5" />
+  <text x="532.0" y="324.0" font-size="7.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#4ecdc4" text-anchor="middle" dominant-baseline="middle">EntityGroup</text>
+  <rect x="230.72" y="20.0" width="98.56" height="32.0" fill="#ff6b6b" stroke="#ff6b6b" stroke-width="1.5" fill-opacity="0.25" stroke-opacity="0.7" />
+  <text x="280.0" y="36.0" font-size="13.0" font-family="sans-serif" font-style="normal" font-weight="bold" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">Scene</text>
+  <rect x="251.0" y="45.78" width="58.0" height="15.0" fill="#ffe66d" stroke="#ffe66d" stroke-width="0.0" fill-opacity="0.85" stroke-opacity="0" />
+  <text x="280.0" y="53.28" font-size="8.0" font-family="sans-serif" font-style="normal" font-weight="bold" fill="#1a1a2e" text-anchor="middle" dominant-baseline="middle">Surface</text>
+  <rect x="174.72" y="92.0" width="98.56" height="32.0" fill="#ff6b6b" stroke="#ff6b6b" stroke-width="1.5" fill-opacity="0.25" stroke-opacity="0.7" />
+  <text x="224.0" y="108.0" font-size="13.0" font-family="sans-serif" font-style="normal" font-weight="bold" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">Grid</text>
+  <rect x="454.72" y="92.0" width="98.56" height="32.0" fill="#3d3d5c" stroke="#3d3d5c" stroke-width="1.5" fill-opacity="0.3" stroke-opacity="0.5" />
+  <text x="504.0" y="108.0" font-size="12.0" font-family="sans-serif" font-style="normal" font-weight="bold" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">Image</text>
+  <rect x="62.72" y="164.0" width="98.56" height="32.0" fill="#ff6b6b" stroke="#ff6b6b" stroke-width="1.5" fill-opacity="0.25" stroke-opacity="0.7" />
+  <text x="112.0" y="180.0" font-size="13.0" font-family="sans-serif" font-style="normal" font-weight="bold" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">Cell</text>
+  <rect x="83.0" y="189.78" width="58.0" height="15.0" fill="#ffe66d" stroke="#ffe66d" stroke-width="0.0" fill-opacity="0.85" stroke-opacity="0" />
+  <text x="112.0" y="197.28" font-size="8.0" font-family="sans-serif" font-style="normal" font-weight="bold" fill="#1a1a2e" text-anchor="middle" dominant-baseline="middle">Surface</text>
+  <rect x="422.0" y="164.0" width="108.0" height="32.0" fill="#ff6b6b" stroke="#ff6b6b" stroke-width="1.5" fill-opacity="0.25" stroke-opacity="0.7" />
+  <text x="476.0" y="180.0" font-size="12.0" font-family="sans-serif" font-style="normal" font-weight="bold" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">CellGroup</text>
+  <rect x="447.0" y="189.78" width="58.0" height="15.0" fill="#ffe66d" stroke="#ffe66d" stroke-width="0.0" fill-opacity="0.85" stroke-opacity="0" />
+  <text x="476.0" y="197.28" font-size="8.0" font-family="sans-serif" font-style="normal" font-weight="bold" fill="#1a1a2e" text-anchor="middle" dominant-baseline="middle">Surface</text>
+  <rect x="174.72" y="236.0" width="98.56" height="32.0" fill="#4ecdc4" stroke="#4ecdc4" stroke-width="1.5" fill-opacity="0.25" stroke-opacity="0.7" />
+  <text x="224.0" y="252.0" font-size="13.0" font-family="sans-serif" font-style="normal" font-weight="bold" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">Entity</text>
+  <rect x="566.72" y="308.0" width="98.56" height="32.0" fill="#4ecdc4" stroke="#4ecdc4" stroke-width="1.5" fill-opacity="0.25" stroke-opacity="0.7" />
+  <text x="616.0" y="324.0" font-size="11.0" font-family="sans-serif" font-style="normal" font-weight="bold" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">Connection</text>
+  <text x="616.0" y="344.16" font-size="7.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#888899" text-anchor="middle" dominant-baseline="middle">StrokedPathMixin</text>
+  <rect x="56.0" y="442.8" width="560.0" height="50.4" fill="#ffe66d" stroke="#ffe66d" stroke-width="1.5" fill-opacity="0.1" stroke-opacity="0.5" />
+  <text x="336.0" y="457.2" font-size="11.0" font-family="sans-serif" font-style="normal" font-weight="bold" fill="#ffe66d" text-anchor="middle" dominant-baseline="middle">Pathable protocol: point_at(t)</text>
+  <text x="336.0" y="478.8" font-size="9.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">Line  ·  Curve  ·  Ellipse  ·  Path  ·  Connection</text>
+</svg>

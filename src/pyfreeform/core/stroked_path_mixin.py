@@ -79,5 +79,11 @@ class StrokedPathMixin:
             mid = make_marker_id(ec, self.color, size, for_start=False)
             parts.append(f' marker-end="url(#{mid})"')
 
+        # When any marker cap is present, use "butt" linecap so the stroke
+        # ends flush at the endpoint — prevents round/square caps from
+        # poking out past the arrow tip.
+        if has_marker_start or has_marker_end:
+            svg_cap = "butt"
+
         return svg_cap, "".join(parts)
 
