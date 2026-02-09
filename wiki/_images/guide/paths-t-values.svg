@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="280" height="280" viewBox="0 0 280 280">
+  <rect width="100%" height="100%" fill="#1a1a2e" />
+  <path d="M 28.0 224.0 Q 198.8 218.4 252.0 56.0" fill="none" stroke="#666688" stroke-width="2.0" stroke-linecap="round" opacity="0.5" />
+  <circle cx="28.0" cy="224.0" r="8.0" fill="#ff6b6b" opacity="0.8" />
+  <text x="28.0" y="240.80000000000004" font-size="11.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">t=0.00</text>
+  <circle cx="106.05000000000001" cy="211.4" r="8.0" fill="#ff6b6b" opacity="0.8" />
+  <text x="106.05000000000001" y="228.2" font-size="11.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">t=0.25</text>
+  <circle cx="169.4" cy="179.2" r="8.0" fill="#ff6b6b" opacity="0.8" />
+  <text x="169.4" y="196.0" font-size="11.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">t=0.50</text>
+  <circle cx="218.05" cy="127.4" r="8.0" fill="#ff6b6b" opacity="0.8" />
+  <text x="218.05" y="144.20000000000002" font-size="11.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">t=0.75</text>
+  <circle cx="252.0" cy="56.0" r="8.0" fill="#ff6b6b" opacity="0.8" />
+  <text x="252.0" y="72.8" font-size="11.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">t=1.00</text>
+</svg>

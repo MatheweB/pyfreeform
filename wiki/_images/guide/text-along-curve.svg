@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+  <defs>
+    <path id="textpath-0" d="M 15.0 210.0 Q 180.0 217.5 285.0 90.0" fill="none" />
+  </defs>
+  <rect width="100%" height="100%" fill="#1a1a2e" />
+  <path d="M 15.0 210.0 Q 180.0 217.5 285.0 90.0" fill="none" stroke="#666688" stroke-width="1.0" stroke-linecap="round" opacity="0.2" />
+  <text font-size="14.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#ffe66d" text-anchor="start" dominant-baseline="middle"><textPath href="#textpath-0" textLength="307.4" lengthAdjust="spacing">Text warps along curves beautifully</textPath></text>
+</svg>

@@ -6,7 +6,7 @@ from pyfreeform import (
     Scene, Palette, Polygon, EntityGroup, Dot, Line, Ellipse, map_range,
 )
 
-from wiki_v2._generator import save, sample_image
+from wiki._generator import save, sample_image
 
 
 def generate():

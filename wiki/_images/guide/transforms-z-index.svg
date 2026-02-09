@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <rect width="100%" height="100%" fill="#1a1a2e" />
+  <line x1="20.0" y1="0" x2="20.0" y2="200" stroke="#3d3d5c" stroke-width="0.5" stroke-linecap="round" opacity="0.3" />
+  <line x1="0" y1="20.0" x2="200" y2="20.0" stroke="#3d3d5c" stroke-width="0.5" stroke-linecap="round" opacity="0.3" />
+  <line x1="40.0" y1="0" x2="40.0" y2="200" stroke="#3d3d5c" stroke-width="0.5" stroke-linecap="round" opacity="0.3" />
+  <line x1="0" y1="40.0" x2="200" y2="40.0" stroke="#3d3d5c" stroke-width="0.5" stroke-linecap="round" opacity="0.3" />
+  <line x1="60.0" y1="0" x2="60.0" y2="200" stroke="#3d3d5c" stroke-width="0.5" stroke-linecap="round" opacity="0.3" />
+  <line x1="0" y1="60.0" x2="200" y2="60.0" stroke="#3d3d5c" stroke-width="0.5" stroke-linecap="round" opacity="0.3" />
+  <line x1="80.0" y1="0" x2="80.0" y2="200" stroke="#3d3d5c" stroke-width="0.5" stroke-linecap="round" opacity="0.3" />
+  <line x1="0" y1="80.0" x2="200" y2="80.0" stroke="#3d3d5c" stroke-width="0.5" stroke-linecap="round" opacity="0.3" />
+  <line x1="100.0" y1="0" x2="100.0" y2="200" stroke="#3d3d5c" stroke-width="0.5" stroke-linecap="round" opacity="0.3" />
+  <line x1="0" y1="100.0" x2="200" y2="100.0" stroke="#3d3d5c" stroke-width="0.5" stroke-linecap="round" opacity="0.3" />
+  <line x1="120.0" y1="0" x2="120.0" y2="200" stroke="#3d3d5c" stroke-width="0.5" stroke-linecap="round" opacity="0.3" />
+  <line x1="0" y1="120.0" x2="200" y2="120.0" stroke="#3d3d5c" stroke-width="0.5" stroke-linecap="round" opacity="0.3" />
+  <line x1="140.0" y1="0" x2="140.0" y2="200" stroke="#3d3d5c" stroke-width="0.5" stroke-linecap="round" opacity="0.3" />
+  <line x1="0" y1="140.0" x2="200" y2="140.0" stroke="#3d3d5c" stroke-width="0.5" stroke-linecap="round" opacity="0.3" />
+  <line x1="160.0" y1="0" x2="160.0" y2="200" stroke="#3d3d5c" stroke-width="0.5" stroke-linecap="round" opacity="0.3" />
+  <line x1="0" y1="160.0" x2="200" y2="160.0" stroke="#3d3d5c" stroke-width="0.5" stroke-linecap="round" opacity="0.3" />
+  <line x1="180.0" y1="0" x2="180.0" y2="200" stroke="#3d3d5c" stroke-width="0.5" stroke-linecap="round" opacity="0.3" />
+  <line x1="0" y1="180.0" x2="200" y2="180.0" stroke="#3d3d5c" stroke-width="0.5" stroke-linecap="round" opacity="0.3" />
+  <ellipse cx="100.0" cy="100.0" rx="70.0" ry="70.0" fill="#ff6b6b" fill-opacity="0.2" stroke-opacity="0.2" />
+  <polygon points="134.64101615137756,120.0 100.0,140.0 65.35898384862247,120.00000000000001 65.35898384862244,80.0 99.99999999999999,60.0 134.64101615137756,80.00000000000001" fill="#ffe66d" fill-opacity="0.6" stroke-opacity="0.6" />
+  <circle cx="100.0" cy="100.0" r="12.0" fill="#ffffff" opacity="0.9" />
+</svg>

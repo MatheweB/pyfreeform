@@ -20,7 +20,7 @@
     
     
       
-        <title>wiki_v2 Design-Flow Document - PyFreeform</title>
+        <title>wiki Design-Flow Document - PyFreeform</title>
       
     
     
@@ -83,7 +83,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#wiki_v2-design-flow-document" class="md-skip">
+        <a href="#wiki-design-flow-document" class="md-skip">
           Skip to content
         </a>
       
@@ -117,7 +117,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              wiki_v2 Design-Flow Document
+              wiki Design-Flow Document
             
           </span>
         </div>
@@ -1886,7 +1886,7 @@
   
 
 
-<h1 id="wiki_v2-design-flow-document">wiki_v2 Design-Flow Document<a class="headerlink" href="#wiki_v2-design-flow-document" title="Permanent link">¶</a></h1>
+<h1 id="wiki-design-flow-document">wiki Design-Flow Document<a class="headerlink" href="#wiki-design-flow-document" title="Permanent link">¶</a></h1>
 <blockquote>
 <p>The blueprint for the new PyFreeform documentation.
 Describes the structure, user experience, visual design, generation system,
@@ -2259,7 +2259,7 @@ Build up in 3 steps, each with a rendered SVG.</p>
 <li><strong>Validation</strong>: Each generator validates its outputs exist and are non-empty.</li>
 </ol>
 <h3 id="directory-structure">Directory Structure<a class="headerlink" href="#directory-structure" title="Permanent link">¶</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>wiki_v2/
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>wiki/
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>├── index.md
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>├── mkdocs.yml            # (or symlink from project root)
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>├── sample_images/
@@ -2349,7 +2349,7 @@ Build up in 3 steps, each with a rendered SVG.</p>
 </span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>    <span class="k">return</span> <span class="n">path</span>
 </span></code></pre></div>
 <h3 id="generator-runner-_generatorgenerate_allpy">Generator Runner (<code>_generator/generate_all.py</code>)<a class="headerlink" href="#generator-runner-_generatorgenerate_allpy" title="Permanent link">¶</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="sd">"""Regenerate all SVGs for wiki_v2."""</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="sd">"""Regenerate all SVGs for wiki."""</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
@@ -2569,7 +2569,7 @@ Build up in 3 steps, each with a rendered SVG.</p>
 <li>Create <code>_generator/__init__.py</code> with utilities</li>
 <li>Create <code>_generator/generate_all.py</code> runner</li>
 <li>Create custom sample images (gradient.png, circles.png)</li>
-<li>Create <code>mkdocs_v2.yml</code> configuration</li>
+<li>Create <code>mkdocs.yml</code> configuration</li>
 </ol>
 <h3 id="phase-2-core-pages">Phase 2: Core Pages<a class="headerlink" href="#phase-2-core-pages" title="Permanent link">¶</a></h3>
 <ol>

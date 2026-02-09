@@ -4,7 +4,7 @@ import math
 
 from pyfreeform import Scene, Palette, Point, map_range
 
-from wiki_v2._generator import save, sample_image
+from wiki._generator import save, sample_image
 
 
 def generate():

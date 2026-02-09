@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="264" height="88" viewBox="0 0 264 88">
+  <rect width="100%" height="100%" fill="#0a1628" />
+  <rect x="0" y="0" width="44.0" height="44.0" fill="none" stroke="#1a3a52" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <circle cx="22.0" cy="22.0" r="12.0" fill="#00d9ff" />
+  <text x="22.0" y="44.0" font-size="8.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">Dot</text>
+  <rect x="44" y="0" width="44.0" height="44.0" fill="none" stroke="#1a3a52" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <line x1="44.0" y1="44.0" x2="88.0" y2="0.0" stroke="#00d9ff" stroke-width="3.0" stroke-linecap="round" />
+  <text x="66.0" y="44.0" font-size="8.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">Line</text>
+  <rect x="88" y="0" width="44.0" height="44.0" fill="none" stroke="#1a3a52" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <path d="M 88.0 44.0 Q 121.0 33.0 132.0 0.0" fill="none" stroke="#00d9ff" stroke-width="2.0" stroke-linecap="round" />
+  <text x="110.0" y="44.0" font-size="8.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">Curve</text>
+  <rect x="132" y="0" width="44.0" height="44.0" fill="none" stroke="#1a3a52" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <text x="154.0" y="22.0" font-size="20.0" font-family="sans-serif" font-style="normal" font-weight="bold" fill="#00d9ff" text-anchor="middle" dominant-baseline="middle">Aa</text>
+  <text x="154.0" y="44.0" font-size="8.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">Text</text>
+  <rect x="176" y="0" width="44.0" height="44.0" fill="none" stroke="#1a3a52" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="176" y="0" width="44.0" height="44.0" fill="#00d9ff" fill-opacity="0.5" stroke-opacity="0.5" />
+  <text x="198.0" y="44.0" font-size="8.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">Fill</text>
+  <rect x="220" y="0" width="44.0" height="44.0" fill="none" stroke="#1a3a52" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="220" y="0" width="44.0" height="44.0" fill="none" stroke="#00d9ff" stroke-width="2.0" />
+  <text x="242.0" y="44.0" font-size="8.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">Border</text>
+  <rect x="0" y="44" width="44.0" height="44.0" fill="none" stroke="#1a3a52" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="7.0" y="54.0" width="30.0" height="24.0" fill="#90e0ef" />
+  <text x="22.0" y="88.0" font-size="8.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">Rect</text>
+  <rect x="44" y="44" width="44.0" height="44.0" fill="none" stroke="#1a3a52" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <ellipse cx="66.0" cy="66.0" rx="16.0" ry="12.0" fill="#90e0ef" />
+  <text x="66.0" y="88.0" font-size="8.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">Ellipse</text>
+  <rect x="88" y="44" width="44.0" height="44.0" fill="none" stroke="#1a3a52" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <polygon points="121.43153532995458,72.6 110.0,79.2 98.56846467004542,72.60000000000001 98.56846467004542,59.400000000000006 110.0,52.8 121.43153532995458,59.400000000000006" fill="#90e0ef" />
+  <text x="110.0" y="88.0" font-size="8.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">Polygon</text>
+  <rect x="132" y="44" width="44.0" height="44.0" fill="none" stroke="#1a3a52" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <text x="154.0" y="88.0" font-size="8.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">  </text>
+  <rect x="176" y="44" width="44.0" height="44.0" fill="none" stroke="#1a3a52" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <text x="198.0" y="88.0" font-size="8.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">  </text>
+  <rect x="220" y="44" width="44.0" height="44.0" fill="none" stroke="#1a3a52" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <text x="242.0" y="88.0" font-size="8.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">  </text>
+</svg>
