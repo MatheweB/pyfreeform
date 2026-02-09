@@ -83,7 +83,7 @@ def generate():
     # --- 4. Overlapping curves on image ---
     scene = Scene.from_image(
         sample_image("MCEscherBirds.jpg"),
-        grid_size=35,
+        grid_size=60,
         cell_size=10,
     )
     for cell in scene.grid:

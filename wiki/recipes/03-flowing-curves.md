@@ -62,7 +62,7 @@ A custom spiral rendered in each cell:
 Overlay curves on a photograph — curvature driven by brightness:
 
 ```python
-scene = Scene.from_image("MCEscherBirds.jpg", grid_size=35, cell_size=10)
+scene = Scene.from_image("MCEscherBirds.jpg", grid_size=60, cell_size=10)
 for cell in scene.grid:
     if cell.brightness > 0.15:
         curvature = (cell.brightness - 0.5) * 1.5
