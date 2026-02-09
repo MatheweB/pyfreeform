@@ -68,7 +68,7 @@ Every Surface has a rectangular region (`_x`, `_y`, `_width`, `_height`) and a l
 |---|---|
 | **Position resolution** | `relative_to_absolute()`, `absolute_to_relative()`, named positions ("center", "top_left", etc.) |
 | **Builder methods** | `add_dot()`, `add_line()`, `add_curve()`, `add_ellipse()`, `add_polygon()`, `add_rect()`, `add_text()`, `add_path()`, `add_fill()`, `add_border()` |
-| **Entity management** | `place()`, `add_entity()`, `remove()`, `clear()` |
+| **Entity management** | `add()`, `place()`, `remove()`, `clear()` |
 | **Parametric positioning** | `_resolve_along()` -- resolves `along`/`t`/`align` params for any builder |
 
 ### Subclass responsibilities

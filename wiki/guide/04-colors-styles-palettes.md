@@ -44,7 +44,7 @@ Shapes (Rect, Ellipse, Polygon) support independent opacity for fill and stroke:
 
 ```python
 cell.add_ellipse(
-    rx=22, ry=22,
+    rx=0.45, ry=0.45,
     fill=colors.primary,
     stroke=colors.accent,
     stroke_width=3,

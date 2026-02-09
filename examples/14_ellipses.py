@@ -53,10 +53,10 @@ for cell in scene.grid:
     # Rotation based on position
     rotation = (cell.row + cell.col) * 15
 
-    # Add ellipse - use large values, will be auto-constrained
+    # Add ellipse - use large values, will be auto-constrained by fit_to_cell
     ellipse = cell.add_ellipse(
-        rx=100,  # Start large
-        ry=60,   # Will be auto-scaled to fit
+        rx=6.67,  # Start large (oversized fraction)
+        ry=4.0,   # Will be auto-scaled to fit
         rotation=rotation,
         fill=cell.color,
         stroke=None,

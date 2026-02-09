@@ -40,7 +40,7 @@ def make_crosshair(color1, color2):
 
 for cell in scene.grid:
     group = make_crosshair(colors.primary, colors.secondary)
-    cell.place(group)
+    cell.add(group)
     group.fit_to_cell(0.8)
     group.rotate(nx * 45)
 ```
@@ -56,7 +56,7 @@ Use `grid.merge()` to create distinct regions with different treatments:
 
 ```python
 # Feature area
-feature = scene.grid.merge(2, 8, 3, 9)
+feature = scene.grid.merge((2, 3), (7, 8))
 feature.add_fill(color=colors.primary, opacity=0.15)
 feature.add_border(color=colors.accent, width=1.5)
 feature.add_text("FEATURED", at="center", font_size=16, color=colors.accent, bold=True)

@@ -192,14 +192,14 @@ def test_connection_style_builder():
 
 def test_scene_no_defs_without_arrows():
     scene = Scene(200, 200)
-    scene.add(Line(0, 0, 100, 100))
+    scene.place(Line(0, 0, 100, 100))
     svg = scene.to_svg()
     assert "<defs>" not in svg
 
 
 def test_scene_defs_with_arrows():
     scene = Scene(200, 200)
-    scene.add(Line(0, 0, 100, 100, end_cap="arrow"))
+    scene.place(Line(0, 0, 100, 100, end_cap="arrow"))
     svg = scene.to_svg()
     assert "<defs>" in svg
     assert "<marker" in svg
@@ -209,8 +209,8 @@ def test_scene_defs_with_arrows():
 def test_scene_marker_deduplication():
     scene = Scene(200, 200)
     # Two lines with same color and width -> same marker
-    scene.add(Line(0, 0, 100, 0, width=2, color="red", end_cap="arrow"))
-    scene.add(Line(0, 50, 100, 50, width=2, color="red", end_cap="arrow"))
+    scene.place(Line(0, 0, 100, 0, width=2, color="red", end_cap="arrow"))
+    scene.place(Line(0, 50, 100, 50, width=2, color="red", end_cap="arrow"))
     svg = scene.to_svg()
     # Should only have one marker definition
     assert svg.count("<marker") == 1
@@ -218,8 +218,8 @@ def test_scene_marker_deduplication():
 
 def test_scene_multiple_markers_different_colors():
     scene = Scene(200, 200)
-    scene.add(Line(0, 0, 100, 0, color="red", end_cap="arrow"))
-    scene.add(Line(0, 50, 100, 50, color="blue", end_cap="arrow"))
+    scene.place(Line(0, 0, 100, 0, color="red", end_cap="arrow"))
+    scene.place(Line(0, 50, 100, 50, color="blue", end_cap="arrow"))
     svg = scene.to_svg()
     # Should have two different markers
     assert svg.count("<marker") == 2

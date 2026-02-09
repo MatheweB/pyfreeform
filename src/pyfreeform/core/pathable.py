@@ -29,7 +29,7 @@ class Pathable(Protocol):
         >>> curve = cell.add_curve(curvature=0.5)
         >>> cell.add_dot(along=curve, t=cell.brightness)  # Dot slides along curve
 
-        >>> ellipse = cell.add_ellipse(rx=15, ry=10)
+        >>> ellipse = cell.add_ellipse(rx=0.3, ry=0.2)
         >>> cell.add_dot(along=ellipse, t=0.25)  # Dot at top of ellipse
 
         Create custom paths by implementing point_at():

@@ -54,7 +54,7 @@ def generate():
         cx, cy = cell.center
         cell.add_ellipse(
             at=(0.5 + dx / cell.width, 0.5 + dy / cell.height),
-            rx=55, ry=55,
+            rx=0.25, ry=0.25,
             fill=fill,
             opacity=0.5,
         )
@@ -87,9 +87,9 @@ def generate():
     for i, cell in enumerate(scene.grid.row(1)):
         cell.add_border(color=colors.grid, width=0.3, opacity=0.3)
         if i == 0:
-            cell.add_rect(at="center", width=30, height=24, fill=colors.accent)
+            cell.add_rect(at="center", width=0.68, height=0.55, fill=colors.accent)
         elif i == 1:
-            cell.add_ellipse(at="center", rx=16, ry=12, fill=colors.accent)
+            cell.add_ellipse(at="center", rx=0.36, ry=0.27, fill=colors.accent)
         elif i == 2:
             cell.add_polygon(Polygon.hexagon(size=0.6), fill=colors.accent)
         cell.add_text(labels_fill[i], at="bottom", font_size=8, color="#aaaacc")
@@ -126,7 +126,7 @@ def generate():
         op = opacities[i]
         cell.add_ellipse(
             at="center",
-            rx=22, ry=22,
+            rx=0.37, ry=0.37,
             fill=colors.primary,
             stroke=colors.accent,
             stroke_width=3,

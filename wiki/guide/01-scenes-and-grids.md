@@ -173,7 +173,7 @@ A CellGroup has all the same `add_*` methods as a Cell — it's a full Surface.
 
 !!! info "Other merge methods"
     - `grid.merge_col(i)` — merge a full column
-    - `grid.merge(row_start, row_end, col_start, col_end)` — merge any rectangular region
+    - `grid.merge(start, end)` — merge any rectangular region. Both args are `(row, col)` tuples, both inclusive.
 
 ---
 

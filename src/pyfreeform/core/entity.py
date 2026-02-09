@@ -536,7 +536,7 @@ class Entity(ABC):
                        edges where available space is 0)
 
         Example:
-            >>> ellipse = cell.add_ellipse(rx=100, ry=60, rotation=45)
+            >>> ellipse = cell.add_ellipse(rx=2.0, ry=1.2, rotation=45)
             >>> ellipse.fit_to_cell(0.85)  # Auto-constrain to 85% of cell
             >>> dot = cell.add_dot(radius=200)
             >>> dot.fit_to_cell(1.0, at=(0.25, 0.25))  # Fit in top-left quadrant

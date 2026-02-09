@@ -262,7 +262,7 @@ class Surface:
             >>> curve = cell.add_curve()
             >>> cell.add_dot(along=curve, t=0.5)
 
-            >>> ellipse = cell.add_ellipse(rx=15, ry=10)
+            >>> ellipse = cell.add_ellipse(rx=0.3, ry=0.2)
             >>> cell.add_dot(along=ellipse, t=cell.brightness)
         """
         from ..entities.dot import Dot
@@ -550,7 +550,7 @@ class Surface:
             >>> wave = Wave(start=cell.center, end=cell.right_center, amplitude=10, frequency=3)
             >>> cell.add_path(wave, color="blue", width=2)
             >>> # Arc of an ellipse (quarter circle):
-            >>> ellipse = cell.add_ellipse(rx=20, ry=20)
+            >>> ellipse = cell.add_ellipse(rx=0.4, ry=0.4)
             >>> cell.add_path(ellipse, start_t=0.0, end_t=0.25, color="red")
         """
         from ..entities.path import Path
@@ -616,8 +616,8 @@ class Surface:
             along: Path to position the ellipse center along
             t: Parameter on the path (0.0 to 1.0, default 0.5)
             align: Rotate ellipse to follow path tangent
-            rx: Horizontal radius (default: 40% of surface width)
-            ry: Vertical radius (default: 40% of surface height)
+            rx: Horizontal radius as fraction of surface width (default 0.4)
+            ry: Vertical radius as fraction of surface height (default 0.4)
             rotation: Rotation in degrees (counterclockwise)
             fill: Fill color (None for transparent)
             stroke: Stroke color (None for no stroke)
@@ -629,11 +629,11 @@ class Surface:
             The created Ellipse entity.
 
         Examples:
-            >>> ellipse = cell.add_ellipse(rx=15, ry=10)
+            >>> ellipse = cell.add_ellipse(rx=0.3, ry=0.2)
             >>> cell.add_dot(along=ellipse, t=cell.brightness)
             >>> # Place ellipse along a curve
             >>> curve = cell.add_curve()
-            >>> cell.add_ellipse(rx=5, ry=3, along=curve, t=0.5, align=True)
+            >>> cell.add_ellipse(rx=0.1, ry=0.06, along=curve, t=0.5, align=True)
         """
         from ..entities.ellipse import Ellipse
 
@@ -652,13 +652,15 @@ class Surface:
             position = self.relative_to_absolute(at)
 
         if rx is None:
-            rx = self._width * 0.4
+            rx = 0.4
         if ry is None:
-            ry = self._height * 0.4
+            ry = 0.4
+        rx_px = rx * self._width
+        ry_px = ry * self._height
 
         ellipse = Ellipse(
             position.x, position.y,
-            rx=rx, ry=ry, rotation=rotation,
+            rx=rx_px, ry=ry_px, rotation=rotation,
             fill=fill, stroke=stroke, stroke_width=stroke_width,
             z_index=z_index, opacity=opacity,
             fill_opacity=fill_opacity, stroke_opacity=stroke_opacity,
@@ -942,8 +944,8 @@ class Surface:
             along: Path to position the rectangle center along.
             t: Parameter on the path (0.0 to 1.0, default 0.5).
             align: Rotate rectangle to follow path tangent.
-            width: Rectangle width in pixels (default: 60% of surface width).
-            height: Rectangle height in pixels (default: 60% of surface height).
+            width: Rectangle width as fraction of surface width (default 0.6).
+            height: Rectangle height as fraction of surface height (default 0.6).
             rotation: Rotation in degrees (counterclockwise).
             fill: Fill color (None for transparent).
             stroke: Stroke color (None for no stroke).
@@ -959,10 +961,10 @@ class Surface:
 
         Examples:
             >>> rect = cell.add_rect(fill="coral")
-            >>> rect = cell.add_rect(width=30, height=20, rotation=45)
+            >>> rect = cell.add_rect(width=0.5, height=0.4, rotation=45)
             >>> # Place rect along a curve
             >>> curve = cell.add_curve()
-            >>> cell.add_rect(width=10, height=5, along=curve, t=0.5, align=True)
+            >>> cell.add_rect(width=0.2, height=0.1, along=curve, t=0.5, align=True)
         """
         from ..entities.rect import Rect
 
@@ -981,16 +983,18 @@ class Surface:
             center_pos = self.relative_to_absolute(at)
 
         if width is None:
-            width = self._width * 0.6
+            width = 0.6
         if height is None:
-            height = self._height * 0.6
+            height = 0.6
+        width_px = width * self._width
+        height_px = height * self._height
 
-        top_left_x = center_pos.x - width / 2
-        top_left_y = center_pos.y - height / 2
+        top_left_x = center_pos.x - width_px / 2
+        top_left_y = center_pos.y - height_px / 2
 
         rect = Rect(
             top_left_x, top_left_y,
-            width=width, height=height,
+            width=width_px, height=height_px,
             fill=fill, stroke=stroke, stroke_width=stroke_width,
             rotation=rotation, opacity=opacity, z_index=z_index,
             fill_opacity=fill_opacity, stroke_opacity=stroke_opacity,
@@ -1081,47 +1085,44 @@ class Surface:
     # ENTITY MANAGEMENT
     # =========================================================================
 
-    def place(
+    def add(
         self,
         entity: Entity,
         at: Position = "center",
     ) -> Entity:
         """
-        Place an existing entity in this surface.
+        Add an existing entity to this surface with relative positioning.
 
-        For creating and placing in one step, use add_dot(), add_line(), etc.
+        The entity is moved to the resolved ``at`` position.
+        For creating and adding in one step, use add_dot(), add_line(), etc.
 
         Args:
-            entity: The entity to place.
+            entity: The entity to add.
             at: Position - relative coords or named position.
 
         Returns:
-            The placed entity (for chaining).
+            The added entity (for chaining).
         """
         position = self.relative_to_absolute(at)
         entity.position = position
         self._register_entity(entity)
         return entity
 
-    def add_entity(
-        self,
-        entity: Entity,
-        at: Position = "center",
-    ) -> Entity:
+    def place(self, entity: Entity) -> Entity:
         """
-        Place an existing entity in this surface.
+        Place an entity at its current absolute pixel position (escape hatch).
 
-        Follows the ``add_*`` naming convention. Works with any entity
-        type — Dot, Line, Rect, EntityGroup, etc.
+        Unlike ``add()``, this does NOT reposition the entity — it is
+        registered exactly where it already is.
 
         Args:
             entity: The entity to place.
-            at: Position - relative coords or named position.
 
         Returns:
             The placed entity (for chaining).
         """
-        return self.place(entity, at)
+        self._register_entity(entity)
+        return entity
 
     def remove(self, entity: Entity) -> bool:
         """Remove an entity from this surface."""

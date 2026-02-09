@@ -71,7 +71,7 @@ for col_idx in range(GRID_SIZE):
 
 # --- Part 3: Freeform diagonal line (not grid-aligned) ---
 # This line goes from top-left to bottom-right, ignoring grid
-scene.add(Line(
+scene.place(Line(
     20, 20,
     scene.width - 20, scene.height - 20,
     width=3,

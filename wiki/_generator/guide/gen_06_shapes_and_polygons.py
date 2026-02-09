@@ -83,7 +83,7 @@ def generate():
     for cell in scene.grid:
         nx, ny = cell.normalized_position
         flower = make_flower(colors_pastel.primary, colors_pastel.accent)
-        cell.place(flower)
+        cell.add(flower)
         flower.fit_to_cell(0.85)
     save(scene, "guide/shapes-entity-group.svg")
 
@@ -97,7 +97,7 @@ def generate():
         group.add(Dot(0, 0, radius=20, color=colors_sunset.primary))
         group.add(Line(-15, -15, 15, 15, width=2, color=colors_sunset.accent))
         group.add(Line(-15, 15, 15, -15, width=2, color=colors_sunset.accent))
-        cell.place(group)
+        cell.add(group)
         group.fit_to_cell(frac)
         cell.add_text(
             f"{frac:.0%}",
@@ -117,7 +117,7 @@ def generate():
         group.add(Dot(0, 0, radius=12, color=colors.primary, opacity=0.7))
         group.add(Line(-10, 0, 10, 0, width=2, color=colors.accent))
         group.add(Line(0, -10, 0, 10, width=2, color=colors.accent))
-        cell.place(group)
+        cell.add(group)
         group.fit_to_cell(0.75)
         group.rotate(rotation)
     save(scene, "guide/shapes-fit-rotated.svg")
@@ -129,11 +129,11 @@ def generate():
     c = Point(150, 30)
     tri = Polygon([a, b, c], fill=colors.primary, opacity=0.6,
                   stroke=colors.primary, stroke_width=1.5, stroke_opacity=0.8)
-    scene.add(tri)
+    scene.place(tri)
     # Decorative markers at Point positions (Points are invisible)
     for pt, label in [(a, "a"), (b, "b"), (c, "c")]:
-        scene.add(Dot(pt.x, pt.y, radius=5, color=colors.accent))
-        scene.add(Text(pt.x, pt.y - 14, label, font_size=11, color="#aaaacc"))
+        scene.place(Dot(pt.x, pt.y, radius=5, color=colors.accent))
+        scene.place(Text(pt.x, pt.y - 14, label, font_size=11, color="#aaaacc"))
     save(scene, "guide/shapes-reactive-intro.svg")
 
     # --- 8. Shared vertex: two triangles, one shared Point (3 frames) ---
@@ -169,12 +169,12 @@ def generate():
                 [l1, l2, Coord(orig_sx, orig_sy)],
                 fill=None, stroke=colors.grid, stroke_width=1, opacity=0.3,
             )
-            scene.add(ghost)
+            scene.place(ghost)
             ghost2 = Polygon(
                 [r1, r2, Coord(orig_sx, orig_sy)],
                 fill=None, stroke=colors.grid, stroke_width=1, opacity=0.3,
             )
-            scene.add(ghost2)
+            scene.place(ghost2)
 
         # The two triangles
         tri_left = Polygon(
@@ -187,17 +187,17 @@ def generate():
             fill=colors.secondary, opacity=0.6,
             stroke=colors.secondary, stroke_width=1.5, stroke_opacity=0.8,
         )
-        scene.add(tri_left, tri_right)
+        scene.place(tri_left, tri_right)
 
         # Dot markers at base vertices
         for v in [l1, l2, r2]:
-            scene.add(Dot(v.x, v.y, radius=4, color=colors.line))
+            scene.place(Dot(v.x, v.y, radius=4, color=colors.line))
 
         # Shared vertex marker (accent)
-        scene.add(Dot(sx, sy, radius=6, color=colors.accent))
+        scene.place(Dot(sx, sy, radius=6, color=colors.accent))
 
         # Label
-        scene.add(Text(ox + frame_w / 2, frame_h + 35, label, font_size=11, color="#aaaacc"))
+        scene.place(Text(ox + frame_w / 2, frame_h + 35, label, font_size=11, color="#aaaacc"))
 
     save(scene, "guide/shapes-shared-vertex.svg")
 
@@ -206,11 +206,11 @@ def generate():
     rect = Rect.at_center(Coord(240, 110), 100, 70,
                           fill=colors.secondary, opacity=0.3,
                           stroke=colors.secondary, stroke_width=1.5, stroke_opacity=0.6)
-    scene.add(rect)
+    scene.place(rect)
 
     # Point entity as the triangle tip
     tip = Point(80, 40)
-    scene.add(Dot(tip.x, tip.y, radius=5, color=colors.accent))  # visual marker
+    scene.place(Dot(tip.x, tip.y, radius=5, color=colors.accent))  # visual marker
 
     # Polygon with mixed vertex types
     tri = Polygon(
@@ -218,20 +218,20 @@ def generate():
         fill=colors.primary, opacity=0.5,
         stroke=colors.primary, stroke_width=1.5, stroke_opacity=0.7,
     )
-    scene.add(tri)
+    scene.place(tri)
 
     # Anchor dots on Rect
     for anchor_name in ["top_left", "top_right"]:
         pos = rect.anchor(anchor_name)
-        scene.add(Dot(pos.x, pos.y, radius=4, color=colors.accent))
+        scene.place(Dot(pos.x, pos.y, radius=4, color=colors.accent))
 
     # Labels
-    scene.add(Text(tip.x, tip.y - 14, "Point", font_size=10, color="#aaaacc"))
+    scene.place(Text(tip.x, tip.y - 14, "Point", font_size=10, color="#aaaacc"))
     tl = rect.anchor("top_left")
     tr = rect.anchor("top_right")
-    scene.add(Text(tl.x - 5, tl.y - 12, "top_left", font_size=9, color="#aaaacc", text_anchor="end"))
-    scene.add(Text(tr.x + 5, tr.y - 12, "top_right", font_size=9, color="#aaaacc", text_anchor="start"))
+    scene.place(Text(tl.x - 5, tl.y - 12, "top_left", font_size=9, color="#aaaacc", text_anchor="end"))
+    scene.place(Text(tr.x + 5, tr.y - 12, "top_right", font_size=9, color="#aaaacc", text_anchor="start"))
     rc = rect.anchor("center")
-    scene.add(Text(rc.x, rc.y, "Rect", font_size=12, color="#aaaacc"))
+    scene.place(Text(rc.x, rc.y, "Rect", font_size=12, color="#aaaacc"))
 
     save(scene, "guide/shapes-mixed-vertices.svg")

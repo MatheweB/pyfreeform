@@ -38,7 +38,7 @@ def test_fit_to_cell_ellipse_rotated():
     cell = scene.grid[0, 0]
 
     # Create ellipse with rotation
-    ellipse = cell.add_ellipse(rx=50, ry=30, rotation=45)
+    ellipse = cell.add_ellipse(rx=2.5, ry=1.5, rotation=45)
 
     # Fit to 80% of cell
     ellipse.fit_to_cell(0.8)
@@ -163,11 +163,11 @@ def test_fit_to_cell_method_chaining():
     cell = scene.grid[0, 0]
 
     # Should support chaining
-    ellipse = cell.add_ellipse(rx=50, ry=30).fit_to_cell(0.8)
+    ellipse = cell.add_ellipse(rx=2.5, ry=1.5).fit_to_cell(0.8)
 
     assert ellipse is not None
     # Check it's the same type as a fresh ellipse
-    fresh_ellipse = cell.add_ellipse(rx=1, ry=1)
+    fresh_ellipse = cell.add_ellipse(rx=0.05, ry=0.05)
     assert type(ellipse) == type(fresh_ellipse)
 
 
@@ -219,8 +219,8 @@ def test_fit_to_cell_brightness_based_scaling():
     cell2 = scene.grid[0, 1]
 
     # Create ellipses
-    ellipse1 = cell1.add_ellipse(rx=100, ry=60, rotation=0)
-    ellipse2 = cell2.add_ellipse(rx=100, ry=60, rotation=0)
+    ellipse1 = cell1.add_ellipse(rx=5.0, ry=3.0, rotation=0)
+    ellipse2 = cell2.add_ellipse(rx=5.0, ry=3.0, rotation=0)
 
     # Simulate brightness-based scaling: 30% to 100%
     brightness1 = 0.0  # Dark -> 30% scale
@@ -365,7 +365,7 @@ def test_fit_to_cell_at_with_ellipse():
     scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
     cell = scene.grid[0, 0]
 
-    ellipse = cell.add_ellipse(rx=200, ry=150)
+    ellipse = cell.add_ellipse(rx=2.0, ry=1.5)
     ellipse.fit_to_cell(0.9, at=(0.3, 0.7))
 
     min_x, min_y, max_x, max_y = ellipse.bounds()

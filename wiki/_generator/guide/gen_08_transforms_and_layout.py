@@ -34,7 +34,7 @@ def generate():
         group = EntityGroup()
         group.add(Dot(0, 0, radius=15, color=colors.primary))
         group.add(Line(-10, -10, 10, 10, width=2, color=colors.accent))
-        cell.place(group)
+        cell.add(group)
         group.fit_to_cell(s)
         cell.add_text(f"{s:.1f}", at="bottom", font_size=9, color="#aaaacc")
         cell.add_border(color=colors.grid, width=0.3, opacity=0.3)
@@ -52,7 +52,7 @@ def generate():
         group = EntityGroup()
         group.add(Dot(0, 0, radius=18, color=colors.primary, opacity=0.7))
         group.add(Line(-12, 0, 12, 0, width=2, color=colors.accent))
-        cell.place(group)
+        cell.add(group)
         group.fit_to_cell(0.5, at=at_pos)
         cell.add_text(label, at="bottom", font_size=9, color="#aaaacc")
         cell.add_border(color=colors.grid, width=0.5, opacity=0.3)
@@ -110,7 +110,7 @@ def generate():
         cell.add_line(start=(0, t), end=(1, t), width=0.5, color=colors.grid, opacity=0.3, z_index=0)
     # Layer 1: large faded ellipse
     cell.add_ellipse(
-        at="center", rx=70, ry=70,
+        at="center", rx=0.35, ry=0.35,
         fill=colors.primary, opacity=0.2, z_index=1,
     )
     # Layer 2: hexagon

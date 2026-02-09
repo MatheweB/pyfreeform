@@ -163,7 +163,7 @@ class TestSurfaceAlong:
     def test_add_dot_along(self):
         scene = make_scene()
         line = Line(0, 0, 100, 0)
-        scene.add(line)
+        scene.place(line)
         dot = scene.add_dot(along=line, t=0.5)
         assert dot.position.x == pytest.approx(50.0)
         assert dot.position.y == pytest.approx(0.0)
@@ -171,15 +171,15 @@ class TestSurfaceAlong:
     def test_add_dot_along_defaults_t_to_half(self):
         scene = make_scene()
         line = Line(0, 0, 100, 0)
-        scene.add(line)
+        scene.place(line)
         dot = scene.add_dot(along=line)
         assert dot.position.x == pytest.approx(50.0)
 
     def test_add_rect_along(self):
         scene = make_scene()
         line = Line(0, 0, 100, 0)
-        scene.add(line)
-        rect = scene.add_rect(width=10, height=10, along=line, t=0.5)
+        scene.place(line)
+        rect = scene.add_rect(width=0.1, height=0.1, along=line, t=0.5)
         # Center should be at line midpoint (50, 0)
         center_x = rect.x + rect.width / 2
         center_y = rect.y + rect.height / 2
@@ -190,44 +190,44 @@ class TestSurfaceAlong:
         scene = make_scene()
         # A 45-degree line
         line = Line(0, 0, 100, 100)
-        scene.add(line)
-        rect = scene.add_rect(width=10, height=10, along=line, t=0.5, align=True)
+        scene.place(line)
+        rect = scene.add_rect(width=0.1, height=0.1, along=line, t=0.5, align=True)
         assert rect.rotation == pytest.approx(45.0)
 
     def test_add_ellipse_along(self):
         scene = make_scene()
         line = Line(0, 0, 100, 0)
-        scene.add(line)
-        ellipse = scene.add_ellipse(rx=5, ry=3, along=line, t=0.5)
+        scene.place(line)
+        ellipse = scene.add_ellipse(rx=0.05, ry=0.03, along=line, t=0.5)
         assert ellipse.position.x == pytest.approx(50.0)
         assert ellipse.position.y == pytest.approx(0.0)
 
     def test_add_ellipse_along_align(self):
         scene = make_scene()
         line = Line(0, 0, 100, 100)
-        scene.add(line)
-        ellipse = scene.add_ellipse(rx=5, ry=3, along=line, t=0.5, align=True)
+        scene.place(line)
+        ellipse = scene.add_ellipse(rx=0.05, ry=0.03, along=line, t=0.5, align=True)
         assert ellipse.rotation == pytest.approx(45.0)
 
     def test_add_ellipse_along_align_with_user_rotation(self):
         scene = make_scene()
         line = Line(0, 0, 100, 0)
-        scene.add(line)
-        ellipse = scene.add_ellipse(rx=5, ry=3, along=line, t=0.5, align=True, rotation=10)
+        scene.place(line)
+        ellipse = scene.add_ellipse(rx=0.05, ry=0.03, along=line, t=0.5, align=True, rotation=10)
         # tangent=0° + user_rotation=10°
         assert ellipse.rotation == pytest.approx(10.0)
 
     def test_add_text_along_with_t(self):
         scene = make_scene()
         line = Line(0, 0, 100, 0)
-        scene.add(line)
+        scene.place(line)
         text = scene.add_text("Hi", along=line, t=0.5, align=True)
         assert text.position.x == pytest.approx(50.0)
 
     def test_add_polygon_along(self):
         scene = make_scene()
         line = Line(0, 0, 100, 0)
-        scene.add(line)
+        scene.place(line)
         # Triangle vertices (relative coords)
         polygon = scene.add_polygon(
             [(0.4, 0.4), (0.6, 0.4), (0.5, 0.6)],
@@ -240,7 +240,7 @@ class TestSurfaceAlong:
     def test_add_line_along(self):
         scene = make_scene()
         path = Line(0, 0, 200, 0)
-        scene.add(path)
+        scene.place(path)
         # Place a short line along the path at t=0.5
         line = scene.add_line(start=(0, 0), end=(20, 0), along=path, t=0.5)
         midpoint = line.anchor("center")
@@ -249,7 +249,7 @@ class TestSurfaceAlong:
     def test_add_curve_along(self):
         scene = make_scene()
         path = Line(0, 0, 200, 0)
-        scene.add(path)
+        scene.place(path)
         curve = scene.add_curve(
             start=(0, 0), end=(20, 0), curvature=0.3,
             along=path, t=0.5,
@@ -261,7 +261,7 @@ class TestSurfaceAlong:
     def test_add_diagonal_along(self):
         scene = make_scene()
         path = Line(0, 0, 200, 0)
-        scene.add(path)
+        scene.place(path)
         line = scene.add_diagonal(along=path, t=0.5)
         midpoint = line.anchor("center")
         assert midpoint.x == pytest.approx(100.0, abs=1)
@@ -275,7 +275,7 @@ class TestTextPathWarp:
     def test_textpath_svg_output(self):
         scene = Scene(200, 100)
         curve = Curve(0, 50, 200, 50, curvature=0.5)
-        scene.add(curve)
+        scene.place(curve)
         # along without t → textPath warp mode
         cell = scene
         text = cell.add_text("Hello", along=curve)
@@ -288,7 +288,7 @@ class TestTextPathWarp:
     def test_textpath_defs_in_scene(self):
         scene = Scene(200, 100)
         curve = Curve(0, 50, 200, 50, curvature=0.5)
-        scene.add(curve)
+        scene.place(curve)
         text = scene.add_text("Hello", along=curve)
 
         full_svg = scene.to_svg()
@@ -309,7 +309,7 @@ class TestTextPathWarp:
     def test_text_along_with_t_does_not_warp(self):
         scene = Scene(200, 100)
         curve = Curve(0, 50, 200, 50, curvature=0.5)
-        scene.add(curve)
+        scene.place(curve)
         text = scene.add_text("Hi", along=curve, t=0.5)
         assert text._textpath_info is None
         svg = text.to_svg()
@@ -324,7 +324,7 @@ class TestEdgeCases:
     def test_along_t_zero(self):
         scene = make_scene()
         line = Line(10, 20, 30, 40)
-        scene.add(line)
+        scene.place(line)
         dot = scene.add_dot(along=line, t=0)
         assert dot.position.x == pytest.approx(10.0)
         assert dot.position.y == pytest.approx(20.0)
@@ -332,7 +332,7 @@ class TestEdgeCases:
     def test_along_t_one(self):
         scene = make_scene()
         line = Line(10, 20, 30, 40)
-        scene.add(line)
+        scene.place(line)
         dot = scene.add_dot(along=line, t=1.0)
         assert dot.position.x == pytest.approx(30.0)
         assert dot.position.y == pytest.approx(40.0)

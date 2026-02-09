@@ -75,8 +75,8 @@ def generate():
 
     # Scene-level: place entities directly
     from pyfreeform import Dot, Line
-    scene.add(Dot(160, 110, radius=15, color=colors.accent, opacity=0.8))
-    scene.add(Line(140, 90, 220, 160, width=2, color=colors.secondary, opacity=0.6))
+    scene.place(Dot(160, 110, radius=15, color=colors.accent, opacity=0.8))
+    scene.place(Line(140, 90, 220, 160, width=2, color=colors.secondary, opacity=0.6))
     save(scene, "getting-started/how-surface-protocol.svg")
 
     # --- 4. z_index layering demo ---
@@ -86,7 +86,7 @@ def generate():
     cell.add_fill(color="#2a2a4e", z_index=0)
     # Large circle behind
     cell.add_ellipse(
-        at="center", rx=60, ry=60,
+        at="center", rx=0.33, ry=0.33,
         fill=colors.primary, opacity=0.4, z_index=1,
     )
     # Medium shape in middle

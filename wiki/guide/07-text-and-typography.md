@@ -87,7 +87,7 @@ cell.add_text("Text warps along curves beautifully", along=curve, font_size=14, 
 ### Along an Ellipse
 
 ```python
-ellipse = cell.add_ellipse(at="center", rx=100, ry=60, fill="none", stroke=colors.line)
+ellipse = cell.add_ellipse(at="center", rx=0.4, ry=0.25, fill="none", stroke=colors.line)
 cell.add_text("Text flows around an ellipse path", along=ellipse, font_size=13, color=colors.primary)
 ```
 
@@ -111,7 +111,7 @@ for cell in scene.grid:
     cell.add_dot(radius=cell.brightness * 5, color=cell.color, opacity=0.7)
 
 # Merge bottom rows for a title bar
-title = scene.grid.merge(scene.grid.rows - 3, scene.grid.rows, 0, scene.grid.cols)
+title = scene.grid.merge((scene.grid.rows - 3, 0), (scene.grid.rows - 1, scene.grid.cols - 1))
 title.add_fill(color="#000000", opacity=0.5)
 title.add_text("FRANK", at="center", font_size=20, color="#ffffff", bold=True)
 ```

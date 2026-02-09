@@ -147,7 +147,7 @@ A `Grid` divides the scene into rows and columns of `Cell` objects. It provides 
 
 | Method | Returns | Description |
 |---|---|---|
-| `grid.merge(row_start, row_end, col_start, col_end)` | `CellGroup` | Merge region into single surface |
+| `grid.merge(start, end)` | `CellGroup` | Merge region into single surface. Both args are `(row, col)` tuples, both inclusive. Default: `start=(0, 0)`, `end=(rows-1, cols-1)`. Example: `merge((0, 0), (2, 2))` selects a 3x3 block. |
 | `grid.merge_row(i)` | `CellGroup` | Merge full row |
 | `grid.merge_col(i)` | `CellGroup` | Merge full column |
 
@@ -410,14 +410,21 @@ add_border(*, color="#cccccc", width=0.5, z_index=0, opacity=1.0, style=BorderSt
 
 Add a stroke-only border around the surface.
 
-#### `place` / `add_entity`
+#### `add`
 
 ```python
-place(entity, at="center")
-add_entity(entity, at="center")
+add(entity, at="center")
 ```
 
-Place an existing entity into this surface. Works for any entity type including `EntityGroup`.
+Add an existing entity to this surface with relative positioning. The entity is moved to the resolved `at` position. Works for any entity type including `EntityGroup`.
+
+#### `place`
+
+```python
+place(entity)
+```
+
+Place an entity at its current absolute pixel position (escape hatch). Unlike `add()`, this does NOT reposition the entity -- it is registered exactly where it already is.
 
 ---
 
@@ -692,7 +699,7 @@ EntityGroup(x=0, y=0, z_index=0, opacity=1.0)
 - **`group.rotate(angle, origin=None)`**: Accumulate rotation (degrees). With `origin`, also orbits position.
 - **`group.scale(factor, origin=None)`**: Accumulate scale factor.
 - **`group.opacity`**: Group-level opacity (applies to entire `<g>` element)
-- **Placement**: `cell.place(group)` / `cell.add_entity(group)` -- centers in cell
+- **Placement**: `cell.add(group)` -- centers in cell
 - **Fitting**: `group.fit_to_cell(fraction)` -- auto-scales to fit cell bounds
 - **SVG**: `<g transform="translate(x,y) rotate(r) scale(s)" opacity="o">` -- children never mutated
 - **Reuse**: Wrap creation in a factory function; each call returns new instance

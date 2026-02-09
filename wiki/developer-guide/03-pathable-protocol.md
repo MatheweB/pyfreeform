@@ -271,7 +271,7 @@ Use `start_t` and `end_t` to render only a portion of any pathable:
 cell.add_path(liss, start_t=0.0, end_t=0.25, color="red", width=2)
 
 # Render an arc of an ellipse
-ellipse = cell.add_ellipse(rx=30, ry=20)
+ellipse = cell.add_ellipse(rx=0.4, ry=0.3)
 cell.add_path(ellipse, start_t=0.0, end_t=0.5, color="blue")
 ```
 

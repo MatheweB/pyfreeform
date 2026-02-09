@@ -58,7 +58,7 @@ def generate():
     for cell in scene.grid:
         nx, ny = cell.normalized_position
         group = make_crosshair(colors.primary, colors.secondary)
-        cell.place(group)
+        cell.add(group)
         group.fit_to_cell(0.8)
         group.rotate(nx * 45)
     save(scene, "recipes/adv-entity-groups.svg")
@@ -76,7 +76,7 @@ def generate():
         )
 
     # Merge center region for a feature area
-    feature = scene.grid.merge(2, 8, 3, 9)
+    feature = scene.grid.merge((2, 3), (7, 8))
     feature.add_fill(color=colors.primary, opacity=0.15)
     feature.add_border(color=colors.accent, width=1.5, opacity=0.6)
     feature.add_text(
@@ -130,7 +130,7 @@ def generate():
                 scene.add(dot.connect(dots[key], shape=Line(), style=conn_style))
 
     # Title overlay
-    title = scene.grid.merge(0, 2, 0, scene.grid.cols)
+    title = scene.grid.merge((0, 0), (1, scene.grid.cols - 1))
     title.add_fill(color="#000000", opacity=0.5, z_index=3)
     title.add_text("LAYERED ART", at="center", font_size=14, color="#ffffff", bold=True, z_index=4)
     save(scene, "recipes/adv-combined.svg")

@@ -20,12 +20,12 @@ def generate():
     scene = Scene(300, 100, background=colors.background)
     d1 = Dot(50, 50, radius=10, color=colors.primary)
     d2 = Dot(250, 50, radius=10, color=colors.secondary)
-    scene.add(d1, d2)
+    scene.place(d1, d2)
     conn = d1.connect(d2, shape=Line(), style=ConnectionStyle(width=2, color=colors.line))
     scene.add(conn)
     # Labels
-    scene.add(Text(50, 85, "dot1", font_size=10, color="#aaaacc"))
-    scene.add(Text(250, 85, "dot2", font_size=10, color="#aaaacc"))
+    scene.place(Text(50, 85, "dot1", font_size=10, color="#aaaacc"))
+    scene.place(Text(250, 85, "dot2", font_size=10, color="#aaaacc"))
     save(scene, "guide/connections-basic.svg")
 
     # --- 2. Morphing square (4 frames) ---
@@ -55,7 +55,7 @@ def generate():
         dots = []
         for (x, y) in corners:
             d = Dot(x, y, radius=6, color=colors.primary)
-            scene.add(d)
+            scene.place(d)
             dots.append(d)
 
         # 4 edges
@@ -71,14 +71,14 @@ def generate():
         if t > 0:
             ghost_style = ConnectionStyle(width=1, color=colors.grid, opacity=0.3)
             orig_tr = Dot(cx + sq_half, cy - sq_half, radius=0, color=colors.background, opacity=0)
-            scene.add(orig_tr)
+            scene.place(orig_tr)
             ghost = dots[0].connect(orig_tr, shape=Line(), style=ghost_style)
             scene.add(ghost)
             ghost2 = orig_tr.connect(dots[2], shape=Line(), style=ghost_style)
             scene.add(ghost2)
 
         # Frame label
-        scene.add(Text(cx, frame_h + 45, label, font_size=11, color="#aaaacc"))
+        scene.place(Text(cx, frame_h + 45, label, font_size=11, color="#aaaacc"))
 
     save(scene, "guide/connections-morphing-square.svg")
 
@@ -87,7 +87,7 @@ def generate():
 
     rect = Rect.at_center(Coord(210, 150), 140, 90, fill=colors.primary, opacity=0.25,
                           stroke=colors.primary, stroke_width=1.5, stroke_opacity=0.5)
-    scene.add(rect)
+    scene.place(rect)
 
     # Anchor positions → label offset directions
     anchor_info = {
@@ -110,7 +110,7 @@ def generate():
         label_x = anchor_pt.x + dx * 1.8
         label_y = anchor_pt.y + dy * 1.8
         label_dot = Dot(label_x, label_y, radius=4, color=colors.accent)
-        scene.add(label_dot)
+        scene.place(label_dot)
 
         # Connection from rect anchor to label dot
         conn = rect.connect(label_dot, shape=Line(), start_anchor=name, style=anchor_style)
@@ -120,10 +120,10 @@ def generate():
         text_x = label_x + (15 if dx >= 0 else -15)
         text_y = label_y + (0 if abs(dy) > 0 else 0)
         text_anchor = "start" if dx >= 0 else "end"
-        scene.add(Text(text_x, text_y, name, font_size=9, color="#aaaacc",
-                       text_anchor=text_anchor))
+        scene.place(Text(text_x, text_y, name, font_size=9, color="#aaaacc",
+                        text_anchor=text_anchor))
 
-    scene.add(Text(210, 25, "Rect anchors", font_size=13, color=colors.primary, bold=True))
+    scene.place(Text(210, 25, "Rect anchors", font_size=13, color=colors.primary, bold=True))
     save(scene, "guide/connections-anchor-showcase.svg")
 
     # --- 4. Mixed entity types connected ---
@@ -142,7 +142,7 @@ def generate():
     ell = Ellipse(460, 100, rx=30, ry=20, fill=colors.primary, opacity=0.3,
                   stroke=colors.primary, stroke_width=1.5)
 
-    scene.add(dot, rect, poly, ell)
+    scene.place(dot, rect, poly, ell)
 
     link_style = ConnectionStyle(width=1.5, color=colors.line, opacity=0.7)
     arrow_style = ConnectionStyle(width=1.5, color=colors.line, opacity=0.7, end_cap="arrow")
@@ -153,17 +153,19 @@ def generate():
     conn2 = rect.connect(poly, shape=Line(), start_anchor="right", end_anchor="v0", style=arrow_style)
     # Polygon.v3 → Ellipse.left
     conn3 = poly.connect(ell, shape=Line(), start_anchor="v3", end_anchor="left", style=link_style)
-    scene.add(conn1, conn2, conn3)
+    scene.add(conn1)
+    scene.add(conn2)
+    scene.add(conn3)
 
     # Labels
-    scene.add(Text(60, 140, "Dot", font_size=10, color="#aaaacc"))
-    scene.add(Text(190, 145, "Rect", font_size=10, color="#aaaacc"))
-    scene.add(Text(340, 150, "Polygon", font_size=10, color="#aaaacc"))
-    scene.add(Text(460, 140, "Ellipse", font_size=10, color="#aaaacc"))
+    scene.place(Text(60, 140, "Dot", font_size=10, color="#aaaacc"))
+    scene.place(Text(190, 145, "Rect", font_size=10, color="#aaaacc"))
+    scene.place(Text(340, 150, "Polygon", font_size=10, color="#aaaacc"))
+    scene.place(Text(460, 140, "Ellipse", font_size=10, color="#aaaacc"))
     # Anchor labels on connections
-    scene.add(Text(125, 85, "center → left", font_size=8, color="#888899"))
-    scene.add(Text(260, 85, "right → v0", font_size=8, color="#888899"))
-    scene.add(Text(400, 85, "v3 → left", font_size=8, color="#888899"))
+    scene.place(Text(125, 85, "center → left", font_size=8, color="#888899"))
+    scene.place(Text(260, 85, "right → v0", font_size=8, color="#888899"))
+    scene.place(Text(400, 85, "v3 → left", font_size=8, color="#888899"))
 
     save(scene, "guide/connections-mixed-entities.svg")
 
@@ -175,7 +177,7 @@ def generate():
         y = 30 + i * 44
         d1 = Dot(100, y, radius=4, color=colors.primary)
         d2 = Dot(300, y, radius=4, color=colors.primary)
-        scene.add(d1, d2)
+        scene.place(d1, d2)
 
         style = ConnectionStyle(
             width=3, color=colors.secondary, opacity=0.8,
@@ -185,9 +187,9 @@ def generate():
         scene.add(conn)
 
         # Label
-        scene.add(Text(45, y, cap, font_size=11, color="#aaaacc", text_anchor="end"))
+        scene.place(Text(45, y, cap, font_size=11, color="#aaaacc", text_anchor="end"))
 
-    scene.add(Text(200, 16, "Cap Styles", font_size=12, color=colors.primary, bold=True))
+    scene.place(Text(200, 16, "Cap Styles", font_size=12, color=colors.primary, bold=True))
     save(scene, "guide/connections-cap-styles.svg")
 
     # --- 6. Connections as Pathable ---
@@ -202,7 +204,7 @@ def generate():
     tri_dots = []
     for pt in tri_pts:
         d = Dot(pt.x, pt.y, radius=8, color=colors.primary)
-        scene.add(d)
+        scene.place(d)
         tri_dots.append(d)
 
     edge_style = ConnectionStyle(width=2, color=colors.line, opacity=0.5)
@@ -218,12 +220,12 @@ def generate():
         for t_val in [0.25, 0.5, 0.75]:
             pt = edge.point_at(t_val)
             marker = Dot(pt.x, pt.y, radius=4, color=colors.accent, opacity=0.9)
-            scene.add(marker)
+            scene.place(marker)
             # Tiny label
-            scene.add(Text(pt.x, pt.y - 10, f"{t_val}", font_size=8, color="#aaaacc"))
+            scene.place(Text(pt.x, pt.y - 10, f"{t_val}", font_size=8, color="#aaaacc"))
 
-    scene.add(Text(190, 250, "point_at(t) places markers along connections",
-                   font_size=10, color="#aaaacc"))
+    scene.place(Text(190, 250, "point_at(t) places markers along connections",
+                     font_size=10, color="#aaaacc"))
     save(scene, "guide/connections-as-pathable.svg")
 
     # --- 7. Constellation creative pattern ---
@@ -235,7 +237,7 @@ def generate():
     star_dots = []
     for (x, y) in positions:
         d = Dot(x, y, radius=3, color="#e0c3fc", opacity=0.9)
-        scene.add(d)
+        scene.place(d)
         star_dots.append(d)
 
     # Connect dots within distance threshold
@@ -256,7 +258,7 @@ def generate():
                 # Midpoint marker on longer connections
                 if dist > 90:
                     mid = conn.point_at(0.5)
-                    scene.add(Dot(mid.x, mid.y, radius=1.5, color="#ffd700", opacity=0.6))
+                    scene.place(Dot(mid.x, mid.y, radius=1.5, color="#ffd700", opacity=0.6))
 
     # A few bright "hub" dots
     for d in star_dots[:3]:
@@ -287,16 +289,16 @@ def generate():
         ox = 20 + i * 180
         d1 = Dot(ox + 20, 75, radius=8, color=colors.primary)
         d2 = Dot(ox + 150, 75, radius=8, color=colors.secondary)
-        scene.add(d1, d2)
+        scene.place(d1, d2)
         conn = d1.connect(d2, shape=shape,
                           style=ConnectionStyle(width=2.5, color=colors.accent))
         scene.add(conn)
-        scene.add(Text(ox + 85, 135, label, font_size=11, color="#aaaacc"))
+        scene.place(Text(ox + 85, 135, label, font_size=11, color="#aaaacc"))
         # Subtle code hint
         code = f"shape={label.split()[0]}()"
         if "wave" in label.lower():
             code = "shape=Path(wave)"
-        scene.add(Text(ox + 85, 25, code, font_size=9, color="#888899"))
+        scene.place(Text(ox + 85, 25, code, font_size=9, color="#888899"))
 
     save(scene, "guide/connections-shape-comparison.svg")
 
@@ -305,7 +307,7 @@ def generate():
 
     d1 = Dot(50, 65, radius=12, color=colors.primary)
     d2 = Dot(350, 65, radius=12, color=colors.secondary)
-    scene.add(d1, d2)
+    scene.place(d1, d2)
 
     # Invisible connection (no shape)
     conn = d1.connect(d2)
@@ -316,12 +318,12 @@ def generate():
         t = i / 8
         pt = conn.point_at(t)
         r = 5 if i in (0, 8) else 3
-        scene.add(Dot(pt.x, pt.y, radius=r, color=colors.accent, opacity=0.85))
+        scene.place(Dot(pt.x, pt.y, radius=r, color=colors.accent, opacity=0.85))
         if 0 < t < 1:
-            scene.add(Text(pt.x, pt.y - 14, f"t={t:.2f}", font_size=7, color="#aaaacc"))
+            scene.place(Text(pt.x, pt.y - 14, f"t={t:.2f}", font_size=7, color="#aaaacc"))
 
-    scene.add(Text(200, 130, "shape=None — invisible, but point_at(t) still works",
-                   font_size=10, color="#aaaacc"))
+    scene.place(Text(200, 130, "shape=None — invisible, but point_at(t) still works",
+                     font_size=10, color="#aaaacc"))
 
     save(scene, "guide/connections-invisible.svg")
 
@@ -333,7 +335,7 @@ def generate():
     arc_dots = []
     for (x, y) in positions:
         d = Dot(x, y, radius=3, color="#e0c3fc", opacity=0.9)
-        scene.add(d)
+        scene.place(d)
         arc_dots.append(d)
 
     for i, d1 in enumerate(arc_dots):
@@ -353,7 +355,7 @@ def generate():
 
                 if dist > 90:
                     mid = conn.point_at(0.5)
-                    scene.add(Dot(mid.x, mid.y, radius=1.5, color="#ffd700", opacity=0.6))
+                    scene.place(Dot(mid.x, mid.y, radius=1.5, color="#ffd700", opacity=0.6))
 
     for d in arc_dots[:3]:
         d.radius = 5
@@ -379,7 +381,7 @@ def generate():
         for (x, y) in level_positions:
             r = 10 - level_idx * 2
             d = Dot(x, y, radius=r, color=level_colors[level_idx])
-            scene.add(d)
+            scene.place(d)
             level_dots.append(d)
         node_dots.append(level_dots)
 
@@ -400,7 +402,7 @@ def generate():
                                   style=arc_style)
             scene.add(conn)
 
-    scene.add(Text(220, 270, "Flowing tree with curved connections",
-                   font_size=10, color="#aaaacc"))
+    scene.place(Text(220, 270, "Flowing tree with curved connections",
+                     font_size=10, color="#aaaacc"))
 
     save(scene, "guide/connections-flowing-tree.svg")

@@ -63,7 +63,7 @@ cell.add_curve(start="bottom_left", end="top_right", curvature=curvature, width=
 The pathable shape. Ellipses can serve as both visual elements and paths for positioning.
 
 ```python
-cell.add_ellipse(at="center", rx=10, ry=5, rotation=(nx + ny) * 90, fill=colors.primary, opacity=0.6)
+cell.add_ellipse(at="center", rx=0.4, ry=0.2, rotation=(nx + ny) * 90, fill=colors.primary, opacity=0.6)
 ```
 
 <figure markdown>

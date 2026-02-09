@@ -68,8 +68,8 @@ for cell in scene.grid:
     else:
         # Bright areas: ellipses
         path = cell.add_ellipse(
-            rx=8,
-            ry=6,
+            rx=0.32,
+            ry=0.24,
             rotation=45,
             fill=None,
             stroke=colors.line,

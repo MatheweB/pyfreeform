@@ -21,8 +21,7 @@ class EntityGroup(Entity):
 
     Works with all placement methods:
     - ``scene.add(group)`` — add to scene at group's position
-    - ``cell.place(group)`` — center in cell
-    - ``cell.add_entity(group)`` — same as place, add_* naming
+    - ``cell.add(group)`` — center in cell
     - ``group.fit_to_cell()`` — auto-scale to fit cell bounds
 
     For reuse, wrap creation in a factory function — each call returns
@@ -43,8 +42,8 @@ class EntityGroup(Entity):
                 g.add(Dot(x, y, radius=6, color=petal_color))
             return g
 
-        cell.place(make_flower())
-        cell2.place(make_flower(color="blue"))
+        cell.add(make_flower())
+        cell2.add(make_flower(color="blue"))
     """
 
     def __init__(

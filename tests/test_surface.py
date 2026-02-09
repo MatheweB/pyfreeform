@@ -27,7 +27,7 @@ def test_scene_is_surface():
 
 def test_cell_group_is_surface():
     scene = Scene.with_grid(cols=3, rows=3, cell_size=10)
-    group = scene.grid.merge(row_start=0, row_end=2, col_start=0, col_end=2)
+    group = scene.grid.merge((0, 0), (1, 1))
     assert isinstance(group, Surface)
 
 
@@ -82,10 +82,10 @@ def test_scene_add_fill():
 
 def test_scene_add_rect():
     scene = Scene(200, 200)
-    rect = scene.add_rect(at="center", width=50, height=30, fill="blue")
+    rect = scene.add_rect(at="center", width=0.25, height=0.15, fill="blue")
     assert rect is not None
-    assert rect.width == 50
-    assert rect.height == 30
+    assert rect.width == pytest.approx(50)
+    assert rect.height == pytest.approx(30)
 
 
 def test_scene_entities_in_svg():
@@ -113,14 +113,14 @@ def test_scene_along_and_t():
 
 def test_merge_returns_cell_group():
     scene = Scene.with_grid(cols=5, rows=5, cell_size=10)
-    group = scene.grid.merge(row_start=0, row_end=2, col_start=0, col_end=3)
+    group = scene.grid.merge((0, 0), (1, 2))
     assert isinstance(group, CellGroup)
 
 
 def test_merge_bounds():
     """Merged group should span the correct pixel region."""
     scene = Scene.with_grid(cols=5, rows=5, cell_size=10)
-    group = scene.grid.merge(row_start=1, row_end=3, col_start=1, col_end=4)
+    group = scene.grid.merge((1, 1), (2, 3))
     # cells at col=1..3, row=1..2 → x from 10 to 40, y from 10 to 30
     assert group.x == 10.0
     assert group.y == 10.0
@@ -147,13 +147,13 @@ def test_merge_col():
 def test_merge_empty_region_raises():
     scene = Scene.with_grid(cols=5, rows=5, cell_size=10)
     with pytest.raises(ValueError):
-        # row_start == row_end → no cells
-        scene.grid.merge(row_start=3, row_end=3)
+        # end row < start row → no cells
+        scene.grid.merge((3, 0), (2, 4))
 
 
 def test_cell_group_cells():
     scene = Scene.with_grid(cols=4, rows=4, cell_size=10)
-    group = scene.grid.merge(row_start=0, row_end=2, col_start=0, col_end=2)
+    group = scene.grid.merge((0, 0), (1, 1))
     assert len(group.cells) == 4  # 2x2 grid
 
 
@@ -163,7 +163,7 @@ def test_cell_group_averaged_brightness():
     # Set brightness on cells manually
     scene.grid[0, 0]._data["brightness"] = 0.2
     scene.grid[0, 1]._data["brightness"] = 0.8
-    group = scene.grid.merge(row_start=0, row_end=1)
+    group = scene.grid.merge((0, 0), (0, 1))
     assert abs(group.brightness - 0.5) < 0.01
 
 
@@ -172,7 +172,7 @@ def test_cell_group_averaged_color():
     scene = Scene.with_grid(cols=2, rows=1, cell_size=10)
     scene.grid[0, 0]._data["color"] = "#ff0000"  # Red
     scene.grid[0, 1]._data["color"] = "#0000ff"  # Blue
-    group = scene.grid.merge(row_start=0, row_end=1)
+    group = scene.grid.merge((0, 0), (0, 1))
     # Average of (255,0,0) and (0,0,255) → (128, 0, 128) → #800080
     r, g, b = group.rgb
     assert r == 128
@@ -187,7 +187,7 @@ def test_cell_group_averaged_color():
 
 def test_cell_group_add_dot():
     scene = Scene.with_grid(cols=4, rows=4, cell_size=10)
-    group = scene.grid.merge(row_start=0, row_end=2, col_start=0, col_end=2)
+    group = scene.grid.merge((0, 0), (1, 1))
     dot = group.add_dot(at="center", color="red")
     # Center of a 20x20 region starting at (0,0) → (10, 10)
     assert dot.x == 10.0
@@ -196,7 +196,7 @@ def test_cell_group_add_dot():
 
 def test_cell_group_add_line():
     scene = Scene.with_grid(cols=4, rows=4, cell_size=10)
-    group = scene.grid.merge(row_start=1, row_end=3, col_start=1, col_end=3)
+    group = scene.grid.merge((1, 1), (2, 2))
     line = group.add_line(start="top_left", end="bottom_right", color="blue")
     assert line.start.x == 10.0  # group starts at (10, 10)
     assert line.start.y == 10.0
@@ -214,7 +214,7 @@ def test_cell_group_add_text():
 
 def test_cell_group_add_fill():
     scene = Scene.with_grid(cols=4, rows=4, cell_size=10)
-    group = scene.grid.merge(row_start=0, row_end=2, col_start=0, col_end=2)
+    group = scene.grid.merge((0, 0), (1, 1))
     fill = group.add_fill(color="navy")
     assert fill.width == 20.0
     assert fill.height == 20.0
@@ -228,7 +228,7 @@ def test_cell_group_add_fill():
 def test_cell_group_entities_in_svg():
     """Entities added to a CellGroup should appear in the scene's SVG."""
     scene = Scene.with_grid(cols=4, rows=4, cell_size=10)
-    group = scene.grid.merge(row_start=0, row_end=2, col_start=0, col_end=2)
+    group = scene.grid.merge((0, 0), (1, 1))
     group.add_dot(at="center", color="coral", radius=3)
     svg = scene.to_svg()
     assert "<circle" in svg
@@ -252,7 +252,7 @@ def test_cell_group_along_and_t():
 
 def test_grid_clear_clears_groups():
     scene = Scene.with_grid(cols=4, rows=4, cell_size=10)
-    group = scene.grid.merge(row_start=0, row_end=2, col_start=0, col_end=2)
+    group = scene.grid.merge((0, 0), (1, 1))
     group.add_dot(color="red")
     assert len(scene.entities) > 0
     scene.grid.clear()
@@ -267,7 +267,7 @@ def test_grid_clear_clears_groups():
 def test_fit_to_cell_on_cell_group():
     """fit_to_cell should work for entities on a CellGroup."""
     scene = Scene.with_grid(cols=4, rows=4, cell_size=10)
-    group = scene.grid.merge(row_start=0, row_end=2, col_start=0, col_end=2)
+    group = scene.grid.merge((0, 0), (1, 1))
     # 20x20 group, add a huge dot
     dot = group.add_dot(radius=100, color="red")
     dot.fit_to_cell(1.0)

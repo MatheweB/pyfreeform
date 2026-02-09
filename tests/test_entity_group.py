@@ -139,7 +139,7 @@ def test_group_fit_to_cell_after_rotate():
     group.add(Dot(0, 0, radius=50, color="red"))
     group.add(Line(-40, 0, 40, 0, width=3, color="blue"))
 
-    cell.place(group)
+    cell.add(group)
     group.rotate(45)
     group.fit_to_cell(0.8)
 
@@ -159,7 +159,7 @@ def test_group_rotate_then_fit_then_rotate():
     group = EntityGroup()
     group.add(Dot(0, 0, radius=30, color="red"))
 
-    cell.place(group)
+    cell.add(group)
     group.rotate(30)
     group.fit_to_cell(0.8)
     group.rotate(15)

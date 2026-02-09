@@ -45,15 +45,16 @@ def generate():
         stroke_opacity=0.7,
     ):
         """Place a labeled class box centered in a merged cell area."""
-        w = min(area.width * 0.88, 108)
+        w_rel = min(0.88, 108 / area.width)
+        h_rel = 32 / area.height
         r = area.add_rect(
             fill=fill,
             stroke=fill,
             stroke_width=1.5,
             fill_opacity=fill_opacity,
             stroke_opacity=stroke_opacity,
-            width=w,
-            height=32,
+            width=w_rel,
+            height=h_rel,
         )
         area.add_text(label, font_size=font_size, bold=True, color=text_color)
         return r
@@ -67,8 +68,8 @@ def generate():
             stroke_width=0,
             fill_opacity=0.85,
             stroke_opacity=0,
-            width=58,
-            height=15,
+            width=58 / area.width,
+            height=15 / area.height,
         )
         area.add_text(
             "Surface",
@@ -103,7 +104,7 @@ def generate():
         scene.add(conn)
         if label:
             mid = conn.point_at(label_t)
-            scene.add(
+            scene.place(
                 Text(
                     mid.x + label_dx, mid.y + label_dy, label, font_size=9, color=LABEL
                 )
@@ -113,17 +114,17 @@ def generate():
     # ═══════════════════════════════════════════════════════════
     # ROW 0 — Scene  (entry point, alone at top)
     # ═══════════════════════════════════════════════════════════
-    scene_area = g.merge(row_start=0, row_end=1, col_start=4, col_end=6)
+    scene_area = g.merge((0, 4), (0, 5))
     scene_box = class_box(scene_area, "Scene", colors.primary)
     surface_badge(scene_area)
 
     # ═══════════════════════════════════════════════════════════
     # ROW 1 — Grid + Image  (same row → clean horizontal arrow)
     # ═══════════════════════════════════════════════════════════
-    grid_area = g.merge(row_start=1, row_end=2, col_start=3, col_end=5)
+    grid_area = g.merge((1, 3), (1, 4))
     grid_box = class_box(grid_area, "Grid", colors.primary)
 
-    image_area = g.merge(row_start=1, row_end=2, col_start=8, col_end=10)
+    image_area = g.merge((1, 8), (1, 9))
     image_box = class_box(
         image_area,
         "Image",
@@ -137,18 +138,18 @@ def generate():
     # ═══════════════════════════════════════════════════════════
     # ROW 2 — Cell + CellGroup
     # ═══════════════════════════════════════════════════════════
-    cell_area = g.merge(row_start=2, row_end=3, col_start=1, col_end=3)
+    cell_area = g.merge((2, 1), (2, 2))
     cell_box = class_box(cell_area, "Cell", colors.primary)
     surface_badge(cell_area)
 
-    cg_area = g.merge(row_start=2, row_end=3, col_start=7, col_end=10)
+    cg_area = g.merge((2, 7), (2, 9))
     cg_box = class_box(cg_area, "CellGroup", colors.primary, font_size=12)
     surface_badge(cg_area)
 
     # ═══════════════════════════════════════════════════════════
     # ROW 3 — Entity
     # ═══════════════════════════════════════════════════════════
-    entity_area = g.merge(row_start=3, row_end=4, col_start=3, col_end=5)
+    entity_area = g.merge((3, 3), (3, 4))
     entity_box = class_box(entity_area, "Entity", colors.secondary)
 
     # ═══════════════════════════════════════════════════════════
@@ -175,8 +176,8 @@ def generate():
             stroke_width=1,
             fill_opacity=0.15,
             stroke_opacity=0.5,
-            width=min(cell.width * 0.9, 52),
-            height=22,
+            width=min(0.9, 52 / cell.width),
+            height=22 / cell.height,
         )
         fs = 7 if len(name) > 7 else 10
         cell.add_text(name, font_size=fs, color=colors.secondary)
@@ -194,7 +195,7 @@ def generate():
     g[4, 3].add_text("Pathable", at=(0.5, 0.95), font_size=7, color=DIM)
 
     # Connection — right side of the same row
-    conn_area = g.merge(row_start=4, row_end=5, col_start=10, col_end=12)
+    conn_area = g.merge((4, 10), (4, 11))
     conn_box = class_box(
         conn_area,
         "Connection",
@@ -212,15 +213,15 @@ def generate():
     # ═══════════════════════════════════════════════════════════
     # ROW 5 — Pathable protocol box
     # ═══════════════════════════════════════════════════════════
-    path_area = g.merge(row_start=6, row_end=7, col_start=1, col_end=11)
+    path_area = g.merge((6, 1), (6, 10))
     pathable_box = path_area.add_rect(
         fill=colors.accent,
         stroke=colors.accent,
         stroke_width=1.5,
         fill_opacity=0.1,
         stroke_opacity=0.5,
-        width=path_area.width,
-        height=path_area.height * 0.7,
+        width=1.0,
+        height=0.7,
     )
     path_area.add_text(
         "Pathable protocol: point_at(t)",

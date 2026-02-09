@@ -55,8 +55,8 @@ def generate():
         nx, ny = cell.normalized_position
         ellipse = cell.add_ellipse(
             at="center",
-            rx=scene.grid.cell_width * 0.4,
-            ry=scene.grid.cell_height * 0.25,
+            rx=0.4,
+            ry=0.25,
             rotation=nx * 60,
             fill="none",
             stroke=colors_sunset.line,
@@ -137,8 +137,8 @@ def generate():
         nx, ny = cell.normalized_position
         ellipse = cell.add_ellipse(
             at="center",
-            rx=scene.grid.cell_width * 0.4,
-            ry=scene.grid.cell_height * 0.4,
+            rx=0.4,
+            ry=0.4,
             fill="none",
             stroke=colors_forest.grid,
             stroke_width=0.3,

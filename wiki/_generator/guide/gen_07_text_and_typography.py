@@ -99,7 +99,7 @@ def generate():
     cell = scene.grid[0, 0]
     ellipse = cell.add_ellipse(
         at="center",
-        rx=100, ry=60,
+        rx=0.38, ry=0.23,
         fill="none",
         stroke=colors.line,
         stroke_width=0.5,
@@ -141,8 +141,8 @@ def generate():
             cell.add_dot(radius=r, color=cell.color, opacity=0.7)
     # Merge bottom 2 rows for title overlay
     title = scene.grid.merge(
-        scene.grid.rows - 3, scene.grid.rows,
-        0, scene.grid.cols,
+        (scene.grid.rows - 3, 0),
+        (scene.grid.rows - 1, scene.grid.cols - 1),
     )
     title.add_fill(color="#000000", opacity=0.5)
     title.add_text(

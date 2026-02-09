@@ -98,7 +98,7 @@ Use it across cells:
 ```python
 for cell in scene.grid:
     flower = make_flower(colors.primary, colors.accent)
-    cell.place(flower)
+    cell.add(flower)
     flower.fit_to_cell(0.85)
 ```
 
@@ -189,7 +189,7 @@ Auto-scale any entity or group to fit within its cell:
 
 ```python
 group = make_flower(...)
-cell.place(group)
+cell.add(group)
 group.fit_to_cell(0.7)  # (1)!
 ```
 

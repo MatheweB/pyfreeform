@@ -111,7 +111,7 @@ title = Text(
     baseline="hanging",
     z_index=10,
 )
-scene.add(title)
+scene.place(title)
 
 # Add labels for rows
 labels = [
@@ -133,7 +133,7 @@ for i, label in enumerate(labels):
         baseline="middle",
         z_index=10,
     )
-    scene.add(label_text)
+    scene.place(label_text)
 
 # =============================================================================
 # Save
@@ -151,4 +151,4 @@ print("  • Multiple font sizes (10-28px)")
 print("  • Text alignment options (anchor and baseline)")
 print("  • Text rotation (0°, 30°, 60°, 90°)")
 print("  • Combining text with other elements")
-print("  • Absolute positioning with scene.add()")
+print("  • Absolute positioning with scene.place()")

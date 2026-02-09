@@ -44,7 +44,7 @@ class Ellipse(Entity):
         >>> point = ellipse.point_at_angle(45)  # 45° from right
 
         >>> # In a cell:
-        >>> ellipse = cell.add_ellipse(rx=15, ry=10, rotation=30)
+        >>> ellipse = cell.add_ellipse(rx=0.3, ry=0.2, rotation=30)
         >>> cell.add_dot(along=ellipse, t=cell.brightness)
     """
 
@@ -187,7 +187,7 @@ class Ellipse(Entity):
             Coord on the ellipse at parameter t.
 
         Example:
-            >>> ellipse = cell.add_ellipse(rx=20, ry=15)
+            >>> ellipse = cell.add_ellipse(rx=0.4, ry=0.3)
             >>> cell.add_dot(along=ellipse, t=0.5)  # Dot at left side
         """
         # Convert t (0-1) to angle in radians

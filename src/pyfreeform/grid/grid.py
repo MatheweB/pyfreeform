@@ -30,7 +30,7 @@ class Grid:
     Examples:
         >>> grid = Grid(cols=20, rows=20, cell_size=10)
         >>> cell = grid[5, 10]  # Access by [row, col]
-        >>> cell.place(Dot(color="red"))
+        >>> cell.add(Dot(color="red"))
         
         >>> # Load image data into cells
         >>> grid.load_layer("brightness", image["brightness"])
@@ -487,10 +487,8 @@ class Grid:
 
     def merge(
         self,
-        row_start: int = 0,
-        row_end: int | None = None,
-        col_start: int = 0,
-        col_end: int | None = None,
+        start: tuple[int, int] = (0, 0),
+        end: tuple[int, int] | None = None,
     ) -> CellGroup:
         """
         Merge a rectangular region of cells into a single virtual surface.
@@ -499,25 +497,36 @@ class Grid:
         the same builder methods (add_dot, add_line, add_curve, etc.) and
         averaged data properties (brightness, color, rgb).
 
+        Both corners are **inclusive** — ``merge((0, 0), (2, 2))`` selects
+        a 3×3 block (rows 0-2, cols 0-2).
+
         Args:
-            row_start: Starting row (inclusive, default 0).
-            row_end: Ending row (exclusive, default all rows).
-            col_start: Starting column (inclusive, default 0).
-            col_end: Ending column (exclusive, default all columns).
+            start: Top-left corner as ``(row, col)``, inclusive. Default ``(0, 0)``.
+            end: Bottom-right corner as ``(row, col)``, inclusive.
+                 Default ``(rows-1, cols-1)`` (entire grid).
 
         Returns:
             A CellGroup spanning the selected region.
 
-        Example:
-            >>> header = grid.merge(row_start=0, row_end=2)
+        Examples:
+            >>> header = grid.merge((0, 0), (1, grid.cols - 1))
             >>> header.add_fill(color="#333")
             >>> header.add_text("Title", font_size=16, color="white")
+
+            >>> single = grid.merge((3, 3), (3, 3))  # one cell
+            >>> block = grid.merge((0, 0), (2, 2))    # 3×3 block
         """
-        cells = list(self.region(row_start, row_end, col_start, col_end))
+        if end is None:
+            end = (self._rows - 1, self._cols - 1)
+
+        row_start, col_start = start
+        row_end, col_end = end
+
+        # Convert inclusive end to exclusive end for region()
+        cells = list(self.region(row_start, row_end + 1, col_start, col_end + 1))
         if not cells:
             raise ValueError(
-                f"No cells in region rows [{row_start}:{row_end}], "
-                f"cols [{col_start}:{col_end}]"
+                f"No cells in region start={start}, end={end}"
             )
         group = CellGroup(cells, grid=self)
         self._cell_groups.append(group)
@@ -538,7 +547,7 @@ class Grid:
             >>> top.add_fill(color="navy")
             >>> top.add_text("Header", font_size=14, color="white")
         """
-        return self.merge(row_start=index, row_end=index + 1)
+        return self.merge((index, 0), (index, self._cols - 1))
 
     def merge_col(self, index: int) -> CellGroup:
         """
@@ -554,7 +563,7 @@ class Grid:
             >>> sidebar = grid.merge_col(0)
             >>> sidebar.add_fill(color="gray")
         """
-        return self.merge(col_start=index, col_end=index + 1)
+        return self.merge((0, index), (self._rows - 1, index))
 
     # =========================================================================
     # PATTERN SELECTION

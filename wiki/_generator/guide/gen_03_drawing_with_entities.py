@@ -69,8 +69,8 @@ def generate():
         rotation = (nx + ny) * 90
         cell.add_ellipse(
             at="center",
-            rx=scene.grid.cell_width * 0.4,
-            ry=scene.grid.cell_height * 0.2,
+            rx=0.4,
+            ry=0.2,
             rotation=rotation,
             fill=colors.primary,
             stroke=colors.secondary,
@@ -85,12 +85,10 @@ def generate():
     for cell in scene.grid:
         nx, ny = cell.normalized_position
         t = (nx + ny) / 2
-        w = scene.grid.cell_width * (0.4 + t * 0.4)
-        h = scene.grid.cell_height * (0.4 + (1 - t) * 0.4)
         rotation = t * 45
         cell.add_rect(
             at="center",
-            width=w, height=h,
+            width=0.4 + t * 0.4, height=0.4 + (1 - t) * 0.4,
             rotation=rotation,
             fill=colors.primary if (cell.row + cell.col) % 2 == 0 else colors.accent,
             opacity=0.3 + t * 0.6,

@@ -280,19 +280,53 @@ class Scene(Surface):
     
     # --- Adding objects ---
     
-    def add(self, *objects: Entity | Connection | Grid) -> Entity | Connection | Grid:
+    def add(self, obj: Entity | Connection | Grid, at: str | tuple[float, float] = "center") -> Entity | Connection | Grid:
         """
-        Add entities, connections, or grids to the scene.
-        
+        Add an object to the scene.
+
+        Entities are positioned using relative coordinates (via ``at``).
+        Connections and Grids are appended directly (no positioning).
+
         Args:
-            *objects: One or more objects to add.
-        
+            obj: Entity, Connection, or Grid to add.
+            at: Position for entities — relative coords or named position.
+                Ignored for Connections and Grids.
+
         Returns:
-            The last added object (for chaining with single adds).
-        
+            The added object (for chaining).
+
         Examples:
-            >>> dot = scene.add(Dot(100, 100))
-            >>> scene.add(Dot(200, 200), Dot(300, 300))
+            >>> scene.add(conn)  # Connection — just appended
+            >>> scene.add(grid)  # Grid — just appended
+            >>> scene.add(entity, at="center")  # Entity — positioned
+        """
+        if isinstance(obj, Grid):
+            self._grids.append(obj)
+            return obj
+        elif isinstance(obj, Connection):
+            self._connections.append(obj)
+            return obj
+        elif isinstance(obj, Entity):
+            return super().add(obj, at=at)
+        raise TypeError(f"Cannot add {type(obj).__name__} to scene")
+
+    def place(self, *objects: Entity | Connection | Grid) -> Entity | Connection | Grid:
+        """
+        Place objects at their current absolute pixel positions.
+
+        This is the escape hatch for raw pixel placement. Unlike ``add()``,
+        entities are NOT repositioned — they stay at their constructed coordinates.
+        Supports multiple objects in a single call.
+
+        Args:
+            *objects: One or more Entity, Connection, or Grid objects.
+
+        Returns:
+            The last placed object (for chaining with single places).
+
+        Examples:
+            >>> scene.place(Line(0, 0, 100, 100))  # Stays at pixel coords
+            >>> scene.place(Dot(50, 50), Line(0, 0, 200, 0))
         """
         last = None
         for obj in objects:
@@ -306,7 +340,7 @@ class Scene(Surface):
                 self._entities.append(obj)
                 last = obj
             else:
-                raise TypeError(f"Cannot add {type(obj).__name__} to scene")
+                raise TypeError(f"Cannot place {type(obj).__name__} in scene")
         return last
     
     def remove(self, obj: Entity | Connection | Grid) -> bool:

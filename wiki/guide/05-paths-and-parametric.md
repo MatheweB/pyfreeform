@@ -45,7 +45,7 @@ Ellipses are closed paths — `t=0` is the rightmost point, going counterclockwi
 | 0.75 | Bottom |
 
 ```python
-ellipse = cell.add_ellipse(at="center", rx=10, ry=6, fill="none", stroke=colors.line)
+ellipse = cell.add_ellipse(at="center", rx=0.4, ry=0.25, fill="none", stroke=colors.line)
 cell.add_dot(along=ellipse, t=ny, radius=3, color=colors.accent)
 ```
 

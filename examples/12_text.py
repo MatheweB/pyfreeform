@@ -103,7 +103,7 @@ title = Text(
     baseline="hanging",
     z_index=10,
 )
-scene.add(title)
+scene.place(title)
 
 # =============================================================================
 # Save

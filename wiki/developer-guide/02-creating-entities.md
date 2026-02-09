@@ -329,7 +329,7 @@ scene = Scene.with_grid(cols=10, rows=10, cell_size=30)
 
 for cell in scene.grid:
     ch = CrossHair(size=20, color="coral", width=1.5)
-    cell.place(ch)               # Centers in cell
+    cell.add(ch)                 # Centers in cell
     ch.fit_to_cell(0.8)          # Scales to 80% of cell
 
 scene.save("crosshairs.svg")
@@ -340,7 +340,7 @@ Connections work too:
 ```python
 ch1 = CrossHair(100, 100, size=15, color="navy")
 ch2 = CrossHair(200, 150, size=15, color="navy")
-scene.add(ch1, ch2)
+scene.place(ch1, ch2)
 
 # Connect right anchor of ch1 to left anchor of ch2
 ch1.connect(ch2, start_anchor="right", end_anchor="left",
@@ -379,7 +379,7 @@ Before considering your entity complete, verify:
 - [ ] `rotate()` handles internal geometry if shape is asymmetric
 - [ ] Opacity attributes are only emitted when not equal to 1.0
 - [ ] `__repr__` is implemented for debugging
-- [ ] Works with `cell.place()` and `fit_to_cell()`
+- [ ] Works with `cell.add()` and `fit_to_cell()`
 
 !!! tip "The simplest built-in entity: Point"
     For a minimal real-world example, look at `pyfreeform/entities/point.py`. The `Point` entity renders nothing (`to_svg()` returns `""`) and exists purely as a movable positional anchor. It has a single `"center"` anchor, zero-size bounds, and no internal geometry to scale or rotate. Its primary use is as a reactive vertex for `Polygon` — see [Reactive Polygons](../guide/06-shapes-and-polygons.md#reactive-polygons).
