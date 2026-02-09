@@ -410,7 +410,9 @@ Creates a rectangle. `at` specifies the **center** position. Default size: 60% o
              start_offset=0.0, end_offset=1.0, style=TextStyle)
     ```
 
-Creates text. Two modes with `along`:
+Creates text. `font_size` is a fraction of the surface height (0.25 = 25% of cell height). Default: 0.25.
+
+Two modes with `along`:
 
 - **`along` + `t`**: Position text at a point on the path, optionally align to tangent.
 - **`along` without `t`**: Warp text along the path using SVG `<textPath>` (auto-sizes font to fill path).
@@ -661,6 +663,7 @@ Rect.at_center(center, width, height, rotation=0, ...)
          rotation=0, z_index=0, opacity=1.0)
     ```
 
+- **`font_size`** in the constructor is **pixels** (16 = 16px). In `add_text()`, it's a **fraction** of surface height (0.25 = 25%).
 - **Anchors**: `"center"`
 - **`color=`** parameter
 - **Sugar**: `bold=True` sets `font_weight="bold"`, `italic=True` sets `font_style="italic"`
