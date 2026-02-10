@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     from ..entities.ellipse import Ellipse
     from ..entities.polygon import Polygon
     from ..entities.path import Path
+    from ..entities.point import Point
     from ..entities.text import Text
     from ..config.styles import (
         DotStyle, LineStyle, FillStyle, BorderStyle,
@@ -1187,6 +1188,63 @@ class Surface:
         )
         self._register_entity(rect)
         return rect
+
+    def add_point(
+        self,
+        *,
+        at: Position = "center",
+        within: Entity | None = None,
+        along: Pathable | None = None,
+        t: float | None = None,
+        z_index: int = 0,
+    ) -> Point:
+        """
+        Add an invisible point to this surface.
+
+        Points render nothing — they exist purely as positional anchors.
+        Use them as reactive Polygon vertices, connection endpoints, or
+        reference positions for ``within=``.
+
+        Args:
+            at: Position ("center", "top_left", or (rx, ry) tuple)
+            within: Size/position relative to another entity's bounds
+            along: Path to position the point along
+            t: Parameter on the path (0.0 to 1.0, default 0.5)
+            z_index: Layer order
+
+        Returns:
+            The created Point entity.
+
+        Examples:
+            >>> p = cell.add_point(at=(0.25, 0.75))
+            >>> p = cell.add_point(at="top_left")
+            >>> # Reactive polygon vertex
+            >>> a = cell.add_point(at=(0.5, 0.1))
+            >>> b = cell.add_point(at=(0.9, 0.9))
+            >>> c = cell.add_point(at=(0.1, 0.9))
+            >>> tri = Polygon([a, b, c], fill="coral")
+        """
+        from ..entities.point import Point
+
+        ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
+
+        if along is not None:
+            position, _ = self._resolve_along(along, t, False, 0)
+            point = Point(position.x, position.y, z_index=z_index)
+            point._along_path = along
+            point._along_t = t if t is not None else 0.5
+        else:
+            if isinstance(at, str):
+                at = NAMED_POSITIONS[at]
+            rx, ry = at
+            position = Coord(ref_x + rx * ref_w, ref_y + ry * ref_h)
+            point = Point(position.x, position.y, z_index=z_index)
+            point._relative_at = RelCoord(*at) if not isinstance(at, RelCoord) else at
+
+        if within is not None:
+            point._reference = within
+        self._register_entity(point)
+        return point
 
     # =========================================================================
     # ENTITY MANAGEMENT

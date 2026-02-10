@@ -171,12 +171,15 @@ cell.add_path(spiral, segments=48, width=1.2, color=colors.primary)
 Invisible anchors. Points render nothing but serve as movable position references — useful as reactive vertices in polygons or as connection endpoints.
 
 ```python
-from pyfreeform import Point, Polygon
-
-a, b, c = Point(0, 0), Point(100, 0), Point(50, 80)
+# Builder method (relative coordinates — preferred in cells)
+a = cell.add_point(at=(0.5, 0.1))
+b = cell.add_point(at=(0.9, 0.9))
+c = cell.add_point(at=(0.1, 0.9))
 tri = Polygon([a, b, c], fill="coral")
-b.position = (120, 30)  # polygon deforms automatically
+b.at = (0.8, 0.3)  # polygon deforms automatically
 ```
+
+The direct constructor `Point(x, y)` is also available for pixel-based positioning outside of cells.
 
 !!! info "Zero visual footprint"
     Points produce no SVG output. They exist purely as positional anchors for other entities to reference. See [Reactive Polygons](06-shapes-and-polygons.md#reactive-polygons) for full examples.

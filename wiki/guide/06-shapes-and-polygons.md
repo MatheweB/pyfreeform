@@ -123,11 +123,15 @@ A **Point** is an invisible entity that renders nothing. Think of it as a thumbt
 ```python
 from pyfreeform import Point, Polygon
 
+# Direct constructor (pixel coordinates)
 a = Point(0, 0)
 b = Point(100, 0)
 c = Point(50, 80)
 tri = Polygon([a, b, c], fill="coral")
 ```
+
+!!! tip "Use `add_point` in cells"
+    When working inside cells, prefer `cell.add_point(at=(0.5, 0.1))` — it uses the same relative coordinate system as all other builder methods.
 
 <figure markdown>
 ![Reactive triangle intro](../_images/guide/shapes-reactive-intro.svg){ width="300" }

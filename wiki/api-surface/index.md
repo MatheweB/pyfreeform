@@ -436,6 +436,14 @@ add_border(*, color="#cccccc", width=0.5, z_index=0, opacity=1.0, style=BorderSt
 
 Add a stroke-only border around the surface.
 
+#### `add_point`
+
+```python
+add_point(*, at, within, along, t, z_index=0)
+```
+
+Creates an invisible positional anchor. Points render nothing -- use them as reactive `Polygon` vertices, connection endpoints, or `within=` reference positions.
+
 #### `add`
 
 ```python
@@ -740,7 +748,11 @@ See [Transforms and Layout](../guide/08-transforms-and-layout.md) for EntityGrou
 **An invisible positional entity.** Renders no SVG — used as a movable anchor for reactive polygon vertices or connection endpoints.
 
 ```python
+# Direct constructor (pixel coordinates)
 Point(x=0, y=0, z_index=0)
+
+# Builder method (relative coordinates — preferred)
+point = cell.add_point(at=(0.25, 0.75))
 ```
 
 - **Anchors**: `"center"`
@@ -749,9 +761,12 @@ Point(x=0, y=0, z_index=0)
 - **Key use**: Pass to `Polygon()` as a vertex — the polygon tracks the Point's position at render time
 
 ```python
-a, b, c = Point(0, 0), Point(100, 0), Point(50, 80)
+# Reactive polygon with add_point
+a = cell.add_point(at=(0.5, 0.1))
+b = cell.add_point(at=(0.9, 0.9))
+c = cell.add_point(at=(0.1, 0.9))
 tri = Polygon([a, b, c], fill="coral")
-b.move_to_cell(cell, at=(0.8, 0.3))  # triangle vertex 1 moves with it
+b.at = (0.8, 0.3)  # triangle vertex moves with it
 ```
 
 See [Reactive Polygons](../guide/06-shapes-and-polygons.md#reactive-polygons) for shared vertices and anchor tracking examples.

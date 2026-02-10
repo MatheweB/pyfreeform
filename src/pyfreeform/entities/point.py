@@ -22,7 +22,7 @@ class Point(Entity):
         >>> b = Point(100, 0)
         >>> c = Point(50, 80)
         >>> tri = Polygon([a, b, c], fill="coral")
-        >>> b.move_to(120, 30)  # triangle deforms automatically
+        >>> b.move_to_cell(cell, at=(0.8, 0.3))  # triangle vertex moves
     """
 
     def __init__(self, x: float = 0, y: float = 0, z_index: int = 0) -> None:

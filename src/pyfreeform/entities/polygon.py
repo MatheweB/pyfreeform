@@ -41,7 +41,7 @@ class Polygon(Entity):
         >>> # Entity-reference vertices (reactive)
         >>> a, b, c = Point(0, 0), Point(100, 0), Point(50, 80)
         >>> tri = Polygon([a, b, c], fill="coral")
-        >>> b.move_to(120, 30)  # triangle deforms automatically
+        >>> b.move_to_cell(cell, at=(0.8, 0.3))  # triangle deforms automatically
 
         >>> # Mixed static and entity-reference
         >>> tri = Polygon([(0, 0), dot, (rect, "top_right")], fill="teal")

@@ -25,7 +25,7 @@ class Dot(Entity):
     Examples:
         >>> dot = Dot(100, 100)
         >>> dot = Dot(100, 100, radius=10, color="coral")
-        >>> dot.move_to(150, 200)
+        >>> dot.move_to_cell(cell, at=(0.5, 0.5))
     """
     
     DEFAULT_RADIUS = 5
