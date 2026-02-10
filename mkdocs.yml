@@ -1,8 +1,8 @@
 site_name: PyFreeform
 site_description: Turn images into art with Python
-site_url: https://pyfreeform.github.io/pyfreeform/
-repo_url: https://github.com/pyfreeform/pyfreeform
-repo_name: pyfreeform/pyfreeform
+site_url: https://matheweb.github.io/pyfreeform/
+repo_url: https://github.com/MatheweB/pyfreeform
+repo_name: MatheweB/pyfreeform
 
 docs_dir: wiki
 

@@ -4,13 +4,13 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pyfreeform"
-version = "0.2.0"
+version = "0.3.0"
 description = "A minimalist, art-focused Python drawing library with object-oriented design"
 readme = "README.md"
 license = "MIT"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 authors = [
-    { name = "PyFreeform Contributors" }
+    { name = "Mathewe Banda" }
 ]
 keywords = ["drawing", "art", "svg", "graphics", "creative-coding", "freeform", "generative-art"]
 dependencies = [
@@ -24,19 +24,19 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Artistic Software",
     "Topic :: Multimedia :: Graphics",
 ]
 
 [project.urls]
-Homepage = "https://github.com/pyfreeform/pyfreeform"
-Documentation = "https://github.com/pyfreeform/pyfreeform#readme"
-Repository = "https://github.com/pyfreeform/pyfreeform"
-Issues = "https://github.com/pyfreeform/pyfreeform/issues"
+Homepage = "https://github.com/MatheweB/pyfreeform"
+Documentation = "https://matheweb.github.io/pyfreeform/"
+Repository = "https://github.com/MatheweB/pyfreeform"
+Issues = "https://github.com/MatheweB/pyfreeform/issues"
 
 [project.optional-dependencies]
 dev = [

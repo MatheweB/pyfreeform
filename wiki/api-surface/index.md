@@ -1,6 +1,6 @@
 # API Reference
 
-This is the comprehensive API reference for PyFreeform v0.3.0. Every class, method, property, and concept is documented here on a single page, organized to follow the natural discovery flow -- from creating your first Scene to building complex generative art.
+This is the comprehensive API reference for PyFreeform. Every class, method, property, and concept is documented here on a single page, organized to follow the natural discovery flow -- from creating your first Scene to building complex generative art.
 
 !!! tip "How to use this reference"
     This page is designed as a **lookup reference**. For learning-oriented walkthroughs with visual examples, see the [Guide](../guide/index.md) section. For copy-paste starting points, see [Recipes](../recipes/index.md).
