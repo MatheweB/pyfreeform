@@ -275,20 +275,129 @@ class Path(StrokedPathMixin, Entity):
 
         return "".join(parts)
 
-    def bounds(self) -> tuple[float, float, float, float]:
-        """Get bounding box (includes control points for safety)."""
+    @staticmethod
+    def _cubic_axis_extrema(p0: float, p1: float, p2: float, p3: float) -> list[float]:
+        """Critical t-values where one axis of a cubic Bezier is extremal.
+
+        Solves B'(t)=0 for the quadratic derivative. Returns roots in (0,1).
+        """
+        # B'(t) = 3[a(1-t)² + 2b(1-t)t + ct²]  where a=P1-P0, b=P2-P1, c=P3-P2
+        # Expanding: At² + Bt + C = 0
+        a = p1 - p0
+        b = p2 - p1
+        c = p3 - p2
+        A = a - 2 * b + c
+        B = 2 * (b - a)
+        C = a
+        roots: list[float] = []
+        if abs(A) < 1e-12:
+            # Linear: Bt + C = 0
+            if abs(B) > 1e-12:
+                t = -C / B
+                if 0 < t < 1:
+                    roots.append(t)
+        else:
+            disc = B * B - 4 * A * C
+            if disc >= 0:
+                sd = math.sqrt(disc)
+                for sign in (-1, 1):
+                    t = (-B + sign * sd) / (2 * A)
+                    if 0 < t < 1:
+                        roots.append(t)
+        return roots
+
+    @staticmethod
+    def _cubic_segment_bounds(
+        p0x: float, p0y: float, p1x: float, p1y: float,
+        p2x: float, p2y: float, p3x: float, p3y: float,
+    ) -> tuple[float, float, float, float]:
+        """Exact AABB of one cubic Bezier segment. O(1)."""
+        min_x, max_x = min(p0x, p3x), max(p0x, p3x)
+        min_y, max_y = min(p0y, p3y), max(p0y, p3y)
+        for t in Path._cubic_axis_extrema(p0x, p1x, p2x, p3x):
+            mt = 1 - t
+            v = mt * mt * mt * p0x + 3 * mt * mt * t * p1x + 3 * mt * t * t * p2x + t * t * t * p3x
+            if v < min_x:
+                min_x = v
+            if v > max_x:
+                max_x = v
+        for t in Path._cubic_axis_extrema(p0y, p1y, p2y, p3y):
+            mt = 1 - t
+            v = mt * mt * mt * p0y + 3 * mt * mt * t * p1y + 3 * mt * t * t * p2y + t * t * t * p3y
+            if v < min_y:
+                min_y = v
+            if v > max_y:
+                max_y = v
+        return (min_x, min_y, max_x, max_y)
+
+    def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
+        """Exact bounding box (solves cubic Bezier extrema per segment).
+
+        Args:
+            visual: If True, expand by stroke width / 2 to reflect
+                    the rendered extent.
+        """
         if not self._bezier_segments:
             return (self.position.x, self.position.y,
                     self.position.x, self.position.y)
 
-        all_points = []
+        min_x = min_y = math.inf
+        max_x = max_y = -math.inf
         for p0, cp1, cp2, p3 in self._bezier_segments:
-            all_points.extend([p0, cp1, cp2, p3])
+            sb = Path._cubic_segment_bounds(
+                p0.x, p0.y, cp1.x, cp1.y, cp2.x, cp2.y, p3.x, p3.y,
+            )
+            if sb[0] < min_x: min_x = sb[0]
+            if sb[1] < min_y: min_y = sb[1]
+            if sb[2] > max_x: max_x = sb[2]
+            if sb[3] > max_y: max_y = sb[3]
+        if visual:
+            half = self.width / 2
+            min_x -= half
+            min_y -= half
+            max_x += half
+            max_y += half
+        return (min_x, min_y, max_x, max_y)
 
-        min_x = min(p.x for p in all_points)
-        min_y = min(p.y for p in all_points)
-        max_x = max(p.x for p in all_points)
-        max_y = max(p.y for p in all_points)
+    def _rotated_bounds(
+        self, angle: float, *, visual: bool = False,
+    ) -> tuple[float, float, float, float]:
+        """Exact AABB of this path rotated by *angle* degrees around origin."""
+        if angle == 0:
+            return self.bounds(visual=visual)
+        if not self._bezier_segments:
+            rad = math.radians(angle)
+            cos_a, sin_a = math.cos(rad), math.sin(rad)
+            px = self.position.x * cos_a - self.position.y * sin_a
+            py = self.position.x * sin_a + self.position.y * cos_a
+            return (px, py, px, py)
+
+        rad = math.radians(angle)
+        cos_a, sin_a = math.cos(rad), math.sin(rad)
+
+        def _rot(x: float, y: float) -> tuple[float, float]:
+            return x * cos_a - y * sin_a, x * sin_a + y * cos_a
+
+        min_x = min_y = math.inf
+        max_x = max_y = -math.inf
+        for p0, cp1, cp2, p3 in self._bezier_segments:
+            r0 = _rot(p0.x, p0.y)
+            r1 = _rot(cp1.x, cp1.y)
+            r2 = _rot(cp2.x, cp2.y)
+            r3 = _rot(p3.x, p3.y)
+            sb = Path._cubic_segment_bounds(
+                r0[0], r0[1], r1[0], r1[1], r2[0], r2[1], r3[0], r3[1],
+            )
+            if sb[0] < min_x: min_x = sb[0]
+            if sb[1] < min_y: min_y = sb[1]
+            if sb[2] > max_x: max_x = sb[2]
+            if sb[3] > max_y: max_y = sb[3]
+        if visual:
+            half = self.width / 2
+            min_x -= half
+            min_y -= half
+            max_x += half
+            max_y += half
         return (min_x, min_y, max_x, max_y)
 
     def _move_by(self, dx: float = 0, dy: float = 0) -> Path:

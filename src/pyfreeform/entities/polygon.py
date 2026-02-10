@@ -303,6 +303,27 @@ class Polygon(Entity):
             max_y += half
         return (min_x, min_y, max_x, max_y)
 
+    def _rotated_bounds(
+        self, angle: float, *, visual: bool = False,
+    ) -> tuple[float, float, float, float]:
+        """Exact AABB of this polygon rotated by *angle* degrees around origin."""
+        if angle == 0:
+            return self.bounds(visual=visual)
+        rad = math.radians(angle)
+        cos_a, sin_a = math.cos(rad), math.sin(rad)
+        verts = self.vertices
+        rx = [v.x * cos_a - v.y * sin_a for v in verts]
+        ry = [v.x * sin_a + v.y * cos_a for v in verts]
+        min_x, max_x = min(rx), max(rx)
+        min_y, max_y = min(ry), max(ry)
+        if visual and self.stroke_width:
+            half = self.stroke_width / 2
+            min_x -= half
+            min_y -= half
+            max_x += half
+            max_y += half
+        return (min_x, min_y, max_x, max_y)
+
     def to_svg(self) -> str:
         """Render to SVG polygon element."""
         points_str = " ".join(f"{v.x},{v.y}" for v in self.vertices)

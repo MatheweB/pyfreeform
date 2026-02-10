@@ -121,61 +121,63 @@ class EntityGroup(Entity):
         )
 
     def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
+        """Bounding box in absolute coordinates.
+
+        Delegates to ``_rotated_bounds(0)`` which recursively computes
+        exact analytical bounds for every child under the group's
+        rotation and scale.
         """
-        Bounding box in absolute coordinates.
+        return self._rotated_bounds(0, visual=visual)
 
-        Accounts for the group's position, scale factor, and rotation.
-        Children's bounds are in local coordinates, transformed by
-        ``translate(position) rotate(angle) scale(factor)``.
+    def _rotated_bounds(
+        self, angle: float, *, visual: bool = False,
+    ) -> tuple[float, float, float, float]:
+        """Exact AABB of this group rotated by *angle* degrees around origin.
 
-        Args:
-            visual: If True, children report visual bounds (including
-                    stroke width) so the result reflects the rendered
-                    extent.
-
-        Returns:
-            (min_x, min_y, max_x, max_y) in absolute coordinates.
+        Each child computes its own tight AABB at the combined rotation
+        ``self._rotation + angle``.  The group applies scale and position
+        offset on top.  No sampling, no duck-typing — every entity type
+        provides its own analytical formula.
         """
         if not self._children:
-            return (self.x, self.y, self.x, self.y)
+            if angle == 0:
+                return (self.x, self.y, self.x, self.y)
+            rad = math.radians(angle)
+            cos_a, sin_a = math.cos(rad), math.sin(rad)
+            rx = self.x * cos_a - self.y * sin_a
+            ry = self.x * sin_a + self.y * cos_a
+            return (rx, ry, rx, ry)
 
-        all_bounds = [child.bounds(visual=visual) for child in self._children]
-        # Local bounds after scale
-        local_min_x = min(b[0] for b in all_bounds) * self._scale
-        local_min_y = min(b[1] for b in all_bounds) * self._scale
-        local_max_x = max(b[2] for b in all_bounds) * self._scale
-        local_max_y = max(b[3] for b in all_bounds) * self._scale
+        combined = self._rotation + angle
+        s = self._scale
 
-        if self._rotation == 0:
-            return (
-                self.x + local_min_x,
-                self.y + local_min_y,
-                self.x + local_max_x,
-                self.y + local_max_y,
-            )
+        # Group position after outer rotation
+        if angle == 0:
+            ox, oy = self.x, self.y
+        else:
+            rad = math.radians(angle)
+            cos_a, sin_a = math.cos(rad), math.sin(rad)
+            ox = self.x * cos_a - self.y * sin_a
+            oy = self.x * sin_a + self.y * cos_a
 
-        # Rotate corners around local origin and find AABB
-        angle_rad = math.radians(self._rotation)
-        cos_a = math.cos(angle_rad)
-        sin_a = math.sin(angle_rad)
+        g_min_x = math.inf
+        g_min_y = math.inf
+        g_max_x = -math.inf
+        g_max_y = -math.inf
 
-        corners = [
-            (local_min_x, local_min_y),
-            (local_max_x, local_min_y),
-            (local_max_x, local_max_y),
-            (local_min_x, local_max_y),
-        ]
-        rotated = [
-            (x * cos_a - y * sin_a, x * sin_a + y * cos_a)
-            for x, y in corners
-        ]
+        for child in self._children:
+            cb = child._rotated_bounds(combined, visual=visual)
+            # Apply scale then offset
+            sx0 = cb[0] * s + ox
+            sy0 = cb[1] * s + oy
+            sx1 = cb[2] * s + ox
+            sy1 = cb[3] * s + oy
+            if sx0 < g_min_x: g_min_x = sx0
+            if sy0 < g_min_y: g_min_y = sy0
+            if sx1 > g_max_x: g_max_x = sx1
+            if sy1 > g_max_y: g_max_y = sy1
 
-        return (
-            self.x + min(rx for rx, _ in rotated),
-            self.y + min(ry for _, ry in rotated),
-            self.x + max(rx for rx, _ in rotated),
-            self.y + max(ry for _, ry in rotated),
-        )
+        return (g_min_x, g_min_y, g_max_x, g_max_y)
 
     def to_svg(self) -> str:
         """
@@ -257,6 +259,11 @@ class EntityGroup(Entity):
         self._scale *= factor
         super().scale(factor, origin)
         return self
+
+    @property
+    def rotation(self) -> float:
+        """Current rotation angle in degrees."""
+        return self._rotation
 
     # =========================================================================
     # DEFS COLLECTION (forward to children)

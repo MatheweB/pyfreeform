@@ -47,6 +47,31 @@ group.fit_to_cell(0.5, at=(0.85, 0.85))   # Near bottom-right
 <figcaption>Same size, different positions — the entity respects cell boundaries.</figcaption>
 </figure>
 
+### Rotational Fitting
+
+When a shape doesn't match the cell's aspect ratio, two fitting modes help fill the space:
+
+- **`rotate=True`** — Finds the rotation angle that **maximizes fill**. Uses a closed-form O(1) solution (3 candidate angles: 0°, 90°, and the optimal balanced angle).
+- **`match_aspect=True`** — Rotates so the bounding box **matches the cell's proportions**. Useful when you want the shape to echo the cell's shape rather than simply be as large as possible.
+
+```python
+group = EntityGroup()
+group.add(Rect.at_center((0, 0), 70, 14, fill="coral"))
+cell.add(group)
+group.fit_to_cell(0.85, rotate=True)        # maximize fill
+# OR
+group.fit_to_cell(0.85, match_aspect=True)  # match cell proportions
+```
+
+<figure markdown>
+![Fitting modes comparison](../_images/guide/transforms-fitting-modes.svg){ width="400" }
+<figcaption>Default fit vs rotate vs match_aspect — for a wide rect bar (middle row) and the pyfreeform logo (bottom row).</figcaption>
+</figure>
+
+Both modes work on any entity type — EntityGroup, Rect, Polygon, Ellipse, Line, Curve, and Text. Dot is symmetric so rotation is a no-op.
+
+`rotate` and `match_aspect` are mutually exclusive — passing both raises `ValueError`.
+
 ---
 
 ## Connections

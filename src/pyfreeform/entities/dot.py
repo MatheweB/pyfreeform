@@ -107,6 +107,20 @@ class Dot(Entity):
             self.y + self.radius,
         )
 
+    def _rotated_bounds(
+        self, angle: float, *, visual: bool = False,
+    ) -> tuple[float, float, float, float]:
+        """Exact AABB of this dot rotated by *angle* degrees around origin."""
+        if angle == 0:
+            return self.bounds(visual=visual)
+        import math
+        rad = math.radians(angle)
+        cos_a, sin_a = math.cos(rad), math.sin(rad)
+        cx = self.x * cos_a - self.y * sin_a
+        cy = self.x * sin_a + self.y * cos_a
+        r = self.radius
+        return (cx - r, cy - r, cx + r, cy + r)
+
     def inner_bounds(self) -> tuple[float, float, float, float]:
         """Inscribed square of the circle."""
         import math

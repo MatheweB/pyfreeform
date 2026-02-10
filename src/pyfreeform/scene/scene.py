@@ -467,9 +467,17 @@ class Scene(Surface):
 
         # Background
         if self._background:
-            lines.append(
-                f'  <rect width="100%" height="100%" fill="{self.background}" />'
-            )
+            if self._viewbox is not None:
+                vb_x, vb_y, vb_w, vb_h = self._viewbox
+                lines.append(
+                    f'  <rect x="{vb_x}" y="{vb_y}" '
+                    f'width="{vb_w}" height="{vb_h}" '
+                    f'fill="{self.background}" />'
+                )
+            else:
+                lines.append(
+                    f'  <rect width="100%" height="100%" fill="{self.background}" />'
+                )
 
         # Collect all renderable objects with their z_index
         renderables: list[tuple[int, str]] = []
@@ -539,6 +547,47 @@ class Scene(Surface):
         max_y = max(b[3] for b in bounds) + padding
 
         self._viewbox = (min_x, min_y, max_x - min_x, max_y - min_y)
+        return self
+
+    def trim(
+        self,
+        top: float = 0,
+        right: float = 0,
+        bottom: float = 0,
+        left: float = 0,
+    ) -> Scene:
+        """
+        Remove pixels from one or more edges of the scene.
+
+        Adjusts the viewBox so the specified number of pixels are clipped
+        from each side.  Can be chained with :meth:`crop`.
+
+        Args:
+            top: Pixels to remove from the top edge.
+            right: Pixels to remove from the right edge.
+            bottom: Pixels to remove from the bottom edge.
+            left: Pixels to remove from the left edge.
+
+        Returns:
+            self, for method chaining.
+
+        Example::
+
+            scene.trim(top=20)                # clip 20px from the top
+            scene.trim(top=10, bottom=10)     # clip both edges
+            scene.crop().trim(left=5, right=5)  # tight crop then shave sides
+        """
+        if self._viewbox is not None:
+            vb_x, vb_y, vb_w, vb_h = self._viewbox
+        else:
+            vb_x, vb_y, vb_w, vb_h = 0.0, 0.0, float(self._width), float(self._height)
+
+        vb_x += left
+        vb_y += top
+        vb_w -= left + right
+        vb_h -= top + bottom
+
+        self._viewbox = (vb_x, vb_y, vb_w, vb_h)
         return self
 
     def __repr__(self) -> str:

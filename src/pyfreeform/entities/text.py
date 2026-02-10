@@ -278,6 +278,9 @@ class Text(Entity):
         Args:
             fraction: How much of the cell to fill (0.0–1.0).
                       1.0 = fill entire cell, 0.8 = use 80%.
+            **kwargs: Supports ``rotate`` and ``match_aspect`` booleans.
+                      If either is True, the text is rotated before
+                      font-size scaling.
 
         Returns:
             self, for method chaining.
@@ -287,6 +290,26 @@ class Text(Entity):
         """
         if self._cell is None:
             raise ValueError("Cannot fit to cell: text has no cell")
+
+        # Apply fitting rotation if requested
+        do_rotate = bool(kwargs.get("rotate", False))
+        do_match = bool(kwargs.get("match_aspect", False))
+        if do_rotate or do_match:
+            if do_rotate and do_match:
+                raise ValueError("rotate and match_aspect are mutually exclusive")
+            from ..core.entity import Entity
+            b = self.bounds(visual=True)
+            w, h = b[2] - b[0], b[3] - b[1]
+            cell = self._cell
+            if w > 1e-9 and h > 1e-9:
+                avail_w = cell.width * fraction
+                avail_h = cell.height * fraction
+                angle = (
+                    Entity._compute_optimal_angle(w, h, avail_w, avail_h)
+                    if do_rotate else
+                    Entity._compute_aspect_match_angle(w, h, avail_w, avail_h)
+                )
+                self.rotate(angle)
 
         cell = self._cell
         cell_w, cell_h = cell.width * fraction, cell.height * fraction

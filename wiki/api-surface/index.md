@@ -50,6 +50,7 @@ Everything starts with a `Scene`. It is the canvas -- it holds your artwork and 
 | `scene.to_svg()` | Render to SVG string. |
 | `scene.save(path)` | Save to `.svg` file (adds extension if missing). |
 | `scene.crop(padding=0)` | Crop viewBox to fit content bounds. Great for transparent exports. |
+| `scene.trim(top=0, right=0, bottom=0, left=0)` | Remove pixels from edges of the scene. Chainable with `crop()`. |
 
 ### `from_image()` Full Signature
 
@@ -496,8 +497,8 @@ All entities inherit from `Entity` and share these common capabilities.
 |---|---|
 | `entity.rotate(angle, origin=None)` | Rotate in degrees (counterclockwise) |
 | `entity.scale(factor, origin=None)` | Scale (2.0 = double size) |
-| `entity.fit_to_cell(scale=1.0, recenter=True, *, at=None, visual=True)` | Auto-scale to fit within containing cell. `visual=True` includes stroke width in sizing. |
-| `entity.fit_within(target, scale=1.0, recenter=True, *, at=None, visual=True)` | Auto-scale to fit within another entity's inner bounds. `visual=True` includes stroke width in sizing. |
+| `entity.fit_to_cell(scale=1.0, recenter=True, *, at=None, visual=True, rotate=False, match_aspect=False)` | Auto-scale to fit within containing cell. `rotate=True` finds optimal rotation for maximum fill. `match_aspect=True` rotates to match the cell's aspect ratio. |
+| `entity.fit_within(target, scale=1.0, recenter=True, *, at=None, visual=True, rotate=False, match_aspect=False)` | Auto-scale to fit within another entity's inner bounds. Same `rotate` and `match_aspect` options. |
 
 See [Transforms and Layout](../guide/08-transforms-and-layout.md) for detailed transform examples.
 
@@ -517,6 +518,7 @@ See [Transforms and Layout](../guide/08-transforms-and-layout.md) for detailed t
 | `entity.to_svg()` | Render to SVG element string |
 | `entity.bounds(*, visual=False)` | Bounding box: `(min_x, min_y, max_x, max_y)`. Pass `visual=True` to include stroke width in the bounds. |
 | `entity.inner_bounds()` | Inscribed rectangle (default: same as bounds) |
+| `entity._rotated_bounds(angle, *, visual=False)` | Tight AABB of this entity rotated by `angle` degrees around the origin. Default: rotates 4 `bounds()` corners. Override with exact analytical formulas (Bezier extrema, ellipse extents, etc.) for tighter bounds. Used by `EntityGroup.bounds()` to compose tight group bounds. |
 
 ---
 
@@ -907,19 +909,25 @@ Each entity type handles transforms appropriately:
 - **Path**: Transforms all Bezier control points
 - **EntityGroup**: Accumulates internal `_scale` factor
 
-### `fit_to_cell(scale=1.0, recenter=True, *, at=None)`
+### `fit_to_cell(scale=1.0, recenter=True, *, at=None, visual=True, rotate=False, match_aspect=False)`
 
 Auto-scales and positions any entity to fit within its containing cell.
 
 - **`scale`**: Fraction of cell to fill (0.0-1.0). Default 1.0 fills entire cell.
 - **`recenter`**: If True, centers in cell after scaling.
 - **`at=(rx, ry)`**: Position-aware mode. Entity is placed at relative position within cell, with available space constrained by nearest edges.
+- **`visual`**: If True (default), includes stroke width when measuring bounds.
+- **`rotate`**: If True, finds the rotation angle that maximizes fill before scaling. Uses a closed-form O(1) solution (3 candidate angles). Works on any entity type.
+- **`match_aspect`**: If True, rotates the entity so its bounding box aspect ratio matches the cell's. Mutually exclusive with `rotate`.
 
 For **Text** entities, `fit_to_cell(fraction)` adjusts font size (up or down) to fill the cell at `fraction`. Compare with `add_text(fit=True)` which only *shrinks* — never upsizes.
 
-### `fit_within(target, scale=1.0, recenter=True, *, at=None)`
+### `fit_within(target, scale=1.0, recenter=True, *, at=None, visual=True, rotate=False, match_aspect=False)`
 
 Same concept, but fits within another entity's `inner_bounds()` instead of the cell.
+
+- **`rotate`**: Same as `fit_to_cell` — finds optimal rotation for any entity.
+- **`match_aspect`**: Same as `fit_to_cell` — rotates to match target's aspect ratio.
 
 ---
 

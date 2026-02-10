@@ -300,25 +300,73 @@ class Curve(StrokedPathMixin, Entity):
         s, c, e = self.start, self.control, self.end
         return f"M {s.x} {s.y} Q {c.x} {c.y} {e.x} {e.y}"
 
+    @staticmethod
+    def _quad_bezier_bounds(
+        p0x: float, p0y: float,
+        p1x: float, p1y: float,
+        p2x: float, p2y: float,
+    ) -> tuple[float, float, float, float]:
+        """Exact AABB of a quadratic Bezier (P0, P1=control, P2).
+
+        Per axis the extremum is at ``t = (P0 - P1) / (P0 - 2P1 + P2)``.
+        O(1), no sampling.
+        """
+        min_x, max_x = min(p0x, p2x), max(p0x, p2x)
+        min_y, max_y = min(p0y, p2y), max(p0y, p2y)
+        # X-axis extremum
+        denom = p0x - 2 * p1x + p2x
+        if abs(denom) > 1e-12:
+            t = (p0x - p1x) / denom
+            if 0 < t < 1:
+                v = (1 - t) ** 2 * p0x + 2 * (1 - t) * t * p1x + t * t * p2x
+                if v < min_x:
+                    min_x = v
+                if v > max_x:
+                    max_x = v
+        # Y-axis extremum
+        denom = p0y - 2 * p1y + p2y
+        if abs(denom) > 1e-12:
+            t = (p0y - p1y) / denom
+            if 0 < t < 1:
+                v = (1 - t) ** 2 * p0y + 2 * (1 - t) * t * p1y + t * t * p2y
+                if v < min_y:
+                    min_y = v
+                if v > max_y:
+                    max_y = v
+        return (min_x, min_y, max_x, max_y)
+
     def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
-        """Get bounding box (approximate - includes control point).
+        """Exact bounding box of this quadratic Bezier curve.
 
         Args:
             visual: If True, expand by stroke width / 2 to reflect
                     the rendered extent.
         """
-        points = [self.start, self.control, self.end]
-        min_x = min(p.x for p in points)
-        min_y = min(p.y for p in points)
-        max_x = max(p.x for p in points)
-        max_y = max(p.y for p in points)
+        p0, p1, p2 = self.start, self.control, self.end
+        b = Curve._quad_bezier_bounds(p0.x, p0.y, p1.x, p1.y, p2.x, p2.y)
         if visual:
             half = self.width / 2
-            min_x -= half
-            min_y -= half
-            max_x += half
-            max_y += half
-        return (min_x, min_y, max_x, max_y)
+            b = (b[0] - half, b[1] - half, b[2] + half, b[3] + half)
+        return b
+
+    def _rotated_bounds(
+        self, angle: float, *, visual: bool = False,
+    ) -> tuple[float, float, float, float]:
+        """Exact AABB of this curve rotated by *angle* degrees around origin."""
+        if angle == 0:
+            return self.bounds(visual=visual)
+        rad = math.radians(angle)
+        cos_a, sin_a = math.cos(rad), math.sin(rad)
+        p0, p1, p2 = self.start, self.control, self.end
+        b = Curve._quad_bezier_bounds(
+            p0.x * cos_a - p0.y * sin_a, p0.x * sin_a + p0.y * cos_a,
+            p1.x * cos_a - p1.y * sin_a, p1.x * sin_a + p1.y * cos_a,
+            p2.x * cos_a - p2.y * sin_a, p2.x * sin_a + p2.y * cos_a,
+        )
+        if visual:
+            half = self.width / 2
+            b = (b[0] - half, b[1] - half, b[2] + half, b[3] + half)
+        return b
 
     def _move_by(self, dx: float = 0, dy: float = 0) -> Curve:
         """

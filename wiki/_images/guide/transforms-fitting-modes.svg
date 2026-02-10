@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="315.0" viewBox="0.0 105.0 300.0 315.0">
+  <rect x="0.0" y="105.0" width="300.0" height="315.0" fill="#1a1a2e" />
+  <text x="50.0" y="126.0" font-size="16.8" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="auto">default</text>
+  <rect x="0.25" y="0.25" width="99.5" height="139.5" fill="none" stroke="#3d3d5c" stroke-width="0.5" fill-opacity="0.3" stroke-opacity="0.3" />
+  <text x="150.0" y="126.0" font-size="16.8" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="auto">rotate</text>
+  <rect x="100.25" y="0.25" width="99.5" height="139.5" fill="none" stroke="#3d3d5c" stroke-width="0.5" fill-opacity="0.3" stroke-opacity="0.3" />
+  <text x="250.0" y="126.0" font-size="16.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="auto">match_aspect</text>
+  <rect x="200.25" y="0.25" width="99.5" height="139.5" fill="none" stroke="#3d3d5c" stroke-width="0.5" fill-opacity="0.3" stroke-opacity="0.3" />
+  <g transform="translate(50.0, 210.0) scale(1.639344262295082)">
+  <rect x="-30.0" y="-10.0" width="60.0" height="20.0" fill="#ff6b6b" stroke="#ffe66d" stroke-width="1.0" />
+</g>
+  <rect x="0.25" y="140.25" width="99.5" height="139.5" fill="none" stroke="#3d3d5c" stroke-width="0.5" fill-opacity="0.3" stroke-opacity="0.3" />
+  <g transform="translate(150.0, 210.0) rotate(90.0) scale(2.2950819672131146)">
+  <rect x="-30.0" y="-10.0" width="60.0" height="20.0" fill="#ff6b6b" stroke="#ffe66d" stroke-width="1.0" />
+</g>
+  <rect x="100.25" y="140.25" width="99.5" height="139.5" fill="none" stroke="#3d3d5c" stroke-width="0.5" fill-opacity="0.3" stroke-opacity="0.3" />
+  <g transform="translate(250.0, 210.0) rotate(63.863587555624136) scale(2.198662879692928)">
+  <rect x="-30.0" y="-10.0" width="60.0" height="20.0" fill="#ff6b6b" stroke="#ffe66d" stroke-width="1.0" />
+</g>
+  <rect x="200.25" y="140.25" width="99.5" height="139.5" fill="none" stroke="#3d3d5c" stroke-width="0.5" fill-opacity="0.3" stroke-opacity="0.3" />
+  <g transform="translate(50.0, 336.3540902377184) scale(1.0916727809825264)">
+  <path d="M -43.30127018922194 -24.999999999999996 Q 0.0 -1.1843013959279283 43.30127018922194 -24.999999999999996" fill="none" stroke="#7aafff" stroke-width="5.0" stroke-linecap="round" />
+  <path d="M 43.30127018922194 -24.999999999999996 Q 1.0256350946109656 0.5921506979639695 3.061616997868383e-15 50.0" fill="none" stroke="#ff8a80" stroke-width="5.0" stroke-linecap="round" />
+  <path d="M 3.061616997868383e-15 50.0 Q -1.0256350946109585 0.5921506979639677 -43.30127018922193 -25.000000000000007" fill="none" stroke="#81c995" stroke-width="5.0" stroke-linecap="round" />
+</g>
+  <rect x="0.25" y="280.25" width="99.5" height="139.5" fill="none" stroke="#3d3d5c" stroke-width="0.5" fill-opacity="0.3" stroke-opacity="0.3" />
+  <g transform="translate(165.625, 350.0) rotate(90.0) scale(1.25)">
+  <path d="M -43.30127018922194 -24.999999999999996 Q 0.0 -1.1843013959279283 43.30127018922194 -24.999999999999996" fill="none" stroke="#7aafff" stroke-width="5.0" stroke-linecap="round" />
+  <path d="M 43.30127018922194 -24.999999999999996 Q 1.0256350946109656 0.5921506979639695 3.061616997868383e-15 50.0" fill="none" stroke="#ff8a80" stroke-width="5.0" stroke-linecap="round" />
+  <path d="M 3.061616997868383e-15 50.0 Q -1.0256350946109585 0.5921506979639677 -43.30127018922193 -25.000000000000007" fill="none" stroke="#81c995" stroke-width="5.0" stroke-linecap="round" />
+</g>
+  <rect x="100.25" y="280.25" width="99.5" height="139.5" fill="none" stroke="#3d3d5c" stroke-width="0.5" fill-opacity="0.3" stroke-opacity="0.3" />
+  <g transform="translate(265.625, 350.0) rotate(90.0) scale(1.25)">
+  <path d="M -43.30127018922194 -24.999999999999996 Q 0.0 -1.1843013959279283 43.30127018922194 -24.999999999999996" fill="none" stroke="#7aafff" stroke-width="5.0" stroke-linecap="round" />
+  <path d="M 43.30127018922194 -24.999999999999996 Q 1.0256350946109656 0.5921506979639695 3.061616997868383e-15 50.0" fill="none" stroke="#ff8a80" stroke-width="5.0" stroke-linecap="round" />
+  <path d="M 3.061616997868383e-15 50.0 Q -1.0256350946109585 0.5921506979639677 -43.30127018922193 -25.000000000000007" fill="none" stroke="#81c995" stroke-width="5.0" stroke-linecap="round" />
+</g>
+  <rect x="200.25" y="280.25" width="99.5" height="139.5" fill="none" stroke="#3d3d5c" stroke-width="0.5" fill-opacity="0.3" stroke-opacity="0.3" />
+</svg>

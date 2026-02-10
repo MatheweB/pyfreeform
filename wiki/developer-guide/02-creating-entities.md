@@ -20,6 +20,7 @@ Every entity in PyFreeform extends the `Entity` ABC from `pyfreeform.core.entity
 | Method | When to override |
 |---|---|
 | `inner_bounds()` | Non-rectangular shapes -- return the largest axis-aligned rectangle fully inside the entity. Default: same as `bounds()`. Used by `fit_within()`. |
+| `_rotated_bounds(angle, *, visual)` | If your entity has a tighter AABB under rotation than the default (which rotates 4 `bounds()` corners). Override with analytical formulas for curves, ellipses, or any entity with known extrema. Used by `EntityGroup.bounds()` for tight composite bounds. |
 | `scale(factor, origin)` | If your entity has geometry beyond its position (radius, endpoints, vertices). The base implementation only scales the position. |
 | `rotate(angle, origin)` | If your entity has geometry that should rotate (endpoints, vertices, internal angles). The base implementation only rotates the position. |
 | `_move_by(dx, dy)` | If your entity stores absolute coordinates for sub-parts (e.g., Line stores `_end_offset`, Path stores Bezier segments). This is a private method -- users reposition entities via the `.at` property or `move_to_cell()`. |
@@ -139,6 +140,9 @@ def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
 ```
 
 For the crosshair, `inner_bounds()` would be very small (just the intersection point), so we leave the default which returns the same as `bounds()`.
+
+!!! tip "Tight rotated bounds via `_rotated_bounds()`"
+    The default `_rotated_bounds(angle)` rotates the four corners of `bounds()` — correct but can overestimate for curved or circular shapes. If your entity can compute a tighter AABB at any rotation (e.g., via analytical formulas for Bezier extrema or ellipse extents), override this method. `EntityGroup.bounds()` calls `_rotated_bounds()` on every child with the combined rotation angle, so tight child bounds cascade into tight group bounds automatically.
 
 ### Step 4: Implement to_svg()
 
@@ -274,13 +278,18 @@ class CrossHair(Entity):
             f"Available: {self.anchor_names}"
         )
 
-    def bounds(self) -> tuple[float, float, float, float]:
-        return (
-            self.x - self.size,
-            self.y - self.size,
-            self.x + self.size,
-            self.y + self.size,
-        )
+    def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
+        min_x = self.x - self.size
+        min_y = self.y - self.size
+        max_x = self.x + self.size
+        max_y = self.y + self.size
+        if visual:
+            half = self.width / 2
+            min_x -= half
+            min_y -= half
+            max_x += half
+            max_y += half
+        return (min_x, min_y, max_x, max_y)
 
     def scale(
         self,

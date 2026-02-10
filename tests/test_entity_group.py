@@ -206,3 +206,266 @@ def test_group_opacity_settable():
 
     group.opacity = 0.3
     assert 'opacity="0.3"' in group.to_svg()
+
+
+# =========================================================================
+# Rotational fitting tests
+# =========================================================================
+
+
+def test_fit_to_cell_rotate_default_false():
+    """rotate=False (default) should not change rotation."""
+    scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
+    cell = scene.grid[0, 0]
+
+    group = EntityGroup()
+    group.add(Line(-50, 0, 50, 0, width=5, color="red"))
+    cell.add(group)
+    group.fit_to_cell(0.8)
+
+    assert group._rotation == 0.0
+
+
+def test_fit_to_cell_rotate_wide_in_tall():
+    """A wide group in a tall cell should rotate for better fill."""
+    scene = Scene.with_grid(cols=1, rows=1, cell_width=50, cell_height=200)
+    cell = scene.grid[0, 0]
+
+    # Wide group: 200px wide, 10px tall
+    group = EntityGroup()
+    group.add(Line(-100, 0, 100, 0, width=10, color="red"))
+    cell.add(group)
+
+    # Measure unrotated scale factor
+    unrotated_w = 200  # line length
+    unrotated_factor = min(50 / unrotated_w, 200 / 10)
+
+    group.fit_to_cell(1.0, rotate=True)
+
+    # Should have rotated significantly (>45°) to better use the tall cell.
+    # The optimal angle is ~78° (balanced angle), NOT 90°, because the
+    # closed-form solution finds where both dimensions are equally used.
+    assert group._rotation > 45
+
+    # Bounds should fit within cell
+    min_x, min_y, max_x, max_y = group.bounds()
+    assert min_x >= cell.x - 1.0
+    assert min_y >= cell.y - 1.0
+    assert max_x <= cell.x + cell.width + 1.0
+    assert max_y <= cell.y + cell.height + 1.0
+
+    # Scale factor should be much better than unrotated (0.25)
+    assert group._scale > unrotated_factor
+
+
+def test_fit_to_cell_rotate_square_noop():
+    """Square bbox in square cell — rotation shouldn't change much."""
+    scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
+    cell = scene.grid[0, 0]
+
+    # Square group: equal width and height
+    group = EntityGroup()
+    group.add(Dot(0, 0, radius=40, color="red"))
+    cell.add(group)
+
+    group.fit_to_cell(0.9, rotate=True)
+
+    # Should pick 0° (or equivalent) since bbox is already square
+    assert group._rotation % 90 == pytest.approx(0, abs=1.0)
+
+
+def test_fit_to_cell_rotate_with_at():
+    """rotate=True should work with at= position-aware mode."""
+    scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
+    cell = scene.grid[0, 0]
+
+    group = EntityGroup()
+    group.add(Line(-50, -5, 50, 5, width=10, color="red"))
+    cell.add(group)
+
+    group.fit_to_cell(0.5, at=(0.5, 0.5), rotate=True)
+
+    # Bounds should stay within cell
+    min_x, min_y, max_x, max_y = group.bounds()
+    assert min_x >= cell.x - 1.0
+    assert min_y >= cell.y - 1.0
+    assert max_x <= cell.x + cell.width + 1.0
+    assert max_y <= cell.y + cell.height + 1.0
+
+
+def test_fit_within_rotate():
+    """rotate=True should work with fit_within."""
+    from pyfreeform.entities.rect import Rect
+
+    scene = Scene.with_grid(cols=1, rows=1, cell_size=200)
+    cell = scene.grid[0, 0]
+
+    # Tall target rect
+    rect = Rect(20, 20, 40, 160, fill="blue")
+    scene.place(rect)
+
+    # Wide group
+    group = EntityGroup()
+    group.add(Line(-60, -5, 60, 5, width=10, color="red"))
+    scene.place(group)
+
+    group.fit_within(rect, rotate=True)
+
+    # Should have rotated to fit the tall rectangle
+    min_x, min_y, max_x, max_y = group.bounds()
+    r_min_x, r_min_y, r_max_x, r_max_y = rect.bounds()
+    assert min_x >= r_min_x - 1.0
+    assert min_y >= r_min_y - 1.0
+    assert max_x <= r_max_x + 1.0
+    assert max_y <= r_max_y + 1.0
+
+
+def test_fit_to_cell_rotate_works_on_polygon():
+    """rotate=True should work on Polygon (bakes into vertices)."""
+    from pyfreeform.entities.polygon import Polygon
+
+    scene = Scene.with_grid(cols=1, rows=1, cell_width=50, cell_height=200)
+    cell = scene.grid[0, 0]
+
+    # Wide diamond
+    poly = cell.add_polygon(
+        Polygon.diamond(size=0.8),
+        fill="blue",
+    )
+    poly.fit_to_cell(0.9, rotate=True)
+
+    # Bounds should fit within cell
+    min_x, min_y, max_x, max_y = poly.bounds()
+    assert min_x >= cell.x - 1.0
+    assert max_x <= cell.x + cell.width + 1.0
+    assert min_y >= cell.y - 1.0
+    assert max_y <= cell.y + cell.height + 1.0
+
+
+def test_fit_to_cell_rotate_works_on_rect():
+    """rotate=True should work on Rect (sets self.rotation)."""
+    from pyfreeform.entities.rect import Rect
+
+    scene = Scene.with_grid(cols=1, rows=1, cell_width=50, cell_height=200)
+    cell = scene.grid[0, 0]
+
+    rect = cell.add_rect(width=0.9, height=0.1, fill="blue")
+    rect.fit_to_cell(0.9, rotate=True)
+
+    # Wide rect in tall cell should have rotated
+    assert rect.rotation != 0.0
+
+
+def test_fit_to_cell_rotate_dot_noop():
+    """rotate=True on Dot should work (no-op, circle is symmetric)."""
+    scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
+    cell = scene.grid[0, 0]
+
+    dot = cell.add_dot(radius=0.3, color="red")
+    # Should not raise — Dot is symmetric, rotation is a no-op
+    dot.fit_to_cell(0.8, rotate=True)
+
+
+def test_fit_within_rotate_works_on_non_group():
+    """rotate=True should work on non-EntityGroup in fit_within."""
+    from pyfreeform.entities.rect import Rect
+
+    scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
+    cell = scene.grid[0, 0]
+
+    dot = cell.add_dot(radius=0.3, color="red")
+    target = Rect(0, 0, 50, 50, fill="blue")
+    scene.place(target)
+
+    # Should not raise
+    dot.fit_within(target, rotate=True)
+
+
+# =========================================================================
+# match_aspect tests
+# =========================================================================
+
+
+def test_fit_to_cell_match_aspect_square_cell():
+    """match_aspect=True in square cell with wide entity."""
+    scene = Scene.with_grid(cols=1, rows=1, cell_size=200)
+    cell = scene.grid[0, 0]
+
+    # Wide group (200 x 10)
+    group = EntityGroup()
+    group.add(Line(-100, 0, 100, 0, width=10, color="red"))
+    cell.add(group)
+
+    group.fit_to_cell(0.9, match_aspect=True)
+
+    # After matching aspect to square cell, bounds should be roughly square
+    min_x, min_y, max_x, max_y = group.bounds()
+    w = max_x - min_x
+    h = max_y - min_y
+    if w > 1e-3 and h > 1e-3:
+        ratio = w / h
+        assert 0.5 < ratio < 2.0  # roughly square-ish
+
+
+def test_fit_to_cell_match_aspect_tall_cell():
+    """match_aspect=True in tall cell with wide entity."""
+    scene = Scene.with_grid(cols=1, rows=1, cell_width=100, cell_height=300)
+    cell = scene.grid[0, 0]
+
+    # Wide group
+    group = EntityGroup()
+    group.add(Line(-80, 0, 80, 0, width=8, color="red"))
+    cell.add(group)
+
+    group.fit_to_cell(0.9, match_aspect=True)
+
+    # Bounds should fit within cell
+    min_x, min_y, max_x, max_y = group.bounds()
+    assert min_x >= cell.x - 1.0
+    assert max_x <= cell.x + cell.width + 1.0
+
+
+def test_fit_to_cell_rotate_and_match_aspect_exclusive():
+    """rotate=True and match_aspect=True together should raise ValueError."""
+    scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
+    cell = scene.grid[0, 0]
+
+    group = EntityGroup()
+    group.add(Dot(0, 0, radius=10, color="red"))
+    cell.add(group)
+
+    with pytest.raises(ValueError, match="mutually exclusive"):
+        group.fit_to_cell(0.9, rotate=True, match_aspect=True)
+
+
+def test_fit_within_match_aspect():
+    """match_aspect=True should work with fit_within."""
+    from pyfreeform.entities.rect import Rect
+
+    scene = Scene.with_grid(cols=1, rows=1, cell_size=200)
+    cell = scene.grid[0, 0]
+
+    # Square target
+    target = Rect(20, 20, 100, 100, fill="blue")
+    scene.place(target)
+
+    # Wide group
+    group = EntityGroup()
+    group.add(Line(-60, -5, 60, 5, width=10, color="red"))
+    scene.place(group)
+
+    group.fit_within(target, match_aspect=True)
+
+    # Should fit within target bounds
+    min_x, min_y, max_x, max_y = group.bounds()
+    t_min_x, t_min_y, t_max_x, t_max_y = target.bounds()
+    assert min_x >= t_min_x - 2.0
+    assert max_x <= t_max_x + 2.0
+
+
+def test_entity_group_rotation_property():
+    """EntityGroup.rotation should expose _rotation."""
+    group = EntityGroup()
+    assert group.rotation == 0.0
+    group.rotate(45)
+    assert group.rotation == pytest.approx(45.0)

@@ -3,7 +3,7 @@
 import math
 
 from pyfreeform import (
-    Scene, Palette, Polygon, EntityGroup, Dot, Line, Ellipse,
+    Scene, Palette, Polygon, EntityGroup, Dot, Line, Rect, Ellipse, Curve,
     Connection, ConnectionStyle, map_range,
 )
 
@@ -43,20 +43,71 @@ def generate():
     # --- 3. fit_to_cell with at= positions ---
     scene = Scene.with_grid(cols=3, rows=1, cell_size=80, background=colors.background)
     positions = [
-        ((0.15, 0.15), "top_left"),
-        ((0.5, 0.5), "center"),
-        ((0.85, 0.85), "bottom_right"),
+        (0.15, 0.15),
+        (0.5, 0.5),
+        (0.85, 0.85)
     ]
     for i, cell in enumerate(scene.grid):
-        at_pos, label = positions[i]
+        at_pos = positions[i]
         group = EntityGroup()
         group.add(Dot(0, 0, radius=18, color=colors.primary, opacity=0.7))
         group.add(Line(-12, 0, 12, 0, width=2, color=colors.accent))
         cell.add(group)
         group.fit_to_cell(0.5, at=at_pos)
-        cell.add_text(label, at="bottom", font_size=0.25, color="#aaaacc", baseline="auto", fit=True)
         cell.add_border(color=colors.grid, width=0.5, opacity=0.3)
     save(scene, "guide/transforms-fit-at.svg")
+
+    # --- 3b. Fitting modes comparison (3x3: default / rotate / match_aspect) ---
+    rad, sw = 50, 5
+    arc_colors = ["#7aafff", "#ff8a80", "#81c995"]
+
+    def make_logo():
+        g = EntityGroup()
+        for k, c in enumerate(arc_colors):
+            a1 = math.radians(120 * k - 150)
+            a2 = math.radians(120 * k - 30)
+            g.add(Curve(
+                rad * math.cos(a1), rad * math.sin(a1),
+                rad * math.cos(a2), rad * math.sin(a2),
+                curvature=0.55, width=sw, color=c, cap="round",
+            ))
+        return g
+
+    def make_wide_bar():
+        g = EntityGroup()
+        g.add(Rect.at_center(
+            (0, 0), 60, 20,
+            fill=colors.primary, stroke=colors.accent,
+            stroke_width=1,
+        ))
+        return g
+
+    scene = Scene.with_grid(
+        cols=3, rows=3, cell_width=100, cell_height=140,
+        background=None,
+    )
+
+    # Row 0: column headers
+    for col, label in enumerate(["default", "rotate", "match_aspect"]):
+        cell = scene.grid[0, col]
+        t = cell.add_text(label, at=(0.5, 0.9),
+                      font_size=0.12, color="#aaaacc",
+                      fit=True, baseline="auto")
+        cell.add_border(color=colors.grid, width=0.5, opacity=0.3)
+
+    # Row 1-2: shapes × modes
+    modes = [{}, {"rotate": True}, {"match_aspect": True}]
+    shapes = [(make_wide_bar, "Rect"), (make_logo, "Logo")]
+    for row_idx, (factory, label) in enumerate(shapes, start=1):
+        for col in range(3):
+            cell = scene.grid[row_idx, col]
+            group = factory()
+            cell.add(group)
+            group.fit_to_cell(1.0, **modes[col])
+            cell.add_border(color=colors.grid, width=0.5, opacity=0.3)
+
+    scene.trim(top=scene.grid.cell_height*0.75)
+    save(scene, "guide/transforms-fitting-modes.svg")
 
     # --- 4. Connected network ---
     colors_ocean = Palette.ocean()

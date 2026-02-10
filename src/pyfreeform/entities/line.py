@@ -377,6 +377,29 @@ class Line(StrokedPathMixin, Entity):
             max_y += half
         return (min_x, min_y, max_x, max_y)
 
+    def _rotated_bounds(
+        self, angle: float, *, visual: bool = False,
+    ) -> tuple[float, float, float, float]:
+        """Exact AABB of this line rotated by *angle* degrees around origin."""
+        if angle == 0:
+            return self.bounds(visual=visual)
+        rad = math.radians(angle)
+        cos_a, sin_a = math.cos(rad), math.sin(rad)
+        s, e = self.start, self.end
+        rx1 = s.x * cos_a - s.y * sin_a
+        ry1 = s.x * sin_a + s.y * cos_a
+        rx2 = e.x * cos_a - e.y * sin_a
+        ry2 = e.x * sin_a + e.y * cos_a
+        min_x, max_x = min(rx1, rx2), max(rx1, rx2)
+        min_y, max_y = min(ry1, ry2), max(ry1, ry2)
+        if visual:
+            half = self.width / 2
+            min_x -= half
+            min_y -= half
+            max_x += half
+            max_y += half
+        return (min_x, min_y, max_x, max_y)
+
     def to_svg(self) -> str:
         """Render to SVG line element."""
         s = self.start

@@ -412,12 +412,17 @@ class Ellipse(Entity):
 
         return self
 
-    def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
-        """
-        Get bounding box of the ellipse.
+    @staticmethod
+    def _ellipse_extents(rx: float, ry: float, angle_rad: float) -> tuple[float, float]:
+        """Half-extents of an ellipse rotated by *angle_rad*. O(1), exact."""
+        c = math.cos(angle_rad)
+        s = math.sin(angle_rad)
+        dx = math.sqrt(rx * rx * c * c + ry * ry * s * s)
+        dy = math.sqrt(rx * rx * s * s + ry * ry * c * c)
+        return dx, dy
 
-        For rotated ellipses, this computes the axis-aligned bounding box
-        that fully contains the rotated ellipse.
+    def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
+        """Exact bounding box of the ellipse (handles rotation analytically).
 
         Args:
             visual: If True, expand by stroke width / 2 to reflect
@@ -426,23 +431,15 @@ class Ellipse(Entity):
         Returns:
             Tuple of (min_x, min_y, max_x, max_y).
         """
+        cx, cy = self.position.x, self.position.y
         if self.rotation == 0:
-            # Simple case: axis-aligned ellipse
-            min_x = self.position.x - self.rx
-            min_y = self.position.y - self.ry
-            max_x = self.position.x + self.rx
-            max_y = self.position.y + self.ry
+            dx, dy = self.rx, self.ry
         else:
-            # For rotated ellipse, compute bounds of the rotated bounding box
-            # We check the extrema by sampling points around the ellipse
-            angles = [i * math.pi / 180 for i in range(0, 360, 30)]  # Sample every 30°
-            points = [self._point_at_angle_rad(a) for a in angles]
-
-            min_x = min(p.x for p in points)
-            min_y = min(p.y for p in points)
-            max_x = max(p.x for p in points)
-            max_y = max(p.y for p in points)
-
+            dx, dy = Ellipse._ellipse_extents(
+                self.rx, self.ry, math.radians(self.rotation),
+            )
+        min_x, min_y = cx - dx, cy - dy
+        max_x, max_y = cx + dx, cy + dy
         if visual and self.stroke_width:
             half = self.stroke_width / 2
             min_x -= half
@@ -450,6 +447,24 @@ class Ellipse(Entity):
             max_x += half
             max_y += half
         return (min_x, min_y, max_x, max_y)
+
+    def _rotated_bounds(
+        self, angle: float, *, visual: bool = False,
+    ) -> tuple[float, float, float, float]:
+        """Exact AABB of this ellipse rotated by *angle* degrees around origin."""
+        if angle == 0:
+            return self.bounds(visual=visual)
+        rad = math.radians(angle)
+        cos_a, sin_a = math.cos(rad), math.sin(rad)
+        cx = self.position.x * cos_a - self.position.y * sin_a
+        cy = self.position.x * sin_a + self.position.y * cos_a
+        combined = math.radians(self.rotation) + rad
+        dx, dy = Ellipse._ellipse_extents(self.rx, self.ry, combined)
+        b = (cx - dx, cy - dy, cx + dx, cy + dy)
+        if visual and self.stroke_width:
+            half = self.stroke_width / 2
+            b = (b[0] - half, b[1] - half, b[2] + half, b[3] + half)
+        return b
 
     def inner_bounds(self) -> tuple[float, float, float, float]:
         """Inscribed rectangle of the ellipse."""

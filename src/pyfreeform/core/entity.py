@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
 from weakref import WeakSet
@@ -507,6 +508,97 @@ class Entity(ABC):
         """
         return self.bounds()
 
+    def _rotated_bounds(
+        self, angle: float, *, visual: bool = False,
+    ) -> tuple[float, float, float, float]:
+        """Tight AABB of this entity's geometry rotated by *angle* degrees
+        around the origin.
+
+        The default rotates the four corners of ``bounds()``.  Subclasses
+        override with exact analytical formulas (e.g. Bezier extrema,
+        ellipse extents) so that ``EntityGroup`` can compose tight bounds
+        without sampling.
+        """
+        b = self.bounds(visual=visual)
+        if angle == 0:
+            return b
+        rad = math.radians(angle)
+        cos_a, sin_a = math.cos(rad), math.sin(rad)
+        corners = ((b[0], b[1]), (b[2], b[1]), (b[2], b[3]), (b[0], b[3]))
+        rx = [x * cos_a - y * sin_a for x, y in corners]
+        ry = [x * sin_a + y * cos_a for x, y in corners]
+        return (min(rx), min(ry), max(rx), max(ry))
+
+    # --- Rotation algorithms for fitting ---
+
+    @staticmethod
+    def _compute_optimal_angle(w: float, h: float, W: float, H: float) -> float:
+        """O(1) angle (degrees) that maximizes min(W/bbox_w, H/bbox_h).
+
+        Uses the AABB rotation identity:
+            bbox_w(θ) = w·|cos θ| + h·|sin θ|
+            bbox_h(θ) = w·|sin θ| + h·|cos θ|
+
+        Only three candidate angles: 0°, 90°, and the balanced angle.
+        """
+        if w < 1e-9 or h < 1e-9 or W < 1e-9 or H < 1e-9:
+            return 0.0
+
+        def scale_at(angle_rad: float) -> float:
+            cos_a = abs(math.cos(angle_rad))
+            sin_a = abs(math.sin(angle_rad))
+            bw = w * cos_a + h * sin_a
+            bh = w * sin_a + h * cos_a
+            return min(W / bw, H / bh)
+
+        candidates = [0.0, math.pi / 2]
+
+        numerator = H * w - W * h
+        denominator = W * w - H * h
+        if abs(denominator) > 1e-9:
+            theta = math.atan2(numerator, denominator)
+            theta = theta % math.pi
+            if theta > math.pi / 2:
+                theta -= math.pi / 2
+            if 0 < theta < math.pi / 2:
+                candidates.append(theta)
+
+        best = max(candidates, key=scale_at)
+        return math.degrees(best)
+
+    @staticmethod
+    def _compute_aspect_match_angle(
+        w: float, h: float, target_w: float, target_h: float,
+    ) -> float:
+        """O(1) angle (degrees) that makes bbox aspect ratio ≈ target_w/target_h.
+
+        Solves: (w·cos θ + h·sin θ) / (w·sin θ + h·cos θ) = r
+        giving:  tan θ = (w - r·h) / (r·w - h)
+        """
+        if w < 1e-9 or h < 1e-9 or target_w < 1e-9 or target_h < 1e-9:
+            return 0.0
+
+        r = target_w / target_h
+        current_ratio = w / h
+        if abs(current_ratio - r) < 1e-6:
+            return 0.0  # already matching
+
+        numerator = w - r * h
+        denominator = r * w - h
+
+        if abs(denominator) < 1e-9:
+            return 90.0
+
+        theta_deg = math.degrees(math.atan(numerator / denominator))
+
+        # If outside [0, 90°], target ratio isn't achievable —
+        # return whichever boundary is closer.
+        if theta_deg < 0 or theta_deg > 90:
+            ratio_90 = h / w
+            return 0.0 if abs(current_ratio - r) <= abs(ratio_90 - r) else 90.0
+
+        return theta_deg
+
     def fit_within(
         self,
         target: Entity | tuple[float, float, float, float],
@@ -515,6 +607,8 @@ class Entity(ABC):
         *,
         at: RelCoord | tuple[float, float] | None = None,
         visual: bool = True,
+        rotate: bool = False,
+        match_aspect: bool = False,
     ) -> Entity:
         """
         Scale and position entity to fit within another entity's inner bounds.
@@ -531,6 +625,12 @@ class Entity(ABC):
             visual: If True (default), include stroke width when measuring
                     bounds so stroked entities don't overflow after fitting.
                     Set to False for pure geometric fitting.
+            rotate: If True, find the rotation angle that maximizes how
+                    much of the target space the entity fills before
+                    scaling.
+            match_aspect: If True, rotate the entity so its bounding box
+                          aspect ratio matches the target's. Mutually
+                          exclusive with ``rotate``.
 
         Returns:
             self, for method chaining.
@@ -542,6 +642,9 @@ class Entity(ABC):
             >>> # Position in top-left of a rect's inner bounds:
             >>> label.fit_within(rect, at=(0.25, 0.25))
         """
+        if rotate and match_aspect:
+            raise ValueError("rotate and match_aspect are mutually exclusive")
+
         if not (0.0 < scale <= 1.0):
             raise ValueError(f"scale must be between 0.0 and 1.0, got {scale}")
 
@@ -553,6 +656,24 @@ class Entity(ABC):
 
         target_w = t_max_x - t_min_x
         target_h = t_max_y - t_min_y
+
+        if rotate or match_aspect:
+            b = self.bounds(visual=visual)
+            w, h = b[2] - b[0], b[3] - b[1]
+            if w > 1e-9 and h > 1e-9:
+                if at is not None:
+                    rx, ry = at
+                    avail_w = min(rx, 1 - rx) * 2 * target_w * scale
+                    avail_h = min(ry, 1 - ry) * 2 * target_h * scale
+                else:
+                    avail_w = target_w * scale
+                    avail_h = target_h * scale
+                angle = (
+                    Entity._compute_optimal_angle(w, h, avail_w, avail_h)
+                    if rotate else
+                    Entity._compute_aspect_match_angle(w, h, avail_w, avail_h)
+                )
+                self.rotate(angle)
 
         if at is not None:
             # --- Position-aware mode ---
@@ -636,6 +757,8 @@ class Entity(ABC):
         *,
         at: RelCoord | tuple[float, float] | None = None,
         visual: bool = True,
+        rotate: bool = False,
+        match_aspect: bool = False,
     ) -> Entity:
         """
         Automatically scale and position entity to fit within its cell bounds.
@@ -659,14 +782,20 @@ class Entity(ABC):
             visual: If True (default), include stroke width when measuring
                     bounds so stroked entities don't overflow after fitting.
                     Set to False for pure geometric fitting.
+            rotate: If True, find the rotation angle that maximizes how
+                    much of the cell the entity fills before scaling.
+            match_aspect: If True, rotate the entity so its bounding box
+                          aspect ratio matches the cell's. Mutually
+                          exclusive with ``rotate``.
 
         Returns:
             self, for method chaining
 
         Raises:
-            ValueError: If entity has no cell or scale is out of range
+            ValueError: If entity has no cell, scale is out of range,
+                        or both ``rotate`` and ``match_aspect`` are True.
             TypeError: If ``at`` is a string (named anchors sit on cell
-                       edges where available space is 0)
+                       edges where available space is 0).
 
         Example:
             >>> ellipse = cell.add_ellipse(rx=2.0, ry=1.2, rotation=45)
@@ -674,6 +803,9 @@ class Entity(ABC):
             >>> dot = cell.add_dot(radius=0.8)
             >>> dot.fit_to_cell(1.0, at=(0.25, 0.25))  # Fit in top-left quadrant
         """
+        if rotate and match_aspect:
+            raise ValueError("rotate and match_aspect are mutually exclusive")
+
         # Validation
         if self._cell is None:
             raise ValueError("Cannot fit to cell: entity has no cell")
@@ -682,6 +814,36 @@ class Entity(ABC):
             raise ValueError(f"scale must be between 0.0 and 1.0, got {scale}")
 
         cell = self._cell
+
+        if rotate or match_aspect:
+            b = self.bounds(visual=visual)
+            w, h = b[2] - b[0], b[3] - b[1]
+            if w > 1e-9 and h > 1e-9:
+                if at is not None:
+                    if isinstance(at, str):
+                        raise TypeError(
+                            f"fit_to_cell(at=) only accepts (rx, ry) tuples, "
+                            f"not '{at}'."
+                        )
+                    rx, ry = at
+                    target_pos = cell.relative_to_absolute(at)
+                    cell_x, cell_y = cell.x, cell.y
+                    cell_w, cell_h = cell.width, cell.height
+                    dist_left = target_pos.x - cell_x
+                    dist_right = (cell_x + cell_w) - target_pos.x
+                    dist_top = target_pos.y - cell_y
+                    dist_bottom = (cell_y + cell_h) - target_pos.y
+                    avail_w = min(dist_left, dist_right) * 2 * scale
+                    avail_h = min(dist_top, dist_bottom) * 2 * scale
+                else:
+                    avail_w = cell.width * scale
+                    avail_h = cell.height * scale
+                angle = (
+                    Entity._compute_optimal_angle(w, h, avail_w, avail_h)
+                    if rotate else
+                    Entity._compute_aspect_match_angle(w, h, avail_w, avail_h)
+                )
+                self.rotate(angle)
 
         if at is not None:
             # --- Position-aware mode ---

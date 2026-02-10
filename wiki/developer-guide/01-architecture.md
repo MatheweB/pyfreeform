@@ -11,7 +11,7 @@ pyfreeform/
     surface.py      # Surface base class -- Cell, Scene, CellGroup
     pathable.py     # Pathable protocol -- point_at(t) interface
     connection.py   # Connection -- reactive link between entities
-    coord.py        # Coord NamedTuple (x, y)
+    coord.py        # Coord (x, y) and RelCoord (rx, ry) NamedTuples
     tangent.py      # Tangent angle utilities for pathables
     stroked_path_mixin.py  # Shared cap/marker logic
 
@@ -142,8 +142,8 @@ def to_svg(self) -> str:
     """Render to SVG element string."""
 
 @abstractmethod
-def bounds(self) -> tuple[float, float, float, float]:
-    """Return (min_x, min_y, max_x, max_y)."""
+def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
+    """Return (min_x, min_y, max_x, max_y). visual=True includes stroke width."""
 ```
 
 ### The StrokedPathMixin
@@ -284,6 +284,6 @@ Internally, relative positions are stored as `RelCoord(rx, ry)` -- a `NamedTuple
 Every entity knows which surface it lives in via `entity.cell`. This enables `fit_to_cell()` to work without passing the cell explicitly:
 
 ```python
-dot = cell.add_dot(radius=2.0)
+dot = cell.add_dot(radius=0.15)
 dot.fit_to_cell(0.85)  # Knows its cell, scales to fit
 ```

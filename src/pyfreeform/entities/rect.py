@@ -323,6 +323,32 @@ class Rect(Entity):
             max_y += half
         return (min_x, min_y, max_x, max_y)
 
+    def _rotated_bounds(
+        self, angle: float, *, visual: bool = False,
+    ) -> tuple[float, float, float, float]:
+        """Exact AABB of this rect rotated by *angle* degrees around origin."""
+        if angle == 0:
+            return self.bounds(visual=visual)
+        rad = math.radians(angle)
+        cos_a, sin_a = math.cos(rad), math.sin(rad)
+        corners = [
+            self.anchor("top_left"),
+            self.anchor("top_right"),
+            self.anchor("bottom_left"),
+            self.anchor("bottom_right"),
+        ]
+        rx = [c.x * cos_a - c.y * sin_a for c in corners]
+        ry = [c.x * sin_a + c.y * cos_a for c in corners]
+        min_x, max_x = min(rx), max(rx)
+        min_y, max_y = min(ry), max(ry)
+        if visual and self.stroke_width:
+            half = self.stroke_width / 2
+            min_x -= half
+            min_y -= half
+            max_x += half
+            max_y += half
+        return (min_x, min_y, max_x, max_y)
+
     def to_svg(self) -> str:
         """Render to SVG rect element."""
         parts = [
