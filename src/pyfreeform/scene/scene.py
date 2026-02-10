@@ -393,11 +393,11 @@ class Scene(Surface):
     
     # --- Rendering ---
     
-    def _collect_markers(self) -> dict[str, str]:
+    def _collect_markers(self, entities: list[Entity]) -> dict[str, str]:
         """Collect unique SVG marker definitions needed by all entities and connections."""
         markers: dict[str, str] = {}  # marker_id -> marker_svg
 
-        for entity in self.entities:
+        for entity in entities:
             if hasattr(entity, "get_required_markers"):
                 for mid, svg in entity.get_required_markers():
                     markers[mid] = svg
@@ -409,10 +409,10 @@ class Scene(Surface):
 
         return markers
 
-    def _collect_path_defs(self) -> dict[str, str]:
+    def _collect_path_defs(self, entities: list[Entity]) -> dict[str, str]:
         """Collect unique SVG path definitions needed by textPath entities."""
         paths: dict[str, str] = {}
-        for entity in self.entities:
+        for entity in entities:
             if hasattr(entity, "get_required_paths"):
                 for pid, svg in entity.get_required_paths():
                     paths[pid] = svg
@@ -429,6 +429,9 @@ class Scene(Surface):
         Returns:
             Complete SVG document as string.
         """
+        # Collect entities once (avoids rebuilding the list 3 times)
+        all_entities = self.entities
+
         lines = [
             '<?xml version="1.0" encoding="UTF-8"?>',
             f'<svg xmlns="http://www.w3.org/2000/svg" '
@@ -437,8 +440,8 @@ class Scene(Surface):
         ]
 
         # Definitions (markers for arrow caps, paths for textPath)
-        markers = self._collect_markers()
-        path_defs = self._collect_path_defs()
+        markers = self._collect_markers(all_entities)
+        path_defs = self._collect_path_defs(all_entities)
         if markers or path_defs:
             lines.append("  <defs>")
             for svg in markers.values():
@@ -461,7 +464,7 @@ class Scene(Surface):
             renderables.append((connection.z_index, connection.to_svg()))
 
         # Add entities
-        for entity in self.entities:
+        for entity in all_entities:
             renderables.append((entity.z_index, entity.to_svg()))
 
         # Sort by z_index (stable sort preserves add-order for same z_index)

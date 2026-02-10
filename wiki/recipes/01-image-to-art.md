@@ -71,7 +71,7 @@ for cell in scene.grid:
 
 ## Color Mosaic
 
-The simplest approach — fill each cell with its sampled color:
+The most direct approach — fill each cell with its sampled color:
 
 <figure markdown>
 ![Mosaic](../_images/recipes/image-mosaic.svg){ width="420" }

@@ -258,10 +258,10 @@ self._connections: WeakSet[Connection] = WeakSet()
 Connections optionally carry a `shape` — a `Line`, `Curve`, or `Path` entity that defines the visual form. The shape is processed at construction time based on its type:
 
 - **Line**: No pre-computation. Rendered as a direct `<line>` between the live anchor positions.
-- **Curve**: The quadratic Bezier control point is degree-elevated to a single exact cubic Bezier segment (no approximation loss).
-- **Path**: The pathable is sampled and fitted into cubic Bezier segments using Hermite interpolation via `fit_cubic_beziers()` in `core/bezier.py`.
+- **Curve**: The curve is converted to a precise cubic segment for rendering (degree elevation — no approximation loss).
+- **Path**: The pathable is sampled and fitted into smooth cubic segments via `fit_cubic_beziers()` in `core/bezier.py` (Hermite interpolation).
 
-At render time, an affine transform (scale + rotation + translation) maps the shape's source chord (`point_at(0)` → `point_at(1)`) onto the actual entity anchor endpoints. When `shape=None` (the default), `to_svg()` returns an empty string — the connection is invisible but still trackable via `entity._connections` and queryable via `point_at(t)`.
+At render time, the shape is automatically stretched and rotated (affine transform) to connect the actual entity anchor endpoints. When `shape=None` (the default), `to_svg()` returns an empty string — the connection is invisible but still trackable via `entity._connections` and queryable via `point_at(t)`.
 
 ### Entity-reference vertices
 

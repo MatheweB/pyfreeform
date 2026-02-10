@@ -60,7 +60,7 @@ d1.connect(d2, shape=Path(my_wave, segments=32))
 </figure>
 
 !!! tip "Shape coordinates are auto-mapped"
-    The shape you pass defines a **template**. `Line()` defaults to `(0,0)→(1,0)` and `Curve()` to `(0,0)→(1,0)` with curvature — you never position them manually. An affine transform maps the shape's start→end chord onto the connection's actual anchor positions at render time.
+    The shape you pass defines a **template**. `Line()` defaults to `(0,0)→(1,0)` and `Curve()` to `(0,0)→(1,0)` with curvature — you never position them manually. The shape is automatically stretched and rotated to connect the actual anchor positions at render time (affine transform).
 
 ---
 

@@ -349,7 +349,7 @@ add_curve(*, start="bottom_left", end="top_right", curvature=0.5, within, along,
           opacity=1.0, style=LineStyle)
 ```
 
-Creates a quadratic Bezier curve. `curvature`: 0 = straight, positive = bows left, negative = bows right.
+Creates a smooth curve between two points. `curvature` controls how much it bows: 0 = straight, positive = bows left, negative = bows right (relative to the direction from start to end).
 
 #### `add_path`
 
@@ -551,7 +551,7 @@ Line.from_points(start, end, ...)
 
 ### 5c. Curve
 
-**A quadratic Bezier curve.** Implements the Pathable protocol.
+**A smooth curve between two points.** Implements the Pathable protocol.
 
 ```python
 Curve(x1, y1, x2, y2, curvature=0.5, width=1, color="black", z_index=0,
@@ -599,7 +599,7 @@ Polygon(vertices, fill="black", stroke=None, stroke_width=1, z_index=0,
 - **Anchors**: `"center"` + `"v0"`, `"v1"`, `"v2"`, ...
 - **`fill=`** parameter (not `color=`)
 - **Dual opacity**: `fill_opacity` and `stroke_opacity`
-- Position is centroid of vertices
+- Position is the center of the shape (average of all vertices)
 
 #### Entity-Reference Vertices
 
@@ -710,7 +710,7 @@ See [Text and Typography](../guide/07-text-and-typography.md) for text layout an
 
 - **Anchors**: `"start"`, `"center"`, `"end"`
 - **Pathable**: `path.point_at(t)` evaluates the stored Bezier segments
-- **Algorithm**: Hermite interpolation to cubic Bezier fitting with C1 continuity
+- **Algorithm**: Smooth curve fitting — no sharp corners between segments (Hermite-to-cubic-Bezier with C1 continuity)
 - **Sub-paths**: Use `start_t`/`end_t` to render a portion of any path (e.g., quarter of an ellipse)
 - **Methods**: `arc_length()`, `angle_at(t)`, `to_svg_path_d()`
 
@@ -791,8 +791,8 @@ Where `t` ranges from 0.0 (start) to 1.0 (end). This enables the `along`/`t` par
 
 | Entity | Description |
 |---|---|
-| `Line` | Linear interpolation start to end |
-| `Curve` | Quadratic Bezier |
+| `Line` | Linear interpolation from start to end |
+| `Curve` | Smooth curve with adjustable bow |
 | `Ellipse` | Parametric ellipse (t=0 right, t=0.25 top, t=0.5 left, t=0.75 bottom) |
 | `Path` | Evaluates stored cubic Bezier segments |
 | `Connection` | Dynamic path between entities |
@@ -852,10 +852,10 @@ connection = entity1.connect(
 | `Path(pathable)` | Fitted Bezier `<path>` | Any Pathable — wave, spiral, custom shape |
 
 !!! info "Shape coordinates are auto-mapped"
-    Shape objects define a template curve in their own coordinate space (e.g. `Line()` defaults to `(0,0)→(1,0)`). An affine transform maps the shape's start→end chord onto the actual anchor positions at render time.
+    Shape objects define a template curve (e.g. `Line()` defaults to `(0,0)→(1,0)`). The shape is automatically stretched and rotated to connect the actual anchor positions at render time (affine transform).
 
 - **`style`** accepts `ConnectionStyle` or `dict` with `width`, `color`, `z_index`, `cap` keys
-- **`shape=None`** (default) = invisible — `point_at(t)` still works (linear interpolation)
+- **`shape=None`** (default) = invisible — `point_at(t)` still works (linear interpolation between anchors)
 - **`segments`** controls Bezier fitting resolution for `Path` shapes (default 32; ignored for Line/Curve)
 - Added to scene via `scene.add(connection)` (`entity.connect()` does not auto-add)
 - Supports cap system (arrow, arrow_in, custom) on all visible shapes

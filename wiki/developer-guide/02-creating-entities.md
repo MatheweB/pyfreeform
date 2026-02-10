@@ -131,7 +131,7 @@ def bounds(self) -> tuple[float, float, float, float]:
     )
 ```
 
-For the crosshair, `inner_bounds()` would be trivially small (the intersection point), so we leave the default which returns the same as `bounds()`.
+For the crosshair, `inner_bounds()` would be very small (just the intersection point), so we leave the default which returns the same as `bounds()`.
 
 ### Step 4: Implement to_svg()
 

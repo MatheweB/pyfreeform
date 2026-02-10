@@ -59,7 +59,7 @@ for cell in scene.grid:
 
 ### Color Fill
 
-The simplest approach — fill each cell with its sampled color:
+The most direct approach — fill each cell with its sampled color:
 
 ```python
 for cell in scene.grid:
