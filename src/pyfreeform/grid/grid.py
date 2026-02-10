@@ -161,9 +161,9 @@ class Grid:
             
             # Load standard layers
             grid.load_layer("color", resized, mode="hex")
-            grid.load_layer("brightness", resized["brightness"])
+            grid.load_layer("brightness", resized["brightness"], mode="normalized")
             if resized.has_alpha:
-                grid.load_layer("alpha", resized["alpha"])
+                grid.load_layer("alpha", resized["alpha"], mode="normalized")
 
         # Store source image reference for sub-cell sampling
         grid._source_image = image
