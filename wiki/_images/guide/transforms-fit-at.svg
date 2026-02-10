@@ -5,18 +5,18 @@
   <circle cx="0" cy="0" r="18.0" fill="#ff6b6b" opacity="0.7" />
   <line x1="-12" y1="0" x2="12" y2="0" stroke="#ffe66d" stroke-width="2.0" stroke-linecap="round" />
 </g>
-  <text x="40.0" y="80.0" font-size="9.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">top_left</text>
-  <rect x="0" y="0" width="80.0" height="80.0" fill="none" stroke="#3d3d5c" stroke-width="0.5" fill-opacity="0.3" stroke-opacity="0.3" />
+  <text x="40.0" y="80.0" font-size="20.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="auto">top_left</text>
+  <rect x="0.25" y="0.25" width="79.5" height="79.5" fill="none" stroke="#3d3d5c" stroke-width="0.5" fill-opacity="0.3" stroke-opacity="0.3" />
   <g transform="translate(120.0, 40.0) scale(1.1111111111111112)">
   <circle cx="0" cy="0" r="18.0" fill="#ff6b6b" opacity="0.7" />
   <line x1="-12" y1="0" x2="12" y2="0" stroke="#ffe66d" stroke-width="2.0" stroke-linecap="round" />
 </g>
-  <text x="120.0" y="80.0" font-size="9.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">center</text>
-  <rect x="80" y="0" width="80.0" height="80.0" fill="none" stroke="#3d3d5c" stroke-width="0.5" fill-opacity="0.3" stroke-opacity="0.3" />
+  <text x="120.0" y="80.0" font-size="20.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="auto">center</text>
+  <rect x="80.25" y="0.25" width="79.5" height="79.5" fill="none" stroke="#3d3d5c" stroke-width="0.5" fill-opacity="0.3" stroke-opacity="0.3" />
   <g transform="translate(228.0, 68.0) scale(0.3333333333333333)">
   <circle cx="0" cy="0" r="18.0" fill="#ff6b6b" opacity="0.7" />
   <line x1="-12" y1="0" x2="12" y2="0" stroke="#ffe66d" stroke-width="2.0" stroke-linecap="round" />
 </g>
-  <text x="200.0" y="80.0" font-size="9.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">bottom_right</text>
-  <rect x="160" y="0" width="80.0" height="80.0" fill="none" stroke="#3d3d5c" stroke-width="0.5" fill-opacity="0.3" stroke-opacity="0.3" />
+  <text x="200.0" y="80.0" font-size="14.336917562724015" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="auto">bottom_right</text>
+  <rect x="160.25" y="0.25" width="79.5" height="79.5" fill="none" stroke="#3d3d5c" stroke-width="0.5" fill-opacity="0.3" stroke-opacity="0.3" />
 </svg>

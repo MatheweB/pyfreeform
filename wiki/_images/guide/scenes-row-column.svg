@@ -1,126 +1,126 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="260" height="260" viewBox="0 0 260 260">
   <rect width="100%" height="100%" fill="#1a1a2e" />
-  <rect x="0" y="0" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="26" y="0" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="52" y="0" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="78" y="0" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="104" y="0" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="130" y="0" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="156" y="0" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="0.15" y="0.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="26.15" y="0.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="52.15" y="0.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="78.15" y="0.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="104.15" y="0.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="130.15" y="0.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="156.15" y="0.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
   <rect x="156" y="0" width="26.0" height="26.0" fill="#ffe66d" fill-opacity="0.4" stroke-opacity="0.4" />
-  <rect x="182" y="0" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="208" y="0" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="234" y="0" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="0" y="26" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="26" y="26" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="52" y="26" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="78" y="26" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="104" y="26" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="130" y="26" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="156" y="26" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="182.15" y="0.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="208.15" y="0.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="234.15" y="0.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="0.15" y="26.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="26.15" y="26.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="52.15" y="26.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="78.15" y="26.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="104.15" y="26.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="130.15" y="26.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="156.15" y="26.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
   <rect x="156" y="26" width="26.0" height="26.0" fill="#ffe66d" fill-opacity="0.4" stroke-opacity="0.4" />
-  <rect x="182" y="26" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="208" y="26" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="234" y="26" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="0" y="52" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="26" y="52" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="52" y="52" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="78" y="52" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="104" y="52" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="130" y="52" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="156" y="52" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="182.15" y="26.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="208.15" y="26.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="234.15" y="26.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="0.15" y="52.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="26.15" y="52.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="52.15" y="52.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="78.15" y="52.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="104.15" y="52.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="130.15" y="52.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="156.15" y="52.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
   <rect x="156" y="52" width="26.0" height="26.0" fill="#ffe66d" fill-opacity="0.4" stroke-opacity="0.4" />
-  <rect x="182" y="52" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="208" y="52" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="234" y="52" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="0" y="78" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="182.15" y="52.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="208.15" y="52.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="234.15" y="52.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="0.15" y="78.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
   <rect x="0" y="78" width="26.0" height="26.0" fill="#ff6b6b" fill-opacity="0.4" stroke-opacity="0.4" />
-  <rect x="26" y="78" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="26.15" y="78.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
   <rect x="26" y="78" width="26.0" height="26.0" fill="#ff6b6b" fill-opacity="0.4" stroke-opacity="0.4" />
-  <rect x="52" y="78" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="52.15" y="78.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
   <rect x="52" y="78" width="26.0" height="26.0" fill="#ff6b6b" fill-opacity="0.4" stroke-opacity="0.4" />
-  <rect x="78" y="78" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="78.15" y="78.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
   <rect x="78" y="78" width="26.0" height="26.0" fill="#ff6b6b" fill-opacity="0.4" stroke-opacity="0.4" />
-  <rect x="104" y="78" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="104.15" y="78.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
   <rect x="104" y="78" width="26.0" height="26.0" fill="#ff6b6b" fill-opacity="0.4" stroke-opacity="0.4" />
-  <rect x="130" y="78" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="130.15" y="78.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
   <rect x="130" y="78" width="26.0" height="26.0" fill="#ff6b6b" fill-opacity="0.4" stroke-opacity="0.4" />
-  <rect x="156" y="78" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="156.15" y="78.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
   <rect x="156" y="78" width="26.0" height="26.0" fill="#ff6b6b" fill-opacity="0.4" stroke-opacity="0.4" />
   <rect x="156" y="78" width="26.0" height="26.0" fill="#ffe66d" fill-opacity="0.4" stroke-opacity="0.4" />
   <rect x="156" y="78" width="26.0" height="26.0" fill="#ffffff" fill-opacity="0.3" stroke-opacity="0.3" />
-  <circle cx="169.0" cy="91.0" r="6.0" fill="#ffe66d" />
-  <rect x="182" y="78" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <circle cx="169.0" cy="91.0" r="6.5" fill="#ffe66d" />
+  <rect x="182.15" y="78.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
   <rect x="182" y="78" width="26.0" height="26.0" fill="#ff6b6b" fill-opacity="0.4" stroke-opacity="0.4" />
-  <rect x="208" y="78" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="208.15" y="78.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
   <rect x="208" y="78" width="26.0" height="26.0" fill="#ff6b6b" fill-opacity="0.4" stroke-opacity="0.4" />
-  <rect x="234" y="78" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="234.15" y="78.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
   <rect x="234" y="78" width="26.0" height="26.0" fill="#ff6b6b" fill-opacity="0.4" stroke-opacity="0.4" />
-  <rect x="0" y="104" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="26" y="104" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="52" y="104" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="78" y="104" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="104" y="104" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="130" y="104" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="156" y="104" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="0.15" y="104.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="26.15" y="104.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="52.15" y="104.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="78.15" y="104.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="104.15" y="104.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="130.15" y="104.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="156.15" y="104.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
   <rect x="156" y="104" width="26.0" height="26.0" fill="#ffe66d" fill-opacity="0.4" stroke-opacity="0.4" />
-  <rect x="182" y="104" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="208" y="104" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="234" y="104" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="0" y="130" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="26" y="130" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="52" y="130" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="78" y="130" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="104" y="130" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="130" y="130" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="156" y="130" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="182.15" y="104.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="208.15" y="104.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="234.15" y="104.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="0.15" y="130.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="26.15" y="130.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="52.15" y="130.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="78.15" y="130.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="104.15" y="130.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="130.15" y="130.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="156.15" y="130.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
   <rect x="156" y="130" width="26.0" height="26.0" fill="#ffe66d" fill-opacity="0.4" stroke-opacity="0.4" />
-  <rect x="182" y="130" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="208" y="130" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="234" y="130" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="0" y="156" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="26" y="156" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="52" y="156" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="78" y="156" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="104" y="156" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="130" y="156" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="156" y="156" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="182.15" y="130.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="208.15" y="130.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="234.15" y="130.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="0.15" y="156.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="26.15" y="156.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="52.15" y="156.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="78.15" y="156.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="104.15" y="156.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="130.15" y="156.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="156.15" y="156.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
   <rect x="156" y="156" width="26.0" height="26.0" fill="#ffe66d" fill-opacity="0.4" stroke-opacity="0.4" />
-  <rect x="182" y="156" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="208" y="156" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="234" y="156" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="0" y="182" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="26" y="182" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="52" y="182" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="78" y="182" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="104" y="182" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="130" y="182" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="156" y="182" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="182.15" y="156.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="208.15" y="156.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="234.15" y="156.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="0.15" y="182.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="26.15" y="182.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="52.15" y="182.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="78.15" y="182.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="104.15" y="182.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="130.15" y="182.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="156.15" y="182.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
   <rect x="156" y="182" width="26.0" height="26.0" fill="#ffe66d" fill-opacity="0.4" stroke-opacity="0.4" />
-  <rect x="182" y="182" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="208" y="182" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="234" y="182" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="0" y="208" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="26" y="208" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="52" y="208" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="78" y="208" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="104" y="208" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="130" y="208" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="156" y="208" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="182.15" y="182.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="208.15" y="182.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="234.15" y="182.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="0.15" y="208.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="26.15" y="208.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="52.15" y="208.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="78.15" y="208.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="104.15" y="208.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="130.15" y="208.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="156.15" y="208.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
   <rect x="156" y="208" width="26.0" height="26.0" fill="#ffe66d" fill-opacity="0.4" stroke-opacity="0.4" />
-  <rect x="182" y="208" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="208" y="208" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="234" y="208" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="0" y="234" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="26" y="234" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="52" y="234" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="78" y="234" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="104" y="234" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="130" y="234" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="156" y="234" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="182.15" y="208.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="208.15" y="208.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="234.15" y="208.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="0.15" y="234.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="26.15" y="234.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="52.15" y="234.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="78.15" y="234.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="104.15" y="234.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="130.15" y="234.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="156.15" y="234.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
   <rect x="156" y="234" width="26.0" height="26.0" fill="#ffe66d" fill-opacity="0.4" stroke-opacity="0.4" />
-  <rect x="182" y="234" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="208" y="234" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <rect x="234" y="234" width="26.0" height="26.0" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="182.15" y="234.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="208.15" y="234.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
+  <rect x="234.15" y="234.15" width="25.7" height="25.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
 </svg>

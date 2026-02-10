@@ -38,28 +38,28 @@
   <line x1="54.0" y1="198.0" x2="126.0" y2="198.0" stroke="#ff6b35" stroke-width="1.5" stroke-linecap="butt" marker-end="url(#cap-arrow-ff6b35-4_5)" opacity="0.5" />
   <line x1="126.0" y1="198.0" x2="198.0" y2="198.0" stroke="#ff6b35" stroke-width="1.5" stroke-linecap="butt" marker-end="url(#cap-arrow-ff6b35-4_5)" opacity="0.5" />
   <line x1="198.0" y1="198.0" x2="270.0" y2="198.0" stroke="#ff6b35" stroke-width="1.5" stroke-linecap="butt" marker-end="url(#cap-arrow-ff6b35-4_5)" opacity="0.5" />
-  <circle cx="18.0" cy="18.0" r="6.0" fill="#efa00b" opacity="0.8" />
-  <circle cx="90.0" cy="18.0" r="6.0" fill="#efa00b" opacity="0.8" />
-  <circle cx="162.0" cy="18.0" r="6.0" fill="#efa00b" opacity="0.8" />
-  <circle cx="234.0" cy="18.0" r="6.0" fill="#efa00b" opacity="0.8" />
-  <circle cx="54.0" cy="54.0" r="6.0" fill="#efa00b" opacity="0.8" />
-  <circle cx="126.0" cy="54.0" r="6.0" fill="#efa00b" opacity="0.8" />
-  <circle cx="198.0" cy="54.0" r="6.0" fill="#efa00b" opacity="0.8" />
-  <circle cx="270.0" cy="54.0" r="6.0" fill="#efa00b" opacity="0.8" />
-  <circle cx="18.0" cy="90.0" r="6.0" fill="#efa00b" opacity="0.8" />
-  <circle cx="90.0" cy="90.0" r="6.0" fill="#efa00b" opacity="0.8" />
-  <circle cx="162.0" cy="90.0" r="6.0" fill="#efa00b" opacity="0.8" />
-  <circle cx="234.0" cy="90.0" r="6.0" fill="#efa00b" opacity="0.8" />
-  <circle cx="54.0" cy="126.0" r="6.0" fill="#efa00b" opacity="0.8" />
-  <circle cx="126.0" cy="126.0" r="6.0" fill="#efa00b" opacity="0.8" />
-  <circle cx="198.0" cy="126.0" r="6.0" fill="#efa00b" opacity="0.8" />
-  <circle cx="270.0" cy="126.0" r="6.0" fill="#efa00b" opacity="0.8" />
-  <circle cx="18.0" cy="162.0" r="6.0" fill="#efa00b" opacity="0.8" />
-  <circle cx="90.0" cy="162.0" r="6.0" fill="#efa00b" opacity="0.8" />
-  <circle cx="162.0" cy="162.0" r="6.0" fill="#efa00b" opacity="0.8" />
-  <circle cx="234.0" cy="162.0" r="6.0" fill="#efa00b" opacity="0.8" />
-  <circle cx="54.0" cy="198.0" r="6.0" fill="#efa00b" opacity="0.8" />
-  <circle cx="126.0" cy="198.0" r="6.0" fill="#efa00b" opacity="0.8" />
-  <circle cx="198.0" cy="198.0" r="6.0" fill="#efa00b" opacity="0.8" />
-  <circle cx="270.0" cy="198.0" r="6.0" fill="#efa00b" opacity="0.8" />
+  <circle cx="18.0" cy="18.0" r="5.3999999999999995" fill="#efa00b" opacity="0.8" />
+  <circle cx="90.0" cy="18.0" r="5.3999999999999995" fill="#efa00b" opacity="0.8" />
+  <circle cx="162.0" cy="18.0" r="5.3999999999999995" fill="#efa00b" opacity="0.8" />
+  <circle cx="234.0" cy="18.0" r="5.3999999999999995" fill="#efa00b" opacity="0.8" />
+  <circle cx="54.0" cy="54.0" r="5.3999999999999995" fill="#efa00b" opacity="0.8" />
+  <circle cx="126.0" cy="54.0" r="5.3999999999999995" fill="#efa00b" opacity="0.8" />
+  <circle cx="198.0" cy="54.0" r="5.3999999999999995" fill="#efa00b" opacity="0.8" />
+  <circle cx="270.0" cy="54.0" r="5.3999999999999995" fill="#efa00b" opacity="0.8" />
+  <circle cx="18.0" cy="90.0" r="5.3999999999999995" fill="#efa00b" opacity="0.8" />
+  <circle cx="90.0" cy="90.0" r="5.3999999999999995" fill="#efa00b" opacity="0.8" />
+  <circle cx="162.0" cy="90.0" r="5.3999999999999995" fill="#efa00b" opacity="0.8" />
+  <circle cx="234.0" cy="90.0" r="5.3999999999999995" fill="#efa00b" opacity="0.8" />
+  <circle cx="54.0" cy="126.0" r="5.3999999999999995" fill="#efa00b" opacity="0.8" />
+  <circle cx="126.0" cy="126.0" r="5.3999999999999995" fill="#efa00b" opacity="0.8" />
+  <circle cx="198.0" cy="126.0" r="5.3999999999999995" fill="#efa00b" opacity="0.8" />
+  <circle cx="270.0" cy="126.0" r="5.3999999999999995" fill="#efa00b" opacity="0.8" />
+  <circle cx="18.0" cy="162.0" r="5.3999999999999995" fill="#efa00b" opacity="0.8" />
+  <circle cx="90.0" cy="162.0" r="5.3999999999999995" fill="#efa00b" opacity="0.8" />
+  <circle cx="162.0" cy="162.0" r="5.3999999999999995" fill="#efa00b" opacity="0.8" />
+  <circle cx="234.0" cy="162.0" r="5.3999999999999995" fill="#efa00b" opacity="0.8" />
+  <circle cx="54.0" cy="198.0" r="5.3999999999999995" fill="#efa00b" opacity="0.8" />
+  <circle cx="126.0" cy="198.0" r="5.3999999999999995" fill="#efa00b" opacity="0.8" />
+  <circle cx="198.0" cy="198.0" r="5.3999999999999995" fill="#efa00b" opacity="0.8" />
+  <circle cx="270.0" cy="198.0" r="5.3999999999999995" fill="#efa00b" opacity="0.8" />
 </svg>

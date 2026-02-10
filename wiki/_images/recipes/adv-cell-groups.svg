@@ -122,8 +122,8 @@
   <polygon points="231.0,204.6 235.4,209.0 231.0,213.4 226.6,209.0" fill="#f7c59f" fill-opacity="0.15" stroke-opacity="0.15" />
   <polygon points="253.0,204.6 257.4,209.0 253.0,213.4 248.6,209.0" fill="#f7c59f" fill-opacity="0.15" stroke-opacity="0.15" />
   <rect x="66" y="44" width="132.0" height="132.0" fill="#ff6b35" fill-opacity="0.15" stroke-opacity="0.15" />
-  <rect x="66" y="44" width="132.0" height="132.0" fill="none" stroke="#efa00b" stroke-width="1.5" fill-opacity="0.6" stroke-opacity="0.6" />
-  <text x="132.0" y="110.0" font-size="16.0" font-family="sans-serif" font-style="normal" font-weight="bold" fill="#efa00b" text-anchor="middle" dominant-baseline="middle">FEATURED</text>
+  <rect x="66.75" y="44.75" width="130.5" height="130.5" fill="none" stroke="#efa00b" stroke-width="1.5" fill-opacity="0.6" stroke-opacity="0.6" />
+  <text x="132.0" y="110.0" font-size="13.200000000000001" font-family="sans-serif" font-style="normal" font-weight="bold" fill="#efa00b" text-anchor="middle" dominant-baseline="middle">FEATURED</text>
   <rect x="0" y="0" width="264.0" height="22.0" fill="#ff6b35" fill-opacity="0.2" stroke-opacity="0.2" />
-  <text x="132.0" y="11.0" font-size="12.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#efa00b" text-anchor="middle" dominant-baseline="middle">COMPOSITION</text>
+  <text x="132.0" y="11.0" font-size="12.100000000000001" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#efa00b" text-anchor="middle" dominant-baseline="middle">COMPOSITION</text>
 </svg>

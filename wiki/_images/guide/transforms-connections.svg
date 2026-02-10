@@ -20,19 +20,19 @@
   <line x1="140.0" y1="140.0" x2="220.0" y2="140.0" stroke="#48cae4" stroke-width="1" stroke-linecap="round" opacity="0.4" />
   <line x1="20.0" y1="180.0" x2="100.0" y2="180.0" stroke="#48cae4" stroke-width="1" stroke-linecap="round" opacity="0.4" />
   <line x1="100.0" y1="180.0" x2="180.0" y2="180.0" stroke="#48cae4" stroke-width="1" stroke-linecap="round" opacity="0.4" />
-  <circle cx="20.0" cy="20.0" r="5.0" fill="#00d9ff" opacity="0.8" />
-  <circle cx="100.0" cy="20.0" r="5.0" fill="#00d9ff" opacity="0.8" />
-  <circle cx="180.0" cy="20.0" r="5.0" fill="#00d9ff" opacity="0.8" />
-  <circle cx="60.0" cy="60.0" r="5.0" fill="#00d9ff" opacity="0.8" />
-  <circle cx="140.0" cy="60.0" r="5.0" fill="#00d9ff" opacity="0.8" />
-  <circle cx="220.0" cy="60.0" r="5.0" fill="#00d9ff" opacity="0.8" />
-  <circle cx="20.0" cy="100.0" r="5.0" fill="#00d9ff" opacity="0.8" />
-  <circle cx="100.0" cy="100.0" r="5.0" fill="#00d9ff" opacity="0.8" />
-  <circle cx="180.0" cy="100.0" r="5.0" fill="#00d9ff" opacity="0.8" />
-  <circle cx="60.0" cy="140.0" r="5.0" fill="#00d9ff" opacity="0.8" />
-  <circle cx="140.0" cy="140.0" r="5.0" fill="#00d9ff" opacity="0.8" />
-  <circle cx="220.0" cy="140.0" r="5.0" fill="#00d9ff" opacity="0.8" />
-  <circle cx="20.0" cy="180.0" r="5.0" fill="#00d9ff" opacity="0.8" />
-  <circle cx="100.0" cy="180.0" r="5.0" fill="#00d9ff" opacity="0.8" />
-  <circle cx="180.0" cy="180.0" r="5.0" fill="#00d9ff" opacity="0.8" />
+  <circle cx="20.0" cy="20.0" r="6.0" fill="#00d9ff" opacity="0.8" />
+  <circle cx="100.0" cy="20.0" r="6.0" fill="#00d9ff" opacity="0.8" />
+  <circle cx="180.0" cy="20.0" r="6.0" fill="#00d9ff" opacity="0.8" />
+  <circle cx="60.0" cy="60.0" r="6.0" fill="#00d9ff" opacity="0.8" />
+  <circle cx="140.0" cy="60.0" r="6.0" fill="#00d9ff" opacity="0.8" />
+  <circle cx="220.0" cy="60.0" r="6.0" fill="#00d9ff" opacity="0.8" />
+  <circle cx="20.0" cy="100.0" r="6.0" fill="#00d9ff" opacity="0.8" />
+  <circle cx="100.0" cy="100.0" r="6.0" fill="#00d9ff" opacity="0.8" />
+  <circle cx="180.0" cy="100.0" r="6.0" fill="#00d9ff" opacity="0.8" />
+  <circle cx="60.0" cy="140.0" r="6.0" fill="#00d9ff" opacity="0.8" />
+  <circle cx="140.0" cy="140.0" r="6.0" fill="#00d9ff" opacity="0.8" />
+  <circle cx="220.0" cy="140.0" r="6.0" fill="#00d9ff" opacity="0.8" />
+  <circle cx="20.0" cy="180.0" r="6.0" fill="#00d9ff" opacity="0.8" />
+  <circle cx="100.0" cy="180.0" r="6.0" fill="#00d9ff" opacity="0.8" />
+  <circle cx="180.0" cy="180.0" r="6.0" fill="#00d9ff" opacity="0.8" />
 </svg>
