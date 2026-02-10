@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
+from ..core.coord import RelCoord
 from ..core.entity import Entity
 from ..core.surface import Surface, Position, NAMED_POSITIONS  # noqa: F401 — re-export
 
@@ -293,20 +294,20 @@ class Cell(Surface):
         return self.center.distance_to(target)
 
     @property
-    def normalized_position(self) -> tuple[float, float]:
+    def normalized_position(self) -> RelCoord:
         """
         (col, row) normalized to 0.0-1.0 within the grid.
 
         Useful for position-based gradients and effects.
 
         Returns:
-            Tuple of (nx, ny) where both are in [0.0, 1.0].
+            RelCoord(rx, ry) where both are in [0.0, 1.0].
         """
         cols = self._grid.cols
         rows = self._grid.rows
         nx = self._col / (cols - 1) if cols > 1 else 0.0
         ny = self._row / (rows - 1) if rows > 1 else 0.0
-        return (nx, ny)
+        return RelCoord(nx, ny)
 
     # =========================================================================
     # SUB-CELL IMAGE SAMPLING

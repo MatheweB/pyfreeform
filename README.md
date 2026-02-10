@@ -169,8 +169,8 @@ line.rotate(30, origin=cell.center)
 dot.scale(2.0)      # Double the radius
 polygon.scale(0.5)  # Half size
 
-# Translation
-entity.translate(dx=10, dy=20)
+# Repositioning (relative coordinates)
+dot.at = (0.3, 0.7)  # Move to 30% across, 70% down
 ```
 
 ### Constraining Shapes to Cells

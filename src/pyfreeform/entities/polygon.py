@@ -6,7 +6,7 @@ import math
 from typing import Union
 from ..color import Color
 from ..core.entity import Entity
-from ..core.coord import Coord, CoordLike
+from ..core.coord import Coord, CoordLike, RelCoord
 
 # A vertex can be a static coordinate, an Entity (uses its position),
 # or (Entity, anchor_name) to track a specific anchor.
@@ -97,7 +97,7 @@ class Polygon(Entity):
                 self._vertex_specs.append(Coord(*v))  # CoordLike → Coord
 
         # Relative vertices (set by Surface.add_polygon in Phase 1C)
-        self._relative_vertices: list[tuple[float, float]] | None = None
+        self._relative_vertices: list[RelCoord] | None = None
 
         # Position is centroid
         centroid = self._calculate_centroid()
@@ -257,7 +257,7 @@ class Polygon(Entity):
         self._position = centroid
         return self
     
-    def move_by(self, dx: float = 0, dy: float = 0) -> Polygon:
+    def _move_by(self, dx: float = 0, dy: float = 0) -> Polygon:
         """
         Move the polygon by an offset, updating static vertices.
 
@@ -282,19 +282,6 @@ class Polygon(Entity):
         self._vertex_specs = new_specs
         self._position = Coord(self._position.x + dx, self._position.y + dy)
         return self
-
-    def translate(self, dx: float, dy: float) -> Polygon:
-        """
-        Move the polygon by an offset (alias for move_by).
-
-        Args:
-            dx: Horizontal offset.
-            dy: Vertical offset.
-
-        Returns:
-            self, for method chaining.
-        """
-        return self.move_by(dx, dy)
     
     def bounds(self) -> tuple[float, float, float, float]:
         """Get bounding box (resolved from specs)."""

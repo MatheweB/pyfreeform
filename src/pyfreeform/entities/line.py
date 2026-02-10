@@ -6,7 +6,7 @@ import math
 
 from ..color import Color
 from ..core.entity import Entity
-from ..core.coord import Coord, CoordLike
+from ..core.coord import Coord, CoordLike, RelCoord
 from ..core.stroked_path_mixin import StrokedPathMixin
 
 
@@ -70,7 +70,7 @@ class Line(StrokedPathMixin, Entity):
         """
         super().__init__(x1, y1, z_index)
         self._end_offset = Coord(x2 - x1, y2 - y1)
-        self._relative_end: tuple[float, float] | None = None
+        self._relative_end: RelCoord | None = None
         self.width = float(width)
         self._color = Color(color)
         self.cap = cap
@@ -218,7 +218,7 @@ class Line(StrokedPathMixin, Entity):
         s, e = self.start, self.end
         return f"M {s.x} {s.y} L {e.x} {e.y}"
 
-    def move_to(self, x: float | Coord, y: float | None = None) -> Line:
+    def _move_to(self, x: float | Coord, y: float | None = None) -> Line:
         """
         Move the line's start point to a new position.
 
@@ -232,7 +232,7 @@ class Line(StrokedPathMixin, Entity):
             self, for method chaining.
         """
         # Call parent implementation
-        super().move_to(x, y)
+        super()._move_to(x, y)
         return self
 
     def set_endpoints(
@@ -341,7 +341,7 @@ class Line(StrokedPathMixin, Entity):
         self._relative_end = None
         return self
 
-    def move_by(self, dx: float = 0, dy: float = 0) -> Line:
+    def _move_by(self, dx: float = 0, dy: float = 0) -> Line:
         """Move both endpoints by a pixel offset."""
         if self._relative_end is not None:
             # Adjust end fractions in tandem with start
@@ -355,8 +355,8 @@ class Line(StrokedPathMixin, Entity):
                 drx = dx / ref_w if ref_w > 0 else 0
                 dry = dy / ref_h if ref_h > 0 else 0
                 erx, ery = self._relative_end
-                self._relative_end = (erx + drx, ery + dry)
-        return super().move_by(dx, dy)
+                self._relative_end = RelCoord(erx + drx, ery + dry)
+        return super()._move_by(dx, dy)
 
     def bounds(self) -> tuple[float, float, float, float]:
         """Get bounding box."""

@@ -291,7 +291,7 @@ class Path(StrokedPathMixin, Entity):
         max_y = max(p.y for p in all_points)
         return (min_x, min_y, max_x, max_y)
 
-    def move_by(self, dx: float = 0, dy: float = 0) -> Path:
+    def _move_by(self, dx: float = 0, dy: float = 0) -> Path:
         """
         Move the path by an offset.
 

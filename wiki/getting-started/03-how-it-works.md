@@ -92,6 +92,14 @@ cell.add_text("Hi", font_size=0.30)        # 30% of cell height
 
 This means the same code produces proportional output regardless of cell size -- whether your cells are 10px or 100px.
 
+Every entity created by a builder method stores its position as a `RelCoord(rx, ry)` -- a NamedTuple with `rx` and `ry` fields. You can read or write this through the `.at` property:
+
+```python
+dot = cell.add_dot(at=(0.25, 0.75), color="red")
+print(dot.at)       # RelCoord(rx=0.25, ry=0.75)
+dot.at = (0.5, 0.5) # Reposition to center
+```
+
 !!! tip "Pixel escape hatch"
     If you need absolute pixel positioning, use `place()` with direct constructors:
     ```python

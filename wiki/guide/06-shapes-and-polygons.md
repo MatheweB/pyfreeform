@@ -144,7 +144,7 @@ tri1 = Polygon([Point(50, 150), Point(130, 150), shared], fill="coral", opacity=
 tri2 = Polygon([Point(170, 150), Point(250, 150), shared], fill="teal", opacity=0.7)
 
 # Move the shared vertex — both triangles deform
-shared.move_to(200, 30)
+shared.position = (200, 30)
 ```
 
 <figure markdown>
@@ -179,7 +179,7 @@ tri = Polygon([tip, (rect, "top_left"), (rect, "top_right")], fill="coral", opac
     Use connections when you want **visible links**. Use entity-ref vertices when you want **shapes that deform**.
 
 !!! warning "Transforms and entity vertices"
-    `polygon.move_by()`, `polygon.rotate()`, and `polygon.scale()` only affect static (Coord) vertices. Entity-reference vertices follow their entity, not polygon transforms.
+    `polygon.rotate()` and `polygon.scale()` only affect static (Coord) vertices. Entity-reference vertices follow their entity, not polygon transforms.
 
 ---
 

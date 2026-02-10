@@ -116,7 +116,7 @@ for i in range(4):
     scene.add(conn)
 
 # Move the top-right corner toward center
-corners[1].move_to(100, 100)  # (1)!
+corners[1].position = (100, 100)  # (1)!
 ```
 
 1. The two connections attached to `corners[1]` update their endpoints instantly. No reconnection needed.

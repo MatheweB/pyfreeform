@@ -310,14 +310,14 @@ class TestOffsetFrom:
     def test_no_offset(self):
         """offset_from with no offset = anchor point."""
         dot = Dot(100, 200, radius=10, color="red")
-        result = dot.offset_from("center")
+        result = dot._offset_from("center")
         assert result.x == 100
         assert result.y == 200
 
     def test_with_offset(self):
         """offset_from("center", 10, -5) returns correct point."""
         dot = Dot(100, 200, radius=10, color="red")
-        result = dot.offset_from("center", 10, -5)
+        result = dot._offset_from("center", 10, -5)
         assert result.x == 110
         assert result.y == 195
 
@@ -325,7 +325,7 @@ class TestOffsetFrom:
         """offset_from on Rect named anchors."""
         rect = Rect(100, 100, width=40, height=20, fill="blue")
         # top_left anchor should be at (100, 100)
-        result = rect.offset_from("top_left", 5, 5)
+        result = rect._offset_from("top_left", 5, 5)
         assert abs(result.x - 105) < 0.01
         assert abs(result.y - 105) < 0.01
 

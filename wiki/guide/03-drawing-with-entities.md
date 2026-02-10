@@ -175,7 +175,7 @@ from pyfreeform import Point, Polygon
 
 a, b, c = Point(0, 0), Point(100, 0), Point(50, 80)
 tri = Polygon([a, b, c], fill="coral")
-b.move_to(120, 30)  # polygon deforms automatically
+b.position = (120, 30)  # polygon deforms automatically
 ```
 
 !!! info "Zero visual footprint"

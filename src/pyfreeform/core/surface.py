@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Literal
 
-from .coord import Coord, CoordLike
+from .coord import Coord, CoordLike, RelCoord
 from .entity import Entity
 from .pathable import Pathable
 from .tangent import get_angle_at
@@ -25,20 +25,20 @@ if TYPE_CHECKING:
 
 
 # Named positions within a surface (relative coordinates)
-NAMED_POSITIONS: dict[str, tuple[float, float]] = {
-    "center": (0.5, 0.5),
-    "top_left": (0.0, 0.0),
-    "top_right": (1.0, 0.0),
-    "bottom_left": (0.0, 1.0),
-    "bottom_right": (1.0, 1.0),
-    "top": (0.5, 0.0),
-    "bottom": (0.5, 1.0),
-    "left": (0.0, 0.5),
-    "right": (1.0, 0.5),
+NAMED_POSITIONS: dict[str, RelCoord] = {
+    "center": RelCoord(0.5, 0.5),
+    "top_left": RelCoord(0.0, 0.0),
+    "top_right": RelCoord(1.0, 0.0),
+    "bottom_left": RelCoord(0.0, 1.0),
+    "bottom_right": RelCoord(1.0, 1.0),
+    "top": RelCoord(0.5, 0.0),
+    "bottom": RelCoord(0.5, 1.0),
+    "left": RelCoord(0.0, 0.5),
+    "right": RelCoord(1.0, 0.5),
 }
 
 # Position type for method signatures
-Position = tuple[float, float] | Literal[
+Position = RelCoord | tuple[float, float] | Literal[
     "center", "top_left", "top_right", "bottom_left", "bottom_right",
     "top", "bottom", "left", "right"
 ]
@@ -164,11 +164,11 @@ class Surface:
             self._y + ry * self._height
         )
 
-    def absolute_to_relative(self, point: Coord) -> tuple[float, float]:
+    def absolute_to_relative(self, point: Coord) -> RelCoord:
         """Convert absolute position to relative (0-1) coordinates."""
         rx = (point.x - self._x) / self._width if self._width > 0 else 0
         ry = (point.y - self._y) / self._height if self._height > 0 else 0
-        return (rx, ry)
+        return RelCoord(rx, ry)
 
     def contains(self, point: Coord) -> bool:
         """Check if a point is within this surface's bounds."""
@@ -299,7 +299,7 @@ class Surface:
             position = Coord(ref_x + rx * ref_w, ref_y + ry * ref_h)
             dot = Dot(position.x, position.y, radius=pixel_radius, color=color, z_index=z_index,
                       opacity=opacity)
-            dot._relative_at = at
+            dot._relative_at = RelCoord(*at) if not isinstance(at, RelCoord) else at
 
         dot._relative_radius = radius
         if within is not None:
@@ -384,12 +384,12 @@ class Surface:
         if along is not None:
             target, rotation = self._resolve_along(along, t, align, 0)
             midpoint = line.anchor("center")
-            line.move_by(target.x - midpoint.x, target.y - midpoint.y)
+            line._move_by(target.x - midpoint.x, target.y - midpoint.y)
             if align:
                 line.rotate(rotation, origin=target)
         else:
-            line._relative_at = start
-            line._relative_end = end
+            line._relative_at = RelCoord(*start) if not isinstance(start, RelCoord) else start
+            line._relative_end = RelCoord(*end) if not isinstance(end, RelCoord) else end
 
         if within is not None:
             line._reference = within
@@ -529,12 +529,12 @@ class Surface:
         if along is not None:
             target, rotation = self._resolve_along(along, t, align, 0)
             midpoint = curve.point_at(0.5)
-            curve.move_by(target.x - midpoint.x, target.y - midpoint.y)
+            curve._move_by(target.x - midpoint.x, target.y - midpoint.y)
             if align:
                 curve.rotate(rotation, origin=target)
         else:
-            curve._relative_at = start
-            curve._relative_end = end
+            curve._relative_at = RelCoord(*start) if not isinstance(start, RelCoord) else start
+            curve._relative_end = RelCoord(*end) if not isinstance(end, RelCoord) else end
 
         if within is not None:
             curve._reference = within
@@ -723,7 +723,7 @@ class Surface:
             ellipse._along_path = along
             ellipse._along_t = t if t is not None else 0.5
         else:
-            ellipse._relative_at = at
+            ellipse._relative_at = RelCoord(*at) if not isinstance(at, RelCoord) else at
 
         ellipse._relative_rx = rx
         ellipse._relative_ry = ry
@@ -812,12 +812,12 @@ class Surface:
             stroke_opacity=stroke_opacity,
         )
 
-        polygon._relative_vertices = list(vertices)
+        polygon._relative_vertices = [RelCoord(*v) if not isinstance(v, RelCoord) else v for v in vertices]
 
         if along is not None:
             target, effective_rotation = self._resolve_along(along, t, align, rotation)
             center = polygon.position
-            polygon.move_by(target.x - center.x, target.y - center.y)
+            polygon._move_by(target.x - center.x, target.y - center.y)
             if effective_rotation != 0:
                 polygon.rotate(effective_rotation, origin=target)
         elif rotation != 0:
@@ -969,7 +969,7 @@ class Surface:
             text._along_path = along
             text._along_t = t
         elif along is None:
-            text._relative_at = at
+            text._relative_at = RelCoord(*at) if not isinstance(at, RelCoord) else at
         # textpath mode (along without t): stays pixel
 
         if within is not None:
@@ -1099,7 +1099,7 @@ class Surface:
         )
 
         if along is None:
-            rect._relative_at = (center_rx - width / 2, center_ry - height / 2)
+            rect._relative_at = RelCoord(center_rx - width / 2, center_ry - height / 2)
 
         rect._relative_width = width
         rect._relative_height = height
@@ -1214,7 +1214,7 @@ class Surface:
         entity._position = position
         if isinstance(at, str):
             at = NAMED_POSITIONS[at]
-        entity._relative_at = at
+        entity._relative_at = RelCoord(*at) if not isinstance(at, RelCoord) else at
         entity._along_path = None
         self._register_entity(entity)
         return entity

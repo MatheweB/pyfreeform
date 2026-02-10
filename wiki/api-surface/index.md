@@ -209,7 +209,7 @@ Modes: `"value"` (raw), `"normalized"` (0-1), `"hex"` (color string). Normally h
 | `cell.row` | `int` | Row index (0-based) |
 | `cell.col` | `int` | Column index (0-based) |
 | `cell.grid` | `Grid` | Parent grid |
-| `cell.normalized_position` | `(float, float)` | (nx, ny) normalized to 0.0-1.0 within grid |
+| `cell.normalized_position` | `RelCoord` | `RelCoord(rx, ry)` normalized to 0.0-1.0 within grid |
 
 ### Neighbors
 
@@ -301,15 +301,16 @@ When `within=` is set, all relative coordinates (`at`, `start`/`end`, `radius`, 
 
 ### The `.at` Property
 
-Every entity has a read/write `.at` property:
+Every entity has a read/write `.at` property that returns a `RelCoord`:
 
 ```python
 dot = cell.add_dot(at=(0.25, 0.75), color="red")
-print(dot.at)       # (0.25, 0.75)
-dot.at = (0.5, 0.5) # Reposition to center
+print(dot.at)       # RelCoord(0.25, 0.75)
+print(dot.at.rx)    # 0.25
+dot.at = (0.5, 0.5) # Reposition to center (plain tuples still accepted)
 ```
 
-Returns `None` if the entity was created with pixel coordinates (via `place()` or direct constructor).
+Returns `None` if the entity was created with pixel coordinates (via `place()` or direct constructor). See [The RelCoord Type](#12-the-relcoord-type) for details.
 
 ### Complete Builder Reference
 
@@ -466,7 +467,7 @@ All entities inherit from `Entity` and share these common capabilities.
 |---|---|
 | `entity.position` | Current position (`Coord`) -- computed from relative coords if set |
 | `entity.x`, `entity.y` | Position coordinates (lazily resolved) |
-| `entity.at` | Read/write relative position as `(rx, ry)` tuple, or `None` if pixel-mode |
+| `entity.at` | Read/write relative position as `RelCoord(rx, ry)`, or `None` if pixel-mode |
 | `entity.z_index` | Layer ordering (higher = on top) |
 | `entity.cell` | Containing Surface (if placed) |
 | `entity.connections` | Set of connections involving this entity |
@@ -476,9 +477,6 @@ All entities inherit from `Entity` and share these common capabilities.
 
 | Method | Description |
 |---|---|
-| `entity.move_to(x, y)` | Move to absolute position |
-| `entity.move_by(dx, dy)` | Move by relative offset |
-| `entity.translate(dx, dy)` | Alias for `move_by()` |
 | `entity.move_to_cell(cell, at="center")` | Move to position within a cell |
 
 ### Transforms
@@ -499,7 +497,6 @@ See [Transforms and Layout](../guide/08-transforms-and-layout.md) for detailed t
 | `entity.connect(other, style, start_anchor, end_anchor)` | Create a Connection to another entity |
 | `entity.anchor(name)` | Get named anchor point |
 | `entity.anchor_names` | List of available anchor names |
-| `entity.offset_from(anchor_name, dx, dy)` | Point offset from an anchor |
 | `entity.place_beside(other, side="right", gap=0)` | Position beside another entity using bounding boxes |
 
 ### Abstract Methods (implemented by each entity type)
@@ -609,7 +606,7 @@ Vertices can be static coordinates **or** entity references:
 Entity-reference vertices are resolved at render time. When the referenced entity moves, the polygon deforms automatically.
 
 !!! warning "Transforms and entity vertices"
-    `polygon.move_by()`, `polygon.rotate()`, and `polygon.scale()` only affect static (Coord) vertices. Entity-reference vertices follow their entity, not polygon transforms.
+    `polygon.rotate()` and `polygon.scale()` only affect static (Coord) vertices. Entity-reference vertices follow their entity, not polygon transforms.
 
 !!! info "See also"
     For all shape classmethods and polygon techniques, see [Shapes and Polygons](../guide/06-shapes-and-polygons.md).
@@ -754,7 +751,7 @@ Point(x=0, y=0, z_index=0)
 ```python
 a, b, c = Point(0, 0), Point(100, 0), Point(50, 80)
 tri = Polygon([a, b, c], fill="coral")
-b.move_to(120, 30)  # triangle vertex 1 moves with it
+b.move_to_cell(cell, at=(0.8, 0.3))  # triangle vertex 1 moves with it
 ```
 
 See [Reactive Polygons](../guide/06-shapes-and-polygons.md#reactive-polygons) for shared vertices and anchor tracking examples.
@@ -1010,7 +1007,64 @@ from pyfreeform import Coord
 
 ---
 
-## 12. Image Processing
+## 12. The RelCoord Type
+
+```python
+from pyfreeform import RelCoord
+```
+
+`RelCoord` is a `NamedTuple` with `rx` and `ry` fields representing **relative fractions** (0.0--1.0) within a surface. It is the type returned by `.at` and used throughout the relative-positioning system.
+
+Like `Coord`, it is subscriptable (`rc[0]`, `rc[1]`) and destructurable:
+
+```python
+rc = RelCoord(0.25, 0.75)
+rx, ry = rc          # destructure
+print(rc.rx, rc.ry)  # named access
+print(rc[0], rc[1])  # index access
+```
+
+### Arithmetic
+
+`RelCoord` supports the same arithmetic operators as `Coord`:
+
+```python
+a = RelCoord(0.2, 0.3)
+b = RelCoord(0.1, 0.1)
+
+a + b   # RelCoord(0.3, 0.4)
+a - b   # RelCoord(0.1, 0.2)
+a * 2   # RelCoord(0.4, 0.6)
+a / 2   # RelCoord(0.1, 0.15)
+-a      # RelCoord(-0.2, -0.3)
+```
+
+### Methods
+
+| Method | Description |
+|---|---|
+| `RelCoord(rx, ry)` | Create a relative coordinate |
+| `rc.rx`, `rc.ry` | Access fractions |
+| `rc[0]`, `rc[1]` | Subscript access |
+| `rc.lerp(other, t)` | Linear interpolation |
+| `rc.clamped(min_rx=0, min_ry=0, max_rx=1, max_ry=1)` | Clamp to valid range (default 0.0--1.0) |
+| `rc.as_tuple()` | Return as plain `(float, float)` |
+
+### Where RelCoord Appears
+
+| API | Usage |
+|---|---|
+| `entity.at` | Returns `RelCoord` (or `None` if pixel-mode) |
+| `add_*(..., at=)` | Accepts `RelCoord`, plain tuple, or named position string |
+| `cell.normalized_position` | Returns `RelCoord` (cell position within grid, 0.0--1.0) |
+| `surface.absolute_to_relative(point)` | Returns `RelCoord` |
+
+!!! note "Backward compatible"
+    All APIs that accept `RelCoord` also accept plain `(rx, ry)` tuples -- existing code continues to work unchanged. The difference is that returned values are now `RelCoord` instances with named fields and helper methods.
+
+---
+
+## 13. Image Processing
 
 ### Image Class
 
@@ -1048,7 +1102,7 @@ A single-channel grayscale array (used for brightness, individual color channels
 
 ---
 
-## 13. Utility Functions
+## 14. Utility Functions
 
 ### `map_range(value, in_min=0, in_max=1, out_min=0, out_max=1, clamp=False)`
 
@@ -1076,7 +1130,7 @@ Display an SVG in the current environment (Jupyter notebook, etc.).
 
 ---
 
-## 14. Relationship Map
+## 15. Relationship Map
 
 <figure markdown>
 ![Relationship Map](../_images/api-surface/relationship-map.svg){ width="580" }
@@ -1090,4 +1144,4 @@ Display an SVG in the current environment (Jupyter notebook, etc.).
 3. **`fill=` vs `color=`**: Shapes use `fill`, everything else uses `color`
 4. **Immutable styles**: Style classes with `.with_*()` builder methods
 5. **z_index layering**: Higher values render on top, same values preserve add-order
-6. **Everything returns self**: Transform methods chain: `entity.rotate(45).scale(0.5).move_by(10, 0)`
+6. **Everything returns self**: Transform methods chain: `entity.rotate(45).scale(0.5)`

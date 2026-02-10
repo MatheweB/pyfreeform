@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 from ..color import Color
 from ..core.entity import Entity
-from ..core.coord import Coord, CoordLike
+from ..core.coord import Coord, CoordLike, RelCoord
 from ..core.stroked_path_mixin import StrokedPathMixin
 
 
@@ -83,7 +83,7 @@ class Curve(StrokedPathMixin, Entity):
         """
         super().__init__(x1, y1, z_index)
         self._end = Coord(x2, y2)
-        self._relative_end: tuple[float, float] | None = None
+        self._relative_end: RelCoord | None = None
         self._curvature = float(curvature)
         self.width = float(width)
         self._color = Color(color)
@@ -309,7 +309,7 @@ class Curve(StrokedPathMixin, Entity):
         max_y = max(p.y for p in points)
         return (min_x, min_y, max_x, max_y)
 
-    def move_by(self, dx: float = 0, dy: float = 0) -> Curve:
+    def _move_by(self, dx: float = 0, dy: float = 0) -> Curve:
         """
         Move the curve by an offset, updating both endpoints.
 
@@ -333,9 +333,9 @@ class Curve(StrokedPathMixin, Entity):
                 drx = dx / ref_w if ref_w > 0 else 0
                 dry = dy / ref_h if ref_h > 0 else 0
                 erx, ery = self._relative_end
-                self._relative_end = (erx + drx, ery + dry)
+                self._relative_end = RelCoord(erx + drx, ery + dry)
             self._control = None
-            return super().move_by(dx, dy)
+            return super()._move_by(dx, dy)
         self._position = Coord(self._position.x + dx, self._position.y + dy)
         self._end = Coord(self._end.x + dx, self._end.y + dy)
         self._control = None

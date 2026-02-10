@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
 from weakref import WeakSet
 
-from .coord import Coord, CoordLike
+from .coord import Coord, CoordLike, RelCoord
 
 if TYPE_CHECKING:
     from .surface import Surface
@@ -49,7 +49,7 @@ class Entity(ABC):
         self._z_index = z_index
 
         # Relative coordinate storage
-        self._relative_at: tuple[float, float] | None = None
+        self._relative_at: RelCoord | None = None
         self._reference: Surface | Entity | None = None
         self._along_path: Pathable | None = None
         self._along_t: float = 0.5
@@ -161,13 +161,15 @@ class Entity(ABC):
         return self._resolve_position().y
 
     @property
-    def at(self) -> tuple[float, float] | None:
+    def at(self) -> RelCoord | None:
         """Relative position as (rx, ry) fractions, or None if pixel mode."""
         return self._relative_at
 
     @at.setter
-    def at(self, value: tuple[float, float] | None) -> None:
+    def at(self, value: RelCoord | tuple[float, float] | None) -> None:
         """Set relative position (clears along binding)."""
+        if value is not None and not isinstance(value, RelCoord):
+            value = RelCoord(*value)
         self._relative_at = value
         if value is not None:
             self._along_path = None
@@ -202,7 +204,7 @@ class Entity(ABC):
     
     # --- Movement methods ---
     
-    def move_to(self, x: float | Coord, y: float | None = None) -> Entity:
+    def _move_to(self, x: float | Coord, y: float | None = None) -> Entity:
         """
         Move entity to absolute pixel position (clears relative bindings).
 
@@ -223,7 +225,7 @@ class Entity(ABC):
         self._along_path = None
         return self
     
-    def move_by(self, dx: float = 0, dy: float = 0) -> Entity:
+    def _move_by(self, dx: float = 0, dy: float = 0) -> Entity:
         """
         Move entity by a pixel offset.
 
@@ -258,18 +260,18 @@ class Entity(ABC):
                 drx = dx / ref_w if ref_w > 0 else 0
                 dry = dy / ref_h if ref_h > 0 else 0
                 rx, ry = self._relative_at
-                self._relative_at = (rx + drx, ry + dry)
+                self._relative_at = RelCoord(rx + drx, ry + dry)
                 return self
         self._position = Coord(self._position.x + dx, self._position.y + dy)
         return self
     
-    def move_to_cell(self, cell: Surface, at: tuple[float, float] | str = "center") -> Entity:
+    def move_to_cell(self, cell: Surface, at: RelCoord | tuple[float, float] | str = "center") -> Entity:
         """
         Move entity to a position within a cell (stores relative coords).
 
         Args:
             cell: The target cell/surface.
-            at: Position within cell - either a relative (rx, ry) tuple
+            at: Position within cell - either a RelCoord / (rx, ry) tuple
                 where (0,0) is top-left and (1,1) is bottom-right,
                 or a named position like "center", "top_left", etc.
 
@@ -280,6 +282,8 @@ class Entity(ABC):
         self._cell = cell
         if isinstance(at, str):
             at = NAMED_POSITIONS[at]
+        if not isinstance(at, RelCoord):
+            at = RelCoord(*at)
         self._relative_at = at
         self._along_path = None
         self._reference = None
@@ -391,20 +395,7 @@ class Entity(ABC):
 
         return self
     
-    def translate(self, dx: float, dy: float) -> Entity:
-        """
-        Move entity by an offset (alias for move_by).
-        
-        Args:
-            dx: Horizontal offset.
-            dy: Vertical offset.
-        
-        Returns:
-            self, for method chaining.
-        """
-        return self.move_by(dx, dy)
-
-    def offset_from(self, anchor_name: str, dx: float = 0, dy: float = 0) -> Coord:
+    def _offset_from(self, anchor_name: str, dx: float = 0, dy: float = 0) -> Coord:
         """
         Get a point offset from a named anchor.
 
@@ -452,7 +443,7 @@ class Entity(ABC):
         else:
             raise ValueError(f"Invalid side '{side}'. Use 'right', 'left', 'above', 'below'.")
 
-        self.move_by(tx - s_cx, ty - s_cy)
+        self._move_by(tx - s_cx, ty - s_cy)
         return self
 
     # --- Abstract methods for subclasses ---
@@ -517,7 +508,7 @@ class Entity(ABC):
         scale: float = 1.0,
         recenter: bool = True,
         *,
-        at: tuple[float, float] | None = None,
+        at: RelCoord | tuple[float, float] | None = None,
     ) -> Entity:
         """
         Scale and position entity to fit within another entity's inner bounds.
@@ -591,7 +582,7 @@ class Entity(ABC):
             new_bounds = self.bounds()
             new_cx = (new_bounds[0] + new_bounds[2]) / 2
             new_cy = (new_bounds[1] + new_bounds[3]) / 2
-            self.move_by(target_x - new_cx, target_y - new_cy)
+            self._move_by(target_x - new_cx, target_y - new_cy)
 
             return self
 
@@ -625,7 +616,7 @@ class Entity(ABC):
             new_bounds = self.bounds()
             new_cx = (new_bounds[0] + new_bounds[2]) / 2
             new_cy = (new_bounds[1] + new_bounds[3]) / 2
-            self.move_by(target_cx - new_cx, target_cy - new_cy)
+            self._move_by(target_cx - new_cx, target_cy - new_cy)
 
         return self
 
@@ -634,7 +625,7 @@ class Entity(ABC):
         scale: float = 1.0,
         recenter: bool = True,
         *,
-        at: tuple[float, float] | None = None,
+        at: RelCoord | tuple[float, float] | None = None,
     ) -> Entity:
         """
         Automatically scale and position entity to fit within its cell bounds.
@@ -729,7 +720,7 @@ class Entity(ABC):
             new_bounds = self.bounds()
             new_cx = (new_bounds[0] + new_bounds[2]) / 2
             new_cy = (new_bounds[1] + new_bounds[3]) / 2
-            self.move_by(target.x - new_cx, target.y - new_cy)
+            self._move_by(target.x - new_cx, target.y - new_cy)
 
             return self
 
@@ -776,7 +767,7 @@ class Entity(ABC):
                 entity_center_y = (entity_min_y + entity_max_y) / 2
                 offset_x = cell_center.x - entity_center_x
                 offset_y = cell_center.y - entity_center_y
-                self.move_by(offset_x, offset_y)
+                self._move_by(offset_x, offset_y)
             return self
 
         # Calculate entity's current center (before scaling)
@@ -802,7 +793,7 @@ class Entity(ABC):
             offset_x = cell_center_x - new_center_x
             offset_y = cell_center_y - new_center_y
 
-            self.move_by(offset_x, offset_y)
+            self._move_by(offset_x, offset_y)
 
         return self
 

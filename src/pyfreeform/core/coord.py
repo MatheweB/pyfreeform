@@ -1,4 +1,4 @@
-"""Coord - Immutable 2D coordinate with math operations."""
+"""Coord and RelCoord - Immutable 2D coordinate types."""
 
 from __future__ import annotations
 
@@ -150,3 +150,75 @@ class Coord(NamedTuple):
 
 
 CoordLike = Coord | tuple[float, float]
+
+
+class RelCoord(NamedTuple):
+    """
+    An immutable 2D relative coordinate (fractions 0.0–1.0).
+
+    Used for positioning within surfaces. (0, 0) is top-left, (1, 1) is bottom-right.
+    Fields are named ``rx`` and ``ry`` to prevent confusion with pixel ``Coord(x, y)``.
+
+    Examples:
+        >>> p = RelCoord(0.5, 0.5)
+        >>> p.rx, p.ry
+        (0.5, 0.5)
+        >>> p + RelCoord(0.1, 0)
+        RelCoord(rx=0.6, ry=0.5)
+    """
+
+    rx: float
+    ry: float
+
+    def __add__(self, other: RelCoordLike) -> RelCoord:
+        """Add two relative coords."""
+        if isinstance(other, tuple):
+            other = RelCoord(*other)
+        return RelCoord(self.rx + other.rx, self.ry + other.ry)
+
+    def __sub__(self, other: RelCoordLike) -> RelCoord:
+        """Subtract two relative coords."""
+        if isinstance(other, tuple):
+            other = RelCoord(*other)
+        return RelCoord(self.rx - other.rx, self.ry - other.ry)
+
+    def __mul__(self, scalar: float) -> RelCoord:
+        """Multiply by scalar."""
+        return RelCoord(self.rx * scalar, self.ry * scalar)
+
+    def __rmul__(self, scalar: float) -> RelCoord:
+        """Multiply by scalar (reversed)."""
+        return self.__mul__(scalar)
+
+    def __truediv__(self, scalar: float) -> RelCoord:
+        """Divide by scalar."""
+        return RelCoord(self.rx / scalar, self.ry / scalar)
+
+    def __neg__(self) -> RelCoord:
+        """Negate (flip sign)."""
+        return RelCoord(-self.rx, -self.ry)
+
+    def lerp(self, other: RelCoord, t: float) -> RelCoord:
+        """Linear interpolation between this and another relative coord."""
+        return RelCoord(
+            self.rx + (other.rx - self.rx) * t,
+            self.ry + (other.ry - self.ry) * t,
+        )
+
+    def clamped(self, min_rx: float = 0.0, min_ry: float = 0.0,
+                max_rx: float = 1.0, max_ry: float = 1.0) -> RelCoord:
+        """Return clamped to valid range (default 0.0–1.0)."""
+        return RelCoord(
+            max(min_rx, min(max_rx, self.rx)),
+            max(min_ry, min(max_ry, self.ry)),
+        )
+
+    def as_tuple(self) -> tuple[float, float]:
+        """Return as a plain tuple."""
+        return (self.rx, self.ry)
+
+    def __repr__(self) -> str:
+        return f"RelCoord({self.rx}, {self.ry})"
+
+
+RelCoordLike = RelCoord | tuple[float, float]

@@ -366,7 +366,7 @@ class TestEdgeCases:
 class TestCurveMovement:
     def test_curve_move_by(self):
         curve = Curve(0, 0, 100, 0, curvature=0.5)
-        curve.move_by(10, 20)
+        curve._move_by(10, 20)
         assert curve.start == Coord(10, 20)
         assert curve.end == Coord(110, 20)
 

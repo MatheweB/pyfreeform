@@ -114,7 +114,7 @@ Every entity has:
 - **Z-index** (`_z_index: int`) -- layer ordering for rendering
 - **Cell reference** (`_cell: Surface | None`) -- back-reference to container
 - **Connections** (`_connections: WeakSet`) -- tracked via weak references
-- **Movement** -- `move_to()`, `move_by()`, `translate()`
+- **Movement** -- `_move_to()`, `_move_by()` (private); public API is the `.at` property and `move_to_cell()`
 - **Transforms** -- `rotate()`, `scale()` (base implementations; entities override)
 - **Fitting** -- `fit_within()`, `fit_to_cell()` -- scale to fit a target
 - **Connectivity** -- `connect()`, `place_beside()`
@@ -270,6 +270,8 @@ Polygon vertices can be static `Coord` values or live entity references (`Entity
 ### Relative coordinate system
 
 Surface builder methods accept named positions (`"center"`, `"top_left"`) or relative tuples `(rx, ry)` where `(0, 0)` is top-left and `(1, 1)` is bottom-right. This keeps cell-level code resolution-independent.
+
+Internally, relative positions are stored as `RelCoord(rx, ry)` -- a `NamedTuple` with `rx` and `ry` fields (see `core/coord.py`). The public `.at` property on every entity returns and accepts `RelCoord` values. Low-level movement methods (`_move_to`, `_move_by`) are private; users reposition entities through the `.at` property or `move_to_cell()`.
 
 ### Entity.cell back-reference
 

@@ -22,7 +22,7 @@ Every entity in PyFreeform extends the `Entity` ABC from `pyfreeform.core.entity
 | `inner_bounds()` | Non-rectangular shapes -- return the largest axis-aligned rectangle fully inside the entity. Default: same as `bounds()`. Used by `fit_within()`. |
 | `scale(factor, origin)` | If your entity has geometry beyond its position (radius, endpoints, vertices). The base implementation only scales the position. |
 | `rotate(angle, origin)` | If your entity has geometry that should rotate (endpoints, vertices, internal angles). The base implementation only rotates the position. |
-| `move_by(dx, dy)` | If your entity stores absolute coordinates for sub-parts (e.g., Line stores `_end_offset`, Path stores Bezier segments). |
+| `_move_by(dx, dy)` | If your entity stores absolute coordinates for sub-parts (e.g., Line stores `_end_offset`, Path stores Bezier segments). This is a private method -- users reposition entities via the `.at` property or `move_to_cell()`. |
 | `get_required_markers()` | If your entity needs SVG `<marker>` definitions in `<defs>`. Return `list[tuple[str, str]]` of `(marker_id, marker_svg)`. |
 | `get_required_paths()` | If your entity needs SVG `<path>` definitions in `<defs>` (used by textPath). Return `list[tuple[str, str]]` of `(path_id, path_svg)`. |
 

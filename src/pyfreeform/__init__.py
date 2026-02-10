@@ -5,7 +5,7 @@ PyFreeform - A minimalist, art-focused Python drawing library.
 __version__ = "0.3.0"
 
 # Core
-from .core.coord import Coord, CoordLike
+from .core.coord import Coord, CoordLike, RelCoord, RelCoordLike
 from .core.entity import Entity
 from .core.connection import Connection
 from .core.pathable import Pathable
@@ -119,6 +119,8 @@ __all__ = [
     # Core
     "Coord",
     "CoordLike",
+    "RelCoord",
+    "RelCoordLike",
     "Entity",
     "Connection",
     "Pathable",

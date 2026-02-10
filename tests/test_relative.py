@@ -252,7 +252,7 @@ class TestReactive:
         # Midpoint of line: left=(0,50), right=(100,50) → mid=(50,50)
         assert abs(dot.x - 50.0) < 0.01
         # Move line down
-        line.move_by(0, 20)
+        line._move_by(0, 20)
         # Dot should follow (it re-resolves along path)
         assert abs(dot.y - 70.0) < 0.01
 
@@ -262,7 +262,7 @@ class TestReactive:
         dot = cell.add_dot(within=rect, at="center", color="red")
         assert abs(dot.x - 50.0) < 0.01
         # Move rect
-        rect.move_by(20, 0)
+        rect._move_by(20, 0)
         # Dot should follow (resolves against rect's new bounds)
         assert abs(dot.x - 70.0) < 0.01
 
@@ -305,5 +305,5 @@ class TestModeSwitching:
         scene, cell = _scene_with_cell(100)
         dot = cell.add_dot(at=(0.25, 0.75), color="red")
         assert dot.at is not None
-        dot.move_to(10, 10)
+        dot._move_to(10, 10)
         assert dot.at is None
