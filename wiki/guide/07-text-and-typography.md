@@ -101,6 +101,33 @@ cell.add_text("Text flows around an ellipse path", along=ellipse, font_size=0.05
 
 ---
 
+## Fitting Text to Cells
+
+`font_size=0.25` sets the em-height to 25% of cell height, but says nothing about width. Long strings can overflow horizontally. Use `fit=True` to prevent this:
+
+```python
+cell.add_text("Short", font_size=0.25, color="white", fit=True)   # keeps 0.25
+cell.add_text("A much longer label", font_size=0.25, color="white", fit=True)  # shrinks to fit width
+```
+
+`fit=True` is a **containment guard** — it only *shrinks* the font when the text would exceed the cell width. It never upsizes. `font_size` acts as the ceiling.
+
+!!! tip "When to use fit=True"
+    Any time you display variable-length text (labels, filenames, data values) where overflow would look wrong. Single-character art and path text don't need it.
+
+### fit_to_cell() for Text
+
+If you want text to **fill** a cell (scaling up *or* down), use `fit_to_cell()` after creation:
+
+```python
+t = cell.add_text("TITLE", at="center", font_size=0.25, color="white", bold=True)
+t.fit_to_cell(0.8)  # scale to 80% of cell — may grow or shrink
+```
+
+This is the Text equivalent of `EntityGroup.fit_to_cell()`.
+
+---
+
 ## Title Overlays
 
 Merge cells and overlay text on an artwork:

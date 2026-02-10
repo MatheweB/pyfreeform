@@ -128,10 +128,11 @@ cell.add_polygon(verts, fill=cell.color, opacity=0.8)
 
 ## Text
 
-Labels, characters, and typography. Supports font families, bold, italic, rotation.
+Labels, characters, and typography. Supports font families, bold, italic, rotation, and `fit=True` to prevent overflow.
 
 ```python
 cell.add_text("A", at="center", font_size=0.25, color=colors.primary, bold=True, opacity=0.7)
+cell.add_text("Long label", at="center", font_size=0.25, color=colors.primary, fit=True)
 ```
 
 <figure markdown>

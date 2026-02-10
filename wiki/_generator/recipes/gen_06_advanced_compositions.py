@@ -85,6 +85,7 @@ def generate():
         font_size=0.10,
         color=colors.accent,
         bold=True,
+        fit=True,
     )
 
     # Merge top for title

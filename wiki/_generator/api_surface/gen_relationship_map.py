@@ -56,7 +56,7 @@ def generate():
             width=w_rel,
             height=h_rel,
         )
-        area.add_text(label, font_size=font_size, bold=True, color=text_color)
+        area.add_text(label, font_size=font_size, bold=True, color=text_color, fit=True)
         return r
 
     def surface_badge(area):
@@ -180,7 +180,7 @@ def generate():
             height=22 / cell.height,
         )
         fs = 0.10 if len(name) > 7 else 0.15
-        cell.add_text(name, font_size=fs, color=colors.secondary)
+        cell.add_text(name, font_size=fs, color=colors.secondary, fit=True)
         sub_rects.append(r)
 
     # Pathable indicator dots below Line(2), Curve(3), Ellipse(4), Path(8)
@@ -192,7 +192,7 @@ def generate():
             opacity=0.7,
         )
     # Small annotation
-    g[4, 3].add_text("Pathable", at=(0.5, 0.95), font_size=0.10, color=DIM)
+    g[4, 3].add_text("Pathable", at=(0.5, 0.95), font_size=0.10, color=DIM, fit=True)
 
     # Connection — right side of the same row
     conn_area = g.merge((4, 10), (4, 11))
@@ -208,6 +208,7 @@ def generate():
         at=(0.5, 0.78),
         font_size=0.10,
         color=DIM,
+        fit=True,
     )
 
     # ═══════════════════════════════════════════════════════════
@@ -229,12 +230,14 @@ def generate():
         font_size=0.15,
         bold=True,
         color=colors.accent,
+        fit=True,
     )
     path_area.add_text(
         "Line  \u00b7  Curve  \u00b7  Ellipse  \u00b7  Path  \u00b7  Connection",
         at=(0.5, 0.65),
         font_size=0.15,
         color=LABEL,
+        fit=True,
     )
 
     # ═══════════════════════════════════════════════════════════

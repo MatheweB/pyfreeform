@@ -408,10 +408,12 @@ Creates a rectangle. `at` specifies the **center** position. Default size: 60% o
     add_text(content, *, at, within, along, t, align, font_size, color="black",
              font_family="sans-serif", bold=False, italic=False, text_anchor,
              baseline="middle", rotation=0, z_index=0, opacity=1.0,
-             start_offset=0.0, end_offset=1.0, style=TextStyle)
+             fit=False, start_offset=0.0, end_offset=1.0, style=TextStyle)
     ```
 
 Creates text. `font_size` is a fraction of the surface height (0.25 = 25% of cell height). Default: 0.25.
+
+**`fit=True`**: Shrink `font_size` so the rendered text fits within the cell width. Never upsizes — `font_size` acts as a ceiling. Ignored in path modes (`along=`).
 
 Two modes with `along`:
 
@@ -675,6 +677,7 @@ Rect.at_center(center, width, height, rotation=0, ...)
 - **Text alignment**: `text_anchor` = `"start"` / `"middle"` / `"end"`, `baseline` = `"auto"` / `"middle"` / `"hanging"` / etc.
 - **Rotation**: `rotation` attribute, SVG `transform="rotate()"`
 - **Bounds**: Uses Pillow for accurate font measurement; heuristic fallback
+- **`fit_to_cell(fraction)`**: Scales font up or down so text fills the cell at `fraction` (like `EntityGroup.fit_to_cell`)
 - **TextPath**: `text.set_textpath(path_id, path_d, start_offset, text_length)` for warping along paths
 
 See [Text and Typography](../guide/07-text-and-typography.md) for text layout and textpath examples.
@@ -895,6 +898,8 @@ Auto-scales and positions any entity to fit within its containing cell.
 - **`scale`**: Fraction of cell to fill (0.0-1.0). Default 1.0 fills entire cell.
 - **`recenter`**: If True, centers in cell after scaling.
 - **`at=(rx, ry)`**: Position-aware mode. Entity is placed at relative position within cell, with available space constrained by nearest edges.
+
+For **Text** entities, `fit_to_cell(fraction)` adjusts font size (up or down) to fill the cell at `fraction`. Compare with `add_text(fit=True)` which only *shrinks* — never upsizes.
 
 ### `fit_within(target, scale=1.0, recenter=True, *, at=None)`
 

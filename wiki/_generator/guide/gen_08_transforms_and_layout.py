@@ -36,7 +36,7 @@ def generate():
         group.add(Line(-10, -10, 10, 10, width=2, color=colors.accent))
         cell.add(group)
         group.fit_to_cell(s)
-        cell.add_text(f"{s:.1f}", at="bottom", font_size=0.25, color="#aaaacc")
+        cell.add_text(f"{s:.1f}", at="bottom", font_size=0.25, color="#aaaacc", baseline="auto")
         cell.add_border(color=colors.grid, width=0.3, opacity=0.3)
     save(scene, "guide/transforms-scale.svg")
 
@@ -54,7 +54,7 @@ def generate():
         group.add(Line(-12, 0, 12, 0, width=2, color=colors.accent))
         cell.add(group)
         group.fit_to_cell(0.5, at=at_pos)
-        cell.add_text(label, at="bottom", font_size=0.25, color="#aaaacc")
+        cell.add_text(label, at="bottom", font_size=0.25, color="#aaaacc", baseline="auto", fit=True)
         cell.add_border(color=colors.grid, width=0.5, opacity=0.3)
     save(scene, "guide/transforms-fit-at.svg")
 

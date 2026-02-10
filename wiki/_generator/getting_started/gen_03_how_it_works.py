@@ -40,24 +40,28 @@ def generate():
     scene = Scene.with_grid(cols=1, rows=1, cell_size=160, background=colors.background)
     cell = scene.grid[0, 0]
     cell.add_border(color=colors.grid, width=1)
+    # (position, dot_color, radius, baseline, text_anchor)
     positions = [
-        ("center", colors.primary, 0.05),
-        ("top_left", colors.accent, 0.05),
-        ("top_right", colors.accent, 0.05),
-        ("bottom_left", colors.accent, 0.05),
-        ("bottom_right", colors.accent, 0.05),
-        ("top", colors.secondary, 0.05),
-        ("bottom", colors.secondary, 0.05),
-        ("left", colors.secondary, 0.05),
-        ("right", colors.secondary, 0.05),
+        ("center",       colors.primary,   0.05, "middle",  "middle"),
+        ("top_left",     colors.accent,    0.05, "hanging", "start"),
+        ("top_right",    colors.accent,    0.05, "hanging", "end"),
+        ("bottom_left",  colors.accent,    0.05, "auto",    "start"),
+        ("bottom_right", colors.accent,    0.05, "auto",    "end"),
+        ("top",          colors.secondary, 0.05, "hanging", "middle"),
+        ("bottom",       colors.secondary, 0.05, "auto",    "middle"),
+        ("left",         colors.secondary, 0.05, "middle",  "start"),
+        ("right",        colors.secondary, 0.05, "middle",  "end"),
     ]
-    for pos_name, color, radius in positions:
+    for pos_name, color, radius, baseline, anchor in positions:
         cell.add_dot(at=pos_name, radius=radius, color=color)
         cell.add_text(
             pos_name,
             at=pos_name,
             font_size=0.05,
             color="#aaaacc",
+            baseline=baseline,
+            text_anchor=anchor,
+            fit=True,
         )
     save(scene, "getting-started/how-named-positions.svg")
 

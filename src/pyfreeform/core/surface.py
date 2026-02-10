@@ -848,6 +848,7 @@ class Surface:
         rotation: float = 0,
         z_index: int = 0,
         opacity: float = 1.0,
+        fit: bool = False,
         start_offset: float = 0.0,
         end_offset: float = 1.0,
         style: TextStyle | None = None,
@@ -880,6 +881,8 @@ class Surface:
             baseline: Vertical alignment: "auto", "middle", "hanging".
             rotation: Rotation in degrees around the text position.
             z_index: Layer order (higher = on top).
+            fit: If True, shrink font_size so the rendered text fits
+                within the cell width. Never upsizes — font_size is a ceiling.
             start_offset: Where text begins on the path, 0.0–1.0
                 (textPath mode only). Default 0.0 = start of path.
             end_offset: Where text ends on the path, 0.0–1.0
@@ -948,6 +951,21 @@ class Surface:
         else:
             rel_font_size = font_size
             pixel_font_size = font_size * ref_h if ref_h > 0 else font_size
+
+        # fit=True: shrink font so text fits within the cell width (never upsize)
+        # Ignored in path modes — path length is the constraint, not cell width.
+        if fit and along is None and ref_w > 0 and content:
+            from ..entities.text import _measure_text_width
+            font_weight = "bold" if bold else "normal"
+            font_style = "italic" if italic else "normal"
+            width_at_1px = _measure_text_width(
+                content, 1.0, font_family, font_weight, font_style,
+            )
+            if width_at_1px > 0:
+                max_from_width = ref_w / width_at_1px
+                if max_from_width < pixel_font_size:
+                    pixel_font_size = max_from_width
+                    rel_font_size = pixel_font_size / ref_h if ref_h > 0 else rel_font_size
 
         text = Text(
             position.x, position.y,
@@ -1181,8 +1199,10 @@ class Surface:
             z_index = style.z_index
             opacity = style.opacity
 
+        half = width / 2
         rect = Rect(
-            self._x, self._y, self._width, self._height,
+            self._x + half, self._y + half,
+            self._width - width, self._height - width,
             fill=None, stroke=color, stroke_width=width, z_index=z_index,
             opacity=opacity,
         )

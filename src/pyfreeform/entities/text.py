@@ -267,6 +267,44 @@ class Text(Entity):
             self.y + y_offset + text_height,
         )
 
+    def fit_to_cell(self, fraction: float = 1.0) -> Text:
+        """
+        Scale font size so text fills its cell at *fraction*.
+
+        Unlike ``fit=True`` on ``add_text()`` (which only shrinks),
+        this method scales the font **up or down** to fill the
+        available space — matching :meth:`EntityGroup.fit_to_cell`.
+
+        Args:
+            fraction: How much of the cell to fill (0.0–1.0).
+                      1.0 = fill entire cell, 0.8 = use 80%.
+
+        Returns:
+            self, for method chaining.
+
+        Raises:
+            ValueError: If entity has no cell.
+        """
+        if self._cell is None:
+            raise ValueError("Cannot fit to cell: text has no cell")
+
+        cell = self._cell
+        cell_w, cell_h = cell.width * fraction, cell.height * fraction
+
+        # Compute the font size that fits both dimensions
+        width_at_1px = _measure_text_width(
+            self.content, 1.0, self.font_family,
+            self.font_weight, self.font_style,
+        )
+        max_from_height = cell_h
+        max_from_width = cell_w / width_at_1px if width_at_1px > 0 else max_from_height
+        new_font_size = min(max_from_width, max_from_height)
+
+        self._pixel_font_size = new_font_size
+        if cell_h > 0:
+            self._relative_font_size = new_font_size / cell_h * fraction
+        return self
+
     def rotate(self, angle: float, origin: CoordLike | None = None) -> Text:
         """
         Rotate the text around a point.

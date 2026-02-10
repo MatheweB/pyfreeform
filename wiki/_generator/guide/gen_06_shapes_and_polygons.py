@@ -31,7 +31,7 @@ def generate():
         cell.add_border(color=colors.grid, width=0.3, opacity=0.3)
     for i, (name, _) in enumerate(shapes):
         cell = scene.grid[1, i]
-        cell.add_text(name, at="center", font_size=0.20, color="#aaaacc")
+        cell.add_text(name, at="center", font_size=0.20, color="#aaaacc", fit=True)
     save(scene, "guide/shapes-gallery.svg")
 
     # --- 2. Hexagonal grid ---
@@ -104,6 +104,7 @@ def generate():
             at="bottom",
             font_size=0.15,
             color="#aaaacc",
+            baseline="auto",
         )
         cell.add_border(color=colors_sunset.grid, width=0.5, opacity=0.3)
     save(scene, "guide/shapes-fit-to-cell.svg")

@@ -122,7 +122,7 @@ def generate():
     for i, cell in enumerate(scene.grid):
         char = alphabet[i % len(alphabet)]
         nx, ny = cell.normalized_position
-        size = 12 + ny * 14
+        size = 0.33 + ny * 0.39
         cell.add_text(
             char,
             at="center",

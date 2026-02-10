@@ -80,7 +80,7 @@ def generate():
             cell.add_fill(color=colors.primary, opacity=0.5)
         elif i == 5:
             cell.add_border(color=colors.primary, width=2)
-        cell.add_text(labels_color[i], at="bottom", font_size=0.20, color="#aaaacc")
+        cell.add_text(labels_color[i], at="bottom", font_size=0.20, color="#aaaacc", baseline="auto", fit=True)
 
     # Row 1: entities that use fill=
     labels_fill = ["Rect", "Ellipse", "Polygon", "  ", "  ", "  "]
@@ -92,7 +92,7 @@ def generate():
             cell.add_ellipse(at="center", rx=0.36, ry=0.27, fill=colors.accent)
         elif i == 2:
             cell.add_polygon(Polygon.hexagon(size=0.6), fill=colors.accent)
-        cell.add_text(labels_fill[i], at="bottom", font_size=0.20, color="#aaaacc")
+        cell.add_text(labels_fill[i], at="bottom", font_size=0.20, color="#aaaacc", baseline="auto", fit=True)
     save(scene, "guide/styles-fill-vs-color.svg")
 
     # --- 4. Style reuse example ---
@@ -138,5 +138,6 @@ def generate():
             at="bottom",
             font_size=0.15,
             color="#aaaacc",
+            baseline="auto",
         )
     save(scene, "guide/styles-fill-stroke-opacity.svg")

@@ -23,7 +23,7 @@ cell.add_polygon(
 
 ## Scaling with fit_to_cell
 
-`entity.fit_to_cell(scale)` auto-sizes any entity to fit within its cell. `scale` is the fraction of cell area to fill (0.0 to 1.0):
+`entity.fit_to_cell(scale)` auto-sizes any entity to fit within its cell. `scale` is the fraction of cell area to fill (0.0 to 1.0). Works with both `EntityGroup` and `Text` entities:
 
 <figure markdown>
 ![Scale comparison](../_images/guide/transforms-scale.svg){ width="360" }

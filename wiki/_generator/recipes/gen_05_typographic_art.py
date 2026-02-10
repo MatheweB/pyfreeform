@@ -94,6 +94,7 @@ def generate():
         font_size=0.50,
         color="#ffffff",
         bold=True,
+        fit=True,
     )
 
     # Subtitle
@@ -105,5 +106,6 @@ def generate():
         font_size=0.45,
         color="#cccccc",
         italic=True,
+        fit=True,
     )
     save(scene, "recipes/typo-combined.svg")

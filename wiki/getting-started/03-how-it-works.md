@@ -82,12 +82,14 @@ All `add_*()` builder methods use **fractions of the cell** for sizes and positi
 | `width=0.6` | Size: 60% of cell width | default rect width |
 | `rx=0.4` | Size: 40% of cell width | default ellipse radius |
 | `font_size=0.25` | Size: 25% of cell height | default text size |
+| `fit=True` | Shrink text to fit cell width | prevents overflow |
 
 ```python
 cell.add_dot(radius=0.40)                  # 40% of cell size
 cell.add_rect(width=0.80, height=0.50)     # 80% wide, 50% tall
 cell.add_ellipse(rx=0.35, ry=0.20)         # 35% x 20% radii
 cell.add_text("Hi", font_size=0.30)        # 30% of cell height
+cell.add_text("Long label", font_size=0.30, fit=True)  # shrinks if needed
 ```
 
 This means the same code produces proportional output regardless of cell size -- whether your cells are 10px or 100px.
