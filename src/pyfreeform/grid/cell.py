@@ -84,13 +84,19 @@ class Cell(Surface):
     @property
     def brightness(self) -> float:
         """
-        Normalized brightness from 0.0 (black) to 1.0 (white).
+        Area-averaged brightness from 0.0 (black) to 1.0 (white).
 
-        Calculated from loaded image data. Returns 0.5 if no image loaded.
+        Derived from the LANCZOS-resampled image (one pixel per cell),
+        so each value represents the weighted average of all source pixels
+        that fall within this cell's region. This smooths harsh transitions
+        — e.g. a cell straddling a black/white border reads ~0.5.
+
+        For single-pixel sampling without averaging, use ``sample_brightness()``.
+
+        Returns 0.5 if no image is loaded.
 
         Example:
-            >>> t = cell.brightness  # Use directly for positioning
-            >>> dot_pos = line.point_at(t)
+            >>> cell.add_dot(radius=0.02 + 0.08 * cell.brightness)
         """
         raw = self._data.get("brightness")
         if raw is None:
@@ -103,9 +109,15 @@ class Cell(Surface):
     @property
     def color(self) -> str:
         """
-        Hex color string from loaded image (e.g., "#ff5733").
+        Area-averaged hex color from the resampled image (e.g., "#ff5733").
 
-        Returns "#808080" (gray) if no image loaded.
+        Derived from the LANCZOS-resampled image (one pixel per cell),
+        so it represents the blended color of all source pixels in this
+        cell's region. Borders between contrasting colors will blend.
+
+        For single-pixel sampling without averaging, use ``sample_hex()``.
+
+        Returns "#808080" (gray) if no image is loaded.
 
         Example:
             >>> cell.add_dot(color=cell.color)
@@ -115,9 +127,15 @@ class Cell(Surface):
     @property
     def rgb(self) -> tuple[int, int, int]:
         """
-        RGB color as tuple of integers (0-255 each).
+        Area-averaged RGB color as a tuple of integers (0-255 each).
 
-        Returns (128, 128, 128) if no image loaded.
+        Derived from the LANCZOS-resampled image (one pixel per cell).
+        Each channel is the weighted average of source pixels in this
+        cell's region.
+
+        For single-pixel sampling without averaging, use ``sample_image()``.
+
+        Returns (128, 128, 128) if no image is loaded.
 
         Example:
             >>> r, g, b = cell.rgb
@@ -138,9 +156,13 @@ class Cell(Surface):
     @property
     def alpha(self) -> float:
         """
-        Transparency from 0.0 (transparent) to 1.0 (opaque).
+        Area-averaged transparency from 0.0 (transparent) to 1.0 (opaque).
 
-        Returns 1.0 if no alpha data loaded.
+        Derived from the LANCZOS-resampled image (one pixel per cell),
+        so it represents the blended alpha of all source pixels in this
+        cell's region.
+
+        Returns 1.0 if no alpha data is loaded.
         """
         raw = self._data.get("alpha")
         if raw is None:
@@ -315,7 +337,12 @@ class Cell(Surface):
 
     def sample_image(self, rx: float = 0.5, ry: float = 0.5) -> tuple[int, int, int]:
         """
-        Sample the original source image at a relative position within this cell.
+        Read a single pixel from the original source image (no averaging).
+
+        Unlike ``rgb`` (which comes from the resampled, area-averaged image),
+        this reads one pixel at full resolution. This preserves sharp edges
+        — a cell on a black/white border returns pure black or pure white
+        depending on where the sample point falls.
 
         Args:
             rx: Horizontal position within cell (0.0 = left edge, 1.0 = right edge).
@@ -336,25 +363,32 @@ class Cell(Surface):
 
     def sample_brightness(self, rx: float = 0.5, ry: float = 0.5) -> float:
         """
-        Sample brightness from the original source image at a relative position.
+        Read brightness of a single pixel from the original source image.
+
+        Unlike ``brightness`` (which is area-averaged from the resampled image),
+        this reads one pixel at full resolution. Useful for images with sharp
+        transitions where averaging would produce unwanted intermediate values.
 
         Args:
-            rx: Horizontal position within cell (0.0-1.0).
-            ry: Vertical position within cell (0.0-1.0).
+            rx: Horizontal position within cell (0.0 = left edge, 1.0 = right edge).
+            ry: Vertical position within cell (0.0 = top edge, 1.0 = bottom edge).
 
         Returns:
-            Brightness value 0.0-1.0.
+            Brightness value 0.0 (black) to 1.0 (white).
         """
         r, g, b = self.sample_image(rx, ry)
         return (0.299 * r + 0.587 * g + 0.114 * b) / 255.0
 
     def sample_hex(self, rx: float = 0.5, ry: float = 0.5) -> str:
         """
-        Sample hex color from the original source image at a relative position.
+        Read hex color of a single pixel from the original source image.
+
+        Unlike ``color`` (which is area-averaged from the resampled image),
+        this reads one pixel at full resolution.
 
         Args:
-            rx: Horizontal position within cell (0.0-1.0).
-            ry: Vertical position within cell (0.0-1.0).
+            rx: Horizontal position within cell (0.0 = left edge, 1.0 = right edge).
+            ry: Vertical position within cell (0.0 = top edge, 1.0 = bottom edge).
 
         Returns:
             Hex color string (e.g., "#ff5733").
