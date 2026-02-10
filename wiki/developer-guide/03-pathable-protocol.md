@@ -44,6 +44,19 @@ These entity types implement `point_at(t)` out of the box:
 !!! tip "Point entities as connection endpoints"
     `Point` is an invisible entity with no visual output — ideal as a connection endpoint when you don't want a visible marker. Connections between Points still function as pathables, so you can position other entities along them with `along=conn, t=0.5`.
 
+### Built-in path shapes
+
+Four ready-to-use pathable classes are available as nested classes on `Path`:
+
+| Shape | Description |
+|---|---|
+| `Path.Wave` | Sinusoidal wave between two points |
+| `Path.Spiral` | Archimedean spiral expanding from center |
+| `Path.Lissajous` | Parametric Lissajous curve |
+| `Path.Zigzag` | Triangle wave between two points |
+
+All four implement `point_at(t)`, `angle_at(t)`, `arc_length()`, and `to_svg_path_d()`. When called with no arguments, they default to normalized coordinate space — ideal for connection shapes.
+
 ## Optional Methods
 
 Beyond `point_at(t)`, pathables can implement additional methods that unlock more features:
@@ -117,6 +130,9 @@ Surface._resolve_along(along, t=0.5, align=True, user_rotation=0)
 This works identically for `add_line()`, `add_curve()`, `add_ellipse()`, `add_polygon()`, `add_rect()`, and `add_text()` -- every builder method supports `along`/`t`/`align`.
 
 ## Walkthrough: Creating a Lissajous Curve Pathable
+
+!!! note "This already exists as a built-in"
+    `Path.Lissajous` provides a ready-to-use implementation of this exact curve. This walkthrough recreates it from scratch to teach the Pathable protocol step by step.
 
 A Lissajous curve traces a parametric path defined by:
 

@@ -133,20 +133,8 @@ def generate():
         )
     save(scene, "guide/entities-text.svg")
 
-    # --- 8. Paths: spiral in each cell ---
-    from pyfreeform import Coord
-
-    class Spiral:
-        """A simple spiral pathable."""
-        def __init__(self, cx, cy, max_r, turns=2):
-            self.cx, self.cy = cx, cy
-            self.max_r = max_r
-            self.turns = turns
-
-        def point_at(self, t):
-            angle = t * self.turns * 2 * math.pi
-            r = t * self.max_r
-            return Coord(self.cx + r * math.cos(angle), self.cy + r * math.sin(angle))
+    # --- 8. Paths: spiral in each cell (using built-in Path.Spiral) ---
+    from pyfreeform import Path
 
     colors = Palette.midnight()
     scene = Scene.with_grid(cols=8, rows=8, cell_size=34, background=colors.background)
@@ -154,7 +142,7 @@ def generate():
         nx, ny = cell.normalized_position
         cx, cy = cell.center
         max_r = scene.grid.cell_width * 0.4
-        spiral = Spiral(cx, cy, max_r, turns=2 + nx * 2)
+        spiral = Path.Spiral(center=(cx, cy), end_radius=max_r, turns=2 + nx * 2)
         cell.add_path(
             spiral,
             segments=48,

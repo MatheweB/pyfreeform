@@ -32,7 +32,7 @@ That's it — four lines from photo to SVG.
 <table>
   <tr>
     <td align="center"><img src="wiki/_images/recipes/image-color-dots.svg" width="200"><br><sub>Color dots</sub></td>
-    <td align="center"><img src="wiki/_images/recipes/geo-concentric.svg" width="200"><br><sub>Geometric patterns</sub></td>
+    <td align="center"><img src="wiki/_images/guide/paths-filled-lissajous.svg" width="200"><br><sub>Filled Lissajous curves</sub></td>
     <td align="center"><img src="wiki/_images/recipes/flow-escher-curves.svg" width="200"><br><sub>Flowing curves</sub></td>
   </tr>
   <tr>

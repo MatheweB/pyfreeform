@@ -429,3 +429,12 @@ class Path(StrokedPathMixin, Entity):
             f"Path({kind}, {len(self._bezier_segments)} segments, "
             f"color={self.color!r})"
         )
+
+
+# --- Built-in path shapes (accessible as Path.Wave, Path.Spiral, etc.) ---
+from ..paths import Wave, Spiral, Lissajous, Zigzag  # noqa: E402
+
+Path.Wave = Wave
+Path.Spiral = Spiral
+Path.Lissajous = Lissajous
+Path.Zigzag = Zigzag

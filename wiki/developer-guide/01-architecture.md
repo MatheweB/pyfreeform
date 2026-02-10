@@ -35,6 +35,12 @@ pyfreeform/
     cell.py         # Cell -- extends Surface, has image data
     cell_group.py   # CellGroup -- multi-cell region
 
+  paths/          # Built-in path shapes (Pathable implementations)
+    wave.py         # Wave (sinusoidal wave between two points)
+    spiral.py       # Spiral (Archimedean spiral)
+    lissajous.py    # Lissajous (parametric Lissajous curve)
+    zigzag.py       # Zigzag (triangle wave between two points)
+
   config/         # Configuration and extensibility
     styles.py       # Style dataclasses (DotStyle, LineStyle, etc.)
     caps.py         # Cap registry (arrow markers, custom caps)

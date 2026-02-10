@@ -810,17 +810,32 @@ These methods enable additional features when present:
 | `angle_at(t)` | `get_angle_at()` | Tangent angle for alignment |
 | `to_svg_path_d()` | `add_text(along=)` | SVG path for `<textPath>` warping |
 
-### Custom Pathables
+### Built-in Path Shapes
 
-Any object with `point_at(t: float) -> Coord` works:
+Ready-to-use pathable classes, accessible as nested classes on `Path`:
+
+| Shape | Description | Parameters |
+|---|---|---|
+| `Path.Wave(start, end, amplitude, frequency)` | Sinusoidal wave | Defaults to `(0,0)->(1,0)`, `amplitude=0.15`, `frequency=2` |
+| `Path.Spiral(center, start_radius, end_radius, turns)` | Archimedean spiral | Defaults to center `(0,0)`, `start_radius=0`, `end_radius=50`, `turns=3` |
+| `Path.Lissajous(center, a, b, delta, size)` | Lissajous curve | Defaults to center `(0,0)`, `a=3`, `b=2`, `delta=pi/2`, `size=50` |
+| `Path.Zigzag(start, end, teeth, amplitude)` | Triangle wave | Defaults to `(0,0)->(1,0)`, `teeth=5`, `amplitude=0.12` |
+
+All four implement the full Pathable interface: `point_at(t)`, `angle_at(t)`, `arc_length()`, and `to_svg_path_d()`.
 
 ```python
-class Wave:
-    def point_at(self, t):
-        x = self.start.x + t * (self.end.x - self.start.x)
-        y = self.center_y + self.amplitude * math.sin(t * self.frequency * 2 * math.pi)
-        return Coord(x, y)
+# As a standalone path
+spiral = Path.Spiral(center=cell.center, end_radius=40, turns=3)
+cell.add_path(spiral, width=1.5, color="coral")
+
+# As a connection shape
+wave = Path.Wave(amplitude=0.15, frequency=3)
+conn = dot_a.connect(dot_b, shape=Path(wave), style=style)
 ```
+
+### Custom Pathables
+
+Any object with `point_at(t: float) -> Coord` works as a path. See the [Pathable Protocol](../developer-guide/03-pathable-protocol.md) for a full walkthrough.
 
 ---
 

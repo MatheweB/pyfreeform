@@ -98,17 +98,8 @@ def generate():
         )
     save(scene, "guide/paths-t-values.svg")
 
-    # --- 5. Custom pathable: Wave ---
-    class Wave:
-        def __init__(self, x1, y1, x2, y2, amplitude, frequency):
-            self.x1, self.y1, self.x2, self.y2 = x1, y1, x2, y2
-            self.amp, self.freq = amplitude, frequency
-
-        def point_at(self, t):
-            x = self.x1 + t * (self.x2 - self.x1)
-            cy = self.y1 + t * (self.y2 - self.y1)
-            y = cy + self.amp * math.sin(t * self.freq * 2 * math.pi)
-            return Coord(x, y)
+    # --- 5. Custom pathable: Wave (using built-in Path.Wave) ---
+    from pyfreeform import Path
 
     colors_neon = Palette.neon()
     scene = Scene.with_grid(cols=10, rows=8, cell_size=30, background=colors_neon.background)
@@ -116,9 +107,9 @@ def generate():
         nx, ny = cell.normalized_position
         cx, cy = cell.center
         w, h = cell.width, cell.height
-        wave = Wave(
-            cx - w * 0.4, cy,
-            cx + w * 0.4, cy,
+        wave = Path.Wave(
+            start=(cx - w * 0.4, cy),
+            end=(cx + w * 0.4, cy),
             amplitude=h * 0.3,
             frequency=1 + nx * 3,
         )
@@ -174,7 +165,23 @@ def generate():
     )
     save(scene, "guide/paths-textpath.svg")
 
-    # --- 8. align=True: entity rotated to follow path ---
+    # --- 8. Filled Lissajous curves ---
+    scene = Scene(400, 400, background="#0a0a1a")
+    cx, cy = 200, 200
+    curves = [
+        (3, 2, math.pi / 2, 150, "#4a90d9", "#6ab0ff", 0.25),
+        (5, 4, math.pi / 3, 130, "#d94a6b", "#ff6a8b", 0.20),
+        (3, 4, math.pi / 4, 110, "#4ad9a7", "#6affcf", 0.30),
+    ]
+    for a, b, delta, size, fill, stroke, opacity in curves:
+        liss = Path.Lissajous(center=(cx, cy), a=a, b=b, delta=delta, size=size)
+        path = Path(liss, closed=True, fill=fill, color=stroke,
+                    width=1.2, fill_opacity=opacity, stroke_opacity=0.7,
+                    segments=128)
+        scene.place(path)
+    save(scene, "guide/paths-filled-lissajous.svg")
+
+    # --- 9. align=True: entity rotated to follow path ---
     scene = Scene.with_grid(cols=1, rows=1, cell_size=280, background=colors.background)
     cell = scene.grid[0, 0]
     curve = cell.add_curve(

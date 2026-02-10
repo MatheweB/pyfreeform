@@ -23,17 +23,8 @@ def generate():
         )
     save(scene, "recipes/flow-curve-field.svg")
 
-    # --- 2. Wave visualization ---
-    class Wave:
-        def __init__(self, x1, y1, x2, y2, amplitude, frequency):
-            self.x1, self.y1, self.x2, self.y2 = x1, y1, x2, y2
-            self.amp, self.freq = amplitude, frequency
-
-        def point_at(self, t):
-            x = self.x1 + t * (self.x2 - self.x1)
-            cy = self.y1 + t * (self.y2 - self.y1)
-            y = cy + self.amp * math.sin(t * self.freq * 2 * math.pi)
-            return Coord(x, y)
+    # --- 2. Wave visualization (using built-in Path.Wave) ---
+    from pyfreeform import Path
 
     colors = Palette.neon()
     scene = Scene.with_grid(cols=1, rows=1, cell_size=360, background=colors.background)
@@ -44,9 +35,9 @@ def generate():
         phase = i * 0.3
         amplitude = 20 + i * 12
         freq = 2 + i * 0.5
-        wave = Wave(
-            cell.x + 10, cy + math.sin(phase) * 30,
-            cell.x + cell.width - 10, cy + math.cos(phase) * 30,
+        wave = Path.Wave(
+            start=(cell.x + 10, cy + math.sin(phase) * 30),
+            end=(cell.x + cell.width - 10, cy + math.cos(phase) * 30),
             amplitude=amplitude,
             frequency=freq,
         )
@@ -55,23 +46,14 @@ def generate():
         cell.add_path(wave, segments=48, width=1.5, color=color, opacity=opacity)
     save(scene, "recipes/flow-waves.svg")
 
-    # --- 3. Spiral paths with varying density ---
-    class Spiral:
-        def __init__(self, cx, cy, max_r, turns=3):
-            self.cx, self.cy, self.max_r, self.turns = cx, cy, max_r, turns
-
-        def point_at(self, t):
-            angle = t * self.turns * 2 * math.pi
-            r = t * self.max_r
-            return Coord(self.cx + r * math.cos(angle), self.cy + r * math.sin(angle))
-
+    # --- 3. Spiral paths with varying density (using built-in Path.Spiral) ---
     colors = Palette.sunset()
     scene = Scene.with_grid(cols=6, rows=5, cell_size=48, background=colors.background)
     for cell in scene.grid:
         nx, ny = cell.normalized_position
         cx, cy = cell.center
         turns = 2 + nx * 3
-        spiral = Spiral(cx, cy, scene.grid.cell_width * 0.42, turns=turns)
+        spiral = Path.Spiral(center=(cx, cy), end_radius=scene.grid.cell_width * 0.42, turns=turns)
         cell.add_path(
             spiral, segments=48,
             width=0.8 + ny * 1.5,

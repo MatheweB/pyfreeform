@@ -268,21 +268,13 @@ def generate():
 
     save(scene, "guide/connections-constellation.svg")
 
-    # --- 8. Shape comparison ---
-    class Wave:
-        """A simple wave pathable in unit space (0→1)."""
-        def __init__(self, amp=0.3, freq=3):
-            self.amp, self.freq = amp, freq
-
-        def point_at(self, t):
-            return Coord(t, self.amp * math.sin(t * self.freq * 2 * math.pi))
-
+    # --- 8. Shape comparison (using built-in Path.Wave) ---
     scene = Scene(540, 160, background=colors.background)
 
     shapes = [
         ("Line", Line()),
         ("Curve", Curve(curvature=0.4)),
-        ("Path (wave)", Path(Wave(), segments=32)),
+        ("Path (wave)", Path(Path.Wave(amplitude=0.3, frequency=3), segments=32)),
     ]
 
     for i, (label, shape) in enumerate(shapes):

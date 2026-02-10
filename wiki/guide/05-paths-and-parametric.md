@@ -65,30 +65,47 @@ On a single path, `t` selects the position:
 
 ---
 
+## Built-in Path Shapes
+
+PyFreeform includes four ready-to-use path shapes, accessible as `Path.Wave`, `Path.Spiral`, `Path.Lissajous`, and `Path.Zigzag`:
+
+```python
+from pyfreeform import Path
+
+wave = Path.Wave(start=(cx - 10, cy), end=(cx + 10, cy), amplitude=8, frequency=3)
+cell.add_path(wave, segments=32, width=1.5, color=colors.primary)
+```
+
+All four work with `add_path()`, `along=`/`t=` positioning, and as connection shapes. See the [API Reference](../api-surface/index.md#built-in-path-shapes) for full parameter details.
+
+### Filled Closed Paths
+
+Use `closed=True` and `fill=` to create filled shapes from any path. Layering semi-transparent fills produces striking geometric art:
+
+```python
+liss = Path.Lissajous(center=(200, 200), a=3, b=2, size=150)
+path = Path(liss, closed=True, fill="#4a90d9", color="#6ab0ff",
+            width=1.2, fill_opacity=0.25, stroke_opacity=0.7, segments=128)
+scene.place(path)
+```
+
+<figure markdown>
+![Filled Lissajous curves](../_images/guide/paths-filled-lissajous.svg){ width="380" }
+<figcaption>Three Lissajous curves with different frequency ratios, layered with semi-transparent fills.</figcaption>
+</figure>
+
 ## Custom Pathables
 
-Any object with `point_at(t) → Coord` works as a path. Create your own:
+You can also create your own — any object with `point_at(t) -> Coord` works as a path:
 
 ```python
 from pyfreeform import Coord
 
-class Wave:
-    def __init__(self, x1, y1, x2, y2, amplitude, frequency):
-        self.x1, self.y1, self.x2, self.y2 = x1, y1, x2, y2
-        self.amp, self.freq = amplitude, frequency
-
+class MyPath:
     def point_at(self, t):
-        x = self.x1 + t * (self.x2 - self.x1)
-        cy = self.y1 + t * (self.y2 - self.y1)
-        y = cy + self.amp * math.sin(t * self.freq * 2 * math.pi)
+        x = t * 100
+        y = 50 + 20 * math.sin(t * math.pi * 4)
         return Coord(x, y)
-```
-
-Render it with `add_path()`:
-
-```python
-wave = Wave(cx - 10, cy, cx + 10, cy, amplitude=8, frequency=3)
-cell.add_path(wave, segments=32, width=1.5, color=colors.primary)
 ```
 
 <figure markdown>
