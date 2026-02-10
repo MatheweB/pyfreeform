@@ -8,6 +8,8 @@ docs_dir: wiki
 
 theme:
   name: material
+  logo: _images/logo.svg
+  favicon: _images/logo.svg
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default

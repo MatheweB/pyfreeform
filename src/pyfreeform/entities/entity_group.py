@@ -120,7 +120,7 @@ class EntityGroup(Entity):
             f"Available: {self.anchor_names}"
         )
 
-    def bounds(self) -> tuple[float, float, float, float]:
+    def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
         """
         Bounding box in absolute coordinates.
 
@@ -128,13 +128,18 @@ class EntityGroup(Entity):
         Children's bounds are in local coordinates, transformed by
         ``translate(position) rotate(angle) scale(factor)``.
 
+        Args:
+            visual: If True, children report visual bounds (including
+                    stroke width) so the result reflects the rendered
+                    extent.
+
         Returns:
             (min_x, min_y, max_x, max_y) in absolute coordinates.
         """
         if not self._children:
             return (self.x, self.y, self.x, self.y)
 
-        all_bounds = [child.bounds() for child in self._children]
+        all_bounds = [child.bounds(visual=visual) for child in self._children]
         # Local bounds after scale
         local_min_x = min(b[0] for b in all_bounds) * self._scale
         local_min_y = min(b[1] for b in all_bounds) * self._scale

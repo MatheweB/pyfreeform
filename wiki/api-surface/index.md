@@ -49,6 +49,7 @@ Everything starts with a `Scene`. It is the canvas -- it holds your artwork and 
 | `scene.clear()` | Remove everything. |
 | `scene.to_svg()` | Render to SVG string. |
 | `scene.save(path)` | Save to `.svg` file (adds extension if missing). |
+| `scene.crop(padding=0)` | Crop viewBox to fit content bounds. Great for transparent exports. |
 
 ### `from_image()` Full Signature
 
@@ -495,8 +496,8 @@ All entities inherit from `Entity` and share these common capabilities.
 |---|---|
 | `entity.rotate(angle, origin=None)` | Rotate in degrees (counterclockwise) |
 | `entity.scale(factor, origin=None)` | Scale (2.0 = double size) |
-| `entity.fit_to_cell(scale=1.0, recenter=True, *, at=None)` | Auto-scale to fit within containing cell |
-| `entity.fit_within(target, scale=1.0, recenter=True, *, at=None)` | Auto-scale to fit within another entity's inner bounds |
+| `entity.fit_to_cell(scale=1.0, recenter=True, *, at=None, visual=True)` | Auto-scale to fit within containing cell. `visual=True` includes stroke width in sizing. |
+| `entity.fit_within(target, scale=1.0, recenter=True, *, at=None, visual=True)` | Auto-scale to fit within another entity's inner bounds. `visual=True` includes stroke width in sizing. |
 
 See [Transforms and Layout](../guide/08-transforms-and-layout.md) for detailed transform examples.
 
@@ -514,7 +515,7 @@ See [Transforms and Layout](../guide/08-transforms-and-layout.md) for detailed t
 | Method | Description |
 |---|---|
 | `entity.to_svg()` | Render to SVG element string |
-| `entity.bounds()` | Bounding box: `(min_x, min_y, max_x, max_y)` |
+| `entity.bounds(*, visual=False)` | Bounding box: `(min_x, min_y, max_x, max_y)`. Pass `visual=True` to include stroke width in the bounds. |
 | `entity.inner_bounds()` | Inscribed rectangle (default: same as bounds) |
 
 ---

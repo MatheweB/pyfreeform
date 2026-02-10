@@ -71,9 +71,9 @@ def generate():
         if i == 0:
             cell.add_dot(radius=0.25, color=colors.primary)
         elif i == 1:
-            cell.add_line(start="bottom_left", end="top_right", width=3, color=colors.primary)
+            cell.add_line(start="bottom_left", end="top_right", width=3, color=colors.primary).fit_to_cell()
         elif i == 2:
-            cell.add_curve(start="bottom_left", end="top_right", curvature=0.5, width=2, color=colors.primary)
+            cell.add_curve(start="bottom_left", end="top_right", curvature=0.5, width=2, color=colors.primary).fit_to_cell()
         elif i == 3:
             cell.add_text("Aa", at="center", font_size=0.45, color=colors.primary, bold=True)
         elif i == 4:

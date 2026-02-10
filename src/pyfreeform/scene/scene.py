@@ -72,6 +72,7 @@ class Scene(Surface):
         self._connections: list[Connection] = []
         self._grids: list[Grid] = []
         self._primary_grid: Grid | None = None
+        self._viewbox: tuple[float, float, float, float] | None = None
     
     # =========================================================================
     # FACTORY METHODS
@@ -432,11 +433,25 @@ class Scene(Surface):
         # Collect entities once (avoids rebuilding the list 3 times)
         all_entities = self.entities
 
+        if self._viewbox is not None:
+            vb_x, vb_y, vb_w, vb_h = self._viewbox
+            # Scale display height to match the cropped aspect ratio
+            display_h = vb_h * self._width / vb_w if vb_w > 0 else self._height
+            svg_open = (
+                f'<svg xmlns="http://www.w3.org/2000/svg" '
+                f'width="{self._width}" height="{display_h:.1f}" '
+                f'viewBox="{vb_x} {vb_y} {vb_w} {vb_h}">'
+            )
+        else:
+            svg_open = (
+                f'<svg xmlns="http://www.w3.org/2000/svg" '
+                f'width="{self._width}" height="{self._height}" '
+                f'viewBox="0 0 {self._width} {self._height}">'
+            )
+
         lines = [
             '<?xml version="1.0" encoding="UTF-8"?>',
-            f'<svg xmlns="http://www.w3.org/2000/svg" '
-            f'width="{self._width}" height="{self._height}" '
-            f'viewBox="0 0 {self._width} {self._height}">',
+            svg_open,
         ]
 
         # Definitions (markers for arrow caps, paths for textPath)
@@ -491,6 +506,41 @@ class Scene(Surface):
         svg_content = self.to_svg()
         path.write_text(svg_content, encoding="utf-8")
     
+    def crop(self, padding: float = 0) -> Scene:
+        """
+        Crop the scene viewBox to fit the visual bounds of all content.
+
+        Useful for transparent exports (icons, badges) where you don't
+        want dead space around the artwork.
+
+        Args:
+            padding: Extra space around the content in pixels.
+
+        Returns:
+            self, for method chaining.
+
+        Example::
+
+            scene = Scene.with_grid(cols=1, rows=1, cell_size=200)
+            scene.background = None
+            cell.add_dot(color="coral")
+            scene.crop()       # Tight crop
+            scene.crop(10)     # 10px breathing room
+            scene.save("icon.svg")
+        """
+        all_entities = self.entities
+        if not all_entities:
+            return self
+
+        bounds = [e.bounds(visual=True) for e in all_entities]
+        min_x = min(b[0] for b in bounds) - padding
+        min_y = min(b[1] for b in bounds) - padding
+        max_x = max(b[2] for b in bounds) + padding
+        max_y = max(b[3] for b in bounds) + padding
+
+        self._viewbox = (min_x, min_y, max_x - min_x, max_y - min_y)
+        return self
+
     def __repr__(self) -> str:
         bg_str = f", background={self.background!r}" if self.background else ""
         return (

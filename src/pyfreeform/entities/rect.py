@@ -292,24 +292,35 @@ class Rect(Entity):
 
         return self
 
-    def bounds(self) -> tuple[float, float, float, float]:
-        """Get axis-aligned bounding box (accounts for rotation)."""
+    def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
+        """Get axis-aligned bounding box (accounts for rotation).
+
+        Args:
+            visual: If True, expand by stroke width / 2 to reflect
+                    the rendered extent.
+        """
         if self.rotation == 0:
-            return (self.x, self.y, self.x + self.width, self.y + self.height)
+            min_x, min_y = self.x, self.y
+            max_x, max_y = self.x + self.width, self.y + self.height
+        else:
+            # Get all four corners rotated
+            corners = [
+                self.anchor("top_left"),
+                self.anchor("top_right"),
+                self.anchor("bottom_left"),
+                self.anchor("bottom_right"),
+            ]
+            min_x = min(c.x for c in corners)
+            min_y = min(c.y for c in corners)
+            max_x = max(c.x for c in corners)
+            max_y = max(c.y for c in corners)
 
-        # Get all four corners rotated
-        corners = [
-            self.anchor("top_left"),
-            self.anchor("top_right"),
-            self.anchor("bottom_left"),
-            self.anchor("bottom_right"),
-        ]
-
-        min_x = min(c.x for c in corners)
-        min_y = min(c.y for c in corners)
-        max_x = max(c.x for c in corners)
-        max_y = max(c.y for c in corners)
-
+        if visual and self.stroke_width:
+            half = self.stroke_width / 2
+            min_x -= half
+            min_y -= half
+            max_x += half
+            max_y += half
         return (min_x, min_y, max_x, max_y)
 
     def to_svg(self) -> str:

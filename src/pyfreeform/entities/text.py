@@ -233,7 +233,7 @@ class Text(Entity):
             return self.position
         raise ValueError(f"Text has no anchor '{name}'. Available: {self.anchor_names}")
 
-    def bounds(self) -> tuple[float, float, float, float]:
+    def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
         """
         Get bounding box using Pillow font metrics for width
         and font_size for height.
@@ -267,7 +267,7 @@ class Text(Entity):
             self.y + y_offset + text_height,
         )
 
-    def fit_to_cell(self, fraction: float = 1.0) -> Text:
+    def fit_to_cell(self, fraction: float = 1.0, **kwargs: object) -> Text:
         """
         Scale font size so text fills its cell at *fraction*.
 

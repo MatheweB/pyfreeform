@@ -358,11 +358,24 @@ class Line(StrokedPathMixin, Entity):
                 self._relative_end = RelCoord(erx + drx, ery + dry)
         return super()._move_by(dx, dy)
 
-    def bounds(self) -> tuple[float, float, float, float]:
-        """Get bounding box."""
+    def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
+        """Get bounding box.
+
+        Args:
+            visual: If True, expand by stroke width / 2 to reflect
+                    the rendered extent.
+        """
         x1, y1 = self.start
         x2, y2 = self.end
-        return (min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2))
+        min_x, min_y = min(x1, x2), min(y1, y2)
+        max_x, max_y = max(x1, x2), max(y1, y2)
+        if visual:
+            half = self.width / 2
+            min_x -= half
+            min_y -= half
+            max_x += half
+            max_y += half
+        return (min_x, min_y, max_x, max_y)
 
     def to_svg(self) -> str:
         """Render to SVG line element."""

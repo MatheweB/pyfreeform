@@ -283,13 +283,24 @@ class Polygon(Entity):
         self._position = Coord(self._position.x + dx, self._position.y + dy)
         return self
     
-    def bounds(self) -> tuple[float, float, float, float]:
-        """Get bounding box (resolved from specs)."""
+    def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
+        """Get bounding box (resolved from specs).
+
+        Args:
+            visual: If True, expand by stroke width / 2 to reflect
+                    the rendered extent.
+        """
         verts = self.vertices
         min_x = min(v.x for v in verts)
         min_y = min(v.y for v in verts)
         max_x = max(v.x for v in verts)
         max_y = max(v.y for v in verts)
+        if visual and self.stroke_width:
+            half = self.stroke_width / 2
+            min_x -= half
+            min_y -= half
+            max_x += half
+            max_y += half
         return (min_x, min_y, max_x, max_y)
 
     def to_svg(self) -> str:

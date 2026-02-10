@@ -412,35 +412,43 @@ class Ellipse(Entity):
 
         return self
 
-    def bounds(self) -> tuple[float, float, float, float]:
+    def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
         """
         Get bounding box of the ellipse.
 
         For rotated ellipses, this computes the axis-aligned bounding box
         that fully contains the rotated ellipse.
 
+        Args:
+            visual: If True, expand by stroke width / 2 to reflect
+                    the rendered extent.
+
         Returns:
             Tuple of (min_x, min_y, max_x, max_y).
         """
         if self.rotation == 0:
             # Simple case: axis-aligned ellipse
-            return (
-                self.position.x - self.rx,
-                self.position.y - self.ry,
-                self.position.x + self.rx,
-                self.position.y + self.ry,
-            )
+            min_x = self.position.x - self.rx
+            min_y = self.position.y - self.ry
+            max_x = self.position.x + self.rx
+            max_y = self.position.y + self.ry
+        else:
+            # For rotated ellipse, compute bounds of the rotated bounding box
+            # We check the extrema by sampling points around the ellipse
+            angles = [i * math.pi / 180 for i in range(0, 360, 30)]  # Sample every 30°
+            points = [self._point_at_angle_rad(a) for a in angles]
 
-        # For rotated ellipse, compute bounds of the rotated bounding box
-        # We check the extrema by sampling points around the ellipse
-        angles = [i * math.pi / 180 for i in range(0, 360, 30)]  # Sample every 30°
-        points = [self._point_at_angle_rad(a) for a in angles]
+            min_x = min(p.x for p in points)
+            min_y = min(p.y for p in points)
+            max_x = max(p.x for p in points)
+            max_y = max(p.y for p in points)
 
-        min_x = min(p.x for p in points)
-        min_y = min(p.y for p in points)
-        max_x = max(p.x for p in points)
-        max_y = max(p.y for p in points)
-
+        if visual and self.stroke_width:
+            half = self.stroke_width / 2
+            min_x -= half
+            min_y -= half
+            max_x += half
+            max_y += half
         return (min_x, min_y, max_x, max_y)
 
     def inner_bounds(self) -> tuple[float, float, float, float]:

@@ -481,9 +481,14 @@ class Entity(ABC):
         pass
     
     @abstractmethod
-    def bounds(self) -> tuple[float, float, float, float]:
+    def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
         """
         Get bounding box of this entity.
+
+        Args:
+            visual: If True, include stroke width in the bounds so the
+                    result reflects the rendered (visual) extent rather
+                    than pure geometry. Default is False (geometric bounds).
 
         Returns:
             Tuple of (min_x, min_y, max_x, max_y).
@@ -509,6 +514,7 @@ class Entity(ABC):
         recenter: bool = True,
         *,
         at: RelCoord | tuple[float, float] | None = None,
+        visual: bool = True,
     ) -> Entity:
         """
         Scale and position entity to fit within another entity's inner bounds.
@@ -522,6 +528,9 @@ class Entity(ABC):
                 inner bounds, where (0,0) is top-left and (1,1) is
                 bottom-right. Available space is constrained by the
                 nearest edges so the entity never overflows.
+            visual: If True (default), include stroke width when measuring
+                    bounds so stroked entities don't overflow after fitting.
+                    Set to False for pure geometric fitting.
 
         Returns:
             self, for method chaining.
@@ -562,8 +571,8 @@ class Entity(ABC):
             available_w = min(target_x - t_min_x, t_max_x - target_x) * 2 * scale
             available_h = min(target_y - t_min_y, t_max_y - target_y) * 2 * scale
 
-            # Get entity's current bounding box
-            e_min_x, e_min_y, e_max_x, e_max_y = self.bounds()
+            # Get entity's bounding box
+            e_min_x, e_min_y, e_max_x, e_max_y = self.bounds(visual=visual)
             entity_w = e_max_x - e_min_x
             entity_h = e_max_y - e_min_y
 
@@ -579,7 +588,7 @@ class Entity(ABC):
                 self.scale(factor, origin=entity_center)
 
             # Move to target position
-            new_bounds = self.bounds()
+            new_bounds = self.bounds(visual=visual)
             new_cx = (new_bounds[0] + new_bounds[2]) / 2
             new_cy = (new_bounds[1] + new_bounds[3]) / 2
             self._move_by(target_x - new_cx, target_y - new_cy)
@@ -590,8 +599,8 @@ class Entity(ABC):
         target_cx = (t_min_x + t_max_x) / 2
         target_cy = (t_min_y + t_max_y) / 2
 
-        # Get entity's current bounding box
-        e_min_x, e_min_y, e_max_x, e_max_y = self.bounds()
+        # Get entity's bounding box
+        e_min_x, e_min_y, e_max_x, e_max_y = self.bounds(visual=visual)
         entity_w = e_max_x - e_min_x
         entity_h = e_max_y - e_min_y
 
@@ -613,7 +622,7 @@ class Entity(ABC):
 
         # Recenter within target
         if recenter:
-            new_bounds = self.bounds()
+            new_bounds = self.bounds(visual=visual)
             new_cx = (new_bounds[0] + new_bounds[2]) / 2
             new_cy = (new_bounds[1] + new_bounds[3]) / 2
             self._move_by(target_cx - new_cx, target_cy - new_cy)
@@ -626,6 +635,7 @@ class Entity(ABC):
         recenter: bool = True,
         *,
         at: RelCoord | tuple[float, float] | None = None,
+        visual: bool = True,
     ) -> Entity:
         """
         Automatically scale and position entity to fit within its cell bounds.
@@ -646,6 +656,9 @@ class Entity(ABC):
                 overflows.  At (0.5, 0.5) the full cell is available (same
                 as the default).  At (0.25, 0.25) only the top-left
                 quadrant is usable.
+            visual: If True (default), include stroke width when measuring
+                    bounds so stroked entities don't overflow after fitting.
+                    Set to False for pure geometric fitting.
 
         Returns:
             self, for method chaining
@@ -698,8 +711,8 @@ class Entity(ABC):
             available_w = min(dist_left, dist_right) * 2 * scale
             available_h = min(dist_top, dist_bottom) * 2 * scale
 
-            # Get entity's current bounding box
-            e_min_x, e_min_y, e_max_x, e_max_y = self.bounds()
+            # Get entity's bounding box
+            e_min_x, e_min_y, e_max_x, e_max_y = self.bounds(visual=visual)
             entity_w = e_max_x - e_min_x
             entity_h = e_max_y - e_min_y
 
@@ -717,7 +730,7 @@ class Entity(ABC):
                 self.scale(factor, origin=entity_center)
 
             # Move to target position
-            new_bounds = self.bounds()
+            new_bounds = self.bounds(visual=visual)
             new_cx = (new_bounds[0] + new_bounds[2]) / 2
             new_cy = (new_bounds[1] + new_bounds[3]) / 2
             self._move_by(target.x - new_cx, target.y - new_cy)
@@ -726,8 +739,8 @@ class Entity(ABC):
 
         # --- Default mode (at=None) ---
 
-        # Get entity's current bounding box
-        entity_min_x, entity_min_y, entity_max_x, entity_max_y = self.bounds()
+        # Get entity's bounding box
+        entity_min_x, entity_min_y, entity_max_x, entity_max_y = self.bounds(visual=visual)
         entity_width = entity_max_x - entity_min_x
         entity_height = entity_max_y - entity_min_y
 
@@ -782,7 +795,7 @@ class Entity(ABC):
         # Recenter in cell if requested
         if recenter:
             # Get new bounds after scaling
-            new_min_x, new_min_y, new_max_x, new_max_y = self.bounds()
+            new_min_x, new_min_y, new_max_x, new_max_y = self.bounds(visual=visual)
             new_center_x = (new_min_x + new_max_x) / 2
             new_center_y = (new_min_y + new_max_y) / 2
 

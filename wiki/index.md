@@ -6,7 +6,7 @@ hide:
 
 <div class="hero" markdown>
 
-# PyFreeform
+<h1><img src="_images/logo.svg" alt="logo" style="height: 1em; vertical-align: middle; margin-right: 0.2em;">PyFreeform</h1>
 
 <p class="tagline">Turn images into art with Python.</p>
 

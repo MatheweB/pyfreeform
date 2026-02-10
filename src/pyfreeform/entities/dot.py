@@ -98,7 +98,7 @@ class Dot(Entity):
             return self.position
         raise ValueError(f"Dot has no anchor '{name}'. Available: {self.anchor_names}")
     
-    def bounds(self) -> tuple[float, float, float, float]:
+    def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
         """Get bounding box."""
         return (
             self.x - self.radius,

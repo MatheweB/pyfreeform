@@ -121,14 +121,21 @@ def anchor(self, name: str = "center") -> Coord:
 
 Return the axis-aligned bounding box as `(min_x, min_y, max_x, max_y)`. This is used by `fit_to_cell()`, `fit_within()`, and `place_beside()`.
 
+The `visual` keyword argument controls whether stroke width is included. When `visual=False` (the default), return pure geometric bounds. When `visual=True`, expand by `stroke_width / 2` so that `fit_to_cell` can account for the visual extent of stroked entities.
+
 ```python
-def bounds(self) -> tuple[float, float, float, float]:
-    return (
-        self.x - self.size,
-        self.y - self.size,
-        self.x + self.size,
-        self.y + self.size,
-    )
+def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
+    min_x = self.x - self.size
+    min_y = self.y - self.size
+    max_x = self.x + self.size
+    max_y = self.y + self.size
+    if visual:
+        half = self.width / 2
+        min_x -= half
+        min_y -= half
+        max_x += half
+        max_y += half
+    return (min_x, min_y, max_x, max_y)
 ```
 
 For the crosshair, `inner_bounds()` would be very small (just the intersection point), so we leave the default which returns the same as `bounds()`.

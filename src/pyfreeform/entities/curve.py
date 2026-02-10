@@ -300,13 +300,24 @@ class Curve(StrokedPathMixin, Entity):
         s, c, e = self.start, self.control, self.end
         return f"M {s.x} {s.y} Q {c.x} {c.y} {e.x} {e.y}"
 
-    def bounds(self) -> tuple[float, float, float, float]:
-        """Get bounding box (approximate - includes control point)."""
+    def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
+        """Get bounding box (approximate - includes control point).
+
+        Args:
+            visual: If True, expand by stroke width / 2 to reflect
+                    the rendered extent.
+        """
         points = [self.start, self.control, self.end]
         min_x = min(p.x for p in points)
         min_y = min(p.y for p in points)
         max_x = max(p.x for p in points)
         max_y = max(p.y for p in points)
+        if visual:
+            half = self.width / 2
+            min_x -= half
+            min_y -= half
+            max_x += half
+            max_y += half
         return (min_x, min_y, max_x, max_y)
 
     def _move_by(self, dx: float = 0, dy: float = 0) -> Curve:
