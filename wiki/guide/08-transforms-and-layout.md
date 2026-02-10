@@ -80,14 +80,18 @@ cell.add_dot(color="white", z_index=3)            # On top
 
 ## map_range Utility
 
-`map_range()` maps values between ranges — useful for converting normalized positions or brightness into visual parameters:
+`map_range()` converts a value from one range to another — like converting between units. If a cell's horizontal position (`nx`) goes from 0 to 1 but you want a radius between 2 and 9:
 
 ```python
 from pyfreeform import map_range
 
-radius = map_range(nx, 0, 1, 2, 9)        # nx 0→1  maps to  radius 2→9
-rotation = map_range(ny, 0, 1, 0, 90)     # ny 0→1  maps to  rotation 0→90
-opacity = map_range(nx + ny, 0, 2, 0.3, 1.0)
+radius = map_range(nx, 0, 1, 2, 9)
+# nx=0.0 → radius 2    (left edge: small)
+# nx=0.5 → radius 5.5  (middle: medium)
+# nx=1.0 → radius 9    (right edge: large)
+
+rotation = map_range(ny, 0, 1, 0, 90)          # vertical position → rotation
+opacity = map_range(nx + ny, 0, 2, 0.3, 1.0)   # diagonal position → opacity
 ```
 
 <figure markdown>
@@ -95,8 +99,7 @@ opacity = map_range(nx + ny, 0, 2, 0.3, 1.0)
 <figcaption>Diamonds where size, rotation, and opacity are all driven by mapped position values.</figcaption>
 </figure>
 
-!!! tip "Or just use math"
-    `map_range` is convenience sugar. `radius = 2 + nx * 7` does the same as `map_range(nx, 0, 1, 2, 9)`.
+Swap the output range to reverse the direction — `map_range(nx, 0, 1, 9, 2)` makes the left edge large and the right edge small.
 
 ---
 

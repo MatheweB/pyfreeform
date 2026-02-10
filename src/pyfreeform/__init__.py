@@ -65,36 +65,30 @@ def map_range(
     clamp: bool = False,
 ) -> float:
     """
-    Map a value from one range to another.
-    
-    This is a convenience function for creative coding - it's equivalent to
-    simple math but reads more clearly in code.
-    
+    Convert a value from one range to another.
+
+    Think of it like converting between units. If brightness goes from
+    0 to 1 but you want a radius between 2 and 10, this does the
+    conversion for you:
+
+        radius = map_range(brightness, 0, 1, 2, 10)
+        # brightness 0.0 → radius 2
+        # brightness 0.5 → radius 6
+        # brightness 1.0 → radius 10
+
+    Swap the output range to reverse the direction:
+
+        radius = map_range(brightness, 0, 1, 10, 2)
+        # brightness 0.0 → radius 10  (dark = big)
+        # brightness 1.0 → radius 2   (bright = small)
+
     Args:
-        value: The input value to map.
-        in_min: Input range minimum (default: 0).
-        in_max: Input range maximum (default: 1).
-        out_min: Output range minimum (default: 0).
-        out_max: Output range maximum (default: 1).
-        clamp: If True, clamp result to output range.
-    
-    Returns:
-        The mapped value.
-    
-    Examples:
-        >>> # Map brightness (0-1) to rotation (0-360)
-        >>> rotation = map_range(cell.brightness, 0, 1, 0, 360)
-        
-        >>> # Map brightness to radius (small when dark, large when bright)
-        >>> radius = map_range(cell.brightness, 0, 1, 2, 10)
-        
-        >>> # Inverse mapping (bright = small)
-        >>> radius = map_range(cell.brightness, 0, 1, 10, 2)
-    
-    Note:
-        You can also just use Python math directly:
-        >>> rotation = cell.brightness * 360
-        >>> radius = 2 + cell.brightness * 8
+        value: The input value to convert.
+        in_min: Start of the input range (default: 0).
+        in_max: End of the input range (default: 1).
+        out_min: Start of the output range (default: 0).
+        out_max: End of the output range (default: 1).
+        clamp: If True, keep the result within the output range.
     """
     # Avoid division by zero
     if in_max == in_min:

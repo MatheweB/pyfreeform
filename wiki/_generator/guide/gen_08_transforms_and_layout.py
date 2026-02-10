@@ -127,7 +127,7 @@ def generate():
     scene = Scene.with_grid(cols=15, rows=10, cell_size=20, background=colors_sunset.background)
     for cell in scene.grid:
         nx, ny = cell.normalized_position
-        # map_range: brightness analog from position
+        # Convert position (0–1) to visual parameters
         radius = map_range(nx, 0, 1, 2, 9)
         rotation = map_range(ny, 0, 1, 0, 90)
         cell.add_polygon(

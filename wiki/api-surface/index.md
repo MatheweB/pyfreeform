@@ -1121,14 +1121,24 @@ A single-channel grayscale array (used for brightness, individual color channels
 
 ### `map_range(value, in_min=0, in_max=1, out_min=0, out_max=1, clamp=False)`
 
-Map a value from one range to another. Convenience for creative coding.
+Convert a value from one range to another — like converting between units. If brightness goes from 0 to 1 but you want a radius between 2 and 10:
 
 ```python
 from pyfreeform import map_range
 
-rotation = map_range(cell.brightness, 0, 1, 0, 360)
 radius = map_range(cell.brightness, 0, 1, 2, 10)
+# brightness 0.0 → radius 2
+# brightness 0.5 → radius 6
+# brightness 1.0 → radius 10
+
+# Swap the output range to reverse the direction
+radius = map_range(cell.brightness, 0, 1, 10, 2)   # dark = big, bright = small
+
+# Works with any range — here, pixel position (0-800) to rotation (0-360)
+rotation = map_range(cell.center.x, 0, 800, 0, 360)
 ```
+
+Set `clamp=True` to keep the result within the output range even if the input is outside its range.
 
 ### `get_angle_at(pathable, t)`
 
