@@ -322,7 +322,7 @@ def test_fit_to_cell_at_rejects_edge_zero():
     cell = scene.grid[0, 0]
     dot = cell.add_dot(radius=0.1, color="red")
 
-    with pytest.raises(ValueError, match="inside the cell"):
+    with pytest.raises(ValueError, match="inside the bounds"):
         dot.fit_to_cell(0.8, at=(0.0, 0.5))
 
 
@@ -332,7 +332,7 @@ def test_fit_to_cell_at_rejects_edge_one():
     cell = scene.grid[0, 0]
     dot = cell.add_dot(radius=0.1, color="red")
 
-    with pytest.raises(ValueError, match="inside the cell"):
+    with pytest.raises(ValueError, match="inside the bounds"):
         dot.fit_to_cell(0.8, at=(0.5, 1.0))
 
 

@@ -12,6 +12,20 @@ from .connection import Connection
 from .coord import Coord, CoordLike, RelCoord
 from .surface import NAMED_POSITIONS
 
+def shape_opacity_attrs(
+    opacity: float, fill_opacity: float | None, stroke_opacity: float | None
+) -> str:
+    """Build SVG fill-opacity/stroke-opacity attribute string for shapes."""
+    eff_fill = fill_opacity if fill_opacity is not None else opacity
+    eff_stroke = stroke_opacity if stroke_opacity is not None else opacity
+    parts: list[str] = []
+    if eff_fill < 1.0:
+        parts.append(f' fill-opacity="{eff_fill}"')
+    if eff_stroke < 1.0:
+        parts.append(f' stroke-opacity="{eff_stroke}"')
+    return "".join(parts)
+
+
 if TYPE_CHECKING:
     from .pathable import Pathable
     from .surface import Surface
@@ -905,8 +919,8 @@ class Entity(ABC):
         """
         Automatically scale and position entity to fit within its cell bounds.
 
-        Works for any entity type and handles rotation automatically by using
-        the entity's actual bounding box.
+        Convenience wrapper around :meth:`fit_within` that uses the
+        containing cell as the target region.
 
         Args:
             scale: Percentage of available space to fill (0.0-1.0).
@@ -945,160 +959,23 @@ class Entity(ABC):
             >>> dot = cell.add_dot(radius=0.8)
             >>> dot.fit_to_cell(1.0, at=(0.25, 0.25))  # Fit in top-left quadrant
         """
-        if rotate and match_aspect:
-            raise ValueError("rotate and match_aspect are mutually exclusive")
-
-        # Validation
         if self._cell is None:
             raise ValueError("Cannot fit to cell: entity has no cell")
-
-        if not (0.0 < scale <= 1.0):
-            raise ValueError(f"scale must be between 0.0 and 1.0, got {scale}")
-
-        cell = self._cell
-
-        if rotate or match_aspect:
-            b = self.bounds(visual=visual)
-            w, h = b[2] - b[0], b[3] - b[1]
-            if w > 1e-9 and h > 1e-9:
-                if at is not None:
-                    if isinstance(at, str):
-                        raise TypeError(
-                            f"fit_to_cell(at=) only accepts (rx, ry) tuples, not '{at}'."
-                        )
-                    rx, ry = at
-                    target_pos = cell.relative_to_absolute(at)
-                    cell_x, cell_y = cell.x, cell.y
-                    cell_w, cell_h = cell.width, cell.height
-                    dist_left = target_pos.x - cell_x
-                    dist_right = (cell_x + cell_w) - target_pos.x
-                    dist_top = target_pos.y - cell_y
-                    dist_bottom = (cell_y + cell_h) - target_pos.y
-                    avail_w = min(dist_left, dist_right) * 2 * scale
-                    avail_h = min(dist_top, dist_bottom) * 2 * scale
-                else:
-                    avail_w = cell.width * scale
-                    avail_h = cell.height * scale
-                angle = (
-                    Entity._compute_optimal_angle(w, h, avail_w, avail_h)
-                    if rotate
-                    else Entity._compute_aspect_match_angle(w, h, avail_w, avail_h)
-                )
-                self.rotate(angle)
-
-        if at is not None:
-            # --- Position-aware mode ---
-            if isinstance(at, str):
-                raise TypeError(
-                    f"fit_to_cell(at=) only accepts (rx, ry) tuples, not '{at}'. "
-                    f"Named positions are at cell edges where available space is 0."
-                )
-            rx, ry = at
-            if not (0.0 < rx < 1.0 and 0.0 < ry < 1.0):
-                raise ValueError(
-                    f"at=({rx}, {ry}) must be inside the cell (0.0-1.0 exclusive). "
-                    f"Values at edges leave no room for the entity."
-                )
-
-            # Target position in absolute coordinates
-            target = cell.relative_to_absolute(at)
-            cell_x, cell_y = cell.x, cell.y
-            cell_w, cell_h = cell.width, cell.height
-
-            # Available space = constrained by nearest edge in each direction
-            dist_left = target.x - cell_x
-            dist_right = (cell_x + cell_w) - target.x
-            dist_top = target.y - cell_y
-            dist_bottom = (cell_y + cell_h) - target.y
-
-            available_w = min(dist_left, dist_right) * 2 * scale
-            available_h = min(dist_top, dist_bottom) * 2 * scale
-
-            # Get entity's bounding box
-            e_min_x, e_min_y, e_max_x, e_max_y = self.bounds(visual=visual)
-            entity_w = e_max_x - e_min_x
-            entity_h = e_max_y - e_min_y
-
-            # Calculate scale factors
-            scale_x = available_w / entity_w if entity_w > 0 else 1.0
-            scale_y = available_h / entity_h if entity_h > 0 else 1.0
-            factor = min(scale_x, scale_y)
-
-            # Scale around entity center if needed
-            entity_center = Coord(
-                (e_min_x + e_max_x) / 2,
-                (e_min_y + e_max_y) / 2,
+        if isinstance(at, str):
+            raise TypeError(
+                f"fit_to_cell(at=) only accepts (rx, ry) tuples, not '{at}'. "
+                f"Named positions are at cell edges where available space is 0."
             )
-            if abs(factor - 1.0) > 0.001:
-                self.scale(factor, origin=entity_center)
-
-            # Move to target position
-            new_bounds = self.bounds(visual=visual)
-            new_cx = (new_bounds[0] + new_bounds[2]) / 2
-            new_cy = (new_bounds[1] + new_bounds[3]) / 2
-            self._move_by(target.x - new_cx, target.y - new_cy)
-
-            return self
-
-        # --- Default mode (at=None) ---
-
-        # Get entity's bounding box
-        entity_min_x, entity_min_y, entity_max_x, entity_max_y = self.bounds(visual=visual)
-        entity_width = entity_max_x - entity_min_x
-        entity_height = entity_max_y - entity_min_y
-
-        # Get cell bounds
-        cell_x = cell.x
-        cell_y = cell.y
-        cell_width = cell.width
-        cell_height = cell.height
-
-        # Calculate available space (with scale factor)
-        available_width = cell_width * scale
-        available_height = cell_height * scale
-
-        # Calculate scale factors needed to fit
-        scale_x = available_width / entity_width if entity_width > 0 else 1.0
-        scale_y = available_height / entity_height if entity_height > 0 else 1.0
-
-        # Use smaller scale to maintain aspect ratio and fit within bounds
-        scale_factor = min(scale_x, scale_y)
-
-        # If already fits, skip scaling (optimization)
-        if abs(scale_factor - 1.0) < 0.001:  # Allow small floating point error
-            if recenter:
-                # Just recenter without scaling
-                cell_center = Coord(cell_x + cell_width / 2, cell_y + cell_height / 2)
-                entity_center_x = (entity_min_x + entity_max_x) / 2
-                entity_center_y = (entity_min_y + entity_max_y) / 2
-                offset_x = cell_center.x - entity_center_x
-                offset_y = cell_center.y - entity_center_y
-                self._move_by(offset_x, offset_y)
-            return self
-
-        # Calculate entity's current center (before scaling)
-        entity_center = Coord((entity_min_x + entity_max_x) / 2, (entity_min_y + entity_max_y) / 2)
-
-        # Scale around entity's current center
-        self.scale(scale_factor, origin=entity_center)
-
-        # Recenter in cell if requested
-        if recenter:
-            # Get new bounds after scaling
-            new_min_x, new_min_y, new_max_x, new_max_y = self.bounds(visual=visual)
-            new_center_x = (new_min_x + new_max_x) / 2
-            new_center_y = (new_min_y + new_max_y) / 2
-
-            # Calculate offset to cell center
-            cell_center_x = cell_x + cell_width / 2
-            cell_center_y = cell_y + cell_height / 2
-
-            offset_x = cell_center_x - new_center_x
-            offset_y = cell_center_y - new_center_y
-
-            self._move_by(offset_x, offset_y)
-
-        return self
+        cell = self._cell
+        return self.fit_within(
+            (cell.x, cell.y, cell.x + cell.width, cell.y + cell.height),
+            scale,
+            recenter,
+            at=at,
+            visual=visual,
+            rotate=rotate,
+            match_aspect=match_aspect,
+        )
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(x={self.x}, y={self.y})"

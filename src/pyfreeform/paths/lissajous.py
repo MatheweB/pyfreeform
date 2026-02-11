@@ -5,9 +5,10 @@ from __future__ import annotations
 import math
 
 from ..core.coord import Coord, CoordLike
+from .base import PathShape
 
 
-class Lissajous:
+class Lissajous(PathShape):
     """
     Lissajous curve: ``x = size * sin(a*t + delta)``, ``y = size * sin(b*t)``.
 
@@ -42,9 +43,7 @@ class Lissajous:
         delta: float = math.pi / 2,
         size: float = 50,
     ) -> None:
-        if isinstance(center, tuple):
-            center = Coord(*center)
-        self.center: Coord = center
+        self.center = Coord.coerce(center)
         self.a = a
         self.b = b
         self.delta = delta
@@ -65,31 +64,6 @@ class Lissajous:
         if dx == 0 and dy == 0:
             return 0.0
         return math.degrees(math.atan2(dy, dx))
-
-    def arc_length(self, samples: int = 200) -> float:
-        """Approximate arc length via polyline sampling."""
-        total = 0.0
-        prev = self.point_at(0.0)
-        for i in range(1, samples + 1):
-            curr = self.point_at(i / samples)
-            dx = curr.x - prev.x
-            dy = curr.y - prev.y
-            total += math.sqrt(dx * dx + dy * dy)
-            prev = curr
-        return total
-
-    def to_svg_path_d(self, segments: int = 64) -> str:
-        """SVG path ``d`` attribute using smooth cubic Bézier curves."""
-        from ..core.bezier import fit_cubic_beziers
-
-        beziers = fit_cubic_beziers(self, segments, closed=False)
-        if not beziers:
-            return ""
-        p0 = beziers[0][0]
-        parts = [f"M {p0.x} {p0.y}"]
-        for _, cp1, cp2, p3 in beziers:
-            parts.append(f" C {cp1.x} {cp1.y} {cp2.x} {cp2.y} {p3.x} {p3.y}")
-        return "".join(parts)
 
     def __repr__(self) -> str:
         return (

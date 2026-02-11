@@ -37,6 +37,7 @@ pyfreeform/
     cell_group.py   # CellGroup -- multi-cell region
 
   paths/          # Built-in path shapes (Pathable implementations)
+    base.py         # PathShape base class (shared arc_length, to_svg_path_d)
     wave.py         # Wave (sinusoidal wave between two points)
     spiral.py       # Spiral (Archimedean spiral)
     lissajous.py    # Lissajous (parametric Lissajous curve)
@@ -127,7 +128,7 @@ Every entity has:
 - **Transforms** -- `rotate(angle, origin)` and `scale(factor, origin)` are **non-destructive**: they accumulate `_rotation` and `_scale_factor` without modifying geometry. When called with `origin`, `_resolve_to_absolute()` converts all relative properties to absolute values first, then the position is orbited/scaled around the origin. SVG rendering applies both transforms via `_build_svg_transform()`.
 - **Transform properties** -- `entity.rotation` (degrees), `entity.scale_factor` (multiplier), `entity.rotation_center` (pivot `Coord` -- default: position, overridden by Rect/Polygon/Line/Curve/Path)
 - **World-space helpers** -- `_to_world_space(point)` applies scale then rotation around `rotation_center`. Used by `anchor()` and `bounds()` in all entity types.
-- **Fitting** -- `fit_within()`, `fit_to_cell()` -- scale to fit a target
+- **Fitting** -- `fit_within()` scales to fit a target; `fit_to_cell()` is a convenience wrapper that delegates to `fit_within()` using the containing cell's bounds
 - **Connectivity** -- `connect()`, `place_beside()`
 
 ### Abstract methods every entity must implement

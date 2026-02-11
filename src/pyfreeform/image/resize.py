@@ -106,35 +106,3 @@ def downscale_array(arr: np.ndarray, factor: int) -> np.ndarray:
     # Reshape and average
     reshaped = trimmed.reshape(new_height, factor, new_width, factor)
     return reshaped.mean(axis=(1, 3))
-
-
-def quantize_dimensions(
-    src_width: int,
-    src_height: int,
-    cols: int,
-    rows: int,
-) -> tuple[int, int]:
-    """
-    Calculate dimensions for quantizing to a grid.
-
-    If only cols or rows is specified, calculates the other
-    to maintain aspect ratio.
-
-    Args:
-        src_width: Source image width.
-        src_height: Source image height.
-        cols: Target number of columns (or None to calculate).
-        rows: Target number of rows (or None to calculate).
-
-    Returns:
-        Tuple of (cols, rows).
-    """
-    aspect = src_width / src_height
-
-    if cols is not None and rows is not None:
-        return cols, rows
-    if cols is not None:
-        return cols, max(1, int(cols / aspect))
-    if rows is not None:
-        return max(1, int(rows * aspect)), rows
-    raise ValueError("At least one of cols or rows must be specified")

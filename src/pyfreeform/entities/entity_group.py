@@ -265,10 +265,18 @@ class EntityGroup(Entity):
         """Current rotation angle in degrees."""
         return self._rotation
 
+    @rotation.setter
+    def rotation(self, value: float) -> None:
+        self._rotation = float(value)
+
     @property
     def scale_factor(self) -> float:
         """Current cumulative scale factor."""
         return self._scale
+
+    @scale_factor.setter
+    def scale_factor(self, value: float) -> None:
+        self._scale = float(value)
 
     # =========================================================================
     # DEFS COLLECTION (forward to children)

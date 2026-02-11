@@ -875,7 +875,7 @@ These methods enable additional features when present:
 
 ### Built-in Path Shapes
 
-Ready-to-use pathable classes, accessible as nested classes on `Path`:
+Ready-to-use pathable classes, accessible as nested classes on `Path`. All four inherit from `PathShape` (`pyfreeform.paths.base`), which provides shared `arc_length()` and `to_svg_path_d()` implementations — subclasses only need to implement `point_at(t)` and `angle_at(t)`.
 
 | Shape | Description | Parameters |
 |---|---|---|
@@ -895,6 +895,10 @@ cell.add_path(spiral, width=1.5, color="coral")
 wave = Path.Wave(amplitude=0.15, frequency=3)
 conn = dot_a.connect(dot_b, shape=Path(wave), style=style)
 ```
+
+### Custom Path Shapes
+
+To create a new path shape, inherit from `PathShape` (`pyfreeform.paths.base`) and implement `point_at(t)` and `angle_at(t)`. The base class provides `arc_length()` and `to_svg_path_d()` automatically. See [Creating Custom Entities](../developer-guide/02-creating-entities.md#creating-custom-path-shapes) for a walkthrough.
 
 ### Custom Pathables
 
@@ -974,25 +978,25 @@ Per-entity pivot points (`rotation_center`):
 - **Path**: Bezier midpoint at t=0.5
 - **EntityGroup**: accumulates in `<g>` transform (children unchanged)
 
-### `fit_to_cell(scale=1.0, recenter=True, *, at=None, visual=True, rotate=False, match_aspect=False)`
-
-Auto-scales and positions any entity to fit within its containing cell.
-
-- **`scale`**: Fraction of cell to fill (0.0-1.0). Default 1.0 fills entire cell.
-- **`recenter`**: If True, centers in cell after scaling.
-- **`at=(rx, ry)`**: Position-aware mode. Entity is placed at relative position within cell, with available space constrained by nearest edges.
-- **`visual`**: If True (default), includes stroke width when measuring bounds.
-- **`rotate`**: If True, finds the rotation angle that maximizes fill before scaling. Uses a closed-form O(1) solution (3 candidate angles). Works on any entity type.
-- **`match_aspect`**: If True, rotates the entity so its bounding box aspect ratio matches the cell's. Mutually exclusive with `rotate`.
-
-For **Text** entities, `fit_to_cell(fraction)` adjusts font size (up or down) to fill the cell at `fraction`. Compare with `add_text(fit=True)` which only *shrinks* — never upsizes.
-
 ### `fit_within(target, scale=1.0, recenter=True, *, at=None, visual=True, rotate=False, match_aspect=False)`
 
-Same concept, but fits within another entity's `inner_bounds()` instead of the cell.
+The core fitting method. Scales and positions any entity to fit within a target region.
 
-- **`rotate`**: Same as `fit_to_cell` — finds optimal rotation for any entity.
-- **`match_aspect`**: Same as `fit_to_cell` — rotates to match target's aspect ratio.
+- **`target`**: An `Entity` (uses `inner_bounds()`) or a raw `(min_x, min_y, max_x, max_y)` tuple.
+- **`scale`**: Fraction of target to fill (0.0-1.0). Default 1.0 fills entire area.
+- **`recenter`**: If True, centers entity within target after scaling.
+- **`at=(rx, ry)`**: Position-aware mode. Entity is placed at relative position within target, with available space constrained by nearest edges.
+- **`visual`**: If True (default), includes stroke width when measuring bounds.
+- **`rotate`**: If True, finds the rotation angle that maximizes fill before scaling. Uses a closed-form O(1) solution (3 candidate angles). Works on any entity type.
+- **`match_aspect`**: If True, rotates the entity so its bounding box aspect ratio matches the target's. Mutually exclusive with `rotate`.
+
+### `fit_to_cell(scale=1.0, recenter=True, *, at=None, visual=True, rotate=False, match_aspect=False)`
+
+Convenience wrapper around `fit_within()` that uses the containing cell's bounds as the target. All parameters are forwarded directly.
+
+Raises `ValueError` if the entity has no cell. Raises `TypeError` if `at` is a string (named positions sit on cell edges where available space is 0).
+
+For **Text** entities, `fit_to_cell(fraction)` adjusts font size (up or down) to fill the cell at `fraction`. Compare with `add_text(fit=True)` which only *shrinks* — never upsizes.
 
 ---
 
@@ -1030,7 +1034,7 @@ The `Color` utility accepts:
 
 ### Style Classes
 
-7 immutable dataclasses with `.with_*()` builder methods:
+7 dataclasses with `.with_*()` builder methods (each is a one-liner using `dataclasses.replace()`):
 
 | Class | For | Key Fields |
 |---|---|---|

@@ -365,5 +365,32 @@ Before considering your entity complete, verify:
 - [ ] `__repr__` is implemented for debugging
 - [ ] Works with `cell.add()` and `fit_to_cell()`
 
+!!! tip "Shape entities with fill/stroke opacity"
+    If your entity has both `fill` and `stroke` with independent opacity (like Rect, Ellipse, Polygon), use the shared `shape_opacity_attrs(opacity, fill_opacity, stroke_opacity)` helper from `pyfreeform.core.entity` in your `to_svg()`. It returns the correct `fill-opacity`/`stroke-opacity` SVG attribute string, emitting nothing when opacity is 1.0.
+
 !!! tip "The simplest built-in entity: Point"
     For a minimal real-world example, look at `pyfreeform/entities/point.py`. The `Point` entity renders nothing (`to_svg()` returns `""`) and exists purely as a movable positional anchor. It has a single `"center"` anchor, zero-size bounds, and no internal geometry to scale or rotate. Its primary use is as a reactive vertex for `Polygon` — see [Reactive Polygons](../guide/06-shapes-and-polygons.md#reactive-polygons).
+
+## Creating Custom Path Shapes
+
+If you want to create a new parametric path (like Wave, Spiral, etc.), inherit from `PathShape` in `pyfreeform.paths.base`. You only need to implement `point_at(t)` and `angle_at(t)` — the base class provides `arc_length()` and `to_svg_path_d()` for free:
+
+```python
+from pyfreeform.paths.base import PathShape
+from pyfreeform.core.coord import Coord, CoordLike
+
+class MyShape(PathShape):
+    def __init__(self, center: CoordLike = (0, 0), ...) -> None:
+        self.center = Coord.coerce(center)
+        ...
+
+    def point_at(self, t: float) -> Coord:
+        """Get point at parameter t (0.0 to 1.0)."""
+        ...
+
+    def angle_at(self, t: float) -> float:
+        """Tangent angle in degrees at parameter t."""
+        ...
+```
+
+The shape can then be used with `add_path()`, as a connection shape, or with `along=`/`t=` positioning — anywhere a Pathable is accepted.

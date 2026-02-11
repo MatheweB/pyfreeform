@@ -16,7 +16,7 @@ from ..core.bezier import (
     fit_cubic_beziers as _fit_cubic_beziers,
 )
 from ..core.coord import Coord
-from ..core.entity import Entity
+from ..core.entity import Entity, shape_opacity_attrs
 from ..core.stroked_path_mixin import StrokedPathMixin
 from ..paths import Lissajous, Spiral, Wave, Zigzag
 
@@ -540,15 +540,7 @@ class Path(StrokedPathMixin, Entity):
         if marker_attrs:
             parts.append(marker_attrs)
 
-        # Opacity handling
-        eff_fill_opacity = self.fill_opacity if self.fill_opacity is not None else self.opacity
-        eff_stroke_opacity = (
-            self.stroke_opacity if self.stroke_opacity is not None else self.opacity
-        )
-        if eff_fill_opacity < 1.0:
-            parts.append(f' fill-opacity="{eff_fill_opacity}"')
-        if eff_stroke_opacity < 1.0:
-            parts.append(f' stroke-opacity="{eff_stroke_opacity}"')
+        parts.append(shape_opacity_attrs(self.opacity, self.fill_opacity, self.stroke_opacity))
 
         transform = self._build_svg_transform()
         if transform:
