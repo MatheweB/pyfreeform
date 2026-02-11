@@ -134,8 +134,8 @@ class Text(Entity):
         font_family: str = DEFAULT_FONT_FAMILY,
         font_style: str = DEFAULT_FONT_STYLE,
         font_weight: str | int = DEFAULT_FONT_WEIGHT,
-        bold: bool = False,  # NEW (sugar)
-        italic: bool = False,  # NEW (sugar)
+        bold: bool = False,
+        italic: bool = False,
         text_anchor: str = DEFAULT_ANCHOR,
         baseline: str = DEFAULT_BASELINE,
         rotation: float = 0,
@@ -151,13 +151,15 @@ class Text(Entity):
             content: The text string to display.
             font_size: Font size in pixels.
             color: Text color (name, hex, or RGB tuple).
-            font_family: Font family - "serif", "sans-serif", "monospace",
-                        or a specific font name.
+            font_family: Font family — "serif", "sans-serif", "monospace",
+                         or a specific font name.
+            bold: If True, use bold weight.
+            italic: If True, use italic style.
             text_anchor: Horizontal alignment: "start" (left), "middle", "end" (right).
-            baseline: Vertical alignment: "auto", "middle", "hanging" (top),
-                     "alphabetic", "ideographic", "text-before-edge", "text-after-edge".
+            baseline: Vertical alignment: "auto", "middle", "hanging" (top).
             rotation: Rotation angle in degrees (counterclockwise).
             z_index: Layer ordering (higher = on top).
+            opacity: Opacity (0.0 transparent to 1.0 opaque).
         """
         super().__init__(x, y, z_index)
         self.content = content
@@ -300,7 +302,7 @@ class Text(Entity):
 
         Unlike ``fit=True`` on ``add_text()`` (which only shrinks),
         this method scales the font **up or down** to fill the
-        available space — matching :meth:`EntityGroup.fit_to_cell`.
+        available space.
 
         Args:
             scale: How much of the cell to fill (0.0-1.0).

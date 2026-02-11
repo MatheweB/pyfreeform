@@ -145,7 +145,7 @@ def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
 For the crosshair, `inner_bounds()` would be very small (just the intersection point), so we leave the default which returns the same as `bounds()`.
 
 !!! tip "Tight rotated bounds via `rotated_bounds()`"
-    The default `rotated_bounds(angle)` rotates the four corners of `bounds()` — correct but can overestimate for curved or circular shapes. If your entity can compute a tighter AABB at any rotation (e.g., via analytical formulas for Bezier extrema or ellipse extents), override this method. `EntityGroup.bounds()` calls `rotated_bounds()` on every child with the combined rotation angle, so tight child bounds cascade into tight group bounds automatically.
+    The default `rotated_bounds(angle)` rotates the four corners of `bounds()` — correct but can overestimate for curved or circular shapes. If your entity has analytical formulas for tighter bounds at arbitrary angles (e.g., Bezier extrema, ellipse extents), override this method. Tight child bounds cascade into tight `EntityGroup.bounds()` automatically.
 
 ### Step 4: Implement to_svg()
 

@@ -114,8 +114,6 @@ class Dot(Entity):
 
     def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
         """Get bounding box (accounts for scale)."""
-        # Evaluate position FIRST so _resolving guard can detect circularity
-        # before _resolve_size is called via self.radius.
         cx, cy = self.x, self.y
         r = self.radius * self._scale_factor
         return (cx - r, cy - r, cx + r, cy + r)

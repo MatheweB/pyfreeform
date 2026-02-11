@@ -20,7 +20,6 @@ class Line(StrokedPathMixin, Entity):
 
     Attributes:
         position: The start point of the line
-        end_offset: Offset from position to end point
         width: Stroke width
         color: Stroke color
 

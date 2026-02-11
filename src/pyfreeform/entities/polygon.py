@@ -101,7 +101,7 @@ class Polygon(Entity):
                 else:
                     self._vertex_specs.append(Coord(float(v[0]), float(v[1])))
 
-        # Relative vertices (set by Surface.add_polygon in Phase 1C)
+        # Relative vertices (set by Surface.add_polygon)
         self._relative_vertices: list[RelCoord] | None = None
 
         # Position is centroid

@@ -189,7 +189,7 @@ for cell in scene.grid:
     cell.add_dot(along=liss, t=cell.brightness, color="coral", radius=0.15)
 ```
 
-### Step 2: Add angle_at() for alignment
+### Step 2: Implement angle_at() for alignment
 
 For entities to rotate and follow the curve direction, implement `angle_at()`:
 
@@ -213,8 +213,9 @@ curve_path = cell.add_curve()
 cell.add_rect(width=0.15, height=0.05, along=liss, t=0.25, align=True)
 ```
 
-### Step 3: Add arc_length() for text sizing
+### Step 3: arc_length() for text sizing
 
+*This function is provided by the `PathShape` parent class*
 ```python
 def arc_length(self, samples: int = 200) -> float:
     """Approximate arc length via polyline sampling."""
@@ -229,10 +230,11 @@ def arc_length(self, samples: int = 200) -> float:
     return total
 ```
 
-### Step 4: Add to_svg_path_d() for textPath support
+### Step 4: to_svg_path_d() for textPath support
 
-For text to warp along the Lissajous curve, it needs an SVG path definition. The simplest approach is to sample points and emit line segments:
+For text to warp along the Lissajous curve, it needs an SVG path definition. The simplest approach is to sample points and emit line segments.
 
+*This function is provided by the `PathShape` parent class*
 ```python
 def to_svg_path_d(self, samples: int = 200) -> str:
     """SVG path d attribute as a polyline approximation."""
@@ -297,10 +299,13 @@ cell.add_path(ellipse, start_t=0.0, end_t=0.5, color="blue")
 """Lissajous - A Lissajous curve pathable."""
 
 import math
+
+from ..core.coord import Coord, CoordLike
+from .base import PathShape
+
 from pyfreeform.core.coord import Coord
 
-
-class Lissajous:
+class Lissajous(PathShape):
     """
     A Lissajous curve: x = A*sin(a*t + delta), y = B*sin(b*t).
 
@@ -312,27 +317,27 @@ class Lissajous:
 
     def __init__(
         self,
-        center: Coord | tuple[float, float] = (0, 0),
+        center: CoordLike = (0, 0),
         a: int = 3,
         b: int = 2,
         delta: float = math.pi / 2,
         size: float = 50,
     ) -> None:
-        if isinstance(center, tuple):
-            center = Coord(*center)
-        self.center = center
+        self.center = Coord.coerce(center)
         self.a = a
         self.b = b
         self.delta = delta
         self.size = size
 
     def point_at(self, t: float) -> Coord:
+        """Get point at parameter *t* (0.0 to 1.0)."""
         angle = t * 2 * math.pi
         x = self.center.x + self.size * math.sin(self.a * angle + self.delta)
         y = self.center.y + self.size * math.sin(self.b * angle)
         return Coord(x, y)
 
     def angle_at(self, t: float) -> float:
+        """Tangent angle in degrees at parameter *t*."""
         angle = t * 2 * math.pi
         dx = self.size * self.a * math.cos(self.a * angle + self.delta) * 2 * math.pi
         dy = self.size * self.b * math.cos(self.b * angle) * 2 * math.pi
@@ -340,24 +345,11 @@ class Lissajous:
             return 0.0
         return math.degrees(math.atan2(dy, dx))
 
-    def arc_length(self, samples: int = 200) -> float:
-        total = 0.0
-        prev = self.point_at(0.0)
-        for i in range(1, samples + 1):
-            curr = self.point_at(i / samples)
-            dx = curr.x - prev.x
-            dy = curr.y - prev.y
-            total += math.sqrt(dx * dx + dy * dy)
-            prev = curr
-        return total
-
-    def to_svg_path_d(self, samples: int = 200) -> str:
-        p0 = self.point_at(0.0)
-        parts = [f"M {p0.x} {p0.y}"]
-        for i in range(1, samples + 1):
-            p = self.point_at(i / samples)
-            parts.append(f" L {p.x} {p.y}")
-        return "".join(parts)
+    def __repr__(self) -> str:
+        return (
+            f"Lissajous(center={self.center}, a={self.a}, b={self.b}, "
+            f"delta={self.delta:.4f}, size={self.size})"
+        )
 ```
 
 ## Using It in Practice

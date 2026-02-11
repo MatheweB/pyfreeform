@@ -174,16 +174,10 @@ class Entity(ABC):
 
     @property
     def is_resolved(self) -> bool:
-        """True after relative properties have been resolved to absolute values.
+        """True after relative properties have been converted to absolute values.
 
-        This is a one-way door: once resolved, builder methods will not
-        overwrite the entity's concrete values with relative data.
-
-        What gets resolved (base + subclass overrides):
-
-        - **Position**: ``_relative_at`` / ``_along_path`` → ``_position``
-        - **Sizing**: radius, width/height, rx/ry, font_size (fractions → absolute)
-        - **Geometry**: vertices, start/end points (``RelCoord`` → ``Coord``)
+        Once resolved, relative fractions (position, sizing, geometry)
+        become concrete pixel values and won't be overwritten.
         """
         return self._is_resolved
 
@@ -494,17 +488,15 @@ class Entity(ABC):
 
     def rotate(self, angle: float, origin: CoordLike | None = None) -> Entity:
         """
-        Rotate entity by *angle* degrees (non-destructive).
+        Rotate entity by *angle* degrees.
 
-        Without *origin*, simply accumulates rotation — relative
-        properties are preserved.  With *origin*, also orbits the
-        entity's ``rotation_center`` around that point (resolves all
-        relative properties to absolute values first).
+        Without *origin*, rotates in place. With *origin*, also moves
+        the entity around that point (like orbiting).
 
         Args:
-            angle: Rotation angle in degrees (counterclockwise).
-            origin: Center of rotation.  When ``None`` the entity
-                    rotates in place around its ``rotation_center``.
+            angle: Rotation in degrees (counterclockwise).
+            origin: Point to rotate around. If ``None``, rotates in
+                    place around the entity's natural center.
 
         Returns:
             self, for method chaining.
@@ -516,17 +508,15 @@ class Entity(ABC):
 
     def scale(self, factor: float, origin: CoordLike | None = None) -> Entity:
         """
-        Scale entity by *factor* (non-destructive).
+        Scale entity by *factor*.
 
-        Without *origin*, simply accumulates the scale factor —
-        relative properties are preserved.  With *origin*, also shifts
-        position so the entity moves toward/away from that point
-        (resolves all relative properties to absolute values first).
+        Without *origin*, scales around the entity's natural center.
+        With *origin*, also moves the entity toward/away from that point.
 
         Args:
-            factor: Scale factor (1.0 = no change, 2.0 = double).
-            origin: Center of scaling.  When ``None`` the entity
-                    scales around its ``rotation_center``.
+            factor: Scale multiplier (1.0 = no change, 2.0 = double).
+            origin: Point to scale around. If ``None``, scales around
+                    the entity's natural center.
 
         Returns:
             self, for method chaining.
@@ -923,26 +913,18 @@ class Entity(ABC):
         containing cell as the target region.
 
         Args:
-            scale: Percentage of available space to fill (0.0-1.0).
-                   1.0 = fill entire available area, 0.85 = use 85%.
+            scale: Fraction of available space to fill (0.0-1.0).
+                   1.0 = fill entire cell, 0.85 = use 85%.
             recenter: If True, center entity in cell after scaling.
-                      If False, maintain current position.
                       Ignored when ``at`` is provided.
-            at: Optional cell-relative position (rx, ry) where both values
-                are in (0.0, 1.0) exclusive. When provided, the entity is
-                positioned at this point and the available space is
-                constrained by the nearest cell edges, so the entity never
-                overflows.  At (0.5, 0.5) the full cell is available (same
-                as the default).  At (0.25, 0.25) only the top-left
-                quadrant is usable.
-            visual: If True (default), include stroke width when measuring
-                    bounds so stroked entities don't overflow after fitting.
-                    Set to False for pure geometric fitting.
-            rotate: If True, find the rotation angle that maximizes how
-                    much of the cell the entity fills before scaling.
-            match_aspect: If True, rotate the entity so its bounding box
-                          aspect ratio matches the cell's. Mutually
-                          exclusive with ``rotate``.
+            at: Position within the cell as (rx, ry) fractions. Constrains
+                fitting to the space available at that point so the entity
+                doesn't overflow. (0.5, 0.5) uses the full cell (default).
+            visual: If True (default), include stroke width in bounds
+                    measurement so stroked shapes don't overflow.
+            rotate: If True, auto-rotate to maximize cell coverage.
+            match_aspect: If True, rotate to match the cell's aspect ratio.
+                          Mutually exclusive with ``rotate``.
 
         Returns:
             self, for method chaining

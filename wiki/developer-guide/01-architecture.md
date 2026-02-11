@@ -122,13 +122,13 @@ Every entity has:
 - **Z-index** (`_z_index: int`) -- layer ordering for rendering
 - **Cell reference** (`_cell: Surface | None`) -- back-reference to container
 - **Connections** (`_connections: WeakSet`) -- tracked via weak references
-- **Movement** -- `_move_to()`, `_move_by()` (private pixel movement); public API is `.position`, `.at`, and `move_to_cell()`
-- **Binding** -- `binding` property accepts a `Binding` dataclass (from `core/binding.py`) for relative positioning
-- **Resolved state** -- `is_resolved` property (read-only) is `True` after transforms with an `origin` parameter resolve all relative properties (position, sizing, geometry) to absolute values. This is a one-way door — builder methods check it to avoid overwriting concrete values with relative data.
-- **Transforms** -- `rotate(angle, origin)` and `scale(factor, origin)` are **non-destructive**: they accumulate `_rotation` and `_scale_factor` without modifying geometry. When called with `origin`, `_resolve_to_absolute()` converts all relative properties to absolute values first, then the position is orbited/scaled around the origin. SVG rendering applies both transforms via `_build_svg_transform()`.
-- **Transform properties** -- `entity.rotation` (degrees), `entity.scale_factor` (multiplier), `entity.rotation_center` (pivot `Coord` -- default: position, overridden by Rect/Polygon/Line/Curve/Path)
-- **World-space helpers** -- `_to_world_space(point)` applies scale then rotation around `rotation_center`. Used by `anchor()` and `bounds()` in all entity types.
-- **Fitting** -- `fit_within()` scales to fit a target; `fit_to_cell()` is a convenience wrapper that delegates to `fit_within()` using the containing cell's bounds
+- **Movement** -- private `_move_to()` / `_move_by()` for pixel movement; public API is `.position`, `.at`, and `move_to_cell()`
+- **Binding** -- `.binding` property accepts a `Binding` dataclass (from `core/binding.py`) for relative positioning configuration
+- **Resolved state** -- `.is_resolved` is `True` after a transform with `origin` converts relative properties to absolute values. This is a one-way door — builder methods check it to avoid overwriting concrete values.
+- **Transforms** -- `rotate(angle, origin)` and `scale(factor, origin)` are **non-destructive**: they accumulate `_rotation` and `_scale_factor` without modifying geometry. With `origin`, `_resolve_to_absolute()` converts relative properties first, then orbits/scales the position around the origin. SVG rendering applies transforms via `_build_svg_transform()`.
+- **Transform properties** -- `.rotation` (degrees), `.scale_factor` (multiplier), `.rotation_center` (pivot point — default: position; overridden per entity type)
+- **World-space helpers** -- `_to_world_space(point)` applies scale then rotation around `rotation_center`. Used by `anchor()` and `bounds()`.
+- **Fitting** -- `fit_within()` scales to fit a target; `fit_to_cell()` delegates to `fit_within()` using the containing cell's bounds
 - **Connectivity** -- `connect()`, `place_beside()`
 
 ### Abstract methods every entity must implement
@@ -273,7 +273,7 @@ Connections optionally carry a `shape` — a `Line`, `Curve`, or `Path` entity t
 - **Curve**: The curve is converted to a precise cubic segment for rendering (degree elevation — no approximation loss).
 - **Path**: The pathable is sampled and fitted into smooth cubic segments via `fit_cubic_beziers()` in `core/bezier.py` (Hermite interpolation).
 
-At render time, the shape is automatically stretched and rotated (affine transform) to connect the actual entity anchor endpoints. When `shape=None` (the default), `to_svg()` returns an empty string — the connection is invisible but still trackable via `entity._connections` and queryable via `point_at(t)`.
+At render time, the shape is automatically stretched and rotated (affine transform) to connect the actual anchor endpoints. When `shape=None` (the default), `to_svg()` returns an empty string — the connection is invisible but still queryable via `point_at(t)`.
 
 ### Entity-reference vertices
 
@@ -283,7 +283,7 @@ Polygon vertices can be static `Coord` values or live entity references (`Entity
 
 Surface builder methods accept named positions (`"center"`, `"top_left"`) or relative tuples `(rx, ry)` where `(0, 0)` is top-left and `(1, 1)` is bottom-right. This keeps cell-level code resolution-independent.
 
-Internally, relative positions are stored as `RelCoord(rx, ry)` -- a `NamedTuple` with `rx` and `ry` fields (see `core/coord.py`). The public `.at` property on every entity returns and accepts `RelCoord` values. The `binding` property accepts a `Binding` dataclass for full positioning configuration (relative position, path-following, reference entity). Low-level movement methods (`_move_to`, `_move_by`) are private; users reposition entities through `.position`, `.at`, or `move_to_cell()`.
+Internally, relative positions are stored as `RelCoord(rx, ry)` — a `NamedTuple` with `rx` and `ry` fields (see `core/coord.py`). The `.at` property on every entity returns and accepts `RelCoord` values. The `.binding` property accepts a `Binding` dataclass for full positioning configuration (relative position, path-following, reference entity). Users reposition entities through `.position`, `.at`, or `move_to_cell()` — low-level pixel movement (`_move_to`, `_move_by`) is private.
 
 ### Entity.cell back-reference
 

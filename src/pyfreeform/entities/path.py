@@ -28,17 +28,13 @@ class Path(StrokedPathMixin, Entity):
     """
     Renders any Pathable as a smooth SVG ``<path>`` using cubic Bézier curves.
 
-    This bridges the gap between the Pathable protocol (which only defines
-    ``point_at(t)``) and actual SVG rendering. Pass in a Wave, Spiral,
-    Lissajous, or any custom Pathable and get a smooth, stroked (and
-    optionally filled) SVG curve.
+    Pass in a Wave, Spiral, Lissajous, or any custom Pathable and get a
+    smooth, stroked (and optionally filled) SVG curve. The path is sampled
+    and approximated with Bézier segments (Hermite interpolation) for a
+    clean result.
 
-    The algorithm samples the pathable and fits cubic Bézier segments using
-    Hermite interpolation, giving C1 continuity (matching tangents) at every
-    joint.
-
-    For closed paths, the last segment wraps back to the first point with
-    continuous smoothness — no visible seam.
+    For closed paths, the last segment wraps smoothly back to the start
+    with no visible seam.
 
     Attributes:
         closed: Whether this is a closed path.

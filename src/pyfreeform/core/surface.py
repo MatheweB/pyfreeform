@@ -281,38 +281,27 @@ class Surface:
         """
         Add a dot to this surface.
 
-        Position can be specified in three ways:
-        1. `at`: Named position or relative coordinates
-        2. `along` + `t`: Position along a path (t=0 is start, t=1 is end)
-        3. Defaults to center
-
         Args:
-            at: Position ("center", "top_left", or (rx, ry) tuple)
-            along: Any Pathable object (Line, Curve, Ellipse, or custom path)
-            t: Position along the path (0.0 to 1.0)
-            radius: Dot radius in pixels
-            color: Fill color
-            z_index: Layer order (higher = on top)
-            style: DotStyle object (overrides individual params)
+            at: Position ("center", "top_left", or (rx, ry) tuple).
+            within: Size/position relative to another entity's bounds.
+            along: Path to position the dot along.
+            t: Parameter on the path (0.0 to 1.0).
+            radius: Dot radius as fraction of the smaller surface
+                    dimension. 0.05 = 5% of min(width, height).
+            color: Fill color.
+            z_index: Layer order (higher = on top).
+            opacity: Opacity (0.0 transparent to 1.0 opaque).
+            style: DotStyle object (overrides individual params).
 
         Returns:
             The created Dot entity.
 
         Examples:
             >>> cell.add_dot()  # Centered, default style
-            >>> cell.add_dot(color="red", radius=0.3)
+            >>> cell.add_dot(color="red", radius=0.1)
             >>> cell.add_dot(at="top_left")
             >>> cell.add_dot(at=(0.25, 0.75))  # 25% across, 75% down
-
-            >>> # Works with any Pathable object
-            >>> line = cell.add_diagonal()
-            >>> cell.add_dot(along=line, t=cell.brightness)
-
-            >>> curve = cell.add_curve()
-            >>> cell.add_dot(along=curve, t=0.5)
-
-            >>> ellipse = cell.add_ellipse(rx=0.3, ry=0.2)
-            >>> cell.add_dot(along=ellipse, t=cell.brightness)
+            >>> cell.add_dot(along=line, t=0.5)  # Midpoint of a line
         """
         from ..entities.dot import Dot
 
@@ -541,10 +530,10 @@ class Surface:
         style: LineStyle | None = None,
     ) -> Curve:
         """
-        Add a curved line to this surface.
+        Add a smooth curve between two points.
 
-        Curves are quadratic Bezier curves. The curvature parameter controls
-        how much the curve bows away from a straight line.
+        The ``curvature`` parameter controls how much the curve bows
+        away from a straight line.
 
         When ``along`` is provided, the curve's midpoint is repositioned
         onto the path at parameter ``t``. If ``align=True``, the curve
@@ -964,7 +953,7 @@ class Surface:
         to follow the path's tangent.
 
         When ``along`` is provided without ``t``, the text is warped
-        along the path using SVG ``<textPath>`` (Phase 6).
+        along the path using SVG ``<textPath>``.
 
         Args:
             content: The text string to display.

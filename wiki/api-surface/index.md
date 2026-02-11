@@ -1,6 +1,6 @@
 # API Reference
 
-This is the comprehensive API reference for PyFreeform. Every class, method, property, and concept is documented here on a single page, organized to follow the natural discovery flow -- from creating your first Scene to building complex generative art.
+Comprehensive API reference for PyFreeform. Organized to follow the natural discovery flow -- from creating your first Scene to building complex generative art.
 
 !!! tip "How to use this reference"
     This page is designed as a **lookup reference**. For learning-oriented walkthroughs with visual examples, see the [Guide](../guide/index.md) section. For copy-paste starting points, see [Recipes](../recipes/index.md).
@@ -181,7 +181,7 @@ Modes: `"value"` (raw), `"normalized"` (0-1), `"hex"` (color string). Normally h
 
 ## 3. The Cell: Your Creative Unit
 
-`Cell` extends `Surface` -- it inherits all 12+ builder methods plus has image data, position helpers, and neighbor access.
+`Cell` extends `Surface` -- it inherits all 12 builder methods plus has image data, position helpers, and neighbor access.
 
 !!! info "See also"
     For practical cell usage patterns, see [Working with Cells](../guide/02-working-with-cells.md).
@@ -362,7 +362,7 @@ Builder methods store sizing as **fractions** of the reference frame. These are 
 These return `None` when the entity is in absolute mode (constructed directly or after a transform resolves them). Setting them switches the entity back to relative mode for that dimension.
 
 !!! note "Sizing vs geometry"
-    Relative **sizing** properties (radius, rx/ry, width/height, font_size) are independent of transforms -- rotation doesn't affect how big something is relative to its cell. Relative **geometry** properties (vertices, start/end) encode positions that transforms resolve to absolute values. Builder methods use `entity.is_resolved` to guard against setting geometry after a transform.
+    Relative **sizing** (radius, rx/ry, width/height, font_size) is unaffected by transforms — rotation doesn't change how big something is relative to its cell. Relative **geometry** (vertices, start/end) encodes positions that transforms convert to absolute values. After a transform resolves an entity, builder methods won't overwrite those concrete values.
 
 ### Complete Builder Reference
 
@@ -533,13 +533,13 @@ All entities inherit from `Entity` and share these common capabilities.
 | `entity.binding` | Read/write positioning config as a `Binding` dataclass (see [Binding](#the-binding-dataclass) below) |
 | `entity.rotation` | Accumulated rotation in degrees (default 0.0). Non-destructive -- stored, not baked. |
 | `entity.scale_factor` | Accumulated scale multiplier (default 1.0). Non-destructive -- stored, not baked. |
-| `entity.rotation_center` | `Coord` -- the natural pivot for rotation/scale. Default: `self.position`. Overridden by Rect (center), Polygon (centroid), Line/Curve (chord midpoint), Path (Bezier midpoint). |
-| `entity.is_resolved` | Read-only `bool` -- `True` after a transform with `origin` resolves all relative properties (position, sizing, geometry) to absolute values. Builder methods use this to decide whether to store relative properties. |
+| `entity.rotation_center` | `Coord` -- the natural pivot for rotation/scale. Default: entity position. Each type overrides with its natural center (Rect center, Polygon centroid, Line/Curve chord midpoint, etc.). |
+| `entity.is_resolved` | Read-only `bool` -- `True` after a transform with `origin` converts relative properties to absolute values. Once resolved, relative values won't be overwritten by builder methods. |
 | `entity.z_index` | Layer ordering (higher = on top) |
 | `entity.cell` | Containing Surface (if placed) |
 | `entity.connections` | Set of connections involving this entity |
 | `entity.data` | Custom data dictionary |
-| `entity.ref_frame()` | Returns `(x, y, width, height)` -- bounding box as a reference frame. Unified interface used by both Entity and Surface for resolving relative coordinates. |
+| `entity.ref_frame()` | Returns `(x, y, width, height)` -- bounding box as a reference frame for resolving relative coordinates. |
 | `entity.offset_from(anchor, dx, dy)` | Returns `Coord` at the named anchor position offset by `(dx, dy)` pixels. |
 
 ### Movement
@@ -575,7 +575,7 @@ See [Transforms and Layout](../guide/08-transforms-and-layout.md) for detailed t
 | `entity.to_svg()` | Render to SVG element string |
 | `entity.bounds(*, visual=False)` | Bounding box: `(min_x, min_y, max_x, max_y)`. Pass `visual=True` to include stroke width in the bounds. |
 | `entity.inner_bounds()` | Inscribed rectangle (default: same as bounds) |
-| `entity.rotated_bounds(angle, *, visual=False)` | Tight AABB of this entity rotated by `angle` degrees around the origin. Default: rotates 4 `bounds()` corners. Override with exact analytical formulas (Bezier extrema, ellipse extents, etc.) for tighter bounds. Used by `EntityGroup.bounds()` to compose tight group bounds. |
+| `entity.rotated_bounds(angle, *, visual=False)` | Tight AABB of this entity rotated by `angle` degrees around the origin. Used by `EntityGroup.bounds()` to compose tight group bounds. |
 
 ---
 
@@ -794,8 +794,8 @@ EntityGroup(x=0, y=0, z_index=0, opacity=1.0)
 - **`group.children`**: List of children (copy)
 - **`group.rotate(angle, origin=None)`**: Accumulate rotation (degrees). With `origin`, also orbits position.
 - **`group.scale(factor, origin=None)`**: Accumulate scale factor.
-- **`group.rotation`**: Read-only `float` -- current accumulated rotation angle in degrees.
-- **`group.scale_factor`**: Read-only `float` -- current cumulative scale factor.
+- **`group.rotation`**: Read/write `float` -- current accumulated rotation angle in degrees.
+- **`group.scale_factor`**: Read/write `float` -- current cumulative scale factor.
 - **`group.opacity`**: Group-level opacity (applies to entire `<g>` element)
 - **Placement**: `cell.add(group)` -- centers in cell
 - **Fitting**: `group.fit_to_cell(fraction)` -- auto-scales to fit cell bounds
@@ -942,12 +942,12 @@ connection = entity1.connect(
 - **`style`** accepts `ConnectionStyle` or `dict` with `width`, `color`, `z_index`, `cap` keys
 - **`shape=None`** (default) = invisible — `point_at(t)` still works (linear interpolation between anchors)
 - **`segments`** controls Bezier fitting resolution for `Path` shapes (default 32; ignored for Line/Curve)
-- Added to scene via `scene.add_connection(connection)` (`entity.connect()` does not auto-add)
+- Added to scene via `scene.add_connection(connection)` — `entity.connect()` creates the object but does **not** auto-add it
 - Supports cap system (arrow, arrow_in, custom) on all visible shapes
 - Closed paths (`Path(pathable, closed=True)`) cannot be used as shapes — raises `ValueError`
 
 !!! warning "Connections must be added to the scene"
-    Calling `entity.connect(other)` creates a `Connection` object but does **not** add it to the scene. You must call `scene.add_connection(connection)` separately.
+    `entity.connect()` returns a `Connection` but does **not** add it to the scene. Call `scene.add_connection(connection)` to make it render.
 
 ---
 
@@ -960,14 +960,14 @@ connection = entity1.connect(
 
 All entities support **non-destructive** transforms -- rotation and scale are stored as numbers and applied at render time via SVG `transform`, not baked into geometry:
 
-- **`rotate(angle, origin)`** -- Accumulates `rotation` (degrees). Without `origin`: stores angle only, relative properties preserved. With `origin`: resolves all relative properties (position, sizing, geometry) to absolute values, then orbits position around origin.
-- **`scale(factor, origin)`** -- Accumulates `scale_factor` (multiplier). Without `origin`: stores factor only, relative properties preserved. With `origin`: resolves all relative properties to absolute values, then scales position distance from origin.
+- **`rotate(angle, origin)`** -- Accumulates `rotation` (degrees). Without `origin`, rotates in place. With `origin`, also orbits the entity around that point (resolves relative properties to absolute values first).
+- **`scale(factor, origin)`** -- Accumulates `scale_factor` (multiplier). Without `origin`, scales in place. With `origin`, also moves the entity toward/away from that point (resolves relative properties first).
 
 Properties after transforms:
 
 - **Model-space** properties (`.radius`, `.width`, `.end`, `.vertices`) are **unchanged** by transforms
 - **World-space** methods (`anchor()`, `bounds()`, `point_at()`) apply rotation and scale automatically
-- **`to_svg()`** emits model-space coordinates + `transform="translate(cx,cy) rotate(R) scale(S) translate(-cx,-cy)"`
+- **SVG output** uses model-space coordinates with a `transform` attribute for rotation and scale
 
 Per-entity pivot points (`rotation_center`):
 
@@ -987,7 +987,7 @@ The core fitting method. Scales and positions any entity to fit within a target 
 - **`recenter`**: If True, centers entity within target after scaling.
 - **`at=(rx, ry)`**: Position-aware mode. Entity is placed at relative position within target, with available space constrained by nearest edges.
 - **`visual`**: If True (default), includes stroke width when measuring bounds.
-- **`rotate`**: If True, finds the rotation angle that maximizes fill before scaling. Uses a closed-form O(1) solution (3 candidate angles). Works on any entity type.
+- **`rotate`**: If True, finds the rotation angle that maximizes fill before scaling (closed-form, 3 candidate angles). Works on any entity type.
 - **`match_aspect`**: If True, rotates the entity so its bounding box aspect ratio matches the target's. Mutually exclusive with `rotate`.
 
 ### `fit_to_cell(scale=1.0, recenter=True, *, at=None, visual=True, rotate=False, match_aspect=False)`
