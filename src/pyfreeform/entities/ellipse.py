@@ -5,8 +5,8 @@ from __future__ import annotations
 import math
 
 from ..color import Color
-from ..core.entity import Entity
 from ..core.coord import Coord, CoordLike
+from ..core.entity import Entity
 
 
 class Ellipse(Entity):
@@ -98,6 +98,24 @@ class Ellipse(Entity):
         self._fill = Color(fill) if fill is not None else None
         self._stroke = Color(stroke) if stroke is not None else None
 
+    @property
+    def relative_rx(self) -> float | None:
+        """Relative x-radius (fraction of reference width), or None."""
+        return self._relative_rx
+
+    @relative_rx.setter
+    def relative_rx(self, value: float | None) -> None:
+        self._relative_rx = value
+
+    @property
+    def relative_ry(self) -> float | None:
+        """Relative y-radius (fraction of reference height), or None."""
+        return self._relative_ry
+
+    @relative_ry.setter
+    def relative_ry(self, value: float | None) -> None:
+        self._relative_ry = value
+
     @classmethod
     def at_center(
         cls,
@@ -132,9 +150,21 @@ class Ellipse(Entity):
         Returns:
             A new Ellipse entity.
         """
-        center = Coord._coerce(center)
-        return cls(center.x, center.y, rx, ry, rotation, fill, stroke, stroke_width,
-                   z_index, opacity, fill_opacity, stroke_opacity)
+        center = Coord.coerce(center)
+        return cls(
+            center.x,
+            center.y,
+            rx,
+            ry,
+            rotation,
+            fill,
+            stroke,
+            stroke_width,
+            z_index,
+            opacity,
+            fill_opacity,
+            stroke_opacity,
+        )
 
     @property
     def rx(self) -> float:
@@ -201,13 +231,13 @@ class Ellipse(Entity):
         """Get anchor point by name."""
         if name == "center":
             return self.position
-        elif name == "right":
+        if name == "right":
             return self.point_at_angle(0)
-        elif name == "top":
+        if name == "top":
             return self.point_at_angle(90)
-        elif name == "left":
+        if name == "left":
             return self.point_at_angle(180)
-        elif name == "bottom":
+        if name == "bottom":
             return self.point_at_angle(270)
         raise ValueError(f"Ellipse has no anchor '{name}'. Available: {self.anchor_names}")
 
@@ -368,7 +398,7 @@ class Ellipse(Entity):
             # Rotate position around external origin — switch to pixel mode
             self._to_pixel_mode()
 
-            origin = Coord._coerce(origin)
+            origin = Coord.coerce(origin)
 
             angle_rad = math.radians(angle)
             cos_a = math.cos(angle_rad)
@@ -401,7 +431,7 @@ class Ellipse(Entity):
 
         if origin is not None:
             self._to_pixel_mode()
-            origin = Coord._coerce(origin)
+            origin = Coord.coerce(origin)
 
             new_x = origin.x + (self.position.x - origin.x) * factor
             new_y = origin.y + (self.position.y - origin.y) * factor
@@ -433,7 +463,9 @@ class Ellipse(Entity):
             dx, dy = self.rx, self.ry
         else:
             dx, dy = Ellipse._ellipse_extents(
-                self.rx, self.ry, math.radians(self.rotation),
+                self.rx,
+                self.ry,
+                math.radians(self.rotation),
             )
         min_x, min_y = cx - dx, cy - dy
         max_x, max_y = cx + dx, cy + dy
@@ -445,8 +477,11 @@ class Ellipse(Entity):
             max_y += half
         return (min_x, min_y, max_x, max_y)
 
-    def _rotated_bounds(
-        self, angle: float, *, visual: bool = False,
+    def rotated_bounds(
+        self,
+        angle: float,
+        *,
+        visual: bool = False,
     ) -> tuple[float, float, float, float]:
         """Exact AABB of this ellipse rotated by *angle* degrees around origin."""
         if angle == 0:
@@ -493,7 +528,9 @@ class Ellipse(Entity):
 
         # Opacity
         eff_fill_opacity = self.fill_opacity if self.fill_opacity is not None else self.opacity
-        eff_stroke_opacity = self.stroke_opacity if self.stroke_opacity is not None else self.opacity
+        eff_stroke_opacity = (
+            self.stroke_opacity if self.stroke_opacity is not None else self.opacity
+        )
         if eff_fill_opacity < 1.0:
             parts.append(f' fill-opacity="{eff_fill_opacity}"')
         if eff_stroke_opacity < 1.0:
@@ -501,10 +538,12 @@ class Ellipse(Entity):
 
         # Rotation (use SVG transform)
         if self.rotation != 0:
-            parts.append(f' transform="rotate({self.rotation} {self.position.x} {self.position.y})"')
+            parts.append(
+                f' transform="rotate({self.rotation} {self.position.x} {self.position.y})"'
+            )
 
-        parts.append(' />')
-        return ''.join(parts)
+        parts.append(" />")
+        return "".join(parts)
 
     def __repr__(self) -> str:
         return (

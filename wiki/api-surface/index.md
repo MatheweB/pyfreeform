@@ -319,6 +319,51 @@ dot.at = (0.5, 0.5) # Reposition to center (plain tuples still accepted)
 
 Returns `None` if the entity was created with pixel coordinates (via `place()` or direct constructor). See [The RelCoord Type](#12-the-relcoord-type) for details.
 
+### The Binding Dataclass
+
+Every entity's full positioning configuration is accessible as a `Binding` -- a frozen dataclass from `pyfreeform.core.binding`:
+
+```python
+from pyfreeform.core.binding import Binding
+
+# Relative position within the cell
+entity.binding = Binding(at=RelCoord(0.25, 0.75))
+
+# Position relative to another entity
+entity.binding = Binding(at=RelCoord(0.5, 0.5), reference=rect)
+
+# Position along a path at t=0.3
+entity.binding = Binding(along=line, t=0.3)
+```
+
+| Field | Type | Default | Description |
+|---|---|---|---|
+| `at` | `RelCoord \| None` | `None` | Relative position within reference frame |
+| `reference` | `Surface \| Entity \| None` | `None` | Override reference frame (default: containing cell) |
+| `along` | `Pathable \| None` | `None` | Path to follow |
+| `t` | `float` | `0.5` | Parameter along path (0.0--1.0) |
+
+Modes are mutually exclusive: use `at` for relative positioning, or `along`+`t` for path positioning. The `reference` field optionally overrides the cell as the frame of reference (this is what `within=` sets in builder methods).
+
+### Relative Sizing Properties
+
+Builder methods store sizing as **fractions** of the reference frame. These are accessible as read/write properties on each entity:
+
+| Entity | Property | Builder default | Description |
+|---|---|---|---|
+| Dot | `relative_radius` | `0.05` | Fraction of min(width, height) |
+| Line | `relative_start`, `relative_end` | varies | Start/end as `RelCoord` fractions |
+| Curve | `relative_start`, `relative_end` | varies | Start/end as `RelCoord` fractions |
+| Ellipse | `relative_rx`, `relative_ry` | `0.4` | Fraction of surface width/height |
+| Rect | `relative_width`, `relative_height` | `0.6` | Fraction of surface width/height |
+| Text | `relative_font_size` | `0.25` | Fraction of surface height |
+| Polygon | `relative_vertices` | varies | List of `RelCoord` vertex positions |
+
+These return `None` when the entity is in pixel mode (constructed directly or after a transform). Setting them switches the entity back to relative mode for that dimension.
+
+!!! note "Sizing vs geometry"
+    Relative **sizing** properties (radius, rx/ry, width/height, font_size) are independent of transforms -- rotation doesn't affect how big something is relative to its cell. Relative **geometry** properties (vertices, start/end) encode positions that transforms bake into pixels. Builder methods use `entity.in_pixel_mode` to guard against setting geometry after a transform.
+
 ### Complete Builder Reference
 
 #### `add_dot`
@@ -485,10 +530,14 @@ All entities inherit from `Entity` and share these common capabilities.
 | `entity.position` | Current position (`Coord`) -- computed from relative coords if set |
 | `entity.x`, `entity.y` | Position coordinates (lazily resolved) |
 | `entity.at` | Read/write relative position as `RelCoord(rx, ry)`, or `None` if pixel-mode |
+| `entity.binding` | Read/write positioning config as a `Binding` dataclass (see [Binding](#the-binding-dataclass) below) |
+| `entity.in_pixel_mode` | Read-only `bool` -- `True` if a transform (`rotate`/`scale`) has baked geometry into pixels. Builder methods use this to decide whether to store relative properties. |
 | `entity.z_index` | Layer ordering (higher = on top) |
 | `entity.cell` | Containing Surface (if placed) |
 | `entity.connections` | Set of connections involving this entity |
 | `entity.data` | Custom data dictionary |
+| `entity.ref_frame()` | Returns `(x, y, width, height)` -- bounding box as a reference frame. Unified interface used by both Entity and Surface for resolving relative coordinates. |
+| `entity.offset_from(anchor, dx, dy)` | Returns `Coord` at the named anchor position offset by `(dx, dy)` pixels. |
 
 ### Movement
 
@@ -523,7 +572,7 @@ See [Transforms and Layout](../guide/08-transforms-and-layout.md) for detailed t
 | `entity.to_svg()` | Render to SVG element string |
 | `entity.bounds(*, visual=False)` | Bounding box: `(min_x, min_y, max_x, max_y)`. Pass `visual=True` to include stroke width in the bounds. |
 | `entity.inner_bounds()` | Inscribed rectangle (default: same as bounds) |
-| `entity._rotated_bounds(angle, *, visual=False)` | Tight AABB of this entity rotated by `angle` degrees around the origin. Default: rotates 4 `bounds()` corners. Override with exact analytical formulas (Bezier extrema, ellipse extents, etc.) for tighter bounds. Used by `EntityGroup.bounds()` to compose tight group bounds. |
+| `entity.rotated_bounds(angle, *, visual=False)` | Tight AABB of this entity rotated by `angle` degrees around the origin. Default: rotates 4 `bounds()` corners. Override with exact analytical formulas (Bezier extrema, ellipse extents, etc.) for tighter bounds. Used by `EntityGroup.bounds()` to compose tight group bounds. |
 
 ---
 
@@ -686,6 +735,7 @@ Rect.at_center(center, width, height, rotation=0, ...)
 - **Rotation**: `rotation` attribute, SVG `transform="rotate()"`
 - **Bounds**: Uses Pillow for accurate font measurement; heuristic fallback
 - **`fit_to_cell(fraction)`**: Scales font up or down so text fills the cell at `fraction` (like `EntityGroup.fit_to_cell`)
+- **`text.has_textpath`**: Read-only `bool` -- `True` if the text renders along a path (textPath mode)
 - **TextPath**: `text.set_textpath(path_id, path_d, start_offset, text_length)` for warping along paths
 
 See [Text and Typography](../guide/07-text-and-typography.md) for text layout and textpath examples.
@@ -741,6 +791,8 @@ EntityGroup(x=0, y=0, z_index=0, opacity=1.0)
 - **`group.children`**: List of children (copy)
 - **`group.rotate(angle, origin=None)`**: Accumulate rotation (degrees). With `origin`, also orbits position.
 - **`group.scale(factor, origin=None)`**: Accumulate scale factor.
+- **`group.rotation`**: Read-only `float` -- current accumulated rotation angle in degrees.
+- **`group.scale_factor`**: Read-only `float` -- current cumulative scale factor.
 - **`group.opacity`**: Group-level opacity (applies to entire `<g>` element)
 - **Placement**: `cell.add(group)` -- centers in cell
 - **Fitting**: `group.fit_to_cell(fraction)` -- auto-scales to fit cell bounds
@@ -1051,6 +1103,13 @@ from pyfreeform import Coord
 | `point.distance_to(other)` | Euclidean distance |
 | `point.midpoint(other)` | Midpoint between two points |
 | `point.lerp(other, t)` | Linear interpolation |
+| `point.normalized()` | Unit vector in same direction (zero vector if length is 0) |
+| `point.dot(other)` | Dot product with another coord (as 2D vectors) |
+| `point.rotated(angle, origin=None)` | Rotate around origin. `angle` is in **radians**. Default origin: `(0, 0)` |
+| `point.clamped(min_x, min_y, max_x, max_y)` | Return coord clamped to bounds |
+| `point.rounded(decimals=0)` | Round coordinates to N decimal places |
+| `point.as_tuple()` | Return as plain `(float, float)` |
+| `Coord.coerce(value)` | Convert `(x, y)` tuple or Coord-like to `Coord` |
 | `point + Coord(dx, dy)` | Addition |
 | `point - Coord(dx, dy)` | Subtraction |
 
@@ -1098,6 +1157,7 @@ a / 2   # RelCoord(0.1, 0.15)
 | `rc.lerp(other, t)` | Linear interpolation |
 | `rc.clamped(min_rx=0, min_ry=0, max_rx=1, max_ry=1)` | Clamp to valid range (default 0.0--1.0) |
 | `rc.as_tuple()` | Return as plain `(float, float)` |
+| `RelCoord.coerce(value)` | Convert `(rx, ry)` tuple or RelCoord-like to `RelCoord` |
 
 ### Where RelCoord Appears
 

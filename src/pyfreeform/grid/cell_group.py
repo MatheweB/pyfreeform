@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from ..core.entity import Entity
 from ..core.surface import Surface
 
 if TYPE_CHECKING:
+    from ..core.entity import Entity
     from .cell import Cell
     from .grid import Grid
 

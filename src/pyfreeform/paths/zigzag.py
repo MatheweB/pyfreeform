@@ -68,10 +68,7 @@ class Zigzag:
         # Triangle wave derivative: constant slope, alternating sign
         phase = t * self.teeth * 2
         slope = self.amplitude * 2 * self.teeth * 2
-        if int(phase) % 2 == 0:
-            wave_dy = slope
-        else:
-            wave_dy = -slope
+        wave_dy = slope if int(phase) % 2 == 0 else -slope
 
         if dx == 0 and (base_dy + wave_dy) == 0:
             return 0.0

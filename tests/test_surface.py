@@ -7,7 +7,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from pyfreeform import Scene, Cell, CellGroup, Surface, Grid, Dot, Line, Curve
+from pyfreeform import Scene, CellGroup, Surface, Text
 
 
 # =========================================================================
@@ -161,8 +161,8 @@ def test_cell_group_averaged_brightness():
     """CellGroup.brightness should average constituent cells."""
     scene = Scene.with_grid(cols=2, rows=1, cell_size=10)
     # Set brightness on cells manually
-    scene.grid[0, 0]._data["brightness"] = 0.2
-    scene.grid[0, 1]._data["brightness"] = 0.8
+    scene.grid[0, 0].data["brightness"] = 0.2
+    scene.grid[0, 1].data["brightness"] = 0.8
     group = scene.grid.merge((0, 0), (0, 1))
     assert abs(group.brightness - 0.5) < 0.01
 
@@ -170,8 +170,8 @@ def test_cell_group_averaged_brightness():
 def test_cell_group_averaged_color():
     """CellGroup.color should average constituent cells' RGB."""
     scene = Scene.with_grid(cols=2, rows=1, cell_size=10)
-    scene.grid[0, 0]._data["color"] = "#ff0000"  # Red
-    scene.grid[0, 1]._data["color"] = "#0000ff"  # Blue
+    scene.grid[0, 0].data["color"] = "#ff0000"  # Red
+    scene.grid[0, 1].data["color"] = "#0000ff"  # Blue
     group = scene.grid.merge((0, 0), (0, 1))
     # Average of (255,0,0) and (0,0,255) → (128, 0, 128) → #800080
     r, g, b = group.rgb
@@ -209,7 +209,7 @@ def test_cell_group_add_text():
     group = scene.grid.merge_row(0)
     text = group.add_text("Title", at="center", font_size=0.50, color="white")
     assert text.x == 30.0  # center of 60-wide row
-    assert text.y == 5.0   # center of 10-high row
+    assert text.y == 5.0  # center of 10-high row
 
 
 def test_cell_group_add_fill():
@@ -333,10 +333,10 @@ def test_text_fit_to_cell_scales_down():
 
 def test_text_fit_to_cell_no_cell_raises():
     """fit_to_cell should raise if text has no cell."""
-    from pyfreeform import Text
+
     text = Text(0, 0, "Hello", font_size=16)
     try:
         text.fit_to_cell(1.0)
-        assert False, "Should have raised ValueError"
+        raise AssertionError("Should have raised ValueError")
     except ValueError:
         pass

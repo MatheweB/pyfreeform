@@ -1,7 +1,5 @@
 """Generate SVGs for Recipe: Connected Networks."""
 
-import math
-
 from pyfreeform import Scene, Palette, Line, ConnectionStyle
 
 from wiki._generator import save, sample_image
@@ -47,7 +45,7 @@ def generate():
     keys = list(dots.keys())
     for i, key1 in enumerate(keys):
         cell1 = scene.grid[key1[0], key1[1]]
-        for key2 in keys[i + 1:]:
+        for key2 in keys[i + 1 :]:
             cell2 = scene.grid[key2[0], key2[1]]
             dist = cell1.distance_to(cell2)
             if dist < 80:
@@ -71,7 +69,10 @@ def generate():
             dots[(cell.row, cell.col)] = dot
 
     arrow_style = ConnectionStyle(
-        width=1.5, color=colors.primary, opacity=0.5, end_cap="arrow",
+        width=1.5,
+        color=colors.primary,
+        opacity=0.5,
+        end_cap="arrow",
     )
     for (r, c), dot in dots.items():
         # Connect rightward and downward

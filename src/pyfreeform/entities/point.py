@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from ..core.entity import Entity
-from ..core.coord import Coord, CoordLike
+
+if TYPE_CHECKING:
+    from ..core.coord import Coord
 
 
 class Point(Entity):
@@ -41,8 +45,7 @@ class Point(Entity):
         return ""
 
     def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
-        return (self._position.x, self._position.y,
-                self._position.x, self._position.y)
+        return (self._position.x, self._position.y, self._position.x, self._position.y)
 
     def __repr__(self) -> str:
         return f"Point({self.x}, {self.y})"

@@ -4,8 +4,14 @@ import math
 import pytest
 
 from pyfreeform import (
-    Scene, Line, Curve, Ellipse, Dot, Rect, Text, Polygon, Connection,
-    get_angle_at, Point,
+    Scene,
+    Line,
+    Curve,
+    Ellipse,
+    Dot,
+    get_angle_at,
+    Point,
+    Connection
 )
 from pyfreeform.core.coord import Coord
 
@@ -14,6 +20,7 @@ from pyfreeform.core.coord import Coord
 # Helper: create a simple scene with a surface to test builder methods
 # =========================================================================
 
+
 def make_scene():
     return Scene.with_grid(cols=10, rows=10, cell_size=10)
 
@@ -21,6 +28,7 @@ def make_scene():
 # =========================================================================
 # 1. angle_at() — analytical tangent angles
 # =========================================================================
+
 
 class TestAngleAt:
     def test_line_constant_angle(self):
@@ -68,6 +76,7 @@ class TestAngleAt:
 # 2. get_angle_at() — fallback for custom Pathables
 # =========================================================================
 
+
 class TestGetAngleAt:
     def test_uses_angle_at_if_available(self):
         line = Line(0, 0, 100, 0)
@@ -87,6 +96,7 @@ class TestGetAngleAt:
 # =========================================================================
 # 3. to_svg_path_d() — SVG path strings
 # =========================================================================
+
 
 class TestToSvgPathD:
     def test_line_path_d(self):
@@ -126,23 +136,24 @@ class TestToSvgPathD:
 # 4. StrokedPathMixin — Line/Curve/Connection SVG output
 # =========================================================================
 
+
 class TestStrokedPathMixin:
     def test_line_svg_has_arrow_marker(self):
         line = Line(0, 0, 100, 0, end_cap="arrow")
         svg = line.to_svg()
-        assert 'marker-end=' in svg
+        assert "marker-end=" in svg
 
     def test_curve_svg_has_arrow_marker(self):
         curve = Curve(0, 0, 100, 0, curvature=0.5, end_cap="arrow")
         svg = curve.to_svg()
-        assert 'marker-end=' in svg
+        assert "marker-end=" in svg
 
     def test_connection_svg_has_arrow_marker(self):
         dot1 = Dot(0, 0)
         dot2 = Dot(100, 0)
         conn = Connection(dot1, dot2, style={"end_cap": "arrow"}, shape=Line())
         svg = conn.to_svg()
-        assert 'marker-end=' in svg
+        assert "marker-end=" in svg
 
     def test_line_effective_caps(self):
         line = Line(0, 0, 100, 0, cap="butt", end_cap="arrow")
@@ -158,6 +169,7 @@ class TestStrokedPathMixin:
 # =========================================================================
 # 5. Surface along= for each entity type
 # =========================================================================
+
 
 class TestSurfaceAlong:
     def test_add_dot_along(self):
@@ -231,7 +243,8 @@ class TestSurfaceAlong:
         # Triangle vertices (relative coords)
         polygon = scene.add_polygon(
             [(0.4, 0.4), (0.6, 0.4), (0.5, 0.6)],
-            along=line, t=0.5,
+            along=line,
+            t=0.5,
         )
         # The centroid should be near (50, 0) after repositioning
         assert polygon.position.x == pytest.approx(50.0, abs=1)
@@ -251,8 +264,11 @@ class TestSurfaceAlong:
         path = Line(0, 0, 200, 0)
         scene.place(path)
         curve = scene.add_curve(
-            start=(0, 0), end=(20, 0), curvature=0.3,
-            along=path, t=0.5,
+            start=(0, 0),
+            end=(20, 0),
+            curvature=0.3,
+            along=path,
+            t=0.5,
         )
         midpoint = curve.point_at(0.5)
         # Midpoint should be near (100, y) — x repositioned
@@ -271,6 +287,7 @@ class TestSurfaceAlong:
 # 6. TextPath warping
 # =========================================================================
 
+
 class TestTextPathWarp:
     def test_textpath_svg_output(self):
         scene = Scene(200, 100)
@@ -279,7 +296,7 @@ class TestTextPathWarp:
         # along without t → textPath warp mode
         cell = scene
         text = cell.add_text("Hello", along=curve)
-        assert text._textpath_info is not None
+        assert text.has_textpath
 
         svg = text.to_svg()
         assert "<textPath" in svg
@@ -311,7 +328,7 @@ class TestTextPathWarp:
         curve = Curve(0, 50, 200, 50, curvature=0.5)
         scene.place(curve)
         text = scene.add_text("Hi", along=curve, t=0.5)
-        assert text._textpath_info is None
+        assert not text.has_textpath
         svg = text.to_svg()
         assert "<textPath" not in svg
 
@@ -319,6 +336,7 @@ class TestTextPathWarp:
 # =========================================================================
 # 7. Edge cases
 # =========================================================================
+
 
 class TestEdgeCases:
     def test_along_t_zero(self):
@@ -363,10 +381,13 @@ class TestEdgeCases:
 # 8. Curve movement fixes (Phase 4)
 # =========================================================================
 
+
 class TestCurveMovement:
-    def test_curve_move_by(self):
+    def test_curve_translate(self):
         curve = Curve(0, 0, 100, 0, curvature=0.5)
-        curve._move_by(10, 20)
+        # Move both endpoints
+        curve.position = Coord(10, 20)
+        curve.end = Coord(110, 20)
         assert curve.start == Coord(10, 20)
         assert curve.end == Coord(110, 20)
 

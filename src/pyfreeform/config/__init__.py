@@ -3,18 +3,23 @@
 from .caps import register_cap
 from .palette import Palette
 from .styles import (
-    DotStyle, LineStyle, FillStyle, BorderStyle,
-    ShapeStyle, TextStyle, ConnectionStyle,
+    BorderStyle,
+    ConnectionStyle,
+    DotStyle,
+    FillStyle,
+    LineStyle,
+    ShapeStyle,
+    TextStyle,
 )
 
 __all__ = [
-    "Palette",
-    "DotStyle",
-    "LineStyle",
-    "FillStyle",
     "BorderStyle",
+    "ConnectionStyle",
+    "DotStyle",
+    "FillStyle",
+    "LineStyle",
+    "Palette",
     "ShapeStyle",
     "TextStyle",
-    "ConnectionStyle",
     "register_cap",
 ]

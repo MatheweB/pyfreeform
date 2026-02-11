@@ -9,6 +9,7 @@ pyfreeform/
   core/           # Foundational abstractions
     entity.py       # Entity ABC -- base for all drawable objects
     surface.py      # Surface base class -- Cell, Scene, CellGroup
+    binding.py      # Binding dataclass -- immutable positioning config
     pathable.py     # Pathable protocol -- point_at(t) interface
     connection.py   # Connection -- reactive link between entities
     coord.py        # Coord (x, y) and RelCoord (rx, ry) NamedTuples
@@ -120,8 +121,10 @@ Every entity has:
 - **Z-index** (`_z_index: int`) -- layer ordering for rendering
 - **Cell reference** (`_cell: Surface | None`) -- back-reference to container
 - **Connections** (`_connections: WeakSet`) -- tracked via weak references
-- **Movement** -- `_move_to()`, `_move_by()` (private); public API is the `.at` property and `move_to_cell()`
-- **Transforms** -- `rotate()`, `scale()` (base implementations; entities override)
+- **Movement** -- `_move_to()`, `_move_by()` (private pixel movement); public API is `.position`, `.at`, and `move_to_cell()`
+- **Binding** -- `binding` property accepts a `Binding` dataclass (from `core/binding.py`) for relative positioning
+- **Pixel mode** -- `in_pixel_mode` property (read-only) is `True` after `rotate()`/`scale()` bakes geometry into pixels. Builder methods check this to avoid overriding transforms with relative data.
+- **Transforms** -- `rotate()`, `scale()` (base implementations; entities override). Both call `_to_pixel_mode()` which resolves relative coords and sets `in_pixel_mode = True`.
 - **Fitting** -- `fit_within()`, `fit_to_cell()` -- scale to fit a target
 - **Connectivity** -- `connect()`, `place_beside()`
 
@@ -277,7 +280,7 @@ Polygon vertices can be static `Coord` values or live entity references (`Entity
 
 Surface builder methods accept named positions (`"center"`, `"top_left"`) or relative tuples `(rx, ry)` where `(0, 0)` is top-left and `(1, 1)` is bottom-right. This keeps cell-level code resolution-independent.
 
-Internally, relative positions are stored as `RelCoord(rx, ry)` -- a `NamedTuple` with `rx` and `ry` fields (see `core/coord.py`). The public `.at` property on every entity returns and accepts `RelCoord` values. Low-level movement methods (`_move_to`, `_move_by`) are private; users reposition entities through the `.at` property or `move_to_cell()`.
+Internally, relative positions are stored as `RelCoord(rx, ry)` -- a `NamedTuple` with `rx` and `ry` fields (see `core/coord.py`). The public `.at` property on every entity returns and accepts `RelCoord` values. The `binding` property accepts a `Binding` dataclass for full positioning configuration (relative position, path-following, reference entity). Low-level movement methods (`_move_to`, `_move_by`) are private; users reposition entities through `.position`, `.at`, or `move_to_cell()`.
 
 ### Entity.cell back-reference
 

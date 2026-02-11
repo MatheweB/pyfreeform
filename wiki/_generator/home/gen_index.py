@@ -2,7 +2,7 @@
 
 import math
 
-from pyfreeform import Scene, Palette, Polygon, map_range
+from pyfreeform import Scene, Palette, Polygon
 
 from wiki._generator import save, sample_image
 

@@ -1,8 +1,6 @@
 """Generate SVGs for Recipe: Image-to-Art Portraits."""
 
-import math
-
-from pyfreeform import Scene, Palette, Polygon
+from pyfreeform import Scene, Polygon
 
 from wiki._generator import save, sample_image
 

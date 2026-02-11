@@ -2,35 +2,40 @@
 
 from __future__ import annotations
 
+import math
+from typing import TYPE_CHECKING
+
 from ..color import Color
 from ..core.entity import Entity
-from ..core.coord import Coord, CoordLike
+
+if TYPE_CHECKING:
+    from ..core.coord import Coord, CoordLike
 
 
 class Dot(Entity):
     """
     A filled circle at a specific point.
-    
+
     The fundamental "mark" in PyFreeform - think of it as touching
     a pen or brush to paper.
-    
+
     Attributes:
         position: Center of the dot
         radius: Size of the dot
         color: Fill color
-    
+
     Anchors:
         - "center": The center point (same as position)
-    
+
     Examples:
         >>> dot = Dot(100, 100)
         >>> dot = Dot(100, 100, radius=10, color="coral")
         >>> dot.move_to_cell(cell, at=(0.5, 0.5))
     """
-    
+
     DEFAULT_RADIUS = 5
     DEFAULT_COLOR = "black"
-    
+
     def __init__(
         self,
         x: float = 0,
@@ -56,7 +61,16 @@ class Dot(Entity):
         self._relative_radius: float | None = None
         self._color = Color(color)
         self.opacity = float(opacity)
-    
+
+    @property
+    def relative_radius(self) -> float | None:
+        """Relative radius (fraction of min(surface_w, surface_h)), or None."""
+        return self._relative_radius
+
+    @relative_radius.setter
+    def relative_radius(self, value: float | None) -> None:
+        self._relative_radius = value
+
     @property
     def radius(self) -> float:
         """Radius in pixels (resolved from relative fraction if set)."""
@@ -82,22 +96,22 @@ class Dot(Entity):
     def color(self) -> str:
         """The fill color as a string."""
         return self._color.to_hex()
-    
+
     @color.setter
     def color(self, value: str | tuple[int, int, int]) -> None:
         self._color = Color(value)
-    
+
     @property
     def anchor_names(self) -> list[str]:
         """Available anchors: just 'center' for dots."""
         return ["center"]
-    
+
     def anchor(self, name: str = "center") -> Coord:
         """Get anchor point by name."""
         if name == "center":
             return self.position
         raise ValueError(f"Dot has no anchor '{name}'. Available: {self.anchor_names}")
-    
+
     def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
         """Get bounding box."""
         return (
@@ -107,13 +121,16 @@ class Dot(Entity):
             self.y + self.radius,
         )
 
-    def _rotated_bounds(
-        self, angle: float, *, visual: bool = False,
+    def rotated_bounds(
+        self,
+        angle: float,
+        *,
+        visual: bool = False,
     ) -> tuple[float, float, float, float]:
         """Exact AABB of this dot rotated by *angle* degrees around origin."""
         if angle == 0:
             return self.bounds(visual=visual)
-        import math
+
         rad = math.radians(angle)
         cos_a, sin_a = math.cos(rad), math.sin(rad)
         cx = self.x * cos_a - self.y * sin_a
@@ -123,39 +140,36 @@ class Dot(Entity):
 
     def inner_bounds(self) -> tuple[float, float, float, float]:
         """Inscribed square of the circle."""
-        import math
+
         r = self.radius / math.sqrt(2)
         return (self.x - r, self.y - r, self.x + r, self.y + r)
 
     def scale(self, factor: float, origin: CoordLike | None = None) -> Dot:
         """
         Scale the dot (changes radius and optionally position).
-        
+
         Args:
             factor: Scale factor (2.0 = double the radius).
             origin: If provided, also moves position away from origin.
-        
+
         Returns:
             self, for method chaining.
         """
         self.radius *= factor
-        
+
         if origin is not None:
             # Also scale position relative to origin
             super().scale(factor, origin)
-        
+
         return self
-    
+
     def to_svg(self) -> str:
         """Render to SVG circle element."""
-        parts = [
-            f'<circle cx="{self.x}" cy="{self.y}" '
-            f'r="{self.radius}" fill="{self.color}"'
-        ]
+        parts = [f'<circle cx="{self.x}" cy="{self.y}" r="{self.radius}" fill="{self.color}"']
         if self.opacity < 1.0:
             parts.append(f' opacity="{self.opacity}"')
-        parts.append(' />')
-        return ''.join(parts)
-    
+        parts.append(" />")
+        return "".join(parts)
+
     def __repr__(self) -> str:
         return f"Dot({self.x}, {self.y}, radius={self.radius}, color={self.color!r})"

@@ -1,21 +1,21 @@
 """Drawable entities for PyFreeform."""
 
-from .dot import Dot
-from .line import Line
-from .rect import Rect
 from .curve import Curve
+from .dot import Dot
 from .ellipse import Ellipse
-from .text import Text
+from .line import Line
 from .path import Path
 from .polygon import Polygon
+from .rect import Rect
+from .text import Text
 
 __all__ = [
-    "Dot",
-    "Line",
-    "Rect",
     "Curve",
-    "Path",
+    "Dot",
     "Ellipse",
-    "Text",
+    "Line",
+    "Path",
     "Polygon",
+    "Rect",
+    "Text",
 ]

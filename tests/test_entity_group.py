@@ -20,10 +20,10 @@ def test_group_rotate_accumulates():
     group.add(Dot(0, 0, radius=5, color="red"))
 
     group.rotate(30)
-    assert group._rotation == 30
+    assert group.rotation == 30
 
     group.rotate(15)
-    assert group._rotation == 45
+    assert group.rotation == 45
 
 
 def test_group_rotate_no_origin_no_position_change():
@@ -35,7 +35,7 @@ def test_group_rotate_no_origin_no_position_change():
 
     assert group.x == 100
     assert group.y == 200
-    assert group._rotation == 90
+    assert group.rotation == 90
 
 
 def test_group_rotate_with_origin_orbits_position():
@@ -46,7 +46,7 @@ def test_group_rotate_with_origin_orbits_position():
     # Rotate 90 degrees around the origin (0, 0)
     group.rotate(90, origin=(0, 0))
 
-    assert group._rotation == 90
+    assert group.rotation == 90
     # (100, 0) rotated 90° CCW around (0,0) → (0, 100)
     assert abs(group.x - 0) < 0.01
     assert abs(group.y - 100) < 0.01
@@ -164,7 +164,7 @@ def test_group_rotate_then_fit_then_rotate():
     group.fit_to_cell(0.8)
     group.rotate(15)
 
-    assert group._rotation == 45
+    assert group.rotation == 45
 
 
 def test_group_rotate_method_chaining():
@@ -223,7 +223,7 @@ def test_fit_to_cell_rotate_default_false():
     cell.add(group)
     group.fit_to_cell(0.8)
 
-    assert group._rotation == 0.0
+    assert group.rotation == 0.0
 
 
 def test_fit_to_cell_rotate_wide_in_tall():
@@ -245,7 +245,7 @@ def test_fit_to_cell_rotate_wide_in_tall():
     # Should have rotated significantly (>45°) to better use the tall cell.
     # The optimal angle is ~78° (balanced angle), NOT 90°, because the
     # closed-form solution finds where both dimensions are equally used.
-    assert group._rotation > 45
+    assert group.rotation > 45
 
     # Bounds should fit within cell
     min_x, min_y, max_x, max_y = group.bounds()
@@ -255,7 +255,7 @@ def test_fit_to_cell_rotate_wide_in_tall():
     assert max_y <= cell.y + cell.height + 1.0
 
     # Scale factor should be much better than unrotated (0.25)
-    assert group._scale > unrotated_factor
+    assert group.scale_factor > unrotated_factor
 
 
 def test_fit_to_cell_rotate_square_noop():
@@ -271,7 +271,7 @@ def test_fit_to_cell_rotate_square_noop():
     group.fit_to_cell(0.9, rotate=True)
 
     # Should pick 0° (or equivalent) since bbox is already square
-    assert group._rotation % 90 == pytest.approx(0, abs=1.0)
+    assert group.rotation % 90 == pytest.approx(0, abs=1.0)
 
 
 def test_fit_to_cell_rotate_with_at():

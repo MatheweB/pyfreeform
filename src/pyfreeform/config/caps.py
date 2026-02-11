@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
-from typing import Callable, NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 class _CapEntry(NamedTuple):
@@ -62,9 +65,7 @@ def is_marker_cap(name: str) -> bool:
     return name in _MARKER_CAPS
 
 
-def make_marker_id(
-    cap_name: str, color: str, size: float, *, for_start: bool = False
-) -> str:
+def make_marker_id(cap_name: str, color: str, size: float, *, for_start: bool = False) -> str:
     """Generate a deterministic marker ID from cap type, color, and size."""
     clean = color.lstrip("#").lower()
     size_str = f"{size:.1f}".replace(".", "_")
@@ -92,8 +93,7 @@ def get_marker(
     if entry is None:
         return None
     mid = make_marker_id(cap_name, color, size, for_start=for_start)
-    gen = (entry.start_generator if for_start and entry.start_generator else
-           entry.generator)
+    gen = entry.start_generator if for_start and entry.start_generator else entry.generator
     svg = gen(mid, color, size)
     return (mid, svg)
 
@@ -111,7 +111,7 @@ def get_marker(
 #   marker-end   → refX="10"  (right edge = path endpoint)
 #   marker-start → refX="0"   (left edge  = path endpoint)
 #
-# This means each (shape × position) combination needs its own generator:
+# This means each (shape x position) combination needs its own generator:
 #
 #   cap        position     shape      refX
 #   ─────────  ──────────   ─────────  ────
@@ -126,6 +126,7 @@ _REVERSE = "M 10 0 L 0 5 L 10 10 z"
 
 def _make_arrow_gen(path_d: str, ref_x: int):
     """Create an arrow marker generator with the given shape and refX."""
+
     def _gen(marker_id: str, color: str, size: float) -> str:
         return (
             f'<marker id="{marker_id}" viewBox="0 0 10 10" '
@@ -133,21 +134,22 @@ def _make_arrow_gen(path_d: str, ref_x: int):
             f'markerWidth="{size}" markerHeight="{size}" '
             f'orient="auto" overflow="visible">'
             f'<path d="{path_d}" fill="{color}" />'
-            f'</marker>'
+            f"</marker>"
         )
+
     return _gen
 
 
 # "arrow" — outward-facing (default): tip points away from the path.
 register_cap(
     "arrow",
-    _make_arrow_gen(_FORWARD, ref_x=10),          # end: → at endpoint
+    _make_arrow_gen(_FORWARD, ref_x=10),  # end: → at endpoint
     start_generator=_make_arrow_gen(_REVERSE, ref_x=0),  # start: ← at startpoint
 )
 
 # "arrow_in" — inward-facing: tip points into the path.
 register_cap(
     "arrow_in",
-    _make_arrow_gen(_REVERSE, ref_x=10),           # end: ← at endpoint
+    _make_arrow_gen(_REVERSE, ref_x=10),  # end: ← at endpoint
     start_generator=_make_arrow_gen(_FORWARD, ref_x=0),  # start: → at startpoint
 )

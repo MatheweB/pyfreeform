@@ -3,13 +3,9 @@
 from __future__ import annotations
 
 import math
-from typing import TYPE_CHECKING
 
-from ..core.entity import Entity
 from ..core.coord import Coord, CoordLike
-
-if TYPE_CHECKING:
-    pass
+from ..core.entity import Entity
 
 
 class EntityGroup(Entity):
@@ -115,22 +111,22 @@ class EntityGroup(Entity):
         if name == "center":
             b = self.bounds()
             return Coord((b[0] + b[2]) / 2, (b[1] + b[3]) / 2)
-        raise ValueError(
-            f"EntityGroup has no anchor '{name}'. "
-            f"Available: {self.anchor_names}"
-        )
+        raise ValueError(f"EntityGroup has no anchor '{name}'. Available: {self.anchor_names}")
 
     def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
         """Bounding box in absolute coordinates.
 
-        Delegates to ``_rotated_bounds(0)`` which recursively computes
+        Delegates to ``rotated_bounds(0)`` which recursively computes
         exact analytical bounds for every child under the group's
         rotation and scale.
         """
-        return self._rotated_bounds(0, visual=visual)
+        return self.rotated_bounds(0, visual=visual)
 
-    def _rotated_bounds(
-        self, angle: float, *, visual: bool = False,
+    def rotated_bounds(
+        self,
+        angle: float,
+        *,
+        visual: bool = False,
     ) -> tuple[float, float, float, float]:
         """Exact AABB of this group rotated by *angle* degrees around origin.
 
@@ -166,16 +162,20 @@ class EntityGroup(Entity):
         g_max_y = -math.inf
 
         for child in self._children:
-            cb = child._rotated_bounds(combined, visual=visual)
+            cb = child.rotated_bounds(combined, visual=visual)
             # Apply scale then offset
             sx0 = cb[0] * s + ox
             sy0 = cb[1] * s + oy
             sx1 = cb[2] * s + ox
             sy1 = cb[3] * s + oy
-            if sx0 < g_min_x: g_min_x = sx0
-            if sy0 < g_min_y: g_min_y = sy0
-            if sx1 > g_max_x: g_max_x = sx1
-            if sy1 > g_max_y: g_max_y = sy1
+            if sx0 < g_min_x:
+                g_min_x = sx0
+            if sy0 < g_min_y:
+                g_min_y = sy0
+            if sx1 > g_max_x:
+                g_max_x = sx1
+            if sy1 > g_max_y:
+                g_max_y = sy1
 
         return (g_min_x, g_min_y, g_max_x, g_max_y)
 
@@ -202,8 +202,7 @@ class EntityGroup(Entity):
         sorted_children = sorted(self._children, key=lambda e: e.z_index)
         opacity_attr = f' opacity="{self.opacity}"' if self.opacity < 1.0 else ""
         parts = [f'<g transform="{transform_str}"{opacity_attr}>']
-        for child in sorted_children:
-            parts.append(f"  {child.to_svg()}")
+        parts.extend(f"  {child.to_svg()}" for child in sorted_children)
         parts.append("</g>")
         return "\n".join(parts)
 
@@ -265,6 +264,11 @@ class EntityGroup(Entity):
         """Current rotation angle in degrees."""
         return self._rotation
 
+    @property
+    def scale_factor(self) -> float:
+        """Current cumulative scale factor."""
+        return self._scale
+
     # =========================================================================
     # DEFS COLLECTION (forward to children)
     # =========================================================================
@@ -293,7 +297,4 @@ class EntityGroup(Entity):
         if self.opacity < 1.0:
             extras.append(f"opacity={self.opacity:.2f}")
         extra_str = f", {', '.join(extras)}" if extras else ""
-        return (
-            f"EntityGroup({n} children, "
-            f"pos=({self.x:.1f}, {self.y:.1f}){extra_str})"
-        )
+        return f"EntityGroup({n} children, pos=({self.x:.1f}, {self.y:.1f}){extra_str})"

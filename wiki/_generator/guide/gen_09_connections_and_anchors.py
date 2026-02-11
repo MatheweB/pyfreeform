@@ -4,8 +4,18 @@ import math
 import random
 
 from pyfreeform import (
-    Scene, Palette, Dot, Rect, Polygon, Ellipse, Line, Curve, Path, Text,
-    Connection, ConnectionStyle, Coord,
+    Scene,
+    Palette,
+    Dot,
+    Rect,
+    Polygon,
+    Ellipse,
+    Line,
+    Curve,
+    Path,
+    Text,
+    ConnectionStyle,
+    Coord,
 )
 
 from wiki._generator import save
@@ -40,7 +50,7 @@ def generate():
     sq_half = 50  # half-size of square
     conn_style = ConnectionStyle(width=2, color=colors.secondary, opacity=0.8)
 
-    for frame_idx, (t, label) in enumerate(zip(move_amounts, labels)):
+    for frame_idx, (t, label) in enumerate(zip(move_amounts, labels, strict=False)):
         ox = 20 + frame_idx * (frame_w + gap)
         cx, cy = ox + frame_w / 2, 20 + frame_h / 2
 
@@ -54,7 +64,7 @@ def generate():
 
         corners = [tl, tr, br, bl]
         dots = []
-        for (x, y) in corners:
+        for x, y in corners:
             d = Dot(x, y, radius=6, color=colors.primary)
             scene.place(d)
             dots.append(d)
@@ -86,21 +96,29 @@ def generate():
     # --- 3. Anchor showcase on Rect ---
     scene = Scene(420, 320, background=colors.background)
 
-    rect = Rect.at_center(Coord(210, 150), 140, 90, fill=colors.primary, opacity=0.25,
-                          stroke=colors.primary, stroke_width=1.5, stroke_opacity=0.5)
+    rect = Rect.at_center(
+        Coord(210, 150),
+        140,
+        90,
+        fill=colors.primary,
+        opacity=0.25,
+        stroke=colors.primary,
+        stroke_width=1.5,
+        stroke_opacity=0.5,
+    )
     scene.place(rect)
 
     # Anchor positions → label offset directions
     anchor_info = {
-        "center":       (0, 0),
-        "top_left":     (-40, -30),
-        "top":          (0, -40),
-        "top_right":    (40, -30),
-        "right":        (55, 0),
+        "center": (0, 0),
+        "top_left": (-40, -30),
+        "top": (0, -40),
+        "top_right": (40, -30),
+        "right": (55, 0),
         "bottom_right": (40, 30),
-        "bottom":       (0, 40),
-        "bottom_left":  (-40, 30),
-        "left":         (-55, 0),
+        "bottom": (0, 40),
+        "bottom_left": (-40, 30),
+        "left": (-55, 0),
     }
 
     anchor_style = ConnectionStyle(width=1.5, color=colors.secondary, opacity=0.6)
@@ -121,8 +139,9 @@ def generate():
         text_x = label_x + (15 if dx >= 0 else -15)
         text_y = label_y + (0 if abs(dy) > 0 else 0)
         text_anchor = "start" if dx >= 0 else "end"
-        scene.place(Text(text_x, text_y, name, font_size=9, color="#aaaacc",
-                        text_anchor=text_anchor))
+        scene.place(
+            Text(text_x, text_y, name, font_size=9, color="#aaaacc", text_anchor=text_anchor)
+        )
 
     scene.place(Text(210, 25, "Rect anchors", font_size=13, color=colors.primary, bold=True))
     save(scene, "guide/connections-anchor-showcase.svg")
@@ -131,17 +150,33 @@ def generate():
     scene = Scene(520, 200, background=colors.background)
 
     dot = Dot(60, 100, radius=12, color=colors.primary)
-    rect = Rect.at_center(Coord(190, 100), 70, 50, fill=colors.secondary, opacity=0.4,
-                          stroke=colors.secondary, stroke_width=1.5)
+    rect = Rect.at_center(
+        Coord(190, 100),
+        70,
+        50,
+        fill=colors.secondary,
+        opacity=0.4,
+        stroke=colors.secondary,
+        stroke_width=1.5,
+    )
     hex_verts = []
     hx, hy, hr = 340, 100, 30
     for i in range(6):
         angle = math.radians(60 * i - 30)
         hex_verts.append((hx + hr * math.cos(angle), hy + hr * math.sin(angle)))
-    poly = Polygon(hex_verts, fill=colors.accent, opacity=0.4,
-                   stroke=colors.accent, stroke_width=1.5)
-    ell = Ellipse(460, 100, rx=30, ry=20, fill=colors.primary, opacity=0.3,
-                  stroke=colors.primary, stroke_width=1.5)
+    poly = Polygon(
+        hex_verts, fill=colors.accent, opacity=0.4, stroke=colors.accent, stroke_width=1.5
+    )
+    ell = Ellipse(
+        460,
+        100,
+        rx=30,
+        ry=20,
+        fill=colors.primary,
+        opacity=0.3,
+        stroke=colors.primary,
+        stroke_width=1.5,
+    )
 
     for entity in [dot, rect, poly, ell]:
         scene.place(entity)
@@ -152,7 +187,9 @@ def generate():
     # Dot → Rect.left
     conn1 = dot.connect(rect, shape=Line(), end_anchor="left", style=link_style)
     # Rect.right → Polygon.v0
-    conn2 = rect.connect(poly, shape=Line(), start_anchor="right", end_anchor="v0", style=arrow_style)
+    conn2 = rect.connect(
+        poly, shape=Line(), start_anchor="right", end_anchor="v0", style=arrow_style
+    )
     # Polygon.v3 → Ellipse.left
     conn3 = poly.connect(ell, shape=Line(), start_anchor="v3", end_anchor="left", style=link_style)
     scene.add_connection(conn1)
@@ -179,11 +216,15 @@ def generate():
         y = 30 + i * 44
         d1 = Dot(100, y, radius=4, color=colors.primary)
         d2 = Dot(300, y, radius=4, color=colors.primary)
-        for _d in [d1, d2]: scene.place(_d)
+        for _d in [d1, d2]:
+            scene.place(_d)
 
         style = ConnectionStyle(
-            width=3, color=colors.secondary, opacity=0.8,
-            start_cap=cap, end_cap=cap,
+            width=3,
+            color=colors.secondary,
+            opacity=0.8,
+            start_cap=cap,
+            end_cap=cap,
         )
         conn = d1.connect(d2, shape=Line(), style=style)
         scene.add_connection(conn)
@@ -199,9 +240,9 @@ def generate():
 
     # Three dots forming a triangle
     tri_pts = [
-        Coord(190, 40),   # top
+        Coord(190, 40),  # top
         Coord(330, 220),  # bottom-right
-        Coord(50, 220),   # bottom-left
+        Coord(50, 220),  # bottom-left
     ]
     tri_dots = []
     for pt in tri_pts:
@@ -226,8 +267,11 @@ def generate():
             # Tiny label
             scene.place(Text(pt.x, pt.y - 10, f"{t_val}", font_size=8, color="#aaaacc"))
 
-    scene.place(Text(190, 250, "point_at(t) places markers along connections",
-                     font_size=10, color="#aaaacc"))
+    scene.place(
+        Text(
+            190, 250, "point_at(t) places markers along connections", font_size=10, color="#aaaacc"
+        )
+    )
     save(scene, "guide/connections-as-pathable.svg")
 
     # --- 7. Constellation creative pattern ---
@@ -237,7 +281,7 @@ def generate():
     # Generate random star positions
     positions = [(random.uniform(30, 410), random.uniform(30, 290)) for _ in range(25)]
     star_dots = []
-    for (x, y) in positions:
+    for x, y in positions:
         d = Dot(x, y, radius=3, color="#e0c3fc", opacity=0.9)
         scene.place(d)
         star_dots.append(d)
@@ -245,14 +289,16 @@ def generate():
     # Connect dots within distance threshold
     for i, d1 in enumerate(star_dots):
         p1 = d1.position
-        for j, d2 in enumerate(star_dots[i + 1:], start=i + 1):
+        for j, d2 in enumerate(star_dots[i + 1 :], start=i + 1):
             p2 = d2.position
             dist = math.hypot(p1.x - p2.x, p1.y - p2.y)
             if dist < 130:
                 opacity = 0.5 * (1 - dist / 130)
                 width = 0.4 + (1 - dist / 130) * 1.2
                 style = ConnectionStyle(
-                    width=width, color="#a78bfa", opacity=opacity,
+                    width=width,
+                    color="#a78bfa",
+                    opacity=opacity,
                 )
                 conn = d1.connect(d2, shape=Line(), style=style)
                 scene.add_connection(conn)
@@ -283,9 +329,9 @@ def generate():
         ox = 20 + i * 180
         d1 = Dot(ox + 20, 75, radius=8, color=colors.primary)
         d2 = Dot(ox + 150, 75, radius=8, color=colors.secondary)
-        for _d in [d1, d2]: scene.place(_d)
-        conn = d1.connect(d2, shape=shape,
-                          style=ConnectionStyle(width=2.5, color=colors.accent))
+        for _d in [d1, d2]:
+            scene.place(_d)
+        conn = d1.connect(d2, shape=shape, style=ConnectionStyle(width=2.5, color=colors.accent))
         scene.add_connection(conn)
         scene.place(Text(ox + 85, 135, label, font_size=11, color="#aaaacc"))
         # Subtle code hint
@@ -301,7 +347,8 @@ def generate():
 
     d1 = Dot(50, 65, radius=12, color=colors.primary)
     d2 = Dot(350, 65, radius=12, color=colors.secondary)
-    for _d in [d1, d2]: scene.place(_d)
+    for _d in [d1, d2]:
+        scene.place(_d)
 
     # Invisible connection (no shape)
     conn = d1.connect(d2)
@@ -316,8 +363,15 @@ def generate():
         if 0 < t < 1:
             scene.place(Text(pt.x, pt.y - 14, f"t={t:.2f}", font_size=7, color="#aaaacc"))
 
-    scene.place(Text(200, 130, "shape=None — invisible, but point_at(t) still works",
-                     font_size=10, color="#aaaacc"))
+    scene.place(
+        Text(
+            200,
+            130,
+            "shape=None — invisible, but point_at(t) still works",
+            font_size=10,
+            color="#aaaacc",
+        )
+    )
 
     save(scene, "guide/connections-invisible.svg")
 
@@ -327,14 +381,14 @@ def generate():
 
     positions = [(random.uniform(30, 410), random.uniform(30, 290)) for _ in range(25)]
     arc_dots = []
-    for (x, y) in positions:
+    for x, y in positions:
         d = Dot(x, y, radius=3, color="#e0c3fc", opacity=0.9)
         scene.place(d)
         arc_dots.append(d)
 
     for i, d1 in enumerate(arc_dots):
         p1 = d1.position
-        for j, d2 in enumerate(arc_dots[i + 1:], start=i + 1):
+        for j, d2 in enumerate(arc_dots[i + 1 :], start=i + 1):
             p2 = d2.position
             dist = math.hypot(p1.x - p2.x, p1.y - p2.y)
             if dist < 130:
@@ -372,7 +426,7 @@ def generate():
 
     for level_idx, level_positions in enumerate(levels):
         level_dots = []
-        for (x, y) in level_positions:
+        for x, y in level_positions:
             r = 10 - level_idx * 2
             d = Dot(x, y, radius=r, color=level_colors[level_idx])
             scene.place(d)
@@ -384,19 +438,18 @@ def generate():
     # Root → children
     for child in node_dots[1]:
         curvature = 0.25 if child.position.x < 220 else -0.25
-        conn = node_dots[0][0].connect(child, shape=Curve(curvature=curvature),
-                                       style=arc_style)
+        conn = node_dots[0][0].connect(child, shape=Curve(curvature=curvature), style=arc_style)
         scene.add_connection(conn)
 
     # Children → grandchildren
     for parent_idx, parent in enumerate(node_dots[1]):
-        for child in node_dots[2][parent_idx * 2: parent_idx * 2 + 2]:
+        for child in node_dots[2][parent_idx * 2 : parent_idx * 2 + 2]:
             curvature = 0.2 if child.position.x < parent.position.x else -0.2
-            conn = parent.connect(child, shape=Curve(curvature=curvature),
-                                  style=arc_style)
+            conn = parent.connect(child, shape=Curve(curvature=curvature), style=arc_style)
             scene.add_connection(conn)
 
-    scene.place(Text(220, 270, "Flowing tree with curved connections",
-                     font_size=10, color="#aaaacc"))
+    scene.place(
+        Text(220, 270, "Flowing tree with curved connections", font_size=10, color="#aaaacc")
+    )
 
     save(scene, "guide/connections-flowing-tree.svg")

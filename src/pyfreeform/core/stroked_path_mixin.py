@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from ..config.caps import DEFAULT_ARROW_SCALE, get_marker, is_marker_cap, make_marker_id
+
 
 class StrokedPathMixin:
     """
@@ -16,6 +18,7 @@ class StrokedPathMixin:
     # Declared as properties so subclasses can provide them as
     # either plain attributes (Line, Curve, Path) or properties (Connection).
     if TYPE_CHECKING:
+
         @property
         def cap(self) -> str: ...
         @cap.setter
@@ -54,7 +57,6 @@ class StrokedPathMixin:
         Returns:
             List of (marker_id, marker_svg) tuples.
         """
-        from ..config.caps import DEFAULT_ARROW_SCALE, get_marker
 
         markers: list[tuple[str, str]] = []
         size = self.width * DEFAULT_ARROW_SCALE
@@ -76,11 +78,6 @@ class StrokedPathMixin:
             or "square", and marker_attrs_str contains any marker-start/
             marker-end attributes (or empty string).
         """
-        from ..config.caps import (
-            DEFAULT_ARROW_SCALE,
-            is_marker_cap,
-            make_marker_id,
-        )
 
         sc = self.effective_start_cap
         ec = self.effective_end_cap
@@ -105,4 +102,3 @@ class StrokedPathMixin:
             svg_cap = "butt"
 
         return svg_cap, "".join(parts)
-

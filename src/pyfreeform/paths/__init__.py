@@ -1,8 +1,8 @@
 """Built-in path shapes for the Pathable protocol."""
 
-from .wave import Wave
-from .spiral import Spiral
 from .lissajous import Lissajous
+from .spiral import Spiral
+from .wave import Wave
 from .zigzag import Zigzag
 
-__all__ = ["Wave", "Spiral", "Lissajous", "Zigzag"]
+__all__ = ["Lissajous", "Spiral", "Wave", "Zigzag"]

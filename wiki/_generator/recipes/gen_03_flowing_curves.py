@@ -2,7 +2,7 @@
 
 import math
 
-from pyfreeform import Scene, Palette, Coord, map_range
+from pyfreeform import Scene, Palette
 
 from wiki._generator import save, sample_image
 
@@ -15,7 +15,8 @@ def generate():
         nx, ny = cell.normalized_position
         curvature = math.sin(nx * math.pi * 2 + ny * math.pi) * 0.7
         cell.add_curve(
-            start="left", end="right",
+            start="left",
+            end="right",
             curvature=curvature,
             width=0.5 + ny * 2,
             color=colors.primary,
@@ -55,7 +56,8 @@ def generate():
         turns = 2 + nx * 3
         spiral = Path.Spiral(center=(cx, cy), end_radius=scene.grid.cell_width * 0.42, turns=turns)
         cell.add_path(
-            spiral, segments=48,
+            spiral,
+            segments=48,
             width=0.8 + ny * 1.5,
             color=colors.primary,
             opacity=0.4 + (nx + ny) / 2 * 0.6,
@@ -72,7 +74,8 @@ def generate():
         if cell.brightness > 0.15:
             curvature = (cell.brightness - 0.5) * 1.5
             cell.add_curve(
-                start="bottom_left", end="top_right",
+                start="bottom_left",
+                end="top_right",
                 curvature=curvature,
                 width=0.5 + cell.brightness * 2,
                 color=cell.color,
@@ -88,14 +91,16 @@ def generate():
         t = (nx + ny) / 2
         # First set of lines
         cell.add_line(
-            start=(0.1, 0.1), end=(0.9, 0.9),
+            start=(0.1, 0.1),
+            end=(0.9, 0.9),
             width=0.5 + t * 1.5,
             color=colors.primary,
             opacity=0.3 + t * 0.4,
         )
         # Second set: perpendicular
         cell.add_line(
-            start=(0.9, 0.1), end=(0.1, 0.9),
+            start=(0.9, 0.1),
+            end=(0.1, 0.9),
             width=0.3 + (1 - t) * 1,
             color=colors.secondary,
             opacity=0.2 + (1 - t) * 0.3,

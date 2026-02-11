@@ -5,8 +5,8 @@ from __future__ import annotations
 import math
 
 from ..color import Color
-from ..core.entity import Entity
 from ..core.coord import Coord, CoordLike, RelCoord
+from ..core.entity import Entity
 from ..core.stroked_path_mixin import StrokedPathMixin
 
 
@@ -78,6 +78,24 @@ class Line(StrokedPathMixin, Entity):
         self.end_cap = end_cap
         self.opacity = float(opacity)
 
+    @property
+    def relative_start(self) -> RelCoord | None:
+        """Relative start position (fraction of reference frame), or None."""
+        return self._relative_at
+
+    @relative_start.setter
+    def relative_start(self, value: RelCoord | None) -> None:
+        self._relative_at = value
+
+    @property
+    def relative_end(self) -> RelCoord | None:
+        """Relative end position (fraction of reference frame), or None."""
+        return self._relative_end
+
+    @relative_end.setter
+    def relative_end(self, value: RelCoord | None) -> None:
+        self._relative_end = value
+
     @classmethod
     def from_points(
         cls,
@@ -108,10 +126,11 @@ class Line(StrokedPathMixin, Entity):
         Returns:
             A new Line entity.
         """
-        start = Coord._coerce(start)
-        end = Coord._coerce(end)
-        return cls(start.x, start.y, end.x, end.y, width, color, z_index, cap,
-                   start_cap, end_cap, opacity)
+        start = Coord.coerce(start)
+        end = Coord.coerce(end)
+        return cls(
+            start.x, start.y, end.x, end.y, width, color, z_index, cap, start_cap, end_cap, opacity
+        )
 
     @property
     def start(self) -> Coord:
@@ -130,13 +149,17 @@ class Line(StrokedPathMixin, Entity):
     @end.setter
     def end(self, value: CoordLike) -> None:
         """Set the ending point (clears relative binding)."""
-        value = Coord._coerce(value)
+        value = Coord.coerce(value)
         self._end_offset = value - self.position
         self._relative_end = None
 
     def _to_pixel_mode(self) -> None:
         """Resolve both endpoints to pixels."""
-        if self._relative_end is not None or self._relative_at is not None or self._along_path is not None:
+        if (
+            self._relative_end is not None
+            or self._relative_at is not None
+            or self._along_path is not None
+        ):
             current_end = self.end
             super()._to_pixel_mode()
             self._end_offset = current_end - self._position
@@ -167,9 +190,9 @@ class Line(StrokedPathMixin, Entity):
         """Get anchor point by name."""
         if name == "start":
             return self.start
-        elif name == "center":
+        if name == "center":
             return self.start.midpoint(self.end)
-        elif name == "end":
+        if name == "end":
             return self.end
         raise ValueError(f"Line has no anchor '{name}'. Available: {self.anchor_names}")
 
@@ -202,7 +225,6 @@ class Line(StrokedPathMixin, Entity):
         Returns:
             Angle in degrees.
         """
-        import math
 
         dx = self.end.x - self.start.x
         dy = self.end.y - self.start.y
@@ -215,7 +237,7 @@ class Line(StrokedPathMixin, Entity):
         s, e = self.start, self.end
         return f"M {s.x} {s.y} L {e.x} {e.y}"
 
-    def _connection_data(self, segments: int = 32) -> tuple[str, list]:
+    def connection_data(self, segments: int = 32) -> tuple[str, list]:
         """Return shape kind and bezier data for Connection dispatch."""
         return ("line", [])
 
@@ -251,8 +273,8 @@ class Line(StrokedPathMixin, Entity):
         Returns:
             self, for method chaining.
         """
-        start = Coord._coerce(start)
-        end = Coord._coerce(end)
+        start = Coord.coerce(start)
+        end = Coord.coerce(end)
 
         self._position = start
         self._end_offset = end - start
@@ -272,12 +294,9 @@ class Line(StrokedPathMixin, Entity):
         Returns:
             self, for method chaining.
         """
-        import math
 
-        if origin is None:
-            origin = self.anchor("center")
-        else:
-            origin = Coord._coerce(origin)
+        self._to_pixel_mode()
+        origin = self.anchor("center") if origin is None else Coord.coerce(origin)
 
         angle_rad = math.radians(angle)
         cos_a = math.cos(angle_rad)
@@ -300,9 +319,6 @@ class Line(StrokedPathMixin, Entity):
 
         self._position = new_start
         self._end_offset = new_end - new_start
-        self._relative_at = None
-        self._along_path = None
-        self._relative_end = None
         return self
 
     def scale(self, factor: float, origin: CoordLike | None = None) -> Line:
@@ -316,10 +332,8 @@ class Line(StrokedPathMixin, Entity):
         Returns:
             self, for method chaining.
         """
-        if origin is None:
-            origin = self.anchor("center")
-        else:
-            origin = Coord._coerce(origin)
+        self._to_pixel_mode()
+        origin = self.anchor("center") if origin is None else Coord.coerce(origin)
 
         start = self.start
         end = self.end
@@ -335,9 +349,6 @@ class Line(StrokedPathMixin, Entity):
 
         self._position = new_start
         self._end_offset = new_end - new_start
-        self._relative_at = None
-        self._along_path = None
-        self._relative_end = None
         return self
 
     def _move_by(self, dx: float = 0, dy: float = 0) -> Line:
@@ -373,8 +384,11 @@ class Line(StrokedPathMixin, Entity):
             max_y += half
         return (min_x, min_y, max_x, max_y)
 
-    def _rotated_bounds(
-        self, angle: float, *, visual: bool = False,
+    def rotated_bounds(
+        self,
+        angle: float,
+        *,
+        visual: bool = False,
     ) -> tuple[float, float, float, float]:
         """Exact AABB of this line rotated by *angle* degrees around origin."""
         if angle == 0:

@@ -1,9 +1,12 @@
 """Generate SVGs for Guide: Colors, Styles & Palettes."""
 
-import math
-
 from pyfreeform import (
-    Scene, Palette, Polygon, DotStyle, LineStyle, ShapeStyle, map_range,
+    Scene,
+    Palette,
+    Polygon,
+    DotStyle,
+    LineStyle,
+    ShapeStyle,
 )
 
 from wiki._generator import save, sample_image
@@ -50,11 +53,11 @@ def generate():
     # Stack semi-transparent circles
     offsets = [(-30, -20), (30, -20), (0, 25)]
     palette_colors = [colors.primary, colors.secondary, colors.accent]
-    for (dx, dy), fill in zip(offsets, palette_colors):
-        cx, cy = cell.center
+    for (dx, dy), fill in zip(offsets, palette_colors, strict=False):
         cell.add_ellipse(
             at=(0.5 + dx / cell.width, 0.5 + dy / cell.height),
-            rx=0.25, ry=0.25,
+            rx=0.25,
+            ry=0.25,
             fill=fill,
             opacity=0.5,
         )
@@ -71,16 +74,22 @@ def generate():
         if i == 0:
             cell.add_dot(radius=0.25, color=colors.primary)
         elif i == 1:
-            cell.add_line(start="bottom_left", end="top_right", width=3, color=colors.primary).fit_to_cell()
+            cell.add_line(
+                start="bottom_left", end="top_right", width=3, color=colors.primary
+            ).fit_to_cell()
         elif i == 2:
-            cell.add_curve(start="bottom_left", end="top_right", curvature=0.5, width=2, color=colors.primary).fit_to_cell()
+            cell.add_curve(
+                start="bottom_left", end="top_right", curvature=0.5, width=2, color=colors.primary
+            ).fit_to_cell()
         elif i == 3:
             cell.add_text("Aa", at="center", font_size=0.45, color=colors.primary, bold=True)
         elif i == 4:
             cell.add_fill(color=colors.primary, opacity=0.5)
         elif i == 5:
             cell.add_border(color=colors.primary, width=2)
-        cell.add_text(labels_color[i], at="bottom", font_size=0.20, color="#aaaacc", baseline="auto", fit=True)
+        cell.add_text(
+            labels_color[i], at="bottom", font_size=0.20, color="#aaaacc", baseline="auto", fit=True
+        )
 
     # Row 1: entities that use fill=
     labels_fill = ["Rect", "Ellipse", "Polygon", "  ", "  ", "  "]
@@ -92,7 +101,9 @@ def generate():
             cell.add_ellipse(at="center", rx=0.36, ry=0.27, fill=colors.accent)
         elif i == 2:
             cell.add_polygon(Polygon.hexagon(size=0.6), fill=colors.accent)
-        cell.add_text(labels_fill[i], at="bottom", font_size=0.20, color="#aaaacc", baseline="auto", fit=True)
+        cell.add_text(
+            labels_fill[i], at="bottom", font_size=0.20, color="#aaaacc", baseline="auto", fit=True
+        )
     save(scene, "guide/styles-fill-vs-color.svg")
 
     # --- 4. Style reuse example ---
@@ -126,7 +137,8 @@ def generate():
         op = opacities[i]
         cell.add_ellipse(
             at="center",
-            rx=0.37, ry=0.37,
+            rx=0.37,
+            ry=0.37,
             fill=colors.primary,
             stroke=colors.accent,
             stroke_width=3,

@@ -44,12 +44,12 @@ class Coord:
 
     def __add__(self, other: CoordLike) -> Coord:
         """Add two coords (vector addition)."""
-        other = Coord._coerce(other)
+        other = Coord.coerce(other)
         return Coord(self.x + other.x, self.y + other.y)
 
     def __sub__(self, other: CoordLike) -> Coord:
         """Subtract two coords (vector subtraction)."""
-        other = Coord._coerce(other)
+        other = Coord.coerce(other)
         return Coord(self.x - other.x, self.y - other.y)
 
     def __mul__(self, scalar: float) -> Coord:
@@ -81,7 +81,7 @@ class Coord:
         Args:
             other: The target coord.
             t: Interpolation factor (0 = self, 1 = other).
-               Values outside 0-1 extrapolate beyond the coords.
+                Values outside 0-1 extrapolate beyond the coords.
 
         Returns:
             The interpolated coord.
@@ -92,10 +92,7 @@ class Coord:
             >>> p1.lerp(p2, 0.5)
             Coord(50.0, 50.0)
         """
-        return Coord(
-            self.x + (other.x - self.x) * t,
-            self.y + (other.y - self.y) * t
-        )
+        return Coord(self.x + (other.x - self.x) * t, self.y + (other.y - self.y) * t)
 
     def midpoint(self, other: Coord) -> Coord:
         """Return the midpoint between this coord and another."""
@@ -141,10 +138,7 @@ class Coord:
 
     def clamped(self, min_x: float, min_y: float, max_x: float, max_y: float) -> Coord:
         """Return coord clamped to the given bounds."""
-        return Coord(
-            max(min_x, min(max_x, self.x)),
-            max(min_y, min(max_y, self.y))
-        )
+        return Coord(max(min_x, min(max_x, self.x)), max(min_y, min(max_y, self.y)))
 
     def rounded(self, decimals: int = 0) -> Coord:
         """Return coord with coordinates rounded."""
@@ -157,7 +151,7 @@ class Coord:
         return (self.x, self.y)
 
     @classmethod
-    def _coerce(cls, value: CoordLike) -> Coord:
+    def coerce(cls, value: CoordLike) -> Coord:
         """Convert a CoordLike to a Coord, passing through if already one."""
         if isinstance(value, Coord):
             return value
@@ -205,12 +199,12 @@ class RelCoord:
 
     def __add__(self, other: RelCoordLike) -> RelCoord:
         """Add two relative coords."""
-        other = RelCoord._coerce(other)
+        other = RelCoord.coerce(other)
         return RelCoord(self.rx + other.rx, self.ry + other.ry)
 
     def __sub__(self, other: RelCoordLike) -> RelCoord:
         """Subtract two relative coords."""
-        other = RelCoord._coerce(other)
+        other = RelCoord.coerce(other)
         return RelCoord(self.rx - other.rx, self.ry - other.ry)
 
     def __mul__(self, scalar: float) -> RelCoord:
@@ -236,8 +230,9 @@ class RelCoord:
             self.ry + (other.ry - self.ry) * t,
         )
 
-    def clamped(self, min_rx: float = 0.0, min_ry: float = 0.0,
-                max_rx: float = 1.0, max_ry: float = 1.0) -> RelCoord:
+    def clamped(
+        self, min_rx: float = 0.0, min_ry: float = 0.0, max_rx: float = 1.0, max_ry: float = 1.0
+    ) -> RelCoord:
         """Return clamped to valid range (default 0.0-1.0)."""
         return RelCoord(
             max(min_rx, min(max_rx, self.rx)),
@@ -249,7 +244,7 @@ class RelCoord:
         return (self.rx, self.ry)
 
     @classmethod
-    def _coerce(cls, value: RelCoordLike) -> RelCoord:
+    def coerce(cls, value: RelCoordLike) -> RelCoord:
         """Convert a RelCoordLike to a RelCoord, passing through if already one."""
         return value if isinstance(value, RelCoord) else RelCoord(*value)
 

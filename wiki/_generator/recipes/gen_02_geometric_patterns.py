@@ -14,12 +14,14 @@ def generate():
     for cell in scene.grid.checkerboard("black"):
         cell.add_polygon(
             Polygon.diamond(size=0.75),
-            fill=colors.primary, opacity=0.7,
+            fill=colors.primary,
+            opacity=0.7,
         )
     for cell in scene.grid.checkerboard("white"):
         cell.add_polygon(
             Polygon.hexagon(size=0.6),
-            fill=colors.accent, opacity=0.5,
+            fill=colors.accent,
+            opacity=0.5,
         )
     save(scene, "recipes/geo-checkerboard.svg")
 
@@ -68,7 +70,8 @@ def generate():
         if ring == 0:
             cell.add_polygon(
                 Polygon.hexagon(size=0.7),
-                fill=colors.primary, opacity=0.4 + (1 - t) * 0.5,
+                fill=colors.primary,
+                opacity=0.4 + (1 - t) * 0.5,
             )
         else:
             cell.add_dot(radius=0.15 + (1 - t) * 0.20, color=colors.secondary, opacity=0.5)

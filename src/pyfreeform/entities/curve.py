@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 import math
+
 from ..color import Color
-from ..core.entity import Entity
 from ..core.coord import Coord, CoordLike, RelCoord
+from ..core.entity import Entity
 from ..core.stroked_path_mixin import StrokedPathMixin
 
 
@@ -93,6 +94,24 @@ class Curve(StrokedPathMixin, Entity):
         self.opacity = float(opacity)
         self._control: Coord | None = None  # Calculated lazily
 
+    @property
+    def relative_start(self) -> RelCoord | None:
+        """Relative start position (fraction of reference frame), or None."""
+        return self._relative_at
+
+    @relative_start.setter
+    def relative_start(self, value: RelCoord | None) -> None:
+        self._relative_at = value
+
+    @property
+    def relative_end(self) -> RelCoord | None:
+        """Relative end position (fraction of reference frame), or None."""
+        return self._relative_end
+
+    @relative_end.setter
+    def relative_end(self, value: RelCoord | None) -> None:
+        self._relative_end = value
+
     @classmethod
     def from_points(
         cls,
@@ -108,10 +127,22 @@ class Curve(StrokedPathMixin, Entity):
         opacity: float = 1.0,
     ) -> Curve:
         """Create a curve from two points."""
-        start = Coord._coerce(start)
-        end = Coord._coerce(end)
-        return cls(start.x, start.y, end.x, end.y, curvature, width, color, z_index,
-                   cap, start_cap, end_cap, opacity)
+        start = Coord.coerce(start)
+        end = Coord.coerce(end)
+        return cls(
+            start.x,
+            start.y,
+            end.x,
+            end.y,
+            curvature,
+            width,
+            color,
+            z_index,
+            cap,
+            start_cap,
+            end_cap,
+            opacity,
+        )
 
     @property
     def start(self) -> Coord:
@@ -129,14 +160,18 @@ class Curve(StrokedPathMixin, Entity):
 
     @end.setter
     def end(self, value: CoordLike) -> None:
-        value = Coord._coerce(value)
+        value = Coord.coerce(value)
         self._end = value
         self._relative_end = None
         self._control = None  # Invalidate cached control point
 
     def _to_pixel_mode(self) -> None:
         """Resolve both endpoints to pixels."""
-        if self._relative_end is not None or self._relative_at is not None or self._along_path is not None:
+        if (
+            self._relative_end is not None
+            or self._relative_at is not None
+            or self._along_path is not None
+        ):
             current_end = self.end
             super()._to_pixel_mode()
             self._end = current_end
@@ -210,11 +245,11 @@ class Curve(StrokedPathMixin, Entity):
         """Get anchor point by name."""
         if name == "start":
             return self.start
-        elif name == "center":
+        if name == "center":
             return self.point_at(0.5)
-        elif name == "end":
+        if name == "end":
             return self.end
-        elif name == "control":
+        if name == "control":
             return self.control
         raise ValueError(f"Curve has no anchor '{name}'. Available: {self.anchor_names}")
 
@@ -297,19 +332,22 @@ class Curve(StrokedPathMixin, Entity):
         s, c, e = self.start, self.control, self.end
         return f"M {s.x} {s.y} Q {c.x} {c.y} {e.x} {e.y}"
 
-    def _connection_data(self, segments: int = 32) -> tuple[str, list]:
+    def connection_data(self, segments: int = 32) -> tuple[str, list]:
         """Return shape kind and bezier data for Connection dispatch."""
         P0, Q, P2 = self.start, self.control, self.end
         # Exact degree elevation: quadratic → cubic
-        CP1 = Coord(P0.x + 2/3 * (Q.x - P0.x), P0.y + 2/3 * (Q.y - P0.y))
-        CP2 = Coord(P2.x + 2/3 * (Q.x - P2.x), P2.y + 2/3 * (Q.y - P2.y))
+        CP1 = Coord(P0.x + 2 / 3 * (Q.x - P0.x), P0.y + 2 / 3 * (Q.y - P0.y))
+        CP2 = Coord(P2.x + 2 / 3 * (Q.x - P2.x), P2.y + 2 / 3 * (Q.y - P2.y))
         return ("curve", [(P0, CP1, CP2, P2)])
 
     @staticmethod
     def _quad_bezier_bounds(
-        p0x: float, p0y: float,
-        p1x: float, p1y: float,
-        p2x: float, p2y: float,
+        p0x: float,
+        p0y: float,
+        p1x: float,
+        p1y: float,
+        p2x: float,
+        p2y: float,
     ) -> tuple[float, float, float, float]:
         """Exact AABB of a quadratic Bezier (P0, P1=control, P2).
 
@@ -354,8 +392,11 @@ class Curve(StrokedPathMixin, Entity):
             b = (b[0] - half, b[1] - half, b[2] + half, b[3] + half)
         return b
 
-    def _rotated_bounds(
-        self, angle: float, *, visual: bool = False,
+    def rotated_bounds(
+        self,
+        angle: float,
+        *,
+        visual: bool = False,
     ) -> tuple[float, float, float, float]:
         """Exact AABB of this curve rotated by *angle* degrees around origin."""
         if angle == 0:
@@ -364,9 +405,12 @@ class Curve(StrokedPathMixin, Entity):
         cos_a, sin_a = math.cos(rad), math.sin(rad)
         p0, p1, p2 = self.start, self.control, self.end
         b = Curve._quad_bezier_bounds(
-            p0.x * cos_a - p0.y * sin_a, p0.x * sin_a + p0.y * cos_a,
-            p1.x * cos_a - p1.y * sin_a, p1.x * sin_a + p1.y * cos_a,
-            p2.x * cos_a - p2.y * sin_a, p2.x * sin_a + p2.y * cos_a,
+            p0.x * cos_a - p0.y * sin_a,
+            p0.x * sin_a + p0.y * cos_a,
+            p1.x * cos_a - p1.y * sin_a,
+            p1.x * sin_a + p1.y * cos_a,
+            p2.x * cos_a - p2.y * sin_a,
+            p2.x * sin_a + p2.y * cos_a,
         )
         if visual:
             half = self.width / 2
@@ -412,10 +456,8 @@ class Curve(StrokedPathMixin, Entity):
         Returns:
             self, for method chaining.
         """
-        if origin is None:
-            origin = self.point_at(0.5)
-        else:
-            origin = Coord._coerce(origin)
+        self._to_pixel_mode()
+        origin = self.point_at(0.5) if origin is None else Coord.coerce(origin)
 
         angle_rad = math.radians(angle)
         cos_a = math.cos(angle_rad)
@@ -431,9 +473,6 @@ class Curve(StrokedPathMixin, Entity):
 
         self._position = rotate_point(self.start)
         self._end = rotate_point(self.end)
-        self._relative_at = None
-        self._along_path = None
-        self._relative_end = None
         self._control = None
         return self
 
@@ -448,10 +487,8 @@ class Curve(StrokedPathMixin, Entity):
         Returns:
             self, for method chaining.
         """
-        if origin is None:
-            origin = self.point_at(0.5)
-        else:
-            origin = Coord._coerce(origin)
+        self._to_pixel_mode()
+        origin = self.point_at(0.5) if origin is None else Coord.coerce(origin)
 
         new_start = Coord(
             origin.x + (self.start.x - origin.x) * factor,
@@ -464,9 +501,6 @@ class Curve(StrokedPathMixin, Entity):
 
         self._position = new_start
         self._end = new_end
-        self._relative_at = None
-        self._along_path = None
-        self._relative_end = None
         self._control = None
         return self
 

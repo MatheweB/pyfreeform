@@ -168,7 +168,7 @@ def test_fit_to_cell_method_chaining():
     assert ellipse is not None
     # Check it's the same type as a fresh ellipse
     fresh_ellipse = cell.add_ellipse(rx=0.05, ry=0.05)
-    assert type(ellipse) == type(fresh_ellipse)
+    assert type(ellipse) is type(fresh_ellipse)
 
 
 def test_fit_to_cell_already_fits():
@@ -206,8 +206,8 @@ def test_fit_to_cell_different_scales():
     # Verify scaling relationship
     assert dot1.radius > dot2.radius > dot3.radius
     assert abs(dot1.radius - 10.0) < 0.1  # Full cell radius
-    assert abs(dot2.radius - 5.0) < 0.1   # Half cell radius
-    assert abs(dot3.radius - 1.0) < 0.1   # 10% cell radius
+    assert abs(dot2.radius - 5.0) < 0.1  # Half cell radius
+    assert abs(dot3.radius - 1.0) < 0.1  # 10% cell radius
 
 
 def test_fit_to_cell_brightness_based_scaling():

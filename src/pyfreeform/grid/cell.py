@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from ..core.coord import RelCoord
+from ..core.coord import Coord, RelCoord
 from ..core.entity import Entity
-from ..core.surface import Surface, Position, NAMED_POSITIONS  # noqa: F401 — re-export
+from ..core.surface import Surface
 
 if TYPE_CHECKING:
     from .grid import Grid
@@ -19,9 +19,9 @@ class Cell(Surface):
     Cells provide:
     - **Typed data access**: `cell.brightness`, `cell.color` instead of dict lookups
     - **Builder methods**: `cell.add_dot()`, `cell.add_line()` for easy element creation
-      (inherited from Surface)
+        (inherited from Surface)
     - **Position helpers**: Named positions like "center", "top_left", etc.
-      (inherited from Surface)
+        (inherited from Surface)
     - **Neighbor access**: `cell.right`, `cell.below` for cross-cell operations
 
     Basic usage:
@@ -292,8 +292,7 @@ class Cell(Surface):
         Returns:
             Distance in pixels.
         """
-        from ..core.coord import Coord
-        from ..core.entity import Entity
+
         if isinstance(other, Cell):
             target = other.center
         elif isinstance(other, Coord):

@@ -2,7 +2,7 @@
 
 import math
 
-from pyfreeform import Scene, Palette, Polygon, Ellipse, map_range
+from pyfreeform import Scene, Palette, Polygon, Ellipse, Path
 
 from wiki._generator import save, sample_image
 
@@ -38,7 +38,8 @@ def generate():
         end = (0.5 + dx, 0.5 + dy)
         width = 0.5 + ny * 2
         cell.add_line(
-            start=start, end=end,
+            start=start,
+            end=end,
             width=width,
             color=colors.primary,
             opacity=0.3 + nx * 0.7,
@@ -53,7 +54,8 @@ def generate():
         curvature = math.sin(nx * math.pi * 3 + ny * 2) * 0.8
         width = 0.8 + abs(curvature) * 2
         cell.add_curve(
-            start="bottom_left", end="top_right",
+            start="bottom_left",
+            end="top_right",
             curvature=curvature,
             width=width,
             color=colors.primary,
@@ -88,7 +90,8 @@ def generate():
         rotation = t * 45
         cell.add_rect(
             at="center",
-            width=0.4 + t * 0.4, height=0.4 + (1 - t) * 0.4,
+            width=0.4 + t * 0.4,
+            height=0.4 + (1 - t) * 0.4,
             rotation=rotation,
             fill=colors.primary if (cell.row + cell.col) % 2 == 0 else colors.accent,
             opacity=0.3 + t * 0.6,
@@ -134,7 +137,6 @@ def generate():
     save(scene, "guide/entities-text.svg")
 
     # --- 8. Paths: spiral in each cell (using built-in Path.Spiral) ---
-    from pyfreeform import Path
 
     colors = Palette.midnight()
     scene = Scene.with_grid(cols=8, rows=8, cell_size=34, background=colors.background)

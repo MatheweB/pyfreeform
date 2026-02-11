@@ -3,17 +3,25 @@
 from __future__ import annotations
 
 import math
+from typing import TYPE_CHECKING
+
 from ..color import Color
-from ..core.entity import Entity
-from ..core.coord import Coord, CoordLike
-from ..core.pathable import Pathable
-from ..core.stroked_path_mixin import StrokedPathMixin
 from ..core.bezier import (
-    fit_cubic_beziers as _fit_cubic_beziers,
     eval_cubic as _eval_cubic,
+)
+from ..core.bezier import (
     eval_cubic_derivative as _eval_cubic_derivative,
 )
-from ..paths import Wave, Spiral, Lissajous, Zigzag
+from ..core.bezier import (
+    fit_cubic_beziers as _fit_cubic_beziers,
+)
+from ..core.coord import Coord, CoordLike
+from ..core.entity import Entity
+from ..core.stroked_path_mixin import StrokedPathMixin
+from ..paths import Lissajous, Spiral, Wave, Zigzag
+
+if TYPE_CHECKING:
+    from ..core.pathable import Pathable
 
 
 class Path(StrokedPathMixin, Entity):
@@ -137,9 +145,7 @@ class Path(StrokedPathMixin, Entity):
         self.stroke_opacity = stroke_opacity
 
         # Compute cubic Bézier segments from the pathable
-        self._bezier_segments = _fit_cubic_beziers(
-            pathable, segments, closed, start_t, end_t
-        )
+        self._bezier_segments = _fit_cubic_beziers(pathable, segments, closed, start_t, end_t)
 
     @property
     def closed(self) -> bool:
@@ -175,9 +181,9 @@ class Path(StrokedPathMixin, Entity):
         """Get anchor point by name."""
         if name == "start":
             return self.point_at(0.0)
-        elif name == "center":
+        if name == "center":
             return self.point_at(0.5)
-        elif name == "end":
+        if name == "end":
             return self.point_at(1.0)
         raise ValueError(f"Path has no anchor '{name}'. Available: {self.anchor_names}")
 
@@ -291,7 +297,7 @@ class Path(StrokedPathMixin, Entity):
 
         return "".join(parts)
 
-    def _connection_data(self, segments: int = 32) -> tuple[str, list]:
+    def connection_data(self, segments: int = 32) -> tuple[str, list]:
         """Return shape kind and bezier data for Connection dispatch."""
         if self._closed:
             raise ValueError(
@@ -333,8 +339,14 @@ class Path(StrokedPathMixin, Entity):
 
     @staticmethod
     def _cubic_segment_bounds(
-        p0x: float, p0y: float, p1x: float, p1y: float,
-        p2x: float, p2y: float, p3x: float, p3y: float,
+        p0x: float,
+        p0y: float,
+        p1x: float,
+        p1y: float,
+        p2x: float,
+        p2y: float,
+        p3x: float,
+        p3y: float,
     ) -> tuple[float, float, float, float]:
         """Exact AABB of one cubic Bezier segment. O(1)."""
         min_x, max_x = min(p0x, p3x), max(p0x, p3x)
@@ -363,19 +375,29 @@ class Path(StrokedPathMixin, Entity):
                     the rendered extent.
         """
         if not self._bezier_segments:
-            return (self.position.x, self.position.y,
-                    self.position.x, self.position.y)
+            return (self.position.x, self.position.y, self.position.x, self.position.y)
 
         min_x = min_y = math.inf
         max_x = max_y = -math.inf
         for p0, cp1, cp2, p3 in self._bezier_segments:
             sb = Path._cubic_segment_bounds(
-                p0.x, p0.y, cp1.x, cp1.y, cp2.x, cp2.y, p3.x, p3.y,
+                p0.x,
+                p0.y,
+                cp1.x,
+                cp1.y,
+                cp2.x,
+                cp2.y,
+                p3.x,
+                p3.y,
             )
-            if sb[0] < min_x: min_x = sb[0]
-            if sb[1] < min_y: min_y = sb[1]
-            if sb[2] > max_x: max_x = sb[2]
-            if sb[3] > max_y: max_y = sb[3]
+            if sb[0] < min_x:
+                min_x = sb[0]
+            if sb[1] < min_y:
+                min_y = sb[1]
+            if sb[2] > max_x:
+                max_x = sb[2]
+            if sb[3] > max_y:
+                max_y = sb[3]
         if visual:
             half = self.width / 2
             min_x -= half
@@ -384,8 +406,11 @@ class Path(StrokedPathMixin, Entity):
             max_y += half
         return (min_x, min_y, max_x, max_y)
 
-    def _rotated_bounds(
-        self, angle: float, *, visual: bool = False,
+    def rotated_bounds(
+        self,
+        angle: float,
+        *,
+        visual: bool = False,
     ) -> tuple[float, float, float, float]:
         """Exact AABB of this path rotated by *angle* degrees around origin."""
         if angle == 0:
@@ -411,12 +436,23 @@ class Path(StrokedPathMixin, Entity):
             r2 = _rot(cp2.x, cp2.y)
             r3 = _rot(p3.x, p3.y)
             sb = Path._cubic_segment_bounds(
-                r0[0], r0[1], r1[0], r1[1], r2[0], r2[1], r3[0], r3[1],
+                r0[0],
+                r0[1],
+                r1[0],
+                r1[1],
+                r2[0],
+                r2[1],
+                r3[0],
+                r3[1],
             )
-            if sb[0] < min_x: min_x = sb[0]
-            if sb[1] < min_y: min_y = sb[1]
-            if sb[2] > max_x: max_x = sb[2]
-            if sb[3] > max_y: max_y = sb[3]
+            if sb[0] < min_x:
+                min_x = sb[0]
+            if sb[1] < min_y:
+                min_y = sb[1]
+            if sb[2] > max_x:
+                max_x = sb[2]
+            if sb[3] > max_y:
+                max_y = sb[3]
         if visual:
             half = self.width / 2
             min_x -= half
@@ -459,10 +495,7 @@ class Path(StrokedPathMixin, Entity):
         Returns:
             self, for method chaining.
         """
-        if origin is None:
-            origin = self.point_at(0.5)
-        else:
-            origin = Coord._coerce(origin)
+        origin = self.point_at(0.5) if origin is None else Coord.coerce(origin)
 
         angle_rad = math.radians(angle)
         cos_a = math.cos(angle_rad)
@@ -477,8 +510,7 @@ class Path(StrokedPathMixin, Entity):
             )
 
         self._bezier_segments = [
-            (rot(p0), rot(cp1), rot(cp2), rot(p3))
-            for p0, cp1, cp2, p3 in self._bezier_segments
+            (rot(p0), rot(cp1), rot(cp2), rot(p3)) for p0, cp1, cp2, p3 in self._bezier_segments
         ]
         if self._bezier_segments:
             self._position = self._bezier_segments[0][0]
@@ -495,10 +527,7 @@ class Path(StrokedPathMixin, Entity):
         Returns:
             self, for method chaining.
         """
-        if origin is None:
-            origin = self.point_at(0.5)
-        else:
-            origin = Coord._coerce(origin)
+        origin = self.point_at(0.5) if origin is None else Coord.coerce(origin)
 
         def sc(p: Coord) -> Coord:
             return Coord(
@@ -507,8 +536,7 @@ class Path(StrokedPathMixin, Entity):
             )
 
         self._bezier_segments = [
-            (sc(p0), sc(cp1), sc(cp2), sc(p3))
-            for p0, cp1, cp2, p3 in self._bezier_segments
+            (sc(p0), sc(cp1), sc(cp2), sc(p3)) for p0, cp1, cp2, p3 in self._bezier_segments
         ]
         if self._bezier_segments:
             self._position = self._bezier_segments[0][0]
@@ -530,11 +558,7 @@ class Path(StrokedPathMixin, Entity):
             parts_d.append(" Z")
         d_attr = "".join(parts_d)
 
-        # Fill
-        if self._closed and self._fill is not None:
-            fill_attr = self._fill.to_hex()
-        else:
-            fill_attr = "none"
+        fill_attr = self._fill.to_hex() if self._closed and self._fill is not None else "none"
 
         parts = [
             f'<path d="{d_attr}" '
@@ -548,7 +572,9 @@ class Path(StrokedPathMixin, Entity):
 
         # Opacity handling
         eff_fill_opacity = self.fill_opacity if self.fill_opacity is not None else self.opacity
-        eff_stroke_opacity = self.stroke_opacity if self.stroke_opacity is not None else self.opacity
+        eff_stroke_opacity = (
+            self.stroke_opacity if self.stroke_opacity is not None else self.opacity
+        )
         if eff_fill_opacity < 1.0:
             parts.append(f' fill-opacity="{eff_fill_opacity}"')
         if eff_stroke_opacity < 1.0:
@@ -559,8 +585,4 @@ class Path(StrokedPathMixin, Entity):
 
     def __repr__(self) -> str:
         kind = "closed" if self._closed else "open"
-        return (
-            f"Path({kind}, {len(self._bezier_segments)} segments, "
-            f"color={self.color!r})"
-        )
-
+        return f"Path({kind}, {len(self._bezier_segments)} segments, color={self.color!r})"

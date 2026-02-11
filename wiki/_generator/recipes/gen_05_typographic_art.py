@@ -42,9 +42,12 @@ def generate():
         y_start = 0.2 + i * 0.25
         y_end = y_start + 0.05 * (1 if curv > 0 else -1)
         curve = cell.add_curve(
-            start=(0.05, y_start), end=(0.95, y_end),
+            start=(0.05, y_start),
+            end=(0.95, y_end),
             curvature=curv,
-            width=0.5, color=colors.line, opacity=0.15,
+            width=0.5,
+            color=colors.line,
+            opacity=0.15,
         )
         cell.add_text(
             text,

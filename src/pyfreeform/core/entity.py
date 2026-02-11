@@ -7,37 +7,39 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
 from weakref import WeakSet
 
+from .binding import Binding
+from .connection import Connection
 from .coord import Coord, CoordLike, RelCoord
+from .surface import NAMED_POSITIONS
 
 if TYPE_CHECKING:
-    from .surface import Surface
-    from .connection import Connection
     from .pathable import Pathable
+    from .surface import Surface
 
 
 class Entity(ABC):
     """
     Base class for all drawable objects in PyFreeform.
-    
+
     Entities are objects with identity - they can be moved, connected,
     and tracked. Unlike raw primitives, entities maintain relationships
     with other entities.
-    
+
     Attributes:
         position: Current position (center point for most entities)
         cell: The cell containing this entity (if placed in a grid)
         connections: Set of connections involving this entity
-    
+
     Subclasses must implement:
         - `anchor(name)`: Return anchor point by name
         - `anchor_names`: Property listing available anchor names
         - `to_svg()`: Render to SVG element string
     """
-    
+
     def __init__(self, x: float = 0, y: float = 0, z_index: int = 0) -> None:
         """
         Initialize entity at position.
-        
+
         Args:
             x: Initial x coordinate.
             y: Initial y coordinate.
@@ -55,7 +57,8 @@ class Entity(ABC):
         self._along_path: Pathable | None = None
         self._along_t: float = 0.5
         self._resolving: bool = False
-    
+        self._in_pixel_mode: bool = False
+
     @property
     def z_index(self) -> int:
         """Layer ordering (higher values render on top)."""
@@ -109,10 +112,10 @@ class Entity(ABC):
         _, _, ref_w, ref_h = ref.ref_frame()
         if dimension == "width":
             return fraction * ref_w
-        elif dimension == "height":
+        if dimension == "height":
             return fraction * ref_h
-        else:  # "min"
-            return fraction * min(ref_w, ref_h)
+        # "min"
+        return fraction * min(ref_w, ref_h)
 
     def _resolve_position(self) -> Coord:
         """Resolve position from the most specific mode (along > relative > pixel)."""
@@ -124,8 +127,18 @@ class Entity(ABC):
                 return result
         return self._position
 
+    @property
+    def in_pixel_mode(self) -> bool:
+        """True if a transform has baked this entity's geometry into pixels.
+
+        Builder methods use this to avoid setting relative properties after
+        a transform (e.g. ``rotate()``) that already resolved them.
+        """
+        return self._in_pixel_mode
+
     def _to_pixel_mode(self) -> None:
         """Resolve current position to pixels and clear relative bindings."""
+        self._in_pixel_mode = True
         if self._relative_at is not None or self._along_path is not None:
             self._position = self._resolve_position()
             self._relative_at = None
@@ -139,7 +152,7 @@ class Entity(ABC):
     @position.setter
     def position(self, value: CoordLike) -> None:
         """Set position in pixels (clears relative bindings)."""
-        value = Coord._coerce(value)
+        value = Coord.coerce(value)
         self._position = value
         self._relative_at = None
         self._along_path = None
@@ -163,7 +176,7 @@ class Entity(ABC):
     def at(self, value: RelCoord | tuple[float, float] | None) -> None:
         """Set relative position (clears along binding)."""
         if value is not None:
-            value = RelCoord._coerce(value)
+            value = RelCoord.coerce(value)
         self._relative_at = value
         if value is not None:
             self._along_path = None
@@ -177,27 +190,63 @@ class Entity(ABC):
     def cell(self, value: Surface | None) -> None:
         """Set the containing surface."""
         self._cell = value
-    
+
     @property
     def connections(self) -> set[Connection]:
         """Set of connections involving this entity."""
         return set(self._connections)
-    
+
     @property
     def data(self) -> dict[str, Any]:
         """Custom data dictionary for this entity."""
         return self._data
-    
+
     def add_connection(self, connection: Connection) -> None:
         """Register a connection with this entity."""
         self._connections.add(connection)
-    
+
     def remove_connection(self, connection: Connection) -> None:
         """Remove a connection from this entity."""
         self._connections.discard(connection)
-    
+
+    # --- Binding ---
+
+    @property
+    def binding(self) -> Binding | None:
+        """Current positioning binding, or None if pixel-positioned.
+
+        Returns a ``Binding`` describing how this entity is positioned:
+        relative (``at``), along a path (``along`` + ``t``), or ``None``
+        for raw pixel mode.
+        """
+        if self._along_path is not None:
+            return Binding(along=self._along_path, t=self._along_t, reference=self._reference)
+        if self._relative_at is not None:
+            return Binding(at=self._relative_at, reference=self._reference)
+        return None
+
+    @binding.setter
+    def binding(self, value: Binding | None) -> None:
+        """Set positioning binding (clears previous mode)."""
+        if value is None:
+            self._relative_at = None
+            self._along_path = None
+            self._along_t = 0.5
+            self._reference = None
+            return
+        if value.along is not None:
+            self._along_path = value.along
+            self._along_t = value.t
+            self._relative_at = None
+        elif value.at is not None:
+            self._relative_at = value.at
+            self._along_path = None
+            self._along_t = 0.5
+        if value.reference is not None:
+            self._reference = value.reference
+
     # --- Movement methods ---
-    
+
     def _move_to(self, x: float | Coord, y: float | None = None) -> Entity:
         """
         Move entity to absolute pixel position (clears relative bindings).
@@ -218,7 +267,7 @@ class Entity(ABC):
         self._relative_at = None
         self._along_path = None
         return self
-    
+
     def _move_by(self, dx: float = 0, dy: float = 0) -> Entity:
         """
         Move entity by a pixel offset.
@@ -252,8 +301,10 @@ class Entity(ABC):
                 return self
         self._position = Coord(self._position.x + dx, self._position.y + dy)
         return self
-    
-    def move_to_cell(self, cell: Surface, at: RelCoord | tuple[float, float] | str = "center") -> Entity:
+
+    def move_to_cell(
+        self, cell: Surface, at: RelCoord | tuple[float, float] | str = "center"
+    ) -> Entity:
         """
         Move entity to a position within a cell (stores relative coords).
 
@@ -266,18 +317,18 @@ class Entity(ABC):
         Returns:
             self, for method chaining.
         """
-        from .surface import NAMED_POSITIONS
+
         self._cell = cell
         if isinstance(at, str):
             at = NAMED_POSITIONS[at]
-        at = RelCoord._coerce(at)
+        at = RelCoord.coerce(at)
         self._relative_at = at
         self._along_path = None
         self._reference = None
         return self
-    
+
     # --- Connection methods ---
-    
+
     def connect(
         self,
         other: Entity,
@@ -303,9 +354,8 @@ class Entity(ABC):
         Returns:
             The created Connection.
         """
-        from .connection import Connection
 
-        connection = Connection(
+        return Connection(
             start=self,
             end=other,
             start_anchor=start_anchor,
@@ -314,10 +364,9 @@ class Entity(ABC):
             shape=shape,
             segments=segments,
         )
-        return connection
-    
+
     # --- Transform methods ---
-    
+
     def rotate(self, angle: float, origin: CoordLike | None = None) -> Entity:
         """
         Rotate entity around a point (switches to pixel mode).
@@ -332,12 +381,10 @@ class Entity(ABC):
         Returns:
             self, for method chaining.
         """
-        import math
-
         if origin is None:
             return self
 
-        origin = Coord._coerce(origin)
+        origin = Coord.coerce(origin)
 
         self._to_pixel_mode()
 
@@ -352,7 +399,7 @@ class Entity(ABC):
         self._position = Coord(new_x, new_y)
 
         return self
-    
+
     def scale(self, factor: float, origin: CoordLike | None = None) -> Entity:
         """
         Scale entity around a point (switches to pixel mode).
@@ -370,7 +417,7 @@ class Entity(ABC):
         if origin is None:
             return self
 
-        origin = Coord._coerce(origin)
+        origin = Coord.coerce(origin)
 
         self._to_pixel_mode()
 
@@ -379,8 +426,8 @@ class Entity(ABC):
         self._position = Coord(new_x, new_y)
 
         return self
-    
-    def _offset_from(self, anchor_name: str, dx: float = 0, dy: float = 0) -> Coord:
+
+    def offset_from(self, anchor_name: str, dx: float = 0, dy: float = 0) -> Coord:
         """
         Get a point offset from a named anchor.
 
@@ -432,13 +479,12 @@ class Entity(ABC):
         return self
 
     # --- Abstract methods for subclasses ---
-    
+
     @property
     @abstractmethod
     def anchor_names(self) -> list[str]:
         """List of available anchor names for this entity."""
-        pass
-    
+
     @abstractmethod
     def anchor(self, name: str) -> Coord:
         """
@@ -449,22 +495,20 @@ class Entity(ABC):
 
         Returns:
             The anchor position as a Coord.
-        
+
         Raises:
             ValueError: If anchor name is not valid for this entity.
         """
-        pass
-    
+
     @abstractmethod
     def to_svg(self) -> str:
         """
         Render this entity to an SVG element string.
-        
+
         Returns:
             SVG element (e.g., '<circle ... />').
         """
-        pass
-    
+
     @abstractmethod
     def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
         """
@@ -478,7 +522,6 @@ class Entity(ABC):
         Returns:
             Tuple of (min_x, min_y, max_x, max_y).
         """
-        pass
 
     def get_required_markers(self) -> list[tuple[str, str]]:
         """Collect SVG marker definitions needed by this entity.
@@ -508,8 +551,11 @@ class Entity(ABC):
         """
         return self.bounds()
 
-    def _rotated_bounds(
-        self, angle: float, *, visual: bool = False,
+    def rotated_bounds(
+        self,
+        angle: float,
+        *,
+        visual: bool = False,
     ) -> tuple[float, float, float, float]:
         """Tight AABB of this entity's geometry rotated by *angle* degrees
         around the origin.
@@ -568,7 +614,10 @@ class Entity(ABC):
 
     @staticmethod
     def _compute_aspect_match_angle(
-        w: float, h: float, target_w: float, target_h: float,
+        w: float,
+        h: float,
+        target_w: float,
+        target_h: float,
     ) -> float:
         """O(1) angle (degrees) that makes bbox aspect ratio ≈ target_w/target_h.
 
@@ -670,8 +719,8 @@ class Entity(ABC):
                     avail_h = target_h * scale
                 angle = (
                     Entity._compute_optimal_angle(w, h, avail_w, avail_h)
-                    if rotate else
-                    Entity._compute_aspect_match_angle(w, h, avail_w, avail_h)
+                    if rotate
+                    else Entity._compute_aspect_match_angle(w, h, avail_w, avail_h)
                 )
                 self.rotate(angle)
 
@@ -679,10 +728,7 @@ class Entity(ABC):
             # --- Position-aware mode ---
             rx, ry = at
             if not (0.0 < rx < 1.0 and 0.0 < ry < 1.0):
-                raise ValueError(
-                    f"at=({rx}, {ry}) must be inside the bounds "
-                    f"(0.0-1.0 exclusive)."
-                )
+                raise ValueError(f"at=({rx}, {ry}) must be inside the bounds (0.0-1.0 exclusive).")
 
             # Target position in absolute coordinates
             target_x = t_min_x + rx * target_w
@@ -703,7 +749,8 @@ class Entity(ABC):
             factor = min(scale_x, scale_y)
 
             entity_center = Coord(
-                (e_min_x + e_max_x) / 2, (e_min_y + e_max_y) / 2,
+                (e_min_x + e_max_x) / 2,
+                (e_min_y + e_max_y) / 2,
             )
             if abs(factor - 1.0) > 0.001:
                 self.scale(factor, origin=entity_center)
@@ -822,8 +869,7 @@ class Entity(ABC):
                 if at is not None:
                     if isinstance(at, str):
                         raise TypeError(
-                            f"fit_to_cell(at=) only accepts (rx, ry) tuples, "
-                            f"not '{at}'."
+                            f"fit_to_cell(at=) only accepts (rx, ry) tuples, not '{at}'."
                         )
                     rx, ry = at
                     target_pos = cell.relative_to_absolute(at)
@@ -840,8 +886,8 @@ class Entity(ABC):
                     avail_h = cell.height * scale
                 angle = (
                     Entity._compute_optimal_angle(w, h, avail_w, avail_h)
-                    if rotate else
-                    Entity._compute_aspect_match_angle(w, h, avail_w, avail_h)
+                    if rotate
+                    else Entity._compute_aspect_match_angle(w, h, avail_w, avail_h)
                 )
                 self.rotate(angle)
 
@@ -917,15 +963,8 @@ class Entity(ABC):
         available_height = cell_height * scale
 
         # Calculate scale factors needed to fit
-        if entity_width > 0:
-            scale_x = available_width / entity_width
-        else:
-            scale_x = 1.0
-
-        if entity_height > 0:
-            scale_y = available_height / entity_height
-        else:
-            scale_y = 1.0
+        scale_x = available_width / entity_width if entity_width > 0 else 1.0
+        scale_y = available_height / entity_height if entity_height > 0 else 1.0
 
         # Use smaller scale to maintain aspect ratio and fit within bounds
         scale_factor = min(scale_x, scale_y)
@@ -934,10 +973,7 @@ class Entity(ABC):
         if abs(scale_factor - 1.0) < 0.001:  # Allow small floating point error
             if recenter:
                 # Just recenter without scaling
-                cell_center = Coord(
-                    cell_x + cell_width / 2,
-                    cell_y + cell_height / 2
-                )
+                cell_center = Coord(cell_x + cell_width / 2, cell_y + cell_height / 2)
                 entity_center_x = (entity_min_x + entity_max_x) / 2
                 entity_center_y = (entity_min_y + entity_max_y) / 2
                 offset_x = cell_center.x - entity_center_x
@@ -946,10 +982,7 @@ class Entity(ABC):
             return self
 
         # Calculate entity's current center (before scaling)
-        entity_center = Coord(
-            (entity_min_x + entity_max_x) / 2,
-            (entity_min_y + entity_max_y) / 2
-        )
+        entity_center = Coord((entity_min_x + entity_max_x) / 2, (entity_min_y + entity_max_y) / 2)
 
         # Scale around entity's current center
         self.scale(scale_factor, origin=entity_center)

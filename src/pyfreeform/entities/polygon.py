@@ -3,14 +3,18 @@
 from __future__ import annotations
 
 import math
-from typing import Sequence, Union
+from typing import TYPE_CHECKING
+
 from ..color import Color
-from ..core.entity import Entity
 from ..core.coord import Coord, CoordLike, RelCoord
+from ..core.entity import Entity
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 # A vertex can be a static coordinate, an Entity (uses its position),
 # or (Entity, anchor_name) to track a specific anchor.
-VertexInput = Union[CoordLike, Entity, tuple[Entity, str]]
+VertexInput = CoordLike | Entity | tuple[Entity, str]
 
 
 class Polygon(Entity):
@@ -89,9 +93,7 @@ class Polygon(Entity):
         #   (Entity, str) → kept as-is (reactive + anchor)
         self._vertex_specs: list[Coord | Entity | tuple[Entity, str]] = []
         for v in vertices:
-            if isinstance(v, Entity):
-                self._vertex_specs.append(v)
-            elif isinstance(v, Coord):
+            if isinstance(v, Entity | Coord):
                 self._vertex_specs.append(v)
             elif isinstance(v, tuple):
                 if isinstance(v[0], Entity):
@@ -112,6 +114,15 @@ class Polygon(Entity):
         self.opacity = float(opacity)
         self.fill_opacity = fill_opacity
         self.stroke_opacity = stroke_opacity
+
+    @property
+    def relative_vertices(self) -> list[RelCoord] | None:
+        """Relative vertex positions (fractions of reference frame), or None."""
+        return self._relative_vertices
+
+    @relative_vertices.setter
+    def relative_vertices(self, value: list[RelCoord] | None) -> None:
+        self._relative_vertices = value
 
     def _resolve_vertex(self, spec: Coord | Entity | tuple[Entity, str]) -> Coord:
         """Resolve a single vertex spec to a Coord."""
@@ -136,8 +147,10 @@ class Polygon(Entity):
             ref = self._reference or self._cell
             if ref is not None:
                 ref_x, ref_y, ref_w, ref_h = ref.ref_frame()
-                return [Coord(ref_x + rx * ref_w, ref_y + ry * ref_h)
-                        for rx, ry in self._relative_vertices]
+                return [
+                    Coord(ref_x + rx * ref_w, ref_y + ry * ref_h)
+                    for rx, ry in self._relative_vertices
+                ]
         return [self._resolve_vertex(s) for s in self._vertex_specs]
 
     def _to_pixel_mode(self) -> None:
@@ -156,20 +169,20 @@ class Polygon(Entity):
     def fill(self) -> str | None:
         """Fill color as string, or None."""
         return self._fill.to_hex() if self._fill else None
-    
+
     @fill.setter
     def fill(self, value: str | tuple[int, int, int] | None) -> None:
         self._fill = Color(value) if value else None
-    
+
     @property
     def stroke(self) -> str | None:
         """Stroke color as string, or None."""
         return self._stroke.to_hex() if self._stroke else None
-    
+
     @stroke.setter
     def stroke(self, value: str | tuple[int, int, int] | None) -> None:
         self._stroke = Color(value) if value else None
-    
+
     @property
     def anchor_names(self) -> list[str]:
         """Available anchors: center and vertices."""
@@ -184,7 +197,7 @@ class Polygon(Entity):
             if 0 <= idx < len(self._vertex_specs):
                 return self._resolve_vertex(self._vertex_specs[idx])
         raise ValueError(f"Polygon has no anchor '{name}'. Available: {self.anchor_names}")
-    
+
     def rotate(self, angle: float, origin: CoordLike | None = None) -> Polygon:
         """
         Rotate the polygon around a point.
@@ -199,12 +212,8 @@ class Polygon(Entity):
         Returns:
             self, for method chaining.
         """
-        if self._relative_vertices is not None:
-            self._to_pixel_mode()
-        if origin is None:
-            origin = self._calculate_centroid()
-        else:
-            origin = Coord._coerce(origin)
+        self._to_pixel_mode()
+        origin = self._calculate_centroid() if origin is None else Coord.coerce(origin)
 
         angle_rad = math.radians(angle)
         cos_a = math.cos(angle_rad)
@@ -225,7 +234,7 @@ class Polygon(Entity):
         centroid = self._calculate_centroid()
         self._position = centroid
         return self
-    
+
     def scale(self, factor: float, origin: CoordLike | None = None) -> Polygon:
         """
         Scale the polygon around a point.
@@ -240,12 +249,8 @@ class Polygon(Entity):
         Returns:
             self, for method chaining.
         """
-        if self._relative_vertices is not None:
-            self._to_pixel_mode()
-        if origin is None:
-            origin = self._calculate_centroid()
-        else:
-            origin = Coord._coerce(origin)
+        self._to_pixel_mode()
+        origin = self._calculate_centroid() if origin is None else Coord.coerce(origin)
 
         new_specs = []
         for spec in self._vertex_specs:
@@ -260,7 +265,7 @@ class Polygon(Entity):
         centroid = self._calculate_centroid()
         self._position = centroid
         return self
-    
+
     def _move_by(self, dx: float = 0, dy: float = 0) -> Polygon:
         """
         Move the polygon by an offset, updating static vertices.
@@ -286,7 +291,7 @@ class Polygon(Entity):
         self._vertex_specs = new_specs
         self._position = Coord(self._position.x + dx, self._position.y + dy)
         return self
-    
+
     def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
         """Get bounding box (resolved from specs).
 
@@ -307,8 +312,11 @@ class Polygon(Entity):
             max_y += half
         return (min_x, min_y, max_x, max_y)
 
-    def _rotated_bounds(
-        self, angle: float, *, visual: bool = False,
+    def rotated_bounds(
+        self,
+        angle: float,
+        *,
+        visual: bool = False,
     ) -> tuple[float, float, float, float]:
         """Exact AABB of this polygon rotated by *angle* degrees around origin."""
         if angle == 0:
@@ -331,28 +339,30 @@ class Polygon(Entity):
     def to_svg(self) -> str:
         """Render to SVG polygon element."""
         points_str = " ".join(f"{v.x},{v.y}" for v in self.vertices)
-        
+
         parts = [f'<polygon points="{points_str}"']
-        
+
         if self._fill:
             parts.append(f' fill="{self.fill}"')
         else:
             parts.append(' fill="none"')
-        
+
         if self._stroke:
             parts.append(f' stroke="{self.stroke}" stroke-width="{self.stroke_width}"')
 
         # Opacity
         eff_fill_opacity = self.fill_opacity if self.fill_opacity is not None else self.opacity
-        eff_stroke_opacity = self.stroke_opacity if self.stroke_opacity is not None else self.opacity
+        eff_stroke_opacity = (
+            self.stroke_opacity if self.stroke_opacity is not None else self.opacity
+        )
         if eff_fill_opacity < 1.0:
             parts.append(f' fill-opacity="{eff_fill_opacity}"')
         if eff_stroke_opacity < 1.0:
             parts.append(f' stroke-opacity="{eff_stroke_opacity}"')
 
-        parts.append(' />')
-        return ''.join(parts)
-    
+        parts.append(" />")
+        return "".join(parts)
+
     def __repr__(self) -> str:
         return f"Polygon({len(self._vertex_specs)} vertices, fill={self.fill!r})"
 
@@ -442,28 +452,29 @@ class Polygon(Entity):
 # Shape Helper Functions (internal)
 # =============================================================================
 
+
 def _triangle(
     size: float = 1.0,
     center: tuple[float, float] = (0.5, 0.5),
 ) -> list[tuple[float, float]]:
     """
     Generate triangle vertices (equilateral, pointing up).
-    
+
     Args:
         size: Scale factor (1.0 fills the cell).
         center: Center point in relative coordinates.
-    
+
     Returns:
         List of (x, y) tuples for use with add_polygon().
     """
     cx, cy = center
     h = size * 0.5  # Half-height
     w = size * 0.5 * math.sqrt(3) / 2  # Half-width for equilateral
-    
+
     return [
-        (cx, cy - h),           # Top
-        (cx + w, cy + h * 0.5), # Bottom right
-        (cx - w, cy + h * 0.5), # Bottom left
+        (cx, cy - h),  # Top
+        (cx + w, cy + h * 0.5),  # Bottom right
+        (cx - w, cy + h * 0.5),  # Bottom left
     ]
 
 
@@ -507,10 +518,12 @@ def _hexagon(
     vertices = []
     for i in range(6):
         angle = math.pi / 6 + i * math.pi / 3  # Start from top-right
-        vertices.append((
-            cx + r * math.cos(angle),
-            cy + r * math.sin(angle),
-        ))
+        vertices.append(
+            (
+                cx + r * math.cos(angle),
+                cy + r * math.sin(angle),
+            )
+        )
     return vertices
 
 
@@ -532,15 +545,17 @@ def _star(
     cx, cy = center
     outer_r = size * 0.5
     inner_r = outer_r * inner_ratio
-    
+
     vertices = []
     for i in range(points * 2):
         angle = -math.pi / 2 + i * math.pi / points  # Start from top
         r = outer_r if i % 2 == 0 else inner_r
-        vertices.append((
-            cx + r * math.cos(angle),
-            cy + r * math.sin(angle),
-        ))
+        vertices.append(
+            (
+                cx + r * math.cos(angle),
+                cy + r * math.sin(angle),
+            )
+        )
     return vertices
 
 
@@ -559,16 +574,18 @@ def _regular_polygon(
     """
     if sides < 3:
         raise ValueError("Polygon must have at least 3 sides")
-    
+
     cx, cy = center
     r = size * 0.5
     vertices = []
     for i in range(sides):
         angle = -math.pi / 2 + i * 2 * math.pi / sides  # Start from top
-        vertices.append((
-            cx + r * math.cos(angle),
-            cy + r * math.sin(angle),
-        ))
+        vertices.append(
+            (
+                cx + r * math.cos(angle),
+                cy + r * math.sin(angle),
+            )
+        )
     return vertices
 
 
@@ -589,25 +606,25 @@ def _squircle(
     """
     cx, cy = center
     r = size * 0.5
-    
+
     vertices = []
     for i in range(points):
         angle = 2 * math.pi * i / points
-        
+
         # Superellipse formula: |x/a|^n + |y/b|^n = 1
         # Solved for x,y given angle
         cos_a = math.cos(angle)
         sin_a = math.sin(angle)
-        
+
         # Sign-preserving power function
         def sgn_pow(val, exp):
             return math.copysign(abs(val) ** exp, val)
-        
+
         x = sgn_pow(cos_a, 2 / n) * r
         y = sgn_pow(sin_a, 2 / n) * r
-        
+
         vertices.append((cx + x, cy + y))
-    
+
     return vertices
 
 
@@ -629,17 +646,17 @@ def _rounded_rect(
     cx, cy = center
     half = size * 0.5
     r = min(corner_radius * size, half)  # Clamp radius
-    
+
     vertices = []
-    
+
     # Generate corners: top-right, bottom-right, bottom-left, top-left
     corners = [
-        (cx + half - r, cy - half + r, -math.pi/2, 0),        # Top-right
-        (cx + half - r, cy + half - r, 0, math.pi/2),         # Bottom-right
-        (cx - half + r, cy + half - r, math.pi/2, math.pi),   # Bottom-left
-        (cx - half + r, cy - half + r, math.pi, 3*math.pi/2), # Top-left
+        (cx + half - r, cy - half + r, -math.pi / 2, 0),  # Top-right
+        (cx + half - r, cy + half - r, 0, math.pi / 2),  # Bottom-right
+        (cx - half + r, cy + half - r, math.pi / 2, math.pi),  # Bottom-left
+        (cx - half + r, cy - half + r, math.pi, 3 * math.pi / 2),  # Top-left
     ]
-    
+
     for corner_x, corner_y, start_angle, end_angle in corners:
         for i in range(points_per_corner):
             t = i / points_per_corner
@@ -647,5 +664,5 @@ def _rounded_rect(
             x = corner_x + r * math.cos(angle)
             y = corner_y + r * math.sin(angle)
             vertices.append((x, y))
-    
+
     return vertices

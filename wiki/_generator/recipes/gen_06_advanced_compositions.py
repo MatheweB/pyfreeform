@@ -1,9 +1,14 @@
 """Generate SVGs for Recipe: Advanced Compositions."""
 
-import math
-
 from pyfreeform import (
-    Scene, Palette, Polygon, EntityGroup, Dot, Line, Ellipse, ConnectionStyle,
+    Scene,
+    Palette,
+    Polygon,
+    EntityGroup,
+    Dot,
+    Line,
+    Ellipse,
+    ConnectionStyle,
 )
 
 from wiki._generator import save, sample_image
@@ -24,7 +29,9 @@ def generate():
         t = (nx + ny) / 2
         cell.add_polygon(
             Polygon.hexagon(size=0.6),
-            fill=colors.secondary, opacity=0.1 + t * 0.15, z_index=1,
+            fill=colors.secondary,
+            opacity=0.1 + t * 0.15,
+            z_index=1,
         )
 
     # Layer 2: diagonal lines
@@ -32,7 +39,9 @@ def generate():
         nx, ny = cell.normalized_position
         cell.add_diagonal(
             width=0.5 + nx * 1.5,
-            color=colors.primary, opacity=0.2 + ny * 0.3, z_index=2,
+            color=colors.primary,
+            opacity=0.2 + ny * 0.3,
+            z_index=2,
         )
 
     # Layer 3: dots at intersections
@@ -40,7 +49,9 @@ def generate():
         nx, ny = cell.normalized_position
         cell.add_dot(
             radius=0.15 + nx * 0.2,
-            color=colors.accent, opacity=0.7, z_index=3,
+            color=colors.accent,
+            opacity=0.7,
+            z_index=3,
         )
     save(scene, "recipes/adv-multi-layer.svg")
 
@@ -50,7 +61,9 @@ def generate():
         g.add(Dot(0, 0, radius=8, color=color1, opacity=0.6))
         g.add(Line(-12, 0, 12, 0, width=1, color=color2, opacity=0.5))
         g.add(Line(0, -12, 0, 12, width=1, color=color2, opacity=0.5))
-        g.add(Ellipse(0, 0, rx=10, ry=10, fill="none", stroke=color2, stroke_width=0.5, opacity=0.3))
+        g.add(
+            Ellipse(0, 0, rx=10, ry=10, fill="none", stroke=color2, stroke_width=0.5, opacity=0.3)
+        )
         return g
 
     colors = Palette.ocean()
@@ -72,7 +85,8 @@ def generate():
         nx, ny = cell.normalized_position
         cell.add_polygon(
             Polygon.diamond(size=0.4),
-            fill=colors.secondary, opacity=0.15,
+            fill=colors.secondary,
+            opacity=0.15,
         )
 
     # Merge center region for a feature area
@@ -111,7 +125,9 @@ def generate():
             size = 0.3 + b * 0.4
             cell.add_polygon(
                 Polygon.hexagon(size=size),
-                fill=cell.color, opacity=0.5, z_index=1,
+                fill=cell.color,
+                opacity=0.5,
+                z_index=1,
             )
 
     # Layer 2: connect bright dots
@@ -119,7 +135,10 @@ def generate():
     for cell in scene.grid:
         if cell.brightness > 0.55:
             dot = cell.add_dot(
-                radius=0.15, color="#ffffff", opacity=0.7, z_index=2,
+                radius=0.15,
+                color="#ffffff",
+                opacity=0.7,
+                z_index=2,
             )
             dots[(cell.row, cell.col)] = dot
 
@@ -133,5 +152,7 @@ def generate():
     # Title overlay
     title = scene.grid.merge((0, 0), (1, scene.grid.cols - 1))
     title.add_fill(color="#000000", opacity=0.5, z_index=3)
-    title.add_text("LAYERED ART", at="center", font_size=0.45, color="#ffffff", bold=True, z_index=4)
+    title.add_text(
+        "LAYERED ART", at="center", font_size=0.45, color="#ffffff", bold=True, z_index=4
+    )
     save(scene, "recipes/adv-combined.svg")

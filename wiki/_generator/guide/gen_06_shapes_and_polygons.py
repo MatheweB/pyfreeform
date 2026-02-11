@@ -3,8 +3,17 @@
 import math
 
 from pyfreeform import (
-    Scene, Palette, Polygon, EntityGroup, Dot, Line, Ellipse, Rect, Text,
-    Point, Coord, map_range,
+    Scene,
+    Palette,
+    Polygon,
+    EntityGroup,
+    Dot,
+    Line,
+    Ellipse,
+    Rect,
+    Text,
+    Point,
+    Coord,
 )
 
 from wiki._generator import save, sample_image
@@ -128,8 +137,14 @@ def generate():
     a = Point(50, 140)
     b = Point(250, 140)
     c = Point(150, 30)
-    tri = Polygon([a, b, c], fill=colors.primary, opacity=0.6,
-                  stroke=colors.primary, stroke_width=1.5, stroke_opacity=0.8)
+    tri = Polygon(
+        [a, b, c],
+        fill=colors.primary,
+        opacity=0.6,
+        stroke=colors.primary,
+        stroke_width=1.5,
+        stroke_opacity=0.8,
+    )
     scene.place(tri)
     # Decorative markers at Point positions (Points are invisible)
     for pt, label in [(a, "a"), (b, "b"), (c, "c")]:
@@ -168,25 +183,37 @@ def generate():
             orig_sy = shared_start.y + 10
             ghost = Polygon(
                 [l1, l2, Coord(orig_sx, orig_sy)],
-                fill=None, stroke=colors.grid, stroke_width=1, opacity=0.3,
+                fill=None,
+                stroke=colors.grid,
+                stroke_width=1,
+                opacity=0.3,
             )
             scene.place(ghost)
             ghost2 = Polygon(
                 [r1, r2, Coord(orig_sx, orig_sy)],
-                fill=None, stroke=colors.grid, stroke_width=1, opacity=0.3,
+                fill=None,
+                stroke=colors.grid,
+                stroke_width=1,
+                opacity=0.3,
             )
             scene.place(ghost2)
 
         # The two triangles
         tri_left = Polygon(
             [l1, l2, Coord(sx, sy)],
-            fill=colors.primary, opacity=0.6,
-            stroke=colors.primary, stroke_width=1.5, stroke_opacity=0.8,
+            fill=colors.primary,
+            opacity=0.6,
+            stroke=colors.primary,
+            stroke_width=1.5,
+            stroke_opacity=0.8,
         )
         tri_right = Polygon(
             [r1, r2, Coord(sx, sy)],
-            fill=colors.secondary, opacity=0.6,
-            stroke=colors.secondary, stroke_width=1.5, stroke_opacity=0.8,
+            fill=colors.secondary,
+            opacity=0.6,
+            stroke=colors.secondary,
+            stroke_width=1.5,
+            stroke_opacity=0.8,
         )
         scene.place(tri_left)
         scene.place(tri_right)
@@ -205,9 +232,16 @@ def generate():
 
     # --- 9. Mixed vertices: Point + Rect anchors ---
     scene = Scene(360, 200, background=colors.background)
-    rect = Rect.at_center(Coord(240, 110), 100, 70,
-                          fill=colors.secondary, opacity=0.3,
-                          stroke=colors.secondary, stroke_width=1.5, stroke_opacity=0.6)
+    rect = Rect.at_center(
+        Coord(240, 110),
+        100,
+        70,
+        fill=colors.secondary,
+        opacity=0.3,
+        stroke=colors.secondary,
+        stroke_width=1.5,
+        stroke_opacity=0.6,
+    )
     scene.place(rect)
 
     # Point entity as the triangle tip
@@ -217,8 +251,11 @@ def generate():
     # Polygon with mixed vertex types
     tri = Polygon(
         [tip, (rect, "top_left"), (rect, "top_right")],
-        fill=colors.primary, opacity=0.5,
-        stroke=colors.primary, stroke_width=1.5, stroke_opacity=0.7,
+        fill=colors.primary,
+        opacity=0.5,
+        stroke=colors.primary,
+        stroke_width=1.5,
+        stroke_opacity=0.7,
     )
     scene.place(tri)
 
@@ -231,8 +268,12 @@ def generate():
     scene.place(Text(tip.x, tip.y - 14, "Point", font_size=10, color="#aaaacc"))
     tl = rect.anchor("top_left")
     tr = rect.anchor("top_right")
-    scene.place(Text(tl.x - 5, tl.y - 12, "top_left", font_size=9, color="#aaaacc", text_anchor="end"))
-    scene.place(Text(tr.x + 5, tr.y - 12, "top_right", font_size=9, color="#aaaacc", text_anchor="start"))
+    scene.place(
+        Text(tl.x - 5, tl.y - 12, "top_left", font_size=9, color="#aaaacc", text_anchor="end")
+    )
+    scene.place(
+        Text(tr.x + 5, tr.y - 12, "top_right", font_size=9, color="#aaaacc", text_anchor="start")
+    )
     rc = rect.anchor("center")
     scene.place(Text(rc.x, rc.y, "Rect", font_size=12, color="#aaaacc"))
 

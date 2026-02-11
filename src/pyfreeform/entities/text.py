@@ -7,8 +7,8 @@ import functools
 from PIL import ImageFont
 
 from ..color import Color
-from ..core.entity import Entity
 from ..core.coord import Coord, CoordLike, RelCoord
+from ..core.entity import Entity
 
 # ---------------------------------------------------------------------------
 # Font measurement via Pillow
@@ -33,7 +33,7 @@ def _load_font(
 ) -> ImageFont.FreeTypeFont | None:
     """Load font at reference size. Advance widths scale linearly with size."""
     is_bold = weight in ("bold", 700, 800, 900) or (
-        isinstance(weight, (int, float)) and weight >= 700
+        isinstance(weight, int | float) and weight >= 700
     )
     is_italic = style in ("italic", "oblique")
 
@@ -46,16 +46,23 @@ def _load_font(
     else:
         suffixes = [""]
 
-    concrete_names = [family] + _GENERIC_FAMILIES.get(family, [])
+    concrete_names = [family, *_GENERIC_FAMILIES.get(family, [])]
 
     for name in concrete_names:
         for suffix in suffixes:
-            try:
-                return ImageFont.truetype(name + suffix, _REFERENCE_FONT_SIZE)
-            except (OSError, IOError):
-                continue
+            font = _try_truetype(name + suffix)
+            if font is not None:
+                return font
 
     return None
+
+
+def _try_truetype(full_name: str) -> ImageFont.FreeTypeFont | None:
+    """Try loading a TrueType font, returning None on failure."""
+    try:
+        return ImageFont.truetype(full_name, _REFERENCE_FONT_SIZE)
+    except OSError:
+        return None
 
 
 def _measure_text_width(
@@ -94,7 +101,7 @@ class Text(Entity):
         font_size: Font size in pixels
         font_family: Font family name
         font_style: normal | italic | oblique
-        font_weight: normal | bold | 100–900
+        font_weight: normal | bold | 100-900
         color: Text color
         anchor: Horizontal alignment (start, middle, end)
         baseline: Vertical alignment (auto, middle, hanging, etc.)
@@ -127,8 +134,8 @@ class Text(Entity):
         font_family: str = DEFAULT_FONT_FAMILY,
         font_style: str = DEFAULT_FONT_STYLE,
         font_weight: str | int = DEFAULT_FONT_WEIGHT,
-        bold: bool = False,      # NEW (sugar)
-        italic: bool = False,    # NEW (sugar)
+        bold: bool = False,  # NEW (sugar)
+        italic: bool = False,  # NEW (sugar)
         text_anchor: str = DEFAULT_ANCHOR,
         baseline: str = DEFAULT_BASELINE,
         rotation: float = 0,
@@ -168,12 +175,20 @@ class Text(Entity):
         self.font_style = font_style
         self.font_weight = font_weight
 
-
         self.text_anchor = text_anchor
         self.baseline = baseline
         self.rotation = float(rotation)
         self.opacity = float(opacity)
         self._textpath_info: dict | None = None
+
+    @property
+    def relative_font_size(self) -> float | None:
+        """Relative font size (fraction of surface height), or None."""
+        return self._relative_font_size
+
+    @relative_font_size.setter
+    def relative_font_size(self, value: float | None) -> None:
+        self._relative_font_size = value
 
     @property
     def font_size(self) -> float:
@@ -213,7 +228,6 @@ class Text(Entity):
     def bold(self, value: bool) -> None:
         self.font_weight = "bold" if value else "normal"
 
-
     @property
     def italic(self) -> bool:
         return self.font_style == "italic"
@@ -239,8 +253,11 @@ class Text(Entity):
         and font_size for height.
         """
         text_width = _measure_text_width(
-            self.content, self.font_size, self.font_family,
-            self.font_weight, self.font_style,
+            self.content,
+            self.font_size,
+            self.font_family,
+            self.font_weight,
+            self.font_style,
         )
         text_height = self.font_size
 
@@ -285,7 +302,7 @@ class Text(Entity):
         available space — matching :meth:`EntityGroup.fit_to_cell`.
 
         Args:
-            scale: How much of the cell to fill (0.0–1.0).
+            scale: How much of the cell to fill (0.0-1.0).
                    1.0 = fill entire cell, 0.8 = use 80%.
             recenter: If True, center text in cell after scaling.
             at: Optional cell-relative position (rx, ry).
@@ -315,8 +332,8 @@ class Text(Entity):
                 avail_h = cell.height * scale
                 angle = (
                     Entity._compute_optimal_angle(w, h, avail_w, avail_h)
-                    if rotate else
-                    Entity._compute_aspect_match_angle(w, h, avail_w, avail_h)
+                    if rotate
+                    else Entity._compute_aspect_match_angle(w, h, avail_w, avail_h)
                 )
                 self.rotate(angle)
 
@@ -325,8 +342,11 @@ class Text(Entity):
 
         # Compute the font size that fits both dimensions
         width_at_1px = _measure_text_width(
-            self.content, 1.0, self.font_family,
-            self.font_weight, self.font_style,
+            self.content,
+            1.0,
+            self.font_family,
+            self.font_weight,
+            self.font_style,
         )
         max_from_height = cell_h
         max_from_width = cell_w / width_at_1px if width_at_1px > 0 else max_from_height
@@ -353,7 +373,7 @@ class Text(Entity):
 
         # If origin is specified and different from position, also move the position
         if origin is not None:
-            origin = Coord._coerce(origin)
+            origin = Coord.coerce(origin)
             if origin != self.position:
                 super().rotate(angle, origin)
 
@@ -377,6 +397,11 @@ class Text(Entity):
             super().scale(factor, origin)
 
         return self
+
+    @property
+    def has_textpath(self) -> bool:
+        """Whether this text renders along a path (textPath mode)."""
+        return self._textpath_info is not None
 
     def set_textpath(
         self,
@@ -426,15 +451,14 @@ class Text(Entity):
 
         # Escape special XML characters in content
         escaped_content = (
-            self.content
-            .replace("&", "&amp;")
+            self.content.replace("&", "&amp;")
             .replace("<", "&lt;")
             .replace(">", "&gt;")
             .replace('"', "&quot;")
             .replace("'", "&apos;")
         )
 
-        opacity_attr = f' opacity="{self.opacity}"' if self.opacity < 1.0 else ''
+        opacity_attr = f' opacity="{self.opacity}"' if self.opacity < 1.0 else ""
 
         return (
             f'<text x="{self.x}" y="{self.y}" '
@@ -445,34 +469,29 @@ class Text(Entity):
             f'fill="{self.color}" '
             f'text-anchor="{self.text_anchor}" '
             f'dominant-baseline="{self.baseline}"'
-            f'{opacity_attr}'
-            f'{transform}>'
-            f'{escaped_content}'
-            f'</text>'
+            f"{opacity_attr}"
+            f"{transform}>"
+            f"{escaped_content}"
+            f"</text>"
         )
 
     def _to_svg_textpath(self, info: dict[str, object]) -> str:
         """Render to SVG text element with textPath warping."""
         escaped_content = (
-            self.content
-            .replace("&", "&amp;")
+            self.content.replace("&", "&amp;")
             .replace("<", "&lt;")
             .replace(">", "&gt;")
             .replace('"', "&quot;")
             .replace("'", "&apos;")
         )
 
-        opacity_attr = f' opacity="{self.opacity}"' if self.opacity < 1.0 else ''
+        opacity_attr = f' opacity="{self.opacity}"' if self.opacity < 1.0 else ""
 
         offset = info["start_offset"]
-        offset_attr = f' startOffset="{offset}"' if offset not in ("0%", "0.0%") else ''
+        offset_attr = f' startOffset="{offset}"' if offset not in ("0%", "0.0%") else ""
 
         text_len = info.get("text_length")
-        textlen_attr = (
-            f' textLength="{text_len:.1f}"'
-            f' lengthAdjust="spacing"'
-            if text_len else ''
-        )
+        textlen_attr = f' textLength="{text_len:.1f}" lengthAdjust="spacing"' if text_len else ""
 
         return (
             f'<text font-size="{self.font_size}" '
@@ -482,11 +501,11 @@ class Text(Entity):
             f'fill="{self.color}" '
             f'text-anchor="{self.text_anchor}" '
             f'dominant-baseline="{self.baseline}"'
-            f'{opacity_attr}>'
+            f"{opacity_attr}>"
             f'<textPath href="#{info["path_id"]}"'
-            f'{offset_attr}{textlen_attr}>'
-            f'{escaped_content}'
-            f'</textPath></text>'
+            f"{offset_attr}{textlen_attr}>"
+            f"{escaped_content}"
+            f"</textPath></text>"
         )
 
     def __repr__(self) -> str:

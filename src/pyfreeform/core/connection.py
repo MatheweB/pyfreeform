@@ -3,17 +3,18 @@
 from __future__ import annotations
 
 import math
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, ClassVar
 
-from .coord import Coord, CoordLike
-from .stroked_path_mixin import StrokedPathMixin
+from ..config.styles import ConnectionStyle
 from .bezier import eval_cubic
+from .coord import Coord
+from .stroked_path_mixin import StrokedPathMixin
 
 if TYPE_CHECKING:
-    from .entity import Entity
-    from ..entities.line import Line
     from ..entities.curve import Curve
+    from ..entities.line import Line
     from ..entities.path import Path
+    from .entity import Entity
 
 
 class Connection(StrokedPathMixin):
@@ -43,7 +44,7 @@ class Connection(StrokedPathMixin):
         >>> conn = dot1.connect(dot2, shape=Curve(curvature=0.3))
     """
 
-    DEFAULT_STYLE = {
+    DEFAULT_STYLE: ClassVar[dict[str, str | int]] = {
         "width": 1,
         "color": "black",
         "z_index": 0,
@@ -74,7 +75,6 @@ class Connection(StrokedPathMixin):
                    Line() = straight line, Curve() = arc, Path(...) = custom.
             segments: Number of Bézier segments for shape rendering.
         """
-        from ..config.styles import ConnectionStyle
 
         self._start = start
         self._end = end
@@ -85,7 +85,7 @@ class Connection(StrokedPathMixin):
         else:
             self._style = {**self.DEFAULT_STYLE, **(style or {})}
 
-        # Shape support — dispatch via _connection_data() on the shape
+        # Shape support — dispatch via connection_data() on the shape
         self._shape = shape
         self._shape_kind: str = "none"  # "none", "line", "curve", "path"
         self._shape_beziers: list[tuple[Coord, Coord, Coord, Coord]] = []
@@ -95,7 +95,7 @@ class Connection(StrokedPathMixin):
         if shape is not None:
             self._source_start = shape.point_at(0.0)
             self._source_end = shape.point_at(1.0)
-            self._shape_kind, self._shape_beziers = shape._connection_data(segments)
+            self._shape_kind, self._shape_beziers = shape.connection_data(segments)
 
         # Register with both entities
         start.add_connection(self)
@@ -385,6 +385,5 @@ class Connection(StrokedPathMixin):
     def __repr__(self) -> str:
         shape_str = type(self._shape).__name__ if self._shape else "invisible"
         return (
-            f"Connection({self._start!r} -> {self._end!r}, "
-            f"shape={shape_str}, style={self._style})"
+            f"Connection({self._start!r} -> {self._end!r}, shape={shape_str}, style={self._style})"
         )

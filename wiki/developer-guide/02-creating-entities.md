@@ -20,7 +20,7 @@ Every entity in PyFreeform extends the `Entity` ABC from `pyfreeform.core.entity
 | Method | When to override |
 |---|---|
 | `inner_bounds()` | Non-rectangular shapes -- return the largest axis-aligned rectangle fully inside the entity. Default: same as `bounds()`. Used by `fit_within()`. |
-| `_rotated_bounds(angle, *, visual)` | If your entity has a tighter AABB under rotation than the default (which rotates 4 `bounds()` corners). Override with analytical formulas for curves, ellipses, or any entity with known extrema. Used by `EntityGroup.bounds()` for tight composite bounds. |
+| `rotated_bounds(angle, *, visual)` | If your entity has a tighter AABB under rotation than the default (which rotates 4 `bounds()` corners). Override with analytical formulas for curves, ellipses, or any entity with known extrema. Used by `EntityGroup.bounds()` for tight composite bounds. |
 | `scale(factor, origin)` | If your entity has geometry beyond its position (radius, endpoints, vertices). The base implementation only scales the position. |
 | `rotate(angle, origin)` | If your entity has geometry that should rotate (endpoints, vertices, internal angles). The base implementation only rotates the position. |
 | `_move_by(dx, dy)` | If your entity stores absolute coordinates for sub-parts (e.g., Line stores `_end_offset`, Path stores Bezier segments). This is a private method -- users reposition entities via the `.at` property or `move_to_cell()`. |
@@ -141,8 +141,8 @@ def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
 
 For the crosshair, `inner_bounds()` would be very small (just the intersection point), so we leave the default which returns the same as `bounds()`.
 
-!!! tip "Tight rotated bounds via `_rotated_bounds()`"
-    The default `_rotated_bounds(angle)` rotates the four corners of `bounds()` — correct but can overestimate for curved or circular shapes. If your entity can compute a tighter AABB at any rotation (e.g., via analytical formulas for Bezier extrema or ellipse extents), override this method. `EntityGroup.bounds()` calls `_rotated_bounds()` on every child with the combined rotation angle, so tight child bounds cascade into tight group bounds automatically.
+!!! tip "Tight rotated bounds via `rotated_bounds()`"
+    The default `rotated_bounds(angle)` rotates the four corners of `bounds()` — correct but can overestimate for curved or circular shapes. If your entity can compute a tighter AABB at any rotation (e.g., via analytical formulas for Bezier extrema or ellipse extents), override this method. `EntityGroup.bounds()` calls `rotated_bounds()` on every child with the combined rotation angle, so tight child bounds cascade into tight group bounds automatically.
 
 ### Step 4: Implement to_svg()
 
@@ -211,9 +211,10 @@ def rotate(
 ```
 
 !!! tip "The scale/rotate pattern"
-    1. **Scale internal geometry** (radius, size, endpoints, vertices).
-    2. **Call `super().scale(factor, origin)`** to handle position scaling.
-    3. Return `self` for method chaining.
+    1. **Call `self._to_pixel_mode()`** at the top -- resolves relative coords to pixels and sets `in_pixel_mode = True`. This prevents builder methods from accidentally overriding the transform with relative data.
+    2. **Transform internal geometry** (radius, size, endpoints, vertices).
+    3. **Call `super().scale(factor, origin)`** or `super().rotate(angle, origin)` to handle position scaling/rotation.
+    4. Return `self` for method chaining.
 
     For entities with rotation-sensitive geometry (like Line, Polygon), override `rotate()` to transform all internal points. See `Line.rotate()` for a full example.
 

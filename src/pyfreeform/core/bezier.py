@@ -17,7 +17,9 @@ if TYPE_CHECKING:
     from .pathable import Pathable
 
 
-def tangent_at(pathable: Pathable, t: float, closed: bool, epsilon: float = 1e-5) -> tuple[float, float]:
+def tangent_at(
+    pathable: Pathable, t: float, closed: bool, epsilon: float = 1e-5
+) -> tuple[float, float]:
     """Compute the tangent vector (dx/dt, dy/dt) via numerical differentiation."""
     if closed:
         # For closed paths, wrap around instead of clamping
@@ -71,9 +73,7 @@ def fit_cubic_beziers(
         n = segments
         t_values = [i / n for i in range(n)]
         points = [pathable.point_at(t) for t in t_values]
-        tangents = [
-            tangent_at(pathable, t, closed=True) for t in t_values
-        ]
+        tangents = [tangent_at(pathable, t, closed=True) for t in t_values]
 
         result = []
         for i in range(n):
@@ -93,37 +93,34 @@ def fit_cubic_beziers(
 
         return result
 
-    else:
-        # Open path (or sub-range of a closed path)
-        n = segments
-        t_values = [
-            start_t + (i / n) * t_span for i in range(n + 1)
-        ]
-        points = [pathable.point_at(t) for t in t_values]
-        tangents = [
-            tangent_at(pathable, t, closed=False)
-            for t in t_values
-        ]
+    # Open path (or sub-range of a closed path)
+    n = segments
+    t_values = [start_t + (i / n) * t_span for i in range(n + 1)]
+    points = [pathable.point_at(t) for t in t_values]
+    tangents = [tangent_at(pathable, t, closed=False) for t in t_values]
 
-        result = []
-        for i in range(n):
-            dt = t_span / n
+    result = []
+    for i in range(n):
+        dt = t_span / n
 
-            p0 = points[i]
-            p3 = points[i + 1]
-            tx0, ty0 = tangents[i]
-            tx3, ty3 = tangents[i + 1]
+        p0 = points[i]
+        p3 = points[i + 1]
+        tx0, ty0 = tangents[i]
+        tx3, ty3 = tangents[i + 1]
 
-            cp1 = Coord(p0.x + tx0 * dt / 3, p0.y + ty0 * dt / 3)
-            cp2 = Coord(p3.x - tx3 * dt / 3, p3.y - ty3 * dt / 3)
-            cp1, cp2 = clamp_control_points(p0, cp1, cp2, p3)
-            result.append((p0, cp1, cp2, p3))
+        cp1 = Coord(p0.x + tx0 * dt / 3, p0.y + ty0 * dt / 3)
+        cp2 = Coord(p3.x - tx3 * dt / 3, p3.y - ty3 * dt / 3)
+        cp1, cp2 = clamp_control_points(p0, cp1, cp2, p3)
+        result.append((p0, cp1, cp2, p3))
 
-        return result
+    return result
 
 
 def clamp_control_points(
-    p0: Coord, cp1: Coord, cp2: Coord, p3: Coord,
+    p0: Coord,
+    cp1: Coord,
+    cp2: Coord,
+    p3: Coord,
     max_ratio: float = 0.75,
 ) -> tuple[Coord, Coord]:
     """
@@ -168,17 +165,15 @@ def eval_cubic(p0: Coord, cp1: Coord, cp2: Coord, p3: Coord, t: float) -> Coord:
     return Coord(x, y)
 
 
-def eval_cubic_derivative(p0: Coord, cp1: Coord, cp2: Coord, p3: Coord, t: float) -> tuple[float, float]:
+def eval_cubic_derivative(
+    p0: Coord, cp1: Coord, cp2: Coord, p3: Coord, t: float
+) -> tuple[float, float]:
     """Evaluate the derivative of a cubic Bézier at parameter t."""
     mt = 1 - t
     mt2 = mt * mt
     t2 = t * t
 
     # B'(t) = 3(1-t)²(P1-P0) + 6(1-t)t(P2-P1) + 3t²(P3-P2)
-    dx = (3 * mt2 * (cp1.x - p0.x)
-          + 6 * mt * t * (cp2.x - cp1.x)
-          + 3 * t2 * (p3.x - cp2.x))
-    dy = (3 * mt2 * (cp1.y - p0.y)
-          + 6 * mt * t * (cp2.y - cp1.y)
-          + 3 * t2 * (p3.y - cp2.y))
+    dx = 3 * mt2 * (cp1.x - p0.x) + 6 * mt * t * (cp2.x - cp1.x) + 3 * t2 * (p3.x - cp2.x)
+    dy = 3 * mt2 * (cp1.y - p0.y) + 6 * mt * t * (cp2.y - cp1.y) + 3 * t2 * (p3.y - cp2.y)
     return (dx, dy)

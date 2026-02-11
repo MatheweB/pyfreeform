@@ -9,12 +9,14 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from pyfreeform import Scene, Grid, Cell, Point, Dot, Rect, Text, Image
+from pyfreeform import Scene, Grid, Point, Dot, Rect, Text, Image
+from pyfreeform.core.coord import RelCoord
 
 
 # =========================================================================
 # Helpers
 # =========================================================================
+
 
 def _make_image(width: int, height: int, r=128, g=128, b=128) -> Image:
     """Create a solid-color test image."""
@@ -221,8 +223,8 @@ class TestNormalizedPosition:
     def test_corners(self):
         """Corners are (0,0) and (1,1)."""
         scene = Scene.with_grid(cols=10, rows=10, cell_size=10)
-        assert scene.grid[0, 0].normalized_position == (0.0, 0.0)
-        assert scene.grid[9, 9].normalized_position == (1.0, 1.0)
+        assert scene.grid[0, 0].normalized_position == RelCoord(0.0, 0.0)
+        assert scene.grid[9, 9].normalized_position == RelCoord(1.0, 1.0)
 
     def test_center(self):
         """Center of 11x11 grid = (0.5, 0.5)."""
@@ -234,7 +236,7 @@ class TestNormalizedPosition:
     def test_single_cell(self):
         """Single cell grid = (0.0, 0.0)."""
         scene = Scene.with_grid(cols=1, rows=1, cell_size=10)
-        assert scene.grid[0, 0].normalized_position == (0.0, 0.0)
+        assert scene.grid[0, 0].normalized_position == RelCoord(0.0, 0.0)
 
     def test_top_right(self):
         """Top-right corner."""
@@ -310,14 +312,14 @@ class TestOffsetFrom:
     def test_no_offset(self):
         """offset_from with no offset = anchor point."""
         dot = Dot(100, 200, radius=10, color="red")
-        result = dot._offset_from("center")
+        result = dot.offset_from("center")
         assert result.x == 100
         assert result.y == 200
 
     def test_with_offset(self):
         """offset_from("center", 10, -5) returns correct point."""
         dot = Dot(100, 200, radius=10, color="red")
-        result = dot._offset_from("center", 10, -5)
+        result = dot.offset_from("center", 10, -5)
         assert result.x == 110
         assert result.y == 195
 
@@ -325,7 +327,7 @@ class TestOffsetFrom:
         """offset_from on Rect named anchors."""
         rect = Rect(100, 100, width=40, height=20, fill="blue")
         # top_left anchor should be at (100, 100)
-        result = rect._offset_from("top_left", 5, 5)
+        result = rect.offset_from("top_left", 5, 5)
         assert abs(result.x - 105) < 0.01
         assert abs(result.y - 105) < 0.01
 

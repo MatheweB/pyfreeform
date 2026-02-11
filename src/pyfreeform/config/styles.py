@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Any, Literal
+from dataclasses import dataclass
+from typing import Any
 
 
 @dataclass
@@ -77,45 +77,84 @@ class LineStyle:
 
     def with_width(self, width: float) -> LineStyle:
         """Return new style with different width."""
-        return LineStyle(width=width, color=self.color, z_index=self.z_index,
-                         cap=self.cap, start_cap=self.start_cap, end_cap=self.end_cap,
-                         opacity=self.opacity)
+        return LineStyle(
+            width=width,
+            color=self.color,
+            z_index=self.z_index,
+            cap=self.cap,
+            start_cap=self.start_cap,
+            end_cap=self.end_cap,
+            opacity=self.opacity,
+        )
 
     def with_color(self, color: str) -> LineStyle:
         """Return new style with different color."""
-        return LineStyle(width=self.width, color=color, z_index=self.z_index,
-                         cap=self.cap, start_cap=self.start_cap, end_cap=self.end_cap,
-                         opacity=self.opacity)
+        return LineStyle(
+            width=self.width,
+            color=color,
+            z_index=self.z_index,
+            cap=self.cap,
+            start_cap=self.start_cap,
+            end_cap=self.end_cap,
+            opacity=self.opacity,
+        )
 
     def with_z_index(self, z_index: int) -> LineStyle:
         """Return new style with different z_index."""
-        return LineStyle(width=self.width, color=self.color, z_index=z_index,
-                         cap=self.cap, start_cap=self.start_cap, end_cap=self.end_cap,
-                         opacity=self.opacity)
+        return LineStyle(
+            width=self.width,
+            color=self.color,
+            z_index=z_index,
+            cap=self.cap,
+            start_cap=self.start_cap,
+            end_cap=self.end_cap,
+            opacity=self.opacity,
+        )
 
     def with_start_cap(self, start_cap: str | None) -> LineStyle:
         """Return new style with different start cap."""
-        return LineStyle(width=self.width, color=self.color, z_index=self.z_index,
-                         cap=self.cap, start_cap=start_cap, end_cap=self.end_cap,
-                         opacity=self.opacity)
+        return LineStyle(
+            width=self.width,
+            color=self.color,
+            z_index=self.z_index,
+            cap=self.cap,
+            start_cap=start_cap,
+            end_cap=self.end_cap,
+            opacity=self.opacity,
+        )
 
     def with_end_cap(self, end_cap: str | None) -> LineStyle:
         """Return new style with different end cap."""
-        return LineStyle(width=self.width, color=self.color, z_index=self.z_index,
-                         cap=self.cap, start_cap=self.start_cap, end_cap=end_cap,
-                         opacity=self.opacity)
+        return LineStyle(
+            width=self.width,
+            color=self.color,
+            z_index=self.z_index,
+            cap=self.cap,
+            start_cap=self.start_cap,
+            end_cap=end_cap,
+            opacity=self.opacity,
+        )
 
     def with_opacity(self, opacity: float) -> LineStyle:
         """Return new style with different opacity."""
-        return LineStyle(width=self.width, color=self.color, z_index=self.z_index,
-                         cap=self.cap, start_cap=self.start_cap, end_cap=self.end_cap,
-                         opacity=opacity)
+        return LineStyle(
+            width=self.width,
+            color=self.color,
+            z_index=self.z_index,
+            cap=self.cap,
+            start_cap=self.start_cap,
+            end_cap=self.end_cap,
+            opacity=opacity,
+        )
 
     def to_kwargs(self) -> dict[str, Any]:
         """Convert to keyword arguments for add_line() / add_curve()."""
         d: dict[str, Any] = {
-            "width": self.width, "color": self.color,
-            "z_index": self.z_index, "cap": self.cap, "opacity": self.opacity,
+            "width": self.width,
+            "color": self.color,
+            "z_index": self.z_index,
+            "cap": self.cap,
+            "opacity": self.opacity,
         }
         if self.start_cap is not None:
             d["start_cap"] = self.start_cap
@@ -181,19 +220,30 @@ class BorderStyle:
 
     def with_width(self, width: float) -> BorderStyle:
         """Return new style with different width."""
-        return BorderStyle(width=width, color=self.color, z_index=self.z_index, opacity=self.opacity)
+        return BorderStyle(
+            width=width, color=self.color, z_index=self.z_index, opacity=self.opacity
+        )
 
     def with_color(self, color: str) -> BorderStyle:
         """Return new style with different color."""
-        return BorderStyle(width=self.width, color=color, z_index=self.z_index, opacity=self.opacity)
+        return BorderStyle(
+            width=self.width, color=color, z_index=self.z_index, opacity=self.opacity
+        )
 
     def with_opacity(self, opacity: float) -> BorderStyle:
         """Return new style with different opacity."""
-        return BorderStyle(width=self.width, color=self.color, z_index=self.z_index, opacity=opacity)
+        return BorderStyle(
+            width=self.width, color=self.color, z_index=self.z_index, opacity=opacity
+        )
 
     def to_kwargs(self) -> dict[str, Any]:
         """Convert to keyword arguments for add_border()."""
-        return {"width": self.width, "color": self.color, "z_index": self.z_index, "opacity": self.opacity}
+        return {
+            "width": self.width,
+            "color": self.color,
+            "z_index": self.z_index,
+            "opacity": self.opacity,
+        }
 
 
 @dataclass
@@ -229,51 +279,95 @@ class ShapeStyle:
 
     def with_color(self, color: str) -> ShapeStyle:
         """Return new style with different color."""
-        return ShapeStyle(color=color, stroke=self.stroke, stroke_width=self.stroke_width,
-                          z_index=self.z_index, opacity=self.opacity,
-                          fill_opacity=self.fill_opacity, stroke_opacity=self.stroke_opacity)
+        return ShapeStyle(
+            color=color,
+            stroke=self.stroke,
+            stroke_width=self.stroke_width,
+            z_index=self.z_index,
+            opacity=self.opacity,
+            fill_opacity=self.fill_opacity,
+            stroke_opacity=self.stroke_opacity,
+        )
 
     def with_stroke(self, stroke: str | None) -> ShapeStyle:
         """Return new style with different stroke."""
-        return ShapeStyle(color=self.color, stroke=stroke, stroke_width=self.stroke_width,
-                          z_index=self.z_index, opacity=self.opacity,
-                          fill_opacity=self.fill_opacity, stroke_opacity=self.stroke_opacity)
+        return ShapeStyle(
+            color=self.color,
+            stroke=stroke,
+            stroke_width=self.stroke_width,
+            z_index=self.z_index,
+            opacity=self.opacity,
+            fill_opacity=self.fill_opacity,
+            stroke_opacity=self.stroke_opacity,
+        )
 
     def with_stroke_width(self, stroke_width: float) -> ShapeStyle:
         """Return new style with different stroke width."""
-        return ShapeStyle(color=self.color, stroke=self.stroke, stroke_width=stroke_width,
-                          z_index=self.z_index, opacity=self.opacity,
-                          fill_opacity=self.fill_opacity, stroke_opacity=self.stroke_opacity)
+        return ShapeStyle(
+            color=self.color,
+            stroke=self.stroke,
+            stroke_width=stroke_width,
+            z_index=self.z_index,
+            opacity=self.opacity,
+            fill_opacity=self.fill_opacity,
+            stroke_opacity=self.stroke_opacity,
+        )
 
     def with_z_index(self, z_index: int) -> ShapeStyle:
         """Return new style with different z_index."""
-        return ShapeStyle(color=self.color, stroke=self.stroke, stroke_width=self.stroke_width,
-                          z_index=z_index, opacity=self.opacity,
-                          fill_opacity=self.fill_opacity, stroke_opacity=self.stroke_opacity)
+        return ShapeStyle(
+            color=self.color,
+            stroke=self.stroke,
+            stroke_width=self.stroke_width,
+            z_index=z_index,
+            opacity=self.opacity,
+            fill_opacity=self.fill_opacity,
+            stroke_opacity=self.stroke_opacity,
+        )
 
     def with_opacity(self, opacity: float) -> ShapeStyle:
         """Return new style with different opacity (affects both fill and stroke)."""
-        return ShapeStyle(color=self.color, stroke=self.stroke, stroke_width=self.stroke_width,
-                          z_index=self.z_index, opacity=opacity,
-                          fill_opacity=self.fill_opacity, stroke_opacity=self.stroke_opacity)
+        return ShapeStyle(
+            color=self.color,
+            stroke=self.stroke,
+            stroke_width=self.stroke_width,
+            z_index=self.z_index,
+            opacity=opacity,
+            fill_opacity=self.fill_opacity,
+            stroke_opacity=self.stroke_opacity,
+        )
 
     def with_fill_opacity(self, fill_opacity: float | None) -> ShapeStyle:
         """Return new style with different fill opacity override."""
-        return ShapeStyle(color=self.color, stroke=self.stroke, stroke_width=self.stroke_width,
-                          z_index=self.z_index, opacity=self.opacity,
-                          fill_opacity=fill_opacity, stroke_opacity=self.stroke_opacity)
+        return ShapeStyle(
+            color=self.color,
+            stroke=self.stroke,
+            stroke_width=self.stroke_width,
+            z_index=self.z_index,
+            opacity=self.opacity,
+            fill_opacity=fill_opacity,
+            stroke_opacity=self.stroke_opacity,
+        )
 
     def with_stroke_opacity(self, stroke_opacity: float | None) -> ShapeStyle:
         """Return new style with different stroke opacity override."""
-        return ShapeStyle(color=self.color, stroke=self.stroke, stroke_width=self.stroke_width,
-                          z_index=self.z_index, opacity=self.opacity,
-                          fill_opacity=self.fill_opacity, stroke_opacity=stroke_opacity)
+        return ShapeStyle(
+            color=self.color,
+            stroke=self.stroke,
+            stroke_width=self.stroke_width,
+            z_index=self.z_index,
+            opacity=self.opacity,
+            fill_opacity=self.fill_opacity,
+            stroke_opacity=stroke_opacity,
+        )
 
     def to_kwargs(self) -> dict[str, Any]:
         """Convert to keyword arguments for add_ellipse() / add_polygon() / add_rect()."""
         d: dict[str, Any] = {
-            "fill": self.color, "stroke": self.stroke,
-            "stroke_width": self.stroke_width, "z_index": self.z_index,
+            "fill": self.color,
+            "stroke": self.stroke,
+            "stroke_width": self.stroke_width,
+            "z_index": self.z_index,
             "opacity": self.opacity,
         }
         if self.fill_opacity is not None:
@@ -317,53 +411,99 @@ class TextStyle:
 
     def with_color(self, color: str) -> TextStyle:
         """Return new style with different color."""
-        return TextStyle(color=color, font_family=self.font_family,
-                         bold=self.bold, italic=self.italic, text_anchor=self.text_anchor,
-                         baseline=self.baseline, rotation=self.rotation, z_index=self.z_index,
-                         opacity=self.opacity)
+        return TextStyle(
+            color=color,
+            font_family=self.font_family,
+            bold=self.bold,
+            italic=self.italic,
+            text_anchor=self.text_anchor,
+            baseline=self.baseline,
+            rotation=self.rotation,
+            z_index=self.z_index,
+            opacity=self.opacity,
+        )
 
     def with_font_family(self, font_family: str) -> TextStyle:
         """Return new style with different font family."""
-        return TextStyle(color=self.color, font_family=font_family,
-                         bold=self.bold, italic=self.italic, text_anchor=self.text_anchor,
-                         baseline=self.baseline, rotation=self.rotation, z_index=self.z_index,
-                         opacity=self.opacity)
+        return TextStyle(
+            color=self.color,
+            font_family=font_family,
+            bold=self.bold,
+            italic=self.italic,
+            text_anchor=self.text_anchor,
+            baseline=self.baseline,
+            rotation=self.rotation,
+            z_index=self.z_index,
+            opacity=self.opacity,
+        )
 
     def with_bold(self, bold: bool = True) -> TextStyle:
         """Return new style with bold enabled/disabled."""
-        return TextStyle(color=self.color, font_family=self.font_family,
-                         bold=bold, italic=self.italic, text_anchor=self.text_anchor,
-                         baseline=self.baseline, rotation=self.rotation, z_index=self.z_index,
-                         opacity=self.opacity)
+        return TextStyle(
+            color=self.color,
+            font_family=self.font_family,
+            bold=bold,
+            italic=self.italic,
+            text_anchor=self.text_anchor,
+            baseline=self.baseline,
+            rotation=self.rotation,
+            z_index=self.z_index,
+            opacity=self.opacity,
+        )
 
     def with_italic(self, italic: bool = True) -> TextStyle:
         """Return new style with italic enabled/disabled."""
-        return TextStyle(color=self.color, font_family=self.font_family,
-                         bold=self.bold, italic=italic, text_anchor=self.text_anchor,
-                         baseline=self.baseline, rotation=self.rotation, z_index=self.z_index,
-                         opacity=self.opacity)
+        return TextStyle(
+            color=self.color,
+            font_family=self.font_family,
+            bold=self.bold,
+            italic=italic,
+            text_anchor=self.text_anchor,
+            baseline=self.baseline,
+            rotation=self.rotation,
+            z_index=self.z_index,
+            opacity=self.opacity,
+        )
 
     def with_z_index(self, z_index: int) -> TextStyle:
         """Return new style with different z_index."""
-        return TextStyle(color=self.color, font_family=self.font_family,
-                         bold=self.bold, italic=self.italic, text_anchor=self.text_anchor,
-                         baseline=self.baseline, rotation=self.rotation, z_index=z_index,
-                         opacity=self.opacity)
+        return TextStyle(
+            color=self.color,
+            font_family=self.font_family,
+            bold=self.bold,
+            italic=self.italic,
+            text_anchor=self.text_anchor,
+            baseline=self.baseline,
+            rotation=self.rotation,
+            z_index=z_index,
+            opacity=self.opacity,
+        )
 
     def with_opacity(self, opacity: float) -> TextStyle:
         """Return new style with different opacity."""
-        return TextStyle(color=self.color, font_family=self.font_family,
-                         bold=self.bold, italic=self.italic, text_anchor=self.text_anchor,
-                         baseline=self.baseline, rotation=self.rotation, z_index=self.z_index,
-                         opacity=opacity)
+        return TextStyle(
+            color=self.color,
+            font_family=self.font_family,
+            bold=self.bold,
+            italic=self.italic,
+            text_anchor=self.text_anchor,
+            baseline=self.baseline,
+            rotation=self.rotation,
+            z_index=self.z_index,
+            opacity=opacity,
+        )
 
     def to_kwargs(self) -> dict[str, Any]:
         """Convert to keyword arguments for add_text()."""
         return {
-            "color": self.color, "font_family": self.font_family,
-            "bold": self.bold, "italic": self.italic,
-            "text_anchor": self.text_anchor, "baseline": self.baseline,
-            "rotation": self.rotation, "z_index": self.z_index,
+            "color": self.color,
+            "font_family": self.font_family,
+            "bold": self.bold,
+            "italic": self.italic,
+            "text_anchor": self.text_anchor,
+            "baseline": self.baseline,
+            "rotation": self.rotation,
+            "z_index": self.z_index,
             "opacity": self.opacity,
         }
 
@@ -401,39 +541,75 @@ class ConnectionStyle:
 
     def with_width(self, width: float) -> ConnectionStyle:
         """Return new style with different width."""
-        return ConnectionStyle(width=width, color=self.color, z_index=self.z_index,
-                               cap=self.cap, start_cap=self.start_cap, end_cap=self.end_cap,
-                               opacity=self.opacity)
+        return ConnectionStyle(
+            width=width,
+            color=self.color,
+            z_index=self.z_index,
+            cap=self.cap,
+            start_cap=self.start_cap,
+            end_cap=self.end_cap,
+            opacity=self.opacity,
+        )
 
     def with_color(self, color: str) -> ConnectionStyle:
         """Return new style with different color."""
-        return ConnectionStyle(width=self.width, color=color, z_index=self.z_index,
-                               cap=self.cap, start_cap=self.start_cap, end_cap=self.end_cap,
-                               opacity=self.opacity)
+        return ConnectionStyle(
+            width=self.width,
+            color=color,
+            z_index=self.z_index,
+            cap=self.cap,
+            start_cap=self.start_cap,
+            end_cap=self.end_cap,
+            opacity=self.opacity,
+        )
 
     def with_z_index(self, z_index: int) -> ConnectionStyle:
         """Return new style with different z_index."""
-        return ConnectionStyle(width=self.width, color=self.color, z_index=z_index,
-                               cap=self.cap, start_cap=self.start_cap, end_cap=self.end_cap,
-                               opacity=self.opacity)
+        return ConnectionStyle(
+            width=self.width,
+            color=self.color,
+            z_index=z_index,
+            cap=self.cap,
+            start_cap=self.start_cap,
+            end_cap=self.end_cap,
+            opacity=self.opacity,
+        )
 
     def with_start_cap(self, start_cap: str | None) -> ConnectionStyle:
         """Return new style with different start cap."""
-        return ConnectionStyle(width=self.width, color=self.color, z_index=self.z_index,
-                               cap=self.cap, start_cap=start_cap, end_cap=self.end_cap,
-                               opacity=self.opacity)
+        return ConnectionStyle(
+            width=self.width,
+            color=self.color,
+            z_index=self.z_index,
+            cap=self.cap,
+            start_cap=start_cap,
+            end_cap=self.end_cap,
+            opacity=self.opacity,
+        )
 
     def with_end_cap(self, end_cap: str | None) -> ConnectionStyle:
         """Return new style with different end cap."""
-        return ConnectionStyle(width=self.width, color=self.color, z_index=self.z_index,
-                               cap=self.cap, start_cap=self.start_cap, end_cap=end_cap,
-                               opacity=self.opacity)
+        return ConnectionStyle(
+            width=self.width,
+            color=self.color,
+            z_index=self.z_index,
+            cap=self.cap,
+            start_cap=self.start_cap,
+            end_cap=end_cap,
+            opacity=self.opacity,
+        )
 
     def with_opacity(self, opacity: float) -> ConnectionStyle:
         """Return new style with different opacity."""
-        return ConnectionStyle(width=self.width, color=self.color, z_index=self.z_index,
-                               cap=self.cap, start_cap=self.start_cap, end_cap=self.end_cap,
-                               opacity=opacity)
+        return ConnectionStyle(
+            width=self.width,
+            color=self.color,
+            z_index=self.z_index,
+            cap=self.cap,
+            start_cap=self.start_cap,
+            end_cap=self.end_cap,
+            opacity=opacity,
+        )
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dict for backward compatibility with Connection internals."""

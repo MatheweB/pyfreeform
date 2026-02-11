@@ -3,48 +3,50 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Iterator, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from ..color import Color
-from ..core.connection import Connection
-from ..core.entity import Entity
 from ..core.surface import Surface
 from ..grid.grid import Grid
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
+
+    from ..core.connection import Connection
+    from ..core.entity import Entity
     from ..image import Image
 
 
 class Scene(Surface):
     """
     The main container for all drawable objects in PyFreeform.
-    
+
     A Scene holds entities, grids, and connections. It manages rendering
     to SVG and provides the primary API for creating artwork.
-    
+
     Creating Scenes:
         # From an image (recommended for image-based art)
         scene = Scene.from_image("photo.jpg", grid_size=40)
-        
+
         # With an empty grid
         scene = Scene.with_grid(cols=30, rows=30, cell_size=12)
-        
+
         # Manual (for non-grid art)
         scene = Scene(800, 600, background="#fafafa")
-    
+
     Working with the Grid:
         >>> scene = Scene.from_image("photo.jpg", grid_size=40)
         >>> for cell in scene.grid:
         ...     cell.add_dot(color=cell.color)
         >>> scene.save("art.svg")
-    
+
     Attributes:
         width: Scene width in pixels
         height: Scene height in pixels
         background: Background color (or None for transparent)
         grid: The primary grid (if created with from_image or with_grid)
     """
-    
+
     def __init__(
         self,
         width: int,
@@ -53,10 +55,10 @@ class Scene(Surface):
     ) -> None:
         """
         Create a new empty scene.
-        
+
         For image-based art, use Scene.from_image() instead.
         For grid-based art, use Scene.with_grid() instead.
-        
+
         Args:
             width: Scene width in pixels.
             height: Scene height in pixels.
@@ -73,11 +75,11 @@ class Scene(Surface):
         self._grids: list[Grid] = []
         self._primary_grid: Grid | None = None
         self._viewbox: tuple[float, float, float, float] | None = None
-    
+
     # =========================================================================
     # FACTORY METHODS
     # =========================================================================
-    
+
     @classmethod
     def from_image(
         cls,
@@ -102,7 +104,7 @@ class Scene(Surface):
 
         Two modes:
             - **grid_size=N** (default): N columns, auto rows from aspect ratio.
-              Scene size = cols * cell_size × rows * cell_size.
+              Scene size = cols * cell_size x rows * cell_size.
             - **grid_size=None**: Grid fits the image. Cols/rows derived from
               image dimensions ÷ cell size. Scene size ≈ image dimensions.
 
@@ -128,10 +130,7 @@ class Scene(Surface):
         from ..image import Image as ImageClass
 
         # Load image if path provided
-        if isinstance(source, (str, Path)):
-            image = ImageClass.load(source)
-        else:
-            image = source
+        image = ImageClass.load(source) if isinstance(source, str | Path) else source
 
         # Create grid from image
         grid = Grid.from_image(
@@ -143,24 +142,24 @@ class Scene(Surface):
             cell_height=cell_height,
             load_layers=True,
         )
-        
+
         # Set default background if not specified
         if background is None:
             background = "#1a1a2e"  # Midnight blue
-        
+
         # Create scene sized to grid
         scene = cls(
             width=int(grid.pixel_width),
             height=int(grid.pixel_height),
             background=background,
         )
-        
+
         # Add grid and mark as primary
         scene._grids.append(grid)
         scene._primary_grid = grid
-        
+
         return scene
-    
+
     @classmethod
     def with_grid(
         cls,
@@ -201,43 +200,43 @@ class Scene(Surface):
             cell_width=cell_width,
             cell_height=cell_height,
         )
-        
+
         # Set default background if not specified
         if background is None:
             background = "#1a1a2e"
-        
+
         scene = cls(
             width=int(grid.pixel_width),
             height=int(grid.pixel_height),
             background=background,
         )
-        
+
         scene._grids.append(grid)
         scene._primary_grid = grid
-        
+
         return scene
-    
+
     # =========================================================================
     # PROPERTIES
     # =========================================================================
-    
+
     @property
     def background(self) -> str | None:
         """Background color as string, or None."""
         return self._background.to_hex() if self._background else None
-    
+
     @background.setter
     def background(self, value: str | tuple[int, int, int] | None) -> None:
         self._background = Color(value) if value else None
-    
+
     @property
     def grid(self) -> Grid:
         """
         The primary grid (created by from_image or with_grid).
-        
+
         Raises:
             ValueError: If scene was created without a grid.
-        
+
         Example:
             >>> for cell in scene.grid:
             ...     cell.add_dot(color=cell.color)
@@ -250,7 +249,7 @@ class Scene(Surface):
                 "or add a grid with scene.add_grid(grid)."
             )
         return self._primary_grid
-    
+
     @property
     def entities(self) -> list[Entity]:
         """All entities (including those in grids)."""
@@ -258,17 +257,17 @@ class Scene(Surface):
         for grid in self._grids:
             result.extend(grid.all_entities())
         return result
-    
+
     @property
     def connections(self) -> list[Connection]:
         """All connections."""
         return list(self._connections)
-    
+
     @property
     def grids(self) -> list[Grid]:
         """All grids in the scene."""
         return list(self._grids)
-    
+
     # --- Adding objects ---
 
     def add_connection(self, connection: Connection) -> Connection:
@@ -361,7 +360,7 @@ class Scene(Surface):
             self._grids.remove(grid)
             return True
         return False
-    
+
     def clear(self) -> None:
         """Remove all objects from the scene."""
         self._entities.clear()
@@ -369,40 +368,40 @@ class Scene(Surface):
         for grid in self._grids:
             grid.clear()
         self._grids.clear()
-    
+
     # --- Iteration ---
-    
+
     def __iter__(self) -> Iterator[Entity]:
         """Iterate over all entities."""
         return iter(self.entities)
-    
+
     def __len__(self) -> int:
         """Total number of entities."""
         return len(self.entities)
-    
+
     # --- Rendering ---
-    
+
     def _collect_markers(self, entities: list[Entity]) -> dict[str, str]:
         """Collect unique SVG marker definitions needed by all entities and connections."""
-        markers: dict[str, str] = {}  # marker_id -> marker_svg
-
-        for entity in entities:
-            for mid, svg in entity.get_required_markers():
-                markers[mid] = svg
-
-        for connection in self._connections:
-            for mid, svg in connection.get_required_markers():
-                markers[mid] = svg
-
+        markers = {
+            mid: svg
+            for entity in entities
+            for mid, svg in entity.get_required_markers()
+        }
+        markers |= {
+            mid: svg
+            for connection in self._connections
+            for mid, svg in connection.get_required_markers()
+        }
         return markers
 
     def _collect_path_defs(self, entities: list[Entity]) -> dict[str, str]:
         """Collect unique SVG path definitions needed by textPath entities."""
-        paths: dict[str, str] = {}
-        for entity in entities:
-            for pid, svg in entity.get_required_paths():
-                paths[pid] = svg
-        return paths
+        return {
+            pid: svg
+            for entity in entities
+            for pid, svg in entity.get_required_paths()
+        }
 
     def to_svg(self) -> str:
         """
@@ -444,10 +443,8 @@ class Scene(Surface):
         path_defs = self._collect_path_defs(all_entities)
         if markers or path_defs:
             lines.append("  <defs>")
-            for svg in markers.values():
-                lines.append(f"    {svg}")
-            for svg in path_defs.values():
-                lines.append(f"    {svg}")
+            lines.extend(f"    {svg}" for svg in markers.values())
+            lines.extend(f"    {svg}" for svg in path_defs.values())
             lines.append("  </defs>")
 
         # Background
@@ -467,13 +464,9 @@ class Scene(Surface):
         # Collect all renderable objects with their z_index
         renderables: list[tuple[int, str]] = []
 
-        # Add connections
-        for connection in self._connections:
-            renderables.append((connection.z_index, connection.to_svg()))
-
-        # Add entities
-        for entity in all_entities:
-            renderables.append((entity.z_index, entity.to_svg()))
+        # Add connections and entities
+        renderables.extend((c.z_index, c.to_svg()) for c in self._connections)
+        renderables.extend((e.z_index, e.to_svg()) for e in all_entities)
 
         # Sort by z_index (stable sort preserves add-order for same z_index)
         renderables.sort(key=lambda x: x[0])
@@ -484,21 +477,21 @@ class Scene(Surface):
 
         lines.append("</svg>")
         return "\n".join(lines)
-    
+
     def save(self, path: str | Path) -> None:
         """
         Save the scene to an SVG file.
-        
+
         Args:
             path: File path (will add .svg extension if missing).
         """
         path = Path(path)
         if path.suffix.lower() != ".svg":
             path = path.with_suffix(".svg")
-        
+
         svg_content = self.to_svg()
         path.write_text(svg_content, encoding="utf-8")
-    
+
     def crop(self, padding: float = 0) -> Scene:
         """
         Crop the scene viewBox to fit the visual bounds of all content.

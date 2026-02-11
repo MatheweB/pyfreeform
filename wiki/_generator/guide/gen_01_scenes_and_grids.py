@@ -58,7 +58,8 @@ def generate():
     for cell in scene.grid.checkerboard("black"):
         cell.add_polygon(
             Polygon.diamond(size=0.7),
-            fill=colors_ocean.primary, opacity=0.7,
+            fill=colors_ocean.primary,
+            opacity=0.7,
         )
     for cell in scene.grid.checkerboard("white"):
         cell.add_dot(radius=0.15, color=colors_ocean.accent, opacity=0.5)
@@ -97,7 +98,8 @@ def generate():
         cell.add_fill(color=colors.secondary, opacity=0.3)
         cell.add_polygon(
             Polygon.hexagon(size=0.6),
-            fill=colors.primary, opacity=0.6,
+            fill=colors.primary,
+            opacity=0.6,
         )
     save(scene, "guide/scenes-region.svg")
 
@@ -108,7 +110,8 @@ def generate():
         nx, ny = cell.normalized_position
         cell.add_dot(
             radius=0.05 + nx * 0.15,
-            color=colors.secondary, opacity=0.3,
+            color=colors.secondary,
+            opacity=0.3,
         )
     # Merge top row for a title bar
     title_bar = scene.grid.merge_row(0)

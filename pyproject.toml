@@ -42,6 +42,7 @@ Issues = "https://github.com/MatheweB/pyfreeform/issues"
 dev = [
     "pytest>=7.0",
     "pytest-cov>=4.0",
+    "ruff>=0.4",
 ]
 docs = [
     "mkdocs-material>=9.0",
@@ -53,3 +54,35 @@ packages = ["src/pyfreeform"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+src = ["src"]
+
+[tool.ruff.lint]
+select = [
+    "E",     # pycodestyle errors
+    "W",     # pycodestyle warnings
+    "F",     # pyflakes
+    "I",     # isort
+    "UP",    # pyupgrade
+    "B",     # flake8-bugbear
+    "SIM",   # flake8-simplify
+    "RUF",   # ruff-specific rules
+]
+ignore = [
+    "E501",   # line too long (handled by formatter)
+    "SIM108", # ternary operator (readability preference)
+    "I001",   # import sorting (semantic grouping preferred)
+    "W293",   # whitespace on blank lines (cosmetic)
+    "W291",   # trailing whitespace (cosmetic)
+    "RUF002", # ambiguous unicode in docstrings (intentional)
+    "RUF003", # ambiguous unicode in comments (intentional)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]  # re-exports are intentional
+
+[tool.ruff.lint.isort]
+known-first-party = ["pyfreeform"]

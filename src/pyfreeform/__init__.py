@@ -5,56 +5,59 @@ PyFreeform - A minimalist, art-focused Python drawing library.
 __version__ = "0.3.0"
 
 # Core
-from .core.coord import Coord, CoordLike, RelCoord, RelCoordLike
-from .core.entity import Entity
-from .core.connection import Connection
-from .core.pathable import FullPathable, Pathable
-from .core.tangent import get_angle_at
-
-# Entities
-from .entities.dot import Dot
-from .entities.line import Line
-from .entities.rect import Rect
-from .entities.curve import Curve
-from .entities.path import Path
-from .entities.ellipse import Ellipse
-from .entities.text import Text
-from .entities.polygon import Polygon
-from .entities.entity_group import EntityGroup
-from .entities.point import Point
-
-# Core (Surface protocol)
-from .core.surface import Surface
-
-# Grid
-from .grid.grid import Grid
-from .grid.cell import Cell
-from .grid.cell_group import CellGroup
-
-# Scene
-from .scene.scene import Scene
-
-# Image
-from .image.image import Image
-from .image.layer import Layer
+# Utilities
+from .color import Color
 
 # Configuration
 from .config.caps import register_cap
 from .config.palette import Palette
 from .config.styles import (
-    DotStyle, LineStyle, FillStyle, BorderStyle,
-    ShapeStyle, TextStyle, ConnectionStyle,
+    BorderStyle,
+    ConnectionStyle,
+    DotStyle,
+    FillStyle,
+    LineStyle,
+    ShapeStyle,
+    TextStyle,
 )
+from .core.connection import Connection
+from .core.coord import Coord, CoordLike, RelCoord, RelCoordLike
+from .core.entity import Entity
+from .core.pathable import FullPathable, Pathable
 
-# Utilities
-from .color import Color
+# Core (Surface protocol)
+from .core.surface import Surface
+from .core.tangent import get_angle_at
 from .display import display
+from .entities.curve import Curve
 
+# Entities
+from .entities.dot import Dot
+from .entities.ellipse import Ellipse
+from .entities.entity_group import EntityGroup
+from .entities.line import Line
+from .entities.path import Path
+from .entities.point import Point
+from .entities.polygon import Polygon
+from .entities.rect import Rect
+from .entities.text import Text
+from .grid.cell import Cell
+from .grid.cell_group import CellGroup
 
+# Grid
+from .grid.grid import Grid
+
+# Image
+from .image.image import Image
+from .image.layer import Layer
+
+# Scene
+from .scene.scene import Scene
 
 # =============================================================================
 # Utility Functions
 # =============================================================================
+
 
 def map_range(
     value: float,
@@ -93,67 +96,58 @@ def map_range(
     # Avoid division by zero
     if in_max == in_min:
         return out_min
-    
+
     # Linear interpolation
     t = (value - in_min) / (in_max - in_min)
     result = out_min + t * (out_max - out_min)
-    
+
     if clamp:
         if out_min <= out_max:
             result = max(out_min, min(out_max, result))
         else:
             result = max(out_max, min(out_min, result))
-    
+
     return result
 
 
 __all__ = [
-    # Version
-    "__version__",
-    # Core
-    "Coord",
-    "CoordLike",
-    "RelCoord",
-    "RelCoordLike",
-    "Entity",
-    "Connection",
-    "Pathable",
-    "FullPathable",
-    "get_angle_at",
-    # Entities
-    "Dot",
-    "Line",
-    "Rect",
-    "Curve",
-    "Path",
-    "Ellipse",
-    "Text",
-    "Polygon",
-    "EntityGroup",
-    "Point",
-    # Core (Surface protocol)
-    "Surface",
-    # Grid
-    "Grid",
+    "BorderStyle",
     "Cell",
     "CellGroup",
-    # Scene
-    "Scene",
-    # Image
+    "Color",
+    "Connection",
+    "ConnectionStyle",
+    "Coord",
+    "CoordLike",
+    "Curve",
+    "Dot",
+    "DotStyle",
+    "Ellipse",
+    "Entity",
+    "EntityGroup",
+    "FillStyle",
+    "FullPathable",
+    "Grid",
     "Image",
     "Layer",
-    # Configuration
-    "register_cap",
-    "Palette",
-    "DotStyle",
+    "Line",
     "LineStyle",
-    "FillStyle",
-    "BorderStyle",
+    "Palette",
+    "Path",
+    "Pathable",
+    "Point",
+    "Polygon",
+    "Rect",
+    "RelCoord",
+    "RelCoordLike",
+    "Scene",
     "ShapeStyle",
+    "Surface",
+    "Text",
     "TextStyle",
-    "ConnectionStyle",
-    # Utilities
-    "Color",
+    "__version__",
     "display",
+    "get_angle_at",
     "map_range",
+    "register_cap",
 ]

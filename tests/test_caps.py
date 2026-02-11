@@ -3,7 +3,7 @@
 import sys
 from pathlib import Path
 
-import pytest
+from pyfreeform.entities.point import Point
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
@@ -123,7 +123,7 @@ def test_line_required_markers():
 
 
 def test_line_from_points_with_caps():
-    from pyfreeform.entities.point import Point
+
     line = Line.from_points(Point(0, 0), Point(100, 0), end_cap="arrow")
     assert line.effective_end_cap == "arrow"
     assert "marker-end" in line.to_svg()
@@ -284,7 +284,7 @@ def test_full_render_with_arrows():
     for cell in scene.grid:
         cell.add_line(start="left", end="right", end_cap="arrow", color="navy")
     svg = scene.to_svg()
-    assert svg.startswith('<?xml')
+    assert svg.startswith("<?xml")
     assert "<defs>" in svg
     assert "<marker" in svg
     assert "marker-end" in svg

@@ -1,14 +1,11 @@
 """Generate SVGs for Guide: Working with Cells."""
 
-import math
-
-from pyfreeform import Scene, Palette, Polygon, map_range
+from pyfreeform import Scene, Palette, Polygon
 
 from wiki._generator import save, sample_image
 
 
 def generate():
-    colors = Palette.midnight()
 
     # --- 1. Brightness to radius (classic dot art) ---
     scene = Scene.from_image(
@@ -86,8 +83,16 @@ def generate():
     for cell in scene.grid:
         nx, ny = cell.normalized_position
         # Create a cross-fade from primary (left) to accent (right)
-        r1, g1, b1 = int(colors_sunset.primary[1:3], 16), int(colors_sunset.primary[3:5], 16), int(colors_sunset.primary[5:7], 16)
-        r2, g2, b2 = int(colors_sunset.accent[1:3], 16), int(colors_sunset.accent[3:5], 16), int(colors_sunset.accent[5:7], 16)
+        r1, g1, b1 = (
+            int(colors_sunset.primary[1:3], 16),
+            int(colors_sunset.primary[3:5], 16),
+            int(colors_sunset.primary[5:7], 16),
+        )
+        r2, g2, b2 = (
+            int(colors_sunset.accent[1:3], 16),
+            int(colors_sunset.accent[3:5], 16),
+            int(colors_sunset.accent[5:7], 16),
+        )
         r = int(r1 + (r2 - r1) * nx)
         g = int(g1 + (g2 - g1) * nx)
         b = int(b1 + (b2 - b1) * nx)

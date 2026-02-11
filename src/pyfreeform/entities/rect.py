@@ -5,8 +5,8 @@ from __future__ import annotations
 import math
 
 from ..color import Color
-from ..core.entity import Entity
 from ..core.coord import Coord, CoordLike
+from ..core.entity import Entity
 
 
 class Rect(Entity):
@@ -82,6 +82,24 @@ class Rect(Entity):
         self.fill_opacity = fill_opacity
         self.stroke_opacity = stroke_opacity
 
+    @property
+    def relative_width(self) -> float | None:
+        """Relative width (fraction of reference width), or None."""
+        return self._relative_width
+
+    @relative_width.setter
+    def relative_width(self, value: float | None) -> None:
+        self._relative_width = value
+
+    @property
+    def relative_height(self) -> float | None:
+        """Relative height (fraction of reference height), or None."""
+        return self._relative_height
+
+    @relative_height.setter
+    def relative_height(self, value: float | None) -> None:
+        self._relative_height = value
+
     @classmethod
     def at_center(
         cls,
@@ -116,13 +134,20 @@ class Rect(Entity):
         Returns:
             A new Rect entity.
         """
-        center = Coord._coerce(center)
+        center = Coord.coerce(center)
         return cls(
-            center.x - width / 2, center.y - height / 2,
-            width, height, fill=fill, stroke=stroke,
-            stroke_width=stroke_width, rotation=rotation,
-            z_index=z_index, opacity=opacity,
-            fill_opacity=fill_opacity, stroke_opacity=stroke_opacity,
+            center.x - width / 2,
+            center.y - height / 2,
+            width,
+            height,
+            fill=fill,
+            stroke=stroke,
+            stroke_width=stroke_width,
+            rotation=rotation,
+            z_index=z_index,
+            opacity=opacity,
+            fill_opacity=fill_opacity,
+            stroke_opacity=stroke_opacity,
         )
 
     @property
@@ -191,8 +216,14 @@ class Rect(Entity):
         """Available anchor names."""
         return [
             "center",
-            "top_left", "top_right", "bottom_left", "bottom_right",
-            "top", "bottom", "left", "right",
+            "top_left",
+            "top_right",
+            "bottom_left",
+            "bottom_right",
+            "top",
+            "bottom",
+            "left",
+            "right",
         ]
 
     def anchor(self, name: str = "center") -> Coord:
@@ -243,7 +274,7 @@ class Rect(Entity):
             # Rotate position around external origin — switch to pixel mode
             self._to_pixel_mode()
 
-            origin = Coord._coerce(origin)
+            origin = Coord.coerce(origin)
 
             angle_rad = math.radians(angle)
             cos_a = math.cos(angle_rad)
@@ -279,7 +310,7 @@ class Rect(Entity):
 
         if origin is not None:
             self._to_pixel_mode()
-            origin = Coord._coerce(origin)
+            origin = Coord.coerce(origin)
             new_cx = origin.x + (old_center.x - origin.x) * factor
             new_cy = origin.y + (old_center.y - origin.y) * factor
             self._position = Coord(new_cx - self.width / 2, new_cy - self.height / 2)
@@ -320,8 +351,11 @@ class Rect(Entity):
             max_y += half
         return (min_x, min_y, max_x, max_y)
 
-    def _rotated_bounds(
-        self, angle: float, *, visual: bool = False,
+    def rotated_bounds(
+        self,
+        angle: float,
+        *,
+        visual: bool = False,
     ) -> tuple[float, float, float, float]:
         """Exact AABB of this rect rotated by *angle* degrees around origin."""
         if angle == 0:
@@ -348,10 +382,7 @@ class Rect(Entity):
 
     def to_svg(self) -> str:
         """Render to SVG rect element."""
-        parts = [
-            f'<rect x="{self.x}" y="{self.y}" '
-            f'width="{self.width}" height="{self.height}"'
-        ]
+        parts = [f'<rect x="{self.x}" y="{self.y}" width="{self.width}" height="{self.height}"']
 
         if self._fill:
             parts.append(f' fill="{self.fill}"')
@@ -363,7 +394,9 @@ class Rect(Entity):
 
         # Opacity
         eff_fill_opacity = self.fill_opacity if self.fill_opacity is not None else self.opacity
-        eff_stroke_opacity = self.stroke_opacity if self.stroke_opacity is not None else self.opacity
+        eff_stroke_opacity = (
+            self.stroke_opacity if self.stroke_opacity is not None else self.opacity
+        )
         if eff_fill_opacity < 1.0:
             parts.append(f' fill-opacity="{eff_fill_opacity}"')
         if eff_stroke_opacity < 1.0:
@@ -375,8 +408,8 @@ class Rect(Entity):
             cy = self.y + self.height / 2
             parts.append(f' transform="rotate({self.rotation} {cx} {cy})"')
 
-        parts.append(' />')
-        return ''.join(parts)
+        parts.append(" />")
+        return "".join(parts)
 
     def __repr__(self) -> str:
         rot = f", rotation={self.rotation}°" if self.rotation != 0 else ""

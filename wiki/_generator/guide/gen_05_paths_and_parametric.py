@@ -2,7 +2,7 @@
 
 import math
 
-from pyfreeform import Scene, Palette, Coord, Polygon, map_range
+from pyfreeform import Scene, Palette, Polygon
 
 from wiki._generator import save, sample_image
 
@@ -18,10 +18,13 @@ def generate():
     )
     for cell in scene.grid:
         diag = cell.add_diagonal(
-            width=0.5, color=colors.line, opacity=0.3,
+            width=0.5,
+            color=colors.line,
+            opacity=0.3,
         )
         cell.add_dot(
-            along=diag, t=cell.brightness,
+            along=diag,
+            t=cell.brightness,
             radius=0.15 + cell.brightness * 0.25,
             color=cell.color,
         )
@@ -33,15 +36,19 @@ def generate():
     for cell in scene.grid:
         nx, ny = cell.normalized_position
         curve = cell.add_curve(
-            start="bottom_left", end="top_right",
+            start="bottom_left",
+            end="top_right",
             curvature=0.6,
-            width=0.5, color=colors_ocean.line, opacity=0.2,
+            width=0.5,
+            color=colors_ocean.line,
+            opacity=0.2,
         )
         # Place 3 dots along the curve
         for t_val in [0.25, 0.5, 0.75]:
             r = 0.05 + (nx + t_val) * 0.10
             cell.add_dot(
-                along=curve, t=t_val,
+                along=curve,
+                t=t_val,
                 radius=r,
                 color=colors_ocean.primary,
                 opacity=0.5 + ny * 0.5,
@@ -65,7 +72,8 @@ def generate():
         )
         # Place dot at position driven by ny
         cell.add_dot(
-            along=ellipse, t=ny,
+            along=ellipse,
+            t=ny,
             radius=0.10,
             color=colors_sunset.accent,
             opacity=0.8,
@@ -76,15 +84,19 @@ def generate():
     scene = Scene.with_grid(cols=1, rows=1, cell_size=280, background=colors.background)
     cell = scene.grid[0, 0]
     curve = cell.add_curve(
-        start=(0.1, 0.8), end=(0.9, 0.2),
+        start=(0.1, 0.8),
+        end=(0.9, 0.2),
         curvature=0.7,
-        width=2, color=colors.line, opacity=0.5,
+        width=2,
+        color=colors.line,
+        opacity=0.5,
     )
     # Show dots at t = 0, 0.25, 0.5, 0.75, 1.0
     t_values = [0.0, 0.25, 0.5, 0.75, 1.0]
     for t_val in t_values:
         cell.add_dot(
-            along=curve, t=t_val,
+            along=curve,
+            t=t_val,
             radius=0.05,
             color=colors.primary,
             opacity=0.8,
@@ -114,7 +126,8 @@ def generate():
             frequency=1 + nx * 3,
         )
         cell.add_path(
-            wave, segments=32,
+            wave,
+            segments=32,
             width=1 + ny * 2,
             color=colors_neon.primary,
             opacity=0.5 + nx * 0.5,
@@ -153,9 +166,12 @@ def generate():
     scene = Scene.with_grid(cols=1, rows=1, cell_size=280, background=colors.background)
     cell = scene.grid[0, 0]
     curve = cell.add_curve(
-        start=(0.05, 0.7), end=(0.95, 0.3),
+        start=(0.05, 0.7),
+        end=(0.95, 0.3),
         curvature=0.5,
-        width=1, color=colors.line, opacity=0.3,
+        width=1,
+        color=colors.line,
+        opacity=0.3,
     )
     cell.add_text(
         "Text flows along any path in PyFreeform",
@@ -175,9 +191,16 @@ def generate():
     ]
     for a, b, delta, size, fill, stroke, opacity in curves:
         liss = Path.Lissajous(center=(cx, cy), a=a, b=b, delta=delta, size=size)
-        path = Path(liss, closed=True, fill=fill, color=stroke,
-                    width=1.2, fill_opacity=opacity, stroke_opacity=0.7,
-                    segments=128)
+        path = Path(
+            liss,
+            closed=True,
+            fill=fill,
+            color=stroke,
+            width=1.2,
+            fill_opacity=opacity,
+            stroke_opacity=0.7,
+            segments=128,
+        )
         scene.place(path)
     save(scene, "guide/paths-filled-lissajous.svg")
 
@@ -185,14 +208,19 @@ def generate():
     scene = Scene.with_grid(cols=1, rows=1, cell_size=280, background=colors.background)
     cell = scene.grid[0, 0]
     curve = cell.add_curve(
-        start=(0.1, 0.8), end=(0.9, 0.2),
+        start=(0.1, 0.8),
+        end=(0.9, 0.2),
         curvature=0.6,
-        width=1.5, color=colors.line, opacity=0.4,
+        width=1.5,
+        color=colors.line,
+        opacity=0.4,
     )
     for t_val in [i / 10.0 for i in range(11)]:
         cell.add_polygon(
             Polygon.triangle(size=0.06),
-            along=curve, t=t_val, align=True,
+            along=curve,
+            t=t_val,
+            align=True,
             fill=colors.primary,
             opacity=0.6 + t_val * 0.4,
         )

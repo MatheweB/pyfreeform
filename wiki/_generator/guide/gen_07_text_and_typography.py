@@ -1,8 +1,6 @@
 """Generate SVGs for Guide: Text and Typography."""
 
-import math
-
-from pyfreeform import Scene, Palette, Polygon, map_range
+from pyfreeform import Scene, Palette
 
 from wiki._generator import save, sample_image
 
@@ -82,9 +80,12 @@ def generate():
     scene = Scene.with_grid(cols=1, rows=1, cell_size=300, background=colors.background)
     cell = scene.grid[0, 0]
     curve = cell.add_curve(
-        start=(0.05, 0.7), end=(0.95, 0.3),
+        start=(0.05, 0.7),
+        end=(0.95, 0.3),
         curvature=0.5,
-        width=1, color=colors.line, opacity=0.2,
+        width=1,
+        color=colors.line,
+        opacity=0.2,
     )
     cell.add_text(
         "Text warps along curves beautifully",
@@ -99,7 +100,8 @@ def generate():
     cell = scene.grid[0, 0]
     ellipse = cell.add_ellipse(
         at="center",
-        rx=0.38, ry=0.23,
+        rx=0.38,
+        ry=0.23,
         fill="none",
         stroke=colors.line,
         stroke_width=0.5,
