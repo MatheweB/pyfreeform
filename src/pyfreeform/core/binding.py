@@ -7,6 +7,9 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .coord import RelCoord
+    from .entity import Entity
+    from .pathable import Pathable
+    from .surface import Surface
 
 
 @dataclass(frozen=True, slots=True)
@@ -32,6 +35,6 @@ class Binding:
     """
 
     at: RelCoord | None = None
-    reference: object | None = None  # Surface | Entity — object avoids circular import
-    along: object | None = None  # Pathable
+    reference: Surface | Entity | None = None
+    along: Pathable | None = None
     t: float = 0.5
