@@ -9,7 +9,7 @@ from ..color import Color
 from ..core.entity import Entity
 
 if TYPE_CHECKING:
-    from ..core.coord import Coord, CoordLike
+    from ..core.coord import Coord
 
 
 class Dot(Entity):
@@ -85,12 +85,12 @@ class Dot(Entity):
         self._pixel_radius = float(value)
         self._relative_radius = None
 
-    def _to_pixel_mode(self) -> None:
-        """Resolve radius and position to pixels."""
+    def _resolve_to_absolute(self) -> None:
+        """Resolve relative radius and position to absolute values."""
         if self._relative_radius is not None:
             self._pixel_radius = self.radius
             self._relative_radius = None
-        super()._to_pixel_mode()
+        super()._resolve_to_absolute()
 
     @property
     def color(self) -> str:
@@ -113,13 +113,12 @@ class Dot(Entity):
         raise ValueError(f"Dot has no anchor '{name}'. Available: {self.anchor_names}")
 
     def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
-        """Get bounding box."""
-        return (
-            self.x - self.radius,
-            self.y - self.radius,
-            self.x + self.radius,
-            self.y + self.radius,
-        )
+        """Get bounding box (accounts for scale)."""
+        # Evaluate position FIRST so _resolving guard can detect circularity
+        # before _resolve_size is called via self.radius.
+        cx, cy = self.x, self.y
+        r = self.radius * self._scale_factor
+        return (cx - r, cy - r, cx + r, cy + r)
 
     def rotated_bounds(
         self,
@@ -135,39 +134,22 @@ class Dot(Entity):
         cos_a, sin_a = math.cos(rad), math.sin(rad)
         cx = self.x * cos_a - self.y * sin_a
         cy = self.x * sin_a + self.y * cos_a
-        r = self.radius
+        r = self.radius * self._scale_factor
         return (cx - r, cy - r, cx + r, cy + r)
 
     def inner_bounds(self) -> tuple[float, float, float, float]:
         """Inscribed square of the circle."""
-
-        r = self.radius / math.sqrt(2)
+        r = self.radius * self._scale_factor / math.sqrt(2)
         return (self.x - r, self.y - r, self.x + r, self.y + r)
-
-    def scale(self, factor: float, origin: CoordLike | None = None) -> Dot:
-        """
-        Scale the dot (changes radius and optionally position).
-
-        Args:
-            factor: Scale factor (2.0 = double the radius).
-            origin: If provided, also moves position away from origin.
-
-        Returns:
-            self, for method chaining.
-        """
-        self.radius *= factor
-
-        if origin is not None:
-            # Also scale position relative to origin
-            super().scale(factor, origin)
-
-        return self
 
     def to_svg(self) -> str:
         """Render to SVG circle element."""
         parts = [f'<circle cx="{self.x}" cy="{self.y}" r="{self.radius}" fill="{self.color}"']
         if self.opacity < 1.0:
             parts.append(f' opacity="{self.opacity}"')
+        transform = self._build_svg_transform()
+        if transform:
+            parts.append(transform)
         parts.append(" />")
         return "".join(parts)
 

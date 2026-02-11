@@ -21,8 +21,7 @@ Every entity in PyFreeform extends the `Entity` ABC from `pyfreeform.core.entity
 |---|---|
 | `inner_bounds()` | Non-rectangular shapes -- return the largest axis-aligned rectangle fully inside the entity. Default: same as `bounds()`. Used by `fit_within()`. |
 | `rotated_bounds(angle, *, visual)` | If your entity has a tighter AABB under rotation than the default (which rotates 4 `bounds()` corners). Override with analytical formulas for curves, ellipses, or any entity with known extrema. Used by `EntityGroup.bounds()` for tight composite bounds. |
-| `scale(factor, origin)` | If your entity has geometry beyond its position (radius, endpoints, vertices). The base implementation only scales the position. |
-| `rotate(angle, origin)` | If your entity has geometry that should rotate (endpoints, vertices, internal angles). The base implementation only rotates the position. |
+| `rotation_center` (property) | If the natural rotation/scale pivot isn't `self.position`. Override to return a `Coord` (e.g., Rect returns its center, Polygon returns its centroid). |
 | `_move_by(dx, dy)` | If your entity stores absolute coordinates for sub-parts (e.g., Line stores `_end_offset`, Path stores Bezier segments). This is a private method -- users reposition entities via the `.at` property or `move_to_cell()`. |
 | `get_required_markers()` | If your entity needs SVG `<marker>` definitions in `<defs>`. Return `list[tuple[str, str]]` of `(marker_id, marker_svg)`. |
 | `get_required_paths()` | If your entity needs SVG `<path>` definitions in `<defs>` (used by textPath). Return `list[tuple[str, str]]` of `(path_id, path_svg)`. |
@@ -89,7 +88,7 @@ class CrossHair(Entity):
 
 ### Step 2: Implement anchor_names and anchor()
 
-Anchors are named points on your entity that other entities can connect to or reference.
+Anchors are named points on your entity that other entities can connect to or reference. Anchors must return **world-space** coordinates -- use `self._to_world_space()` to apply the entity's current rotation and scale transforms.
 
 ```python
 @property
@@ -98,15 +97,15 @@ def anchor_names(self) -> list[str]:
 
 def anchor(self, name: str = "center") -> Coord:
     if name == "center":
-        return self.position
+        return self._to_world_space(self.position)
     elif name == "top":
-        return Coord(self.x, self.y - self.size)
+        return self._to_world_space(Coord(self.x, self.y - self.size))
     elif name == "bottom":
-        return Coord(self.x, self.y + self.size)
+        return self._to_world_space(Coord(self.x, self.y + self.size))
     elif name == "left":
-        return Coord(self.x - self.size, self.y)
+        return self._to_world_space(Coord(self.x - self.size, self.y))
     elif name == "right":
-        return Coord(self.x + self.size, self.y)
+        return self._to_world_space(Coord(self.x + self.size, self.y))
     raise ValueError(
         f"CrossHair has no anchor '{name}'. "
         f"Available: {self.anchor_names}"
@@ -124,14 +123,18 @@ Return the axis-aligned bounding box as `(min_x, min_y, max_x, max_y)`. This is 
 
 The `visual` keyword argument controls whether stroke width is included. When `visual=False` (the default), return pure geometric bounds. When `visual=True`, expand by `stroke_width / 2` so that `fit_to_cell` can account for the visual extent of stroked entities.
 
+Bounds must be in **world space** -- multiply geometry dimensions by `self._scale_factor` to account for accumulated scale transforms:
+
 ```python
 def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
-    min_x = self.x - self.size
-    min_y = self.y - self.size
-    max_x = self.x + self.size
-    max_y = self.y + self.size
+    s = self._scale_factor
+    scaled_size = self.size * s
+    min_x = self.x - scaled_size
+    min_y = self.y - scaled_size
+    max_x = self.x + scaled_size
+    max_y = self.y + scaled_size
     if visual:
-        half = self.width / 2
+        half = self.width * s / 2
         min_x -= half
         min_y -= half
         max_x += half
@@ -150,73 +153,53 @@ This is where your entity becomes visible. Return a valid SVG element string.
 
 ```python
 def to_svg(self) -> str:
-    # Horizontal arm
+    # Horizontal arm (model-space coordinates)
     h = (
         f'<line x1="{self.x - self.size}" y1="{self.y}" '
         f'x2="{self.x + self.size}" y2="{self.y}" '
         f'stroke="{self.color}" stroke-width="{self.width}" '
-        f'stroke-linecap="round"'
+        f'stroke-linecap="round" />'
     )
-    # Vertical arm
+    # Vertical arm (model-space coordinates)
     v = (
         f'<line x1="{self.x}" y1="{self.y - self.size}" '
         f'x2="{self.x}" y2="{self.y + self.size}" '
         f'stroke="{self.color}" stroke-width="{self.width}" '
-        f'stroke-linecap="round"'
+        f'stroke-linecap="round" />'
     )
 
-    # Wrap in a group
-    parts = [f'<g']
+    # Wrap in a group with transform
+    parts = ['<g']
     if self.opacity < 1.0:
         parts.append(f' opacity="{self.opacity}"')
-    parts.append(f'>{h} />{v} /></g>')
+    transform = self._build_svg_transform()  # (1)!
+    if transform:
+        parts.append(transform)
+    parts.append(f'>{h}{v}</g>')
     return ''.join(parts)
 ```
+
+1. `_build_svg_transform()` returns a `transform="..."` attribute string when rotation or scale are non-identity, or an empty string otherwise.
 
 !!! note "SVG output rules"
     - Return a **single** SVG element. Use `<g>` to group multiple sub-elements.
     - Only emit optional attributes (like `opacity`) when they differ from defaults.
+    - Use **model-space** coordinates in SVG (unrotated, unscaled). The `_build_svg_transform()` helper emits the SVG `transform` attribute that applies rotation and scale at render time.
     - The scene indents your output with `f"  {svg}"`, so do not add leading whitespace.
 
-### Step 5: Implement scale() and rotate()
+### Step 5: Use the SVG transform in to_svg()
 
-The base `Entity.scale()` and `Entity.rotate()` only move the position relative to an origin. If your entity has internal geometry (like `size`), you must override these methods.
+The base class provides **non-destructive transforms** -- `rotate()` and `scale()` accumulate `self._rotation` and `self._scale_factor` without modifying your entity's geometry. The SVG renderer applies these via a `transform` attribute.
 
-```python
-def scale(
-    self,
-    factor: float,
-    origin: Coord | tuple[float, float] | None = None,
-) -> CrossHair:
-    # Scale the internal geometry
-    self.size *= factor
-    self.width *= factor
+**You do NOT need to override `rotate()` or `scale()`** -- the base class handles everything. Just include `_build_svg_transform()` in your `to_svg()` output (shown above in Step 4, full example below).
 
-    # Also scale position relative to origin (if given)
-    if origin is not None:
-        super().scale(factor, origin)
-
-    return self
-
-def rotate(
-    self,
-    angle: float,
-    origin: Coord | tuple[float, float] | None = None,
-) -> CrossHair:
-    # For a crosshair, rotation doesn't change the + shape
-    # (it's symmetric), but we still rotate the position.
-    if origin is not None:
-        super().rotate(angle, origin)
-    return self
-```
-
-!!! tip "The scale/rotate pattern"
-    1. **Call `self._to_pixel_mode()`** at the top -- resolves relative coords to pixels and sets `in_pixel_mode = True`. This prevents builder methods from accidentally overriding the transform with relative data.
-    2. **Transform internal geometry** (radius, size, endpoints, vertices).
-    3. **Call `super().scale(factor, origin)`** or `super().rotate(angle, origin)` to handle position scaling/rotation.
-    4. Return `self` for method chaining.
-
-    For entities with rotation-sensitive geometry (like Line, Polygon), override `rotate()` to transform all internal points. See `Line.rotate()` for a full example.
+!!! tip "Non-destructive transform system"
+    - `entity.rotate(45)` → stores `_rotation += 45`, no geometry changes
+    - `entity.scale(2)` → stores `_scale_factor *= 2`, no geometry changes
+    - `entity.rotate(45, origin)` → orbits position around origin + stores rotation
+    - `_build_svg_transform()` emits `transform="translate(...) rotate(...) scale(...) translate(...)"` in SVG
+    - `_to_world_space(point)` converts model-space points to world-space (for `anchor()` and `bounds()`)
+    - `rotation_center` property controls the pivot point (default: `self.position`)
 
 ## Complete CrossHair Entity
 
@@ -265,52 +248,34 @@ class CrossHair(Entity):
 
     def anchor(self, name: str = "center") -> Coord:
         if name == "center":
-            return self.position
+            return self._to_world_space(self.position)
         elif name == "top":
-            return Coord(self.x, self.y - self.size)
+            return self._to_world_space(Coord(self.x, self.y - self.size))
         elif name == "bottom":
-            return Coord(self.x, self.y + self.size)
+            return self._to_world_space(Coord(self.x, self.y + self.size))
         elif name == "left":
-            return Coord(self.x - self.size, self.y)
+            return self._to_world_space(Coord(self.x - self.size, self.y))
         elif name == "right":
-            return Coord(self.x + self.size, self.y)
+            return self._to_world_space(Coord(self.x + self.size, self.y))
         raise ValueError(
             f"CrossHair has no anchor '{name}'. "
             f"Available: {self.anchor_names}"
         )
 
     def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
-        min_x = self.x - self.size
-        min_y = self.y - self.size
-        max_x = self.x + self.size
-        max_y = self.y + self.size
+        s = self._scale_factor
+        scaled_size = self.size * s
+        min_x = self.x - scaled_size
+        min_y = self.y - scaled_size
+        max_x = self.x + scaled_size
+        max_y = self.y + scaled_size
         if visual:
-            half = self.width / 2
+            half = self.width * s / 2
             min_x -= half
             min_y -= half
             max_x += half
             max_y += half
         return (min_x, min_y, max_x, max_y)
-
-    def scale(
-        self,
-        factor: float,
-        origin: Coord | tuple[float, float] | None = None,
-    ) -> CrossHair:
-        self.size *= factor
-        self.width *= factor
-        if origin is not None:
-            super().scale(factor, origin)
-        return self
-
-    def rotate(
-        self,
-        angle: float,
-        origin: Coord | tuple[float, float] | None = None,
-    ) -> CrossHair:
-        if origin is not None:
-            super().rotate(angle, origin)
-        return self
 
     def to_svg(self) -> str:
         h = (
@@ -328,6 +293,9 @@ class CrossHair(Entity):
         parts = ['<g']
         if self.opacity < 1.0:
             parts.append(f' opacity="{self.opacity}"')
+        transform = self._build_svg_transform()
+        if transform:
+            parts.append(transform)
         parts.append(f'>{h}{v}</g>')
         return ''.join(parts)
 
@@ -389,11 +357,10 @@ Before considering your entity complete, verify:
 
 - [ ] `super().__init__(x, y, z_index)` is called in `__init__`
 - [ ] `anchor_names` includes `"center"`
-- [ ] `anchor()` raises `ValueError` for unknown names
-- [ ] `bounds()` returns `(min_x, min_y, max_x, max_y)`
-- [ ] `to_svg()` returns a single SVG element (use `<g>` for multiple)
-- [ ] `scale()` scales internal geometry **and** calls `super().scale()`
-- [ ] `rotate()` handles internal geometry if shape is asymmetric
+- [ ] `anchor()` uses `_to_world_space()` and raises `ValueError` for unknown names
+- [ ] `bounds()` returns world-space `(min_x, min_y, max_x, max_y)` using `self._scale_factor`
+- [ ] `to_svg()` returns a single SVG element (use `<g>` for multiple) with `_build_svg_transform()`
+- [ ] `rotation_center` overridden if the natural pivot isn't `self.position`
 - [ ] Opacity attributes are only emitted when not equal to 1.0
 - [ ] `__repr__` is implemented for debugging
 - [ ] Works with `cell.add()` and `fit_to_cell()`

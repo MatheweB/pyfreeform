@@ -178,20 +178,25 @@ class Rect(Entity):
         self._pixel_height = float(value)
         self._relative_height = None
 
-    def _to_pixel_mode(self) -> None:
-        """Resolve dimensions and position to pixels."""
+    def _resolve_to_absolute(self) -> None:
+        """Resolve relative width/height and position to absolute values."""
         if self._relative_width is not None:
             self._pixel_width = self.width
             self._relative_width = None
         if self._relative_height is not None:
             self._pixel_height = self.height
             self._relative_height = None
-        super()._to_pixel_mode()
+        super()._resolve_to_absolute()
 
     @property
     def _center(self) -> Coord:
         """Center of the rectangle (computed from top-left + dimensions)."""
         return Coord(self.x + self.width / 2, self.y + self.height / 2)
+
+    @property
+    def rotation_center(self) -> Coord:
+        """Natural pivot for rotation/scale: rectangle center."""
+        return self._center
 
     @property
     def fill(self) -> str | None:
@@ -227,7 +232,7 @@ class Rect(Entity):
         ]
 
     def anchor(self, name: str = "center") -> Coord:
-        """Get anchor point by name (rotation-aware)."""
+        """Get anchor point by name (transform-aware)."""
         x, y = self.x, self.y
         w, h = self.width, self.height
 
@@ -246,92 +251,19 @@ class Rect(Entity):
         if name not in anchors:
             raise ValueError(f"Rect has no anchor '{name}'. Available: {self.anchor_names}")
 
-        point = anchors[name]
-
-        # Rotate anchor around center if rotated
-        if self.rotation != 0 and name != "center":
-            center = anchors["center"]
-            angle_rad = math.radians(self.rotation)
-            point = point.rotated(angle_rad, origin=center)
-
-        return point
-
-    def rotate(self, angle: float, origin: CoordLike | None = None) -> Rect:
-        """
-        Rotate the rectangle around a point.
-
-        Args:
-            angle: Rotation angle in degrees (counterclockwise).
-            origin: Center of rotation (default: rectangle center).
-
-        Returns:
-            self, for method chaining.
-        """
-        if origin is None:
-            # Rotate around own center: just update rotation angle
-            self.rotation = (self.rotation + angle) % 360
-        else:
-            # Rotate position around external origin — switch to pixel mode
-            self._to_pixel_mode()
-
-            origin = Coord.coerce(origin)
-
-            angle_rad = math.radians(angle)
-            cos_a = math.cos(angle_rad)
-            sin_a = math.sin(angle_rad)
-
-            center = self._center
-            dx = center.x - origin.x
-            dy = center.y - origin.y
-            new_cx = dx * cos_a - dy * sin_a + origin.x
-            new_cy = dx * sin_a + dy * cos_a + origin.y
-
-            self._position = Coord(new_cx - self.width / 2, new_cy - self.height / 2)
-            self.rotation = (self.rotation + angle) % 360
-
-        return self
-
-    def scale(self, factor: float, origin: CoordLike | None = None) -> Rect:
-        """
-        Scale the rectangle around a point.
-
-        Args:
-            factor: Scale factor (2.0 = double dimensions).
-            origin: Center of scaling (default: rectangle center).
-
-        Returns:
-            self, for method chaining.
-        """
-        old_center = self._center
-
-        # Scale dimensions (property setters clear relative bindings)
-        self.width *= factor
-        self.height *= factor
-
-        if origin is not None:
-            self._to_pixel_mode()
-            origin = Coord.coerce(origin)
-            new_cx = origin.x + (old_center.x - origin.x) * factor
-            new_cy = origin.y + (old_center.y - origin.y) * factor
-            self._position = Coord(new_cx - self.width / 2, new_cy - self.height / 2)
-        else:
-            # Keep center fixed
-            self._position = Coord(old_center.x - self.width / 2, old_center.y - self.height / 2)
-
-        return self
+        return self._to_world_space(anchors[name])
 
     def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
-        """Get axis-aligned bounding box (accounts for rotation).
+        """Get axis-aligned bounding box (accounts for rotation and scale).
 
         Args:
             visual: If True, expand by stroke width / 2 to reflect
                     the rendered extent.
         """
-        if self.rotation == 0:
+        if self._rotation == 0 and self._scale_factor == 1.0:
             min_x, min_y = self.x, self.y
             max_x, max_y = self.x + self.width, self.y + self.height
         else:
-            # Get all four corners rotated
             corners = [
                 self.anchor("top_left"),
                 self.anchor("top_right"),
@@ -344,7 +276,7 @@ class Rect(Entity):
             max_y = max(c.y for c in corners)
 
         if visual and self.stroke_width:
-            half = self.stroke_width / 2
+            half = self.stroke_width * self._scale_factor / 2
             min_x -= half
             min_y -= half
             max_x += half
@@ -402,11 +334,10 @@ class Rect(Entity):
         if eff_stroke_opacity < 1.0:
             parts.append(f' stroke-opacity="{eff_stroke_opacity}"')
 
-        # Rotation (use SVG transform around center)
-        if self.rotation != 0:
-            cx = self.x + self.width / 2
-            cy = self.y + self.height / 2
-            parts.append(f' transform="rotate({self.rotation} {cx} {cy})"')
+        # Transform (rotation + scale around center)
+        transform = self._build_svg_transform()
+        if transform:
+            parts.append(transform)
 
         parts.append(" />")
         return "".join(parts)

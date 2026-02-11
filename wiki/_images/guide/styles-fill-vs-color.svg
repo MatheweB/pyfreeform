@@ -5,10 +5,10 @@
   <circle cx="22.0" cy="22.0" r="11.0" fill="#00d9ff" />
   <text x="22.0" y="44.0" font-size="8.8" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="auto">Dot</text>
   <rect x="44.15" y="0.15" width="43.7" height="43.7" fill="none" stroke="#1a3a52" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <line x1="45.40425531914894" y1="42.59574468085106" x2="86.59574468085106" y2="1.4042553191489375" stroke="#00d9ff" stroke-width="3.0" stroke-linecap="round" />
+  <line x1="44.0" y1="44.0" x2="88.0" y2="0.0" stroke="#00d9ff" stroke-width="3.0" stroke-linecap="round" transform="translate(66.0,22.0) scale(0.9361702127659575) translate(-66.0,-22.0)" />
   <text x="66.0" y="44.0" font-size="8.8" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="auto">Line</text>
   <rect x="88.15" y="0.15" width="43.7" height="43.7" fill="none" stroke="#1a3a52" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <path d="M 88.95652173913044 43.04347826086956 Q 120.52173913043478 32.52173913043478 131.04347826086956 0.9565217391304337" fill="none" stroke="#00d9ff" stroke-width="2.0" stroke-linecap="round" />
+  <path d="M 88.0 44.0 Q 121.0 33.0 132.0 0.0" fill="none" stroke="#00d9ff" stroke-width="2.0" stroke-linecap="round" transform="translate(110.0,22.0) scale(0.9565217391304348) translate(-110.0,-22.0)" />
   <text x="110.0" y="44.0" font-size="8.8" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="auto">Curve</text>
   <rect x="132.15" y="0.15" width="43.7" height="43.7" fill="none" stroke="#1a3a52" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
   <text x="154.0" y="22.0" font-size="19.8" font-family="sans-serif" font-style="normal" font-weight="bold" fill="#00d9ff" text-anchor="middle" dominant-baseline="middle">Aa</text>

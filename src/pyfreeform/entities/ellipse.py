@@ -194,15 +194,15 @@ class Ellipse(Entity):
         self._pixel_ry = float(value)
         self._relative_ry = None
 
-    def _to_pixel_mode(self) -> None:
-        """Resolve radii and position to pixels."""
+    def _resolve_to_absolute(self) -> None:
+        """Resolve relative radii (rx/ry) and position to absolute values."""
         if self._relative_rx is not None:
             self._pixel_rx = self.rx
             self._relative_rx = None
         if self._relative_ry is not None:
             self._pixel_ry = self.ry
             self._relative_ry = None
-        super()._to_pixel_mode()
+        super()._resolve_to_absolute()
 
     @property
     def fill(self) -> str | None:
@@ -288,35 +288,25 @@ class Ellipse(Entity):
         Get the tangent angle in degrees at parameter t on the ellipse.
 
         Uses the derivative of the parametric ellipse equations,
-        accounting for rotation.
+        then adds the entity's rotation.
 
         Args:
             t: Parameter from 0.0 to 1.0 around the ellipse.
 
         Returns:
-            Angle in degrees.
+            Angle in degrees (world space).
         """
         angle_rad = t * 2 * math.pi
 
         # Derivative of parametric ellipse (unrotated):
         # dx/dθ = -rx * sin(θ)
         # dy/dθ =  ry * cos(θ)
-        dx_unrot = -self.rx * math.sin(angle_rad)
-        dy_unrot = self.ry * math.cos(angle_rad)
-
-        # Apply ellipse rotation
-        if self.rotation != 0:
-            rot_rad = math.radians(self.rotation)
-            cos_r = math.cos(rot_rad)
-            sin_r = math.sin(rot_rad)
-            dx = dx_unrot * cos_r - dy_unrot * sin_r
-            dy = dx_unrot * sin_r + dy_unrot * cos_r
-        else:
-            dx, dy = dx_unrot, dy_unrot
+        dx = -self.rx * math.sin(angle_rad)
+        dy = self.ry * math.cos(angle_rad)
 
         if dx == 0 and dy == 0:
-            return 0.0
-        return math.degrees(math.atan2(dy, dx))
+            return self._rotation
+        return math.degrees(math.atan2(dy, dx)) + self._rotation
 
     def to_svg_path_d(self) -> str:
         """Return SVG path ``d`` attribute for the full ellipse as two arcs."""
@@ -362,82 +352,15 @@ class Ellipse(Entity):
         return self._point_at_angle_rad(angle_rad)
 
     def _point_at_angle_rad(self, angle_rad: float) -> Coord:
-        """Internal: Get point at angle (in radians), accounting for rotation."""
-        # Parametric ellipse equation (unrotated)
-        x_unrot = self.rx * math.cos(angle_rad)
-        y_unrot = self.ry * math.sin(angle_rad)
+        """Internal: Get point at angle (in radians) in world space.
 
-        # Apply ellipse rotation if any
-        if self.rotation != 0:
-            rot_rad = math.radians(self.rotation)
-            cos_r = math.cos(rot_rad)
-            sin_r = math.sin(rot_rad)
-            x_rot = x_unrot * cos_r - y_unrot * sin_r
-            y_rot = x_unrot * sin_r + y_unrot * cos_r
-        else:
-            x_rot, y_rot = x_unrot, y_unrot
-
-        # Translate to center position
-        return Coord(self.position.x + x_rot, self.position.y + y_rot)
-
-    def rotate(self, angle: float, origin: CoordLike | None = None) -> Ellipse:
+        Computes the model-space point on the unrotated/unscaled ellipse,
+        then delegates to ``_to_world_space`` for rotation and scale.
         """
-        Rotate the ellipse around a point.
-
-        Args:
-            angle: Rotation angle in degrees (counterclockwise).
-            origin: Center of rotation (default: ellipse center).
-
-        Returns:
-            self, for method chaining.
-        """
-        if origin is None:
-            # Rotate around own center: just update rotation angle
-            self.rotation = (self.rotation + angle) % 360
-        else:
-            # Rotate position around external origin — switch to pixel mode
-            self._to_pixel_mode()
-
-            origin = Coord.coerce(origin)
-
-            angle_rad = math.radians(angle)
-            cos_a = math.cos(angle_rad)
-            sin_a = math.sin(angle_rad)
-
-            dx = self.position.x - origin.x
-            dy = self.position.y - origin.y
-            new_x = dx * cos_a - dy * sin_a + origin.x
-            new_y = dx * sin_a + dy * cos_a + origin.y
-            self._position = Coord(new_x, new_y)
-
-            self.rotation = (self.rotation + angle) % 360
-
-        return self
-
-    def scale(self, factor: float, origin: CoordLike | None = None) -> Ellipse:
-        """
-        Scale the ellipse around a point.
-
-        Args:
-            factor: Scale factor (2.0 = double the radii).
-            origin: Center of scaling (default: ellipse center).
-
-        Returns:
-            self, for method chaining.
-        """
-        # Scale the radii (property setters clear relative bindings)
-        self.rx *= factor
-        self.ry *= factor
-
-        if origin is not None:
-            self._to_pixel_mode()
-            origin = Coord.coerce(origin)
-
-            new_x = origin.x + (self.position.x - origin.x) * factor
-            new_y = origin.y + (self.position.y - origin.y) * factor
-            self._position = Coord(new_x, new_y)
-
-        return self
+        x_local = self.rx * math.cos(angle_rad)
+        y_local = self.ry * math.sin(angle_rad)
+        model_point = Coord(self.position.x + x_local, self.position.y + y_local)
+        return self._to_world_space(model_point)
 
     @staticmethod
     def _ellipse_extents(rx: float, ry: float, angle_rad: float) -> tuple[float, float]:
@@ -449,7 +372,7 @@ class Ellipse(Entity):
         return dx, dy
 
     def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
-        """Exact bounding box of the ellipse (handles rotation analytically).
+        """Exact bounding box of the ellipse (handles rotation and scale).
 
         Args:
             visual: If True, expand by stroke width / 2 to reflect
@@ -459,18 +382,19 @@ class Ellipse(Entity):
             Tuple of (min_x, min_y, max_x, max_y).
         """
         cx, cy = self.position.x, self.position.y
-        if self.rotation == 0:
-            dx, dy = self.rx, self.ry
+        s = self._scale_factor
+        if self._rotation == 0:
+            dx, dy = self.rx * s, self.ry * s
         else:
             dx, dy = Ellipse._ellipse_extents(
-                self.rx,
-                self.ry,
-                math.radians(self.rotation),
+                self.rx * s,
+                self.ry * s,
+                math.radians(self._rotation),
             )
         min_x, min_y = cx - dx, cy - dy
         max_x, max_y = cx + dx, cy + dy
         if visual and self.stroke_width:
-            half = self.stroke_width / 2
+            half = self.stroke_width * s / 2
             min_x -= half
             min_y -= half
             max_x += half
@@ -486,27 +410,28 @@ class Ellipse(Entity):
         """Exact AABB of this ellipse rotated by *angle* degrees around origin."""
         if angle == 0:
             return self.bounds(visual=visual)
+        s = self._scale_factor
         rad = math.radians(angle)
         cos_a, sin_a = math.cos(rad), math.sin(rad)
         cx = self.position.x * cos_a - self.position.y * sin_a
         cy = self.position.x * sin_a + self.position.y * cos_a
-        combined = math.radians(self.rotation) + rad
-        dx, dy = Ellipse._ellipse_extents(self.rx, self.ry, combined)
+        combined = math.radians(self._rotation) + rad
+        dx, dy = Ellipse._ellipse_extents(self.rx * s, self.ry * s, combined)
         b = (cx - dx, cy - dy, cx + dx, cy + dy)
         if visual and self.stroke_width:
-            half = self.stroke_width / 2
+            half = self.stroke_width * s / 2
             b = (b[0] - half, b[1] - half, b[2] + half, b[3] + half)
         return b
 
     def inner_bounds(self) -> tuple[float, float, float, float]:
         """Inscribed rectangle of the ellipse."""
         cx, cy = self.position.x, self.position.y
-        if self.rotation == 0:
-            hw = self.rx / math.sqrt(2)
-            hh = self.ry / math.sqrt(2)
+        s = self._scale_factor
+        if self._rotation == 0:
+            hw = self.rx * s / math.sqrt(2)
+            hh = self.ry * s / math.sqrt(2)
         else:
-            # Conservative: inscribed square using the smaller radius
-            hw = hh = min(self.rx, self.ry) / math.sqrt(2)
+            hw = hh = min(self.rx, self.ry) * s / math.sqrt(2)
         return (cx - hw, cy - hh, cx + hw, cy + hh)
 
     def to_svg(self) -> str:
@@ -536,11 +461,10 @@ class Ellipse(Entity):
         if eff_stroke_opacity < 1.0:
             parts.append(f' stroke-opacity="{eff_stroke_opacity}"')
 
-        # Rotation (use SVG transform)
-        if self.rotation != 0:
-            parts.append(
-                f' transform="rotate({self.rotation} {self.position.x} {self.position.y})"'
-            )
+        # Transform (rotation + scale)
+        transform = self._build_svg_transform()
+        if transform:
+            parts.append(transform)
 
         parts.append(" />")
         return "".join(parts)

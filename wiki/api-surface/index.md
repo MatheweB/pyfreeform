@@ -359,10 +359,10 @@ Builder methods store sizing as **fractions** of the reference frame. These are 
 | Text | `relative_font_size` | `0.25` | Fraction of surface height |
 | Polygon | `relative_vertices` | varies | List of `RelCoord` vertex positions |
 
-These return `None` when the entity is in pixel mode (constructed directly or after a transform). Setting them switches the entity back to relative mode for that dimension.
+These return `None` when the entity is in absolute mode (constructed directly or after a transform resolves them). Setting them switches the entity back to relative mode for that dimension.
 
 !!! note "Sizing vs geometry"
-    Relative **sizing** properties (radius, rx/ry, width/height, font_size) are independent of transforms -- rotation doesn't affect how big something is relative to its cell. Relative **geometry** properties (vertices, start/end) encode positions that transforms bake into pixels. Builder methods use `entity.in_pixel_mode` to guard against setting geometry after a transform.
+    Relative **sizing** properties (radius, rx/ry, width/height, font_size) are independent of transforms -- rotation doesn't affect how big something is relative to its cell. Relative **geometry** properties (vertices, start/end) encode positions that transforms resolve to absolute values. Builder methods use `entity.is_resolved` to guard against setting geometry after a transform.
 
 ### Complete Builder Reference
 
@@ -529,9 +529,12 @@ All entities inherit from `Entity` and share these common capabilities.
 |---|---|
 | `entity.position` | Current position (`Coord`) -- computed from relative coords if set |
 | `entity.x`, `entity.y` | Position coordinates (lazily resolved) |
-| `entity.at` | Read/write relative position as `RelCoord(rx, ry)`, or `None` if pixel-mode |
+| `entity.at` | Read/write relative position as `RelCoord(rx, ry)`, or `None` if in absolute mode |
 | `entity.binding` | Read/write positioning config as a `Binding` dataclass (see [Binding](#the-binding-dataclass) below) |
-| `entity.in_pixel_mode` | Read-only `bool` -- `True` if a transform (`rotate`/`scale`) has baked geometry into pixels. Builder methods use this to decide whether to store relative properties. |
+| `entity.rotation` | Accumulated rotation in degrees (default 0.0). Non-destructive -- stored, not baked. |
+| `entity.scale_factor` | Accumulated scale multiplier (default 1.0). Non-destructive -- stored, not baked. |
+| `entity.rotation_center` | `Coord` -- the natural pivot for rotation/scale. Default: `self.position`. Overridden by Rect (center), Polygon (centroid), Line/Curve (chord midpoint), Path (Bezier midpoint). |
+| `entity.is_resolved` | Read-only `bool` -- `True` after a transform with `origin` resolves all relative properties (position, sizing, geometry) to absolute values. Builder methods use this to decide whether to store relative properties. |
 | `entity.z_index` | Layer ordering (higher = on top) |
 | `entity.cell` | Containing Surface (if placed) |
 | `entity.connections` | Set of connections involving this entity |
@@ -951,20 +954,25 @@ connection = entity1.connect(
 
 ### Entity Transforms
 
-All entities support:
+All entities support **non-destructive** transforms -- rotation and scale are stored as numbers and applied at render time via SVG `transform`, not baked into geometry:
 
-- **`rotate(angle, origin)`** -- Degrees counterclockwise. Default origin varies by entity type.
-- **`scale(factor, origin)`** -- 2.0 = double size. Scales both geometry and position.
+- **`rotate(angle, origin)`** -- Accumulates `rotation` (degrees). Without `origin`: stores angle only, relative properties preserved. With `origin`: resolves all relative properties (position, sizing, geometry) to absolute values, then orbits position around origin.
+- **`scale(factor, origin)`** -- Accumulates `scale_factor` (multiplier). Without `origin`: stores factor only, relative properties preserved. With `origin`: resolves all relative properties to absolute values, then scales position distance from origin.
 
-Each entity type handles transforms appropriately:
+Properties after transforms:
 
-- **Dot**: Scales radius
-- **Line/Curve**: Rotates/scales both endpoints
-- **Ellipse**: Scales radii, updates intrinsic rotation
-- **Polygon**: Transforms all vertices
-- **Text**: Scales font_size
-- **Path**: Transforms all Bezier control points
-- **EntityGroup**: Accumulates internal `_scale` factor
+- **Model-space** properties (`.radius`, `.width`, `.end`, `.vertices`) are **unchanged** by transforms
+- **World-space** methods (`anchor()`, `bounds()`, `point_at()`) apply rotation and scale automatically
+- **`to_svg()`** emits model-space coordinates + `transform="translate(cx,cy) rotate(R) scale(S) translate(-cx,-cy)"`
+
+Per-entity pivot points (`rotation_center`):
+
+- **Dot, Ellipse, Text**: center (position)
+- **Rect**: center of rectangle
+- **Line, Curve**: chord midpoint (start↔end)
+- **Polygon**: centroid of vertices
+- **Path**: Bezier midpoint at t=0.5
+- **EntityGroup**: accumulates in `<g>` transform (children unchanged)
 
 ### `fit_to_cell(scale=1.0, recenter=True, *, at=None, visual=True, rotate=False, match_aspect=False)`
 
@@ -1163,7 +1171,7 @@ a / 2   # RelCoord(0.1, 0.15)
 
 | API | Usage |
 |---|---|
-| `entity.at` | Returns `RelCoord` (or `None` if pixel-mode) |
+| `entity.at` | Returns `RelCoord` (or `None` if in absolute mode) |
 | `add_*(..., at=)` | Accepts `RelCoord`, plain tuple, or named position string |
 | `cell.normalized_position` | Returns `RelCoord` (cell position within grid, 0.0--1.0) |
 | `surface.absolute_to_relative(point)` | Returns `RelCoord` |

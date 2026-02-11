@@ -450,9 +450,9 @@ class Surface:
             if align:
                 line.rotate(rotation, origin=target)
             else:
-                line._to_pixel_mode()
+                line._resolve_to_absolute()
 
-        if not line.in_pixel_mode:
+        if not line.is_resolved:
             line.relative_start = RelCoord.coerce(start)
             line.relative_end = RelCoord.coerce(end)
         line.binding = Binding(reference=within)
@@ -625,9 +625,9 @@ class Surface:
             if align:
                 curve.rotate(rotation, origin=target)
             else:
-                curve._to_pixel_mode()
+                curve._resolve_to_absolute()
 
-        if not curve.in_pixel_mode:
+        if not curve.is_resolved:
             curve.relative_start = RelCoord.coerce(start)
             curve.relative_end = RelCoord.coerce(end)
         curve.binding = Binding(reference=within)
@@ -922,11 +922,11 @@ class Surface:
             if effective_rotation != 0:
                 polygon.rotate(effective_rotation, origin=target)
             else:
-                polygon._to_pixel_mode()
+                polygon._resolve_to_absolute()
         elif rotation != 0:
             polygon.rotate(rotation)
 
-        if not polygon.in_pixel_mode:
+        if not polygon.is_resolved:
             polygon.relative_vertices = [RelCoord.coerce(v) for v in vertices]
         polygon.binding = Binding(reference=within)
         self._register_entity(polygon)

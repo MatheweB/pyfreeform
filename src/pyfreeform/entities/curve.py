@@ -165,20 +165,20 @@ class Curve(StrokedPathMixin, Entity):
         self._relative_end = None
         self._control = None  # Invalidate cached control point
 
-    def _to_pixel_mode(self) -> None:
-        """Resolve both endpoints to pixels."""
+    def _resolve_to_absolute(self) -> None:
+        """Resolve relative start/end positions to absolute coordinates."""
         if (
             self._relative_end is not None
             or self._relative_at is not None
             or self._along_path is not None
         ):
             current_end = self.end
-            super()._to_pixel_mode()
+            super()._resolve_to_absolute()
             self._end = current_end
             self._relative_end = None
             self._control = None
         else:
-            super()._to_pixel_mode()
+            super()._resolve_to_absolute()
 
     @property
     def curvature(self) -> float:
@@ -237,20 +237,25 @@ class Curve(StrokedPathMixin, Entity):
         self._color = Color(value)
 
     @property
+    def rotation_center(self) -> Coord:
+        """Natural pivot for rotation/scale: chord midpoint."""
+        return self.start.midpoint(self.end)
+
+    @property
     def anchor_names(self) -> list[str]:
         """Available anchors."""
         return ["start", "center", "end", "control"]
 
     def anchor(self, name: str = "center") -> Coord:
-        """Get anchor point by name."""
+        """Get anchor point by name (world space)."""
         if name == "start":
-            return self.start
+            return self._to_world_space(self.start)
         if name == "center":
             return self.point_at(0.5)
         if name == "end":
-            return self.end
+            return self._to_world_space(self.end)
         if name == "control":
-            return self.control
+            return self._to_world_space(self.control)
         raise ValueError(f"Curve has no anchor '{name}'. Available: {self.anchor_names}")
 
     def point_at(self, t: float) -> Coord:
@@ -281,7 +286,7 @@ class Curve(StrokedPathMixin, Entity):
         x = mt2 * p0.x + 2 * mt * t * p1.x + t2 * p2.x
         y = mt2 * p0.y + 2 * mt * t * p1.y + t2 * p2.y
 
-        return Coord(x, y)
+        return self._to_world_space(Coord(x, y))
 
     def arc_length(self, segments: int = 100) -> float:
         """
@@ -325,7 +330,7 @@ class Curve(StrokedPathMixin, Entity):
 
         if dx == 0 and dy == 0:
             return 0.0
-        return math.degrees(math.atan2(dy, dx))
+        return math.degrees(math.atan2(dy, dx)) + self._rotation
 
     def to_svg_path_d(self) -> str:
         """Return SVG path ``d`` attribute for this quadratic Bezier curve."""
@@ -379,16 +384,20 @@ class Curve(StrokedPathMixin, Entity):
         return (min_x, min_y, max_x, max_y)
 
     def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
-        """Exact bounding box of this quadratic Bezier curve.
+        """Exact bounding box of this quadratic Bezier curve (world space).
 
         Args:
             visual: If True, expand by stroke width / 2 to reflect
                     the rendered extent.
         """
         p0, p1, p2 = self.start, self.control, self.end
+        if self._rotation != 0 or self._scale_factor != 1.0:
+            p0 = self._to_world_space(p0)
+            p1 = self._to_world_space(p1)
+            p2 = self._to_world_space(p2)
         b = Curve._quad_bezier_bounds(p0.x, p0.y, p1.x, p1.y, p2.x, p2.y)
         if visual:
-            half = self.width / 2
+            half = self.width * self._scale_factor / 2
             b = (b[0] - half, b[1] - half, b[2] + half, b[3] + half)
         return b
 
@@ -404,6 +413,10 @@ class Curve(StrokedPathMixin, Entity):
         rad = math.radians(angle)
         cos_a, sin_a = math.cos(rad), math.sin(rad)
         p0, p1, p2 = self.start, self.control, self.end
+        if self._rotation != 0 or self._scale_factor != 1.0:
+            p0 = self._to_world_space(p0)
+            p1 = self._to_world_space(p1)
+            p2 = self._to_world_space(p2)
         b = Curve._quad_bezier_bounds(
             p0.x * cos_a - p0.y * sin_a,
             p0.x * sin_a + p0.y * cos_a,
@@ -413,7 +426,7 @@ class Curve(StrokedPathMixin, Entity):
             p2.x * sin_a + p2.y * cos_a,
         )
         if visual:
-            half = self.width / 2
+            half = self.width * self._scale_factor / 2
             b = (b[0] - half, b[1] - half, b[2] + half, b[3] + half)
         return b
 
@@ -445,65 +458,6 @@ class Curve(StrokedPathMixin, Entity):
         self._control = None
         return self
 
-    def rotate(self, angle: float, origin: CoordLike | None = None) -> Curve:
-        """
-        Rotate the curve around a point.
-
-        Args:
-            angle: Rotation angle in degrees (counterclockwise).
-            origin: Center of rotation (default: curve midpoint).
-
-        Returns:
-            self, for method chaining.
-        """
-        self._to_pixel_mode()
-        origin = self.point_at(0.5) if origin is None else Coord.coerce(origin)
-
-        angle_rad = math.radians(angle)
-        cos_a = math.cos(angle_rad)
-        sin_a = math.sin(angle_rad)
-
-        def rotate_point(p: Coord) -> Coord:
-            dx = p.x - origin.x
-            dy = p.y - origin.y
-            return Coord(
-                dx * cos_a - dy * sin_a + origin.x,
-                dx * sin_a + dy * cos_a + origin.y,
-            )
-
-        self._position = rotate_point(self.start)
-        self._end = rotate_point(self.end)
-        self._control = None
-        return self
-
-    def scale(self, factor: float, origin: CoordLike | None = None) -> Curve:
-        """
-        Scale the curve around a point.
-
-        Args:
-            factor: Scale factor (1.0 = no change).
-            origin: Center of scaling (default: curve midpoint).
-
-        Returns:
-            self, for method chaining.
-        """
-        self._to_pixel_mode()
-        origin = self.point_at(0.5) if origin is None else Coord.coerce(origin)
-
-        new_start = Coord(
-            origin.x + (self.start.x - origin.x) * factor,
-            origin.y + (self.start.y - origin.y) * factor,
-        )
-        new_end = Coord(
-            origin.x + (self.end.x - origin.x) * factor,
-            origin.y + (self.end.y - origin.y) * factor,
-        )
-
-        self._position = new_start
-        self._end = new_end
-        self._control = None
-        return self
-
     def to_svg(self) -> str:
         """Render to SVG path element (quadratic Bezier)."""
         s = self.start
@@ -522,6 +476,10 @@ class Curve(StrokedPathMixin, Entity):
 
         if self.opacity < 1.0:
             parts.append(f' opacity="{self.opacity}"')
+
+        transform = self._build_svg_transform()
+        if transform:
+            parts.append(transform)
 
         parts.append(" />")
         return "".join(parts)

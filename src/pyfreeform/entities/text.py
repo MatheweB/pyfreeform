@@ -7,7 +7,7 @@ import functools
 from PIL import ImageFont
 
 from ..color import Color
-from ..core.coord import Coord, CoordLike, RelCoord
+from ..core.coord import RelCoord
 from ..core.entity import Entity
 
 # ---------------------------------------------------------------------------
@@ -204,12 +204,12 @@ class Text(Entity):
         self._pixel_font_size = float(value)
         self._relative_font_size = None
 
-    def _to_pixel_mode(self) -> None:
-        """Resolve font size and position to pixels."""
+    def _resolve_to_absolute(self) -> None:
+        """Resolve relative font size and position to absolute values."""
         if self._relative_font_size is not None:
             self._pixel_font_size = self.font_size
             self._relative_font_size = None
-        super()._to_pixel_mode()
+        super()._resolve_to_absolute()
 
     @property
     def color(self) -> str:
@@ -250,16 +250,17 @@ class Text(Entity):
     def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
         """
         Get bounding box using Pillow font metrics for width
-        and font_size for height.
+        and font_size for height (accounts for scale).
         """
+        s = self._scale_factor
         text_width = _measure_text_width(
             self.content,
             self.font_size,
             self.font_family,
             self.font_weight,
             self.font_style,
-        )
-        text_height = self.font_size
+        ) * s
+        text_height = self.font_size * s
 
         # Adjust based on text_anchor
         if self.text_anchor == "start":
@@ -357,47 +358,6 @@ class Text(Entity):
             self._relative_font_size = new_font_size / cell_h * scale
         return self
 
-    def rotate(self, angle: float, origin: CoordLike | None = None) -> Text:
-        """
-        Rotate the text around a point.
-
-        Args:
-            angle: Rotation angle in degrees (counterclockwise).
-            origin: Center of rotation (default: text position).
-
-        Returns:
-            self, for method chaining.
-        """
-        # Update the rotation angle
-        self.rotation += angle
-
-        # If origin is specified and different from position, also move the position
-        if origin is not None:
-            origin = Coord.coerce(origin)
-            if origin != self.position:
-                super().rotate(angle, origin)
-
-        return self
-
-    def scale(self, factor: float, origin: CoordLike | None = None) -> Text:
-        """
-        Scale the text (changes font size and optionally position).
-
-        Args:
-            factor: Scale factor (2.0 = double the font size).
-            origin: If provided, also moves position away from origin.
-
-        Returns:
-            self, for method chaining.
-        """
-        self.font_size *= factor
-
-        if origin is not None:
-            # Also scale position relative to origin
-            super().scale(factor, origin)
-
-        return self
-
     @property
     def has_textpath(self) -> bool:
         """Whether this text renders along a path (textPath mode)."""
@@ -444,10 +404,8 @@ class Text(Entity):
         """Render to SVG text element."""
         if self._textpath_info is not None:
             return self._to_svg_textpath(self._textpath_info)
-        # Build transform attribute if rotation is applied
-        transform = ""
-        if self.rotation != 0:
-            transform = f' transform="rotate({self.rotation} {self.x} {self.y})"'
+        # Build transform attribute for rotation and/or scale
+        transform = self._build_svg_transform()
 
         # Escape special XML characters in content
         escaped_content = (

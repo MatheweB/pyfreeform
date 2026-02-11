@@ -233,7 +233,7 @@ class EntityGroup(Entity):
         """
         self._rotation += angle
         if origin is not None:
-            super().rotate(angle, origin)
+            self._orbit_around(angle, Coord.coerce(origin))
         return self
 
     def scale(
@@ -256,7 +256,8 @@ class EntityGroup(Entity):
             self, for method chaining.
         """
         self._scale *= factor
-        super().scale(factor, origin)
+        if origin is not None:
+            self._scale_around(factor, Coord.coerce(origin))
         return self
 
     @property

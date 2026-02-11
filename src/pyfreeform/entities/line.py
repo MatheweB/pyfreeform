@@ -153,19 +153,19 @@ class Line(StrokedPathMixin, Entity):
         self._end_offset = value - self.position
         self._relative_end = None
 
-    def _to_pixel_mode(self) -> None:
-        """Resolve both endpoints to pixels."""
+    def _resolve_to_absolute(self) -> None:
+        """Resolve relative start/end positions to absolute coordinates."""
         if (
             self._relative_end is not None
             or self._relative_at is not None
             or self._along_path is not None
         ):
             current_end = self.end
-            super()._to_pixel_mode()
+            super()._resolve_to_absolute()
             self._end_offset = current_end - self._position
             self._relative_end = None
         else:
-            super()._to_pixel_mode()
+            super()._resolve_to_absolute()
 
     @property
     def color(self) -> str:
@@ -177,9 +177,14 @@ class Line(StrokedPathMixin, Entity):
         self._color = Color(value)
 
     @property
+    def rotation_center(self) -> Coord:
+        """Natural pivot for rotation/scale: line midpoint."""
+        return self.start.midpoint(self.end)
+
+    @property
     def length(self) -> float:
-        """Length of the line."""
-        return self.start.distance_to(self.end)
+        """Length of the line (world space, accounts for scale)."""
+        return self.start.distance_to(self.end) * self._scale_factor
 
     @property
     def anchor_names(self) -> list[str]:
@@ -187,18 +192,18 @@ class Line(StrokedPathMixin, Entity):
         return ["start", "center", "end"]
 
     def anchor(self, name: str = "center") -> Coord:
-        """Get anchor point by name."""
+        """Get anchor point by name (world space)."""
         if name == "start":
-            return self.start
+            return self._to_world_space(self.start)
         if name == "center":
-            return self.start.midpoint(self.end)
+            return self._to_world_space(self.start.midpoint(self.end))
         if name == "end":
-            return self.end
+            return self._to_world_space(self.end)
         raise ValueError(f"Line has no anchor '{name}'. Available: {self.anchor_names}")
 
     def point_at(self, t: float) -> Coord:
         """
-        Get a point along the line.
+        Get a point along the line (world space).
 
         Args:
             t: Parameter from 0 (start) to 1 (end).
@@ -207,7 +212,7 @@ class Line(StrokedPathMixin, Entity):
         Returns:
             Coord at that position along the line.
         """
-        return self.start.lerp(self.end, t)
+        return self._to_world_space(self.start.lerp(self.end, t))
 
     def arc_length(self) -> float:
         """Return the length of the line segment."""
@@ -215,7 +220,7 @@ class Line(StrokedPathMixin, Entity):
 
     def angle_at(self, t: float) -> float:
         """
-        Get the tangent angle in degrees at parameter t.
+        Get the tangent angle in degrees at parameter t (world space).
 
         For a line, the angle is constant (same at every point).
 
@@ -225,12 +230,11 @@ class Line(StrokedPathMixin, Entity):
         Returns:
             Angle in degrees.
         """
-
         dx = self.end.x - self.start.x
         dy = self.end.y - self.start.y
         if dx == 0 and dy == 0:
-            return 0.0
-        return math.degrees(math.atan2(dy, dx))
+            return self._rotation
+        return math.degrees(math.atan2(dy, dx)) + self._rotation
 
     def to_svg_path_d(self) -> str:
         """Return SVG path ``d`` attribute for this line."""
@@ -283,74 +287,6 @@ class Line(StrokedPathMixin, Entity):
         self._relative_end = None
         return self
 
-    def rotate(self, angle: float, origin: CoordLike | None = None) -> Line:
-        """
-        Rotate the line around a point.
-
-        Args:
-            angle: Rotation angle in degrees (counterclockwise).
-            origin: Center of rotation (default: line center).
-
-        Returns:
-            self, for method chaining.
-        """
-
-        self._to_pixel_mode()
-        origin = self.anchor("center") if origin is None else Coord.coerce(origin)
-
-        angle_rad = math.radians(angle)
-        cos_a = math.cos(angle_rad)
-        sin_a = math.sin(angle_rad)
-
-        # Rotate both endpoints
-        start = self.start
-        end = self.end
-
-        def rotate_point(p: Coord) -> Coord:
-            dx = p.x - origin.x
-            dy = p.y - origin.y
-            return Coord(
-                dx * cos_a - dy * sin_a + origin.x,
-                dx * sin_a + dy * cos_a + origin.y,
-            )
-
-        new_start = rotate_point(start)
-        new_end = rotate_point(end)
-
-        self._position = new_start
-        self._end_offset = new_end - new_start
-        return self
-
-    def scale(self, factor: float, origin: CoordLike | None = None) -> Line:
-        """
-        Scale the line around a point.
-
-        Args:
-            factor: Scale factor (1.0 = no change).
-            origin: Center of scaling (default: line center).
-
-        Returns:
-            self, for method chaining.
-        """
-        self._to_pixel_mode()
-        origin = self.anchor("center") if origin is None else Coord.coerce(origin)
-
-        start = self.start
-        end = self.end
-
-        new_start = Coord(
-            origin.x + (start.x - origin.x) * factor,
-            origin.y + (start.y - origin.y) * factor,
-        )
-        new_end = Coord(
-            origin.x + (end.x - origin.x) * factor,
-            origin.y + (end.y - origin.y) * factor,
-        )
-
-        self._position = new_start
-        self._end_offset = new_end - new_start
-        return self
-
     def _move_by(self, dx: float = 0, dy: float = 0) -> Line:
         """Move both endpoints by a pixel offset."""
         if self._relative_end is not None:
@@ -366,18 +302,18 @@ class Line(StrokedPathMixin, Entity):
         return self
 
     def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
-        """Get bounding box.
+        """Get bounding box (world space, accounts for rotation and scale).
 
         Args:
             visual: If True, expand by stroke width / 2 to reflect
                     the rendered extent.
         """
-        x1, y1 = self.start
-        x2, y2 = self.end
-        min_x, min_y = min(x1, x2), min(y1, y2)
-        max_x, max_y = max(x1, x2), max(y1, y2)
+        ws = self._to_world_space(self.start)
+        we = self._to_world_space(self.end)
+        min_x, min_y = min(ws.x, we.x), min(ws.y, we.y)
+        max_x, max_y = max(ws.x, we.x), max(ws.y, we.y)
         if visual:
-            half = self.width / 2
+            half = self.width * self._scale_factor / 2
             min_x -= half
             min_y -= half
             max_x += half
@@ -395,15 +331,16 @@ class Line(StrokedPathMixin, Entity):
             return self.bounds(visual=visual)
         rad = math.radians(angle)
         cos_a, sin_a = math.cos(rad), math.sin(rad)
-        s, e = self.start, self.end
-        rx1 = s.x * cos_a - s.y * sin_a
-        ry1 = s.x * sin_a + s.y * cos_a
-        rx2 = e.x * cos_a - e.y * sin_a
-        ry2 = e.x * sin_a + e.y * cos_a
+        ws = self._to_world_space(self.start)
+        we = self._to_world_space(self.end)
+        rx1 = ws.x * cos_a - ws.y * sin_a
+        ry1 = ws.x * sin_a + ws.y * cos_a
+        rx2 = we.x * cos_a - we.y * sin_a
+        ry2 = we.x * sin_a + we.y * cos_a
         min_x, max_x = min(rx1, rx2), max(rx1, rx2)
         min_y, max_y = min(ry1, ry2), max(ry1, ry2)
         if visual:
-            half = self.width / 2
+            half = self.width * self._scale_factor / 2
             min_x -= half
             min_y -= half
             max_x += half
@@ -411,7 +348,7 @@ class Line(StrokedPathMixin, Entity):
         return (min_x, min_y, max_x, max_y)
 
     def to_svg(self) -> str:
-        """Render to SVG line element."""
+        """Render to SVG line element (model-space coords + transform)."""
         s = self.start
         e = self.end
         svg_cap, marker_attrs = self._svg_cap_and_marker_attrs()
@@ -428,6 +365,10 @@ class Line(StrokedPathMixin, Entity):
 
         if self.opacity < 1.0:
             parts.append(f' opacity="{self.opacity}"')
+
+        transform = self._build_svg_transform()
+        if transform:
+            parts.append(transform)
 
         parts.append(" />")
         return "".join(parts)

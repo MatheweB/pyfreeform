@@ -63,7 +63,7 @@ def generate():
 
     # --- 3b. Fitting modes comparison (3x3: default / rotate / match_aspect) ---
     rad, sw = 50, 5
-    arc_colors = ["#7aafff", "#ff8a80", "#81c995"]
+    arc_colors = ["#FFA726", "#81c995", "#7aafff"]
 
     def make_logo():
         g = EntityGroup()

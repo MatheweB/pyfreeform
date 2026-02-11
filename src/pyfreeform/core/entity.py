@@ -57,7 +57,11 @@ class Entity(ABC):
         self._along_path: Pathable | None = None
         self._along_t: float = 0.5
         self._resolving: bool = False
-        self._in_pixel_mode: bool = False
+        self._is_resolved: bool = False
+
+        # Non-destructive transforms (accumulated, resolved at render time)
+        self._rotation: float = 0.0
+        self._scale_factor: float = 1.0
 
     @property
     def z_index(self) -> int:
@@ -67,6 +71,33 @@ class Entity(ABC):
     @z_index.setter
     def z_index(self, value: int) -> None:
         self._z_index = value
+
+    @property
+    def rotation(self) -> float:
+        """Rotation angle in degrees (accumulated, non-destructive)."""
+        return self._rotation
+
+    @rotation.setter
+    def rotation(self, value: float) -> None:
+        self._rotation = float(value)
+
+    @property
+    def scale_factor(self) -> float:
+        """Scale factor (accumulated, non-destructive). Default 1.0."""
+        return self._scale_factor
+
+    @scale_factor.setter
+    def scale_factor(self, value: float) -> None:
+        self._scale_factor = float(value)
+
+    @property
+    def rotation_center(self) -> Coord:
+        """The center point for rotation and scaling transforms.
+
+        Default: entity position. Override for entities where the
+        natural pivot differs (e.g., Rect center, Polygon centroid).
+        """
+        return self.position
 
     def ref_frame(self) -> tuple[float, float, float, float]:
         """Return (x, y, width, height) of this entity's bounding box.
@@ -128,17 +159,29 @@ class Entity(ABC):
         return self._position
 
     @property
-    def in_pixel_mode(self) -> bool:
-        """True if a transform has baked this entity's geometry into pixels.
+    def is_resolved(self) -> bool:
+        """True after relative properties have been resolved to absolute values.
 
-        Builder methods use this to avoid setting relative properties after
-        a transform (e.g. ``rotate()``) that already resolved them.
+        This is a one-way door: once resolved, builder methods will not
+        overwrite the entity's concrete values with relative data.
+
+        What gets resolved (base + subclass overrides):
+
+        - **Position**: ``_relative_at`` / ``_along_path`` → ``_position``
+        - **Sizing**: radius, width/height, rx/ry, font_size (fractions → absolute)
+        - **Geometry**: vertices, start/end points (``RelCoord`` → ``Coord``)
         """
-        return self._in_pixel_mode
+        return self._is_resolved
 
-    def _to_pixel_mode(self) -> None:
-        """Resolve current position to pixels and clear relative bindings."""
-        self._in_pixel_mode = True
+    def _resolve_to_absolute(self) -> None:
+        """Convert all relative properties to absolute values (one-way).
+
+        The base class resolves **position** (relative binding → concrete
+        ``Coord``).  Subclasses extend this to also resolve **sizing**
+        (e.g. radius, width/height) and **geometry** (e.g. vertices,
+        endpoints) from relative fractions to absolute values.
+        """
+        self._is_resolved = True
         if self._relative_at is not None or self._along_path is not None:
             self._position = self._resolve_position()
             self._relative_at = None
@@ -169,7 +212,7 @@ class Entity(ABC):
 
     @property
     def at(self) -> RelCoord | None:
-        """Relative position as (rx, ry) fractions, or None if pixel mode."""
+        """Relative position as (rx, ry) fractions, or None if absolute mode."""
         return self._relative_at
 
     @at.setter
@@ -213,11 +256,11 @@ class Entity(ABC):
 
     @property
     def binding(self) -> Binding | None:
-        """Current positioning binding, or None if pixel-positioned.
+        """Current positioning binding, or None if absolutely positioned.
 
         Returns a ``Binding`` describing how this entity is positioned:
         relative (``at``), along a path (``along`` + ``t``), or ``None``
-        for raw pixel mode.
+        for absolute mode.
         """
         if self._along_path is not None:
             return Binding(along=self._along_path, t=self._along_t, reference=self._reference)
@@ -283,7 +326,7 @@ class Entity(ABC):
             self, for method chaining.
         """
         if self._along_path is not None:
-            # Resolve to pixels, apply offset, switch to pixel mode
+            # Resolve to absolute position, apply offset, switch to absolute mode
             current = self._resolve_position()
             self._position = Coord(current.x + dx, current.y + dy)
             self._along_path = None
@@ -367,64 +410,116 @@ class Entity(ABC):
 
     # --- Transform methods ---
 
+    def _to_world_space(self, model_point: Coord) -> Coord:
+        """Transform a model-space point to world space.
+
+        Applies scale then rotation around ``rotation_center``.
+        Identity transforms are short-circuited.
+        """
+        if self._rotation == 0 and self._scale_factor == 1.0:
+            return model_point
+        center = self.rotation_center
+        delta = model_point - center
+        if self._scale_factor != 1.0:
+            delta = Coord(delta.x * self._scale_factor, delta.y * self._scale_factor)
+        if self._rotation != 0:
+            delta = delta.rotated(math.radians(self._rotation))
+        return center + delta
+
+    def _build_svg_transform(self) -> str:
+        """Build SVG ``transform`` attribute string for current rotation/scale.
+
+        Returns an empty string when both are identity, otherwise a
+        fully-formed ``' transform="..."'`` attribute (leading space included).
+        """
+        has_rot = self._rotation != 0
+        has_scale = self._scale_factor != 1.0
+        if not has_rot and not has_scale:
+            return ""
+        center = self.rotation_center
+        cx, cy = center.x, center.y
+        if has_rot and not has_scale:
+            return f' transform="rotate({self._rotation} {cx} {cy})"'
+        if has_scale and not has_rot:
+            s = self._scale_factor
+            return f' transform="translate({cx},{cy}) scale({s}) translate({-cx},{-cy})"'
+        # Both rotation and scale
+        s = self._scale_factor
+        return (
+            f' transform="translate({cx},{cy})'
+            f" rotate({self._rotation})"
+            f" scale({s})"
+            f' translate({-cx},{-cy})"'
+        )
+
+    def _orbit_around(self, angle: float, origin: Coord) -> None:
+        """Orbit this entity's rotation_center around *origin* by *angle* degrees.
+
+        Resolves all relative properties to absolute values first
+        (``_resolve_to_absolute``), then shifts position so that
+        ``rotation_center`` moves to its new orbital location.
+        Does **not** accumulate ``_rotation``.
+        """
+        self._resolve_to_absolute()
+        center = self.rotation_center
+        new_center = center.rotated(math.radians(angle), origin=origin)
+        self._move_by(new_center.x - center.x, new_center.y - center.y)
+
+    def _scale_around(self, factor: float, origin: Coord) -> None:
+        """Scale this entity's position relative to *origin* (orbit only).
+
+        Like ``_orbit_around`` but for scaling: resolves relative
+        properties to absolute, then shifts position so that
+        ``rotation_center`` moves toward/away from *origin* by *factor*.
+        Does **not** accumulate ``_scale_factor``.
+        """
+        self._resolve_to_absolute()
+        center = self.rotation_center
+        new_center = origin + (center - origin) * factor
+        self._move_by(new_center.x - center.x, new_center.y - center.y)
+
     def rotate(self, angle: float, origin: CoordLike | None = None) -> Entity:
         """
-        Rotate entity around a point (switches to pixel mode).
+        Rotate entity by *angle* degrees (non-destructive).
 
-        For simple entities (Dot), this just rotates the position.
-        Complex entities (Line, Polygon) override this to rotate their geometry.
+        Without *origin*, simply accumulates rotation — relative
+        properties are preserved.  With *origin*, also orbits the
+        entity's ``rotation_center`` around that point (resolves all
+        relative properties to absolute values first).
 
         Args:
             angle: Rotation angle in degrees (counterclockwise).
-            origin: Center of rotation (default: entity position).
+            origin: Center of rotation.  When ``None`` the entity
+                    rotates in place around its ``rotation_center``.
 
         Returns:
             self, for method chaining.
         """
-        if origin is None:
-            return self
-
-        origin = Coord.coerce(origin)
-
-        self._to_pixel_mode()
-
-        angle_rad = math.radians(angle)
-        cos_a = math.cos(angle_rad)
-        sin_a = math.sin(angle_rad)
-
-        dx = self._position.x - origin.x
-        dy = self._position.y - origin.y
-        new_x = dx * cos_a - dy * sin_a + origin.x
-        new_y = dx * sin_a + dy * cos_a + origin.y
-        self._position = Coord(new_x, new_y)
-
+        if origin is not None:
+            self._orbit_around(angle, Coord.coerce(origin))
+        self._rotation = (self._rotation + angle) % 360
         return self
 
     def scale(self, factor: float, origin: CoordLike | None = None) -> Entity:
         """
-        Scale entity around a point (switches to pixel mode).
+        Scale entity by *factor* (non-destructive).
 
-        For simple entities, this scales the position relative to origin.
-        Complex entities override this to scale their geometry.
+        Without *origin*, simply accumulates the scale factor —
+        relative properties are preserved.  With *origin*, also shifts
+        position so the entity moves toward/away from that point
+        (resolves all relative properties to absolute values first).
 
         Args:
-            factor: Scale factor (1.0 = no change, 2.0 = double distance from origin).
-            origin: Center of scaling (default: entity position).
+            factor: Scale factor (1.0 = no change, 2.0 = double).
+            origin: Center of scaling.  When ``None`` the entity
+                    scales around its ``rotation_center``.
 
         Returns:
             self, for method chaining.
         """
-        if origin is None:
-            return self
-
-        origin = Coord.coerce(origin)
-
-        self._to_pixel_mode()
-
-        new_x = origin.x + (self._position.x - origin.x) * factor
-        new_y = origin.y + (self._position.y - origin.y) * factor
-        self._position = Coord(new_x, new_y)
-
+        if origin is not None:
+            self._scale_around(factor, Coord.coerce(origin))
+        self._scale_factor *= factor
         return self
 
     def offset_from(self, anchor_name: str, dx: float = 0, dy: float = 0) -> Coord:

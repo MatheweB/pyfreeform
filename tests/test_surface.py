@@ -271,9 +271,10 @@ def test_fit_to_cell_on_cell_group():
     # 20x20 group, add a huge dot
     dot = group.add_dot(radius=5.0, color="red")
     dot.fit_to_cell(1.0)
-    # Should be scaled to fit 20x20 → radius 10
-    assert dot.radius <= 10.0 + 0.1
-    assert dot.radius >= 9.9
+    # Should be scaled to fit 20x20 → world-space radius 10
+    wr = dot.radius * dot.scale_factor
+    assert wr <= 10.0 + 0.1
+    assert wr >= 9.9
 
 
 def test_fit_to_cell_on_scene():
@@ -281,9 +282,10 @@ def test_fit_to_cell_on_scene():
     scene = Scene(100, 100)
     dot = scene.add_dot(radius=2.0, color="red")
     dot.fit_to_cell(1.0)
-    # Should be scaled to fit 100x100 → radius 50
-    assert dot.radius <= 50.0 + 0.1
-    assert dot.radius >= 49.9
+    # Should be scaled to fit 100x100 → world-space radius 50
+    wr = dot.radius * dot.scale_factor
+    assert wr <= 50.0 + 0.1
+    assert wr >= 49.9
 
 
 # =========================================================================

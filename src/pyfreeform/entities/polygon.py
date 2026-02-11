@@ -153,8 +153,8 @@ class Polygon(Entity):
                 ]
         return [self._resolve_vertex(s) for s in self._vertex_specs]
 
-    def _to_pixel_mode(self) -> None:
-        """Resolve relative vertices to pixel Coords."""
+    def _resolve_to_absolute(self) -> None:
+        """Resolve relative vertices and position to absolute coordinates."""
         if self._relative_vertices is not None:
             resolved = self.vertices
             self._vertex_specs = []
@@ -163,7 +163,7 @@ class Polygon(Entity):
             self._relative_vertices = None
             centroid = self._calculate_centroid()
             self._position = centroid
-        super()._to_pixel_mode()
+        super()._resolve_to_absolute()
 
     @property
     def fill(self) -> str | None:
@@ -184,87 +184,24 @@ class Polygon(Entity):
         self._stroke = Color(value) if value else None
 
     @property
+    def rotation_center(self) -> Coord:
+        """Natural pivot for rotation/scale: polygon centroid."""
+        return self._calculate_centroid()
+
+    @property
     def anchor_names(self) -> list[str]:
         """Available anchors: center and vertices."""
         return ["center"] + [f"v{i}" for i in range(len(self._vertex_specs))]
 
     def anchor(self, name: str = "center") -> Coord:
-        """Get anchor point by name (resolved from specs)."""
+        """Get anchor point by name (world space)."""
         if name == "center":
-            return self._calculate_centroid()
+            return self._to_world_space(self._calculate_centroid())
         if name.startswith("v") and name[1:].isdigit():
             idx = int(name[1:])
             if 0 <= idx < len(self._vertex_specs):
-                return self._resolve_vertex(self._vertex_specs[idx])
+                return self._to_world_space(self._resolve_vertex(self._vertex_specs[idx]))
         raise ValueError(f"Polygon has no anchor '{name}'. Available: {self.anchor_names}")
-
-    def rotate(self, angle: float, origin: CoordLike | None = None) -> Polygon:
-        """
-        Rotate the polygon around a point.
-
-        Only static (Coord) vertices are rotated. Entity-reference vertices
-        follow their entity and are not affected by polygon transforms.
-
-        Args:
-            angle: Rotation angle in degrees (counterclockwise).
-            origin: Center of rotation (default: polygon centroid).
-
-        Returns:
-            self, for method chaining.
-        """
-        self._to_pixel_mode()
-        origin = self._calculate_centroid() if origin is None else Coord.coerce(origin)
-
-        angle_rad = math.radians(angle)
-        cos_a = math.cos(angle_rad)
-        sin_a = math.sin(angle_rad)
-
-        new_specs = []
-        for spec in self._vertex_specs:
-            if isinstance(spec, Coord):
-                dx = spec.x - origin.x
-                dy = spec.y - origin.y
-                new_x = dx * cos_a - dy * sin_a + origin.x
-                new_y = dx * sin_a + dy * cos_a + origin.y
-                new_specs.append(Coord(new_x, new_y))
-            else:
-                new_specs.append(spec)  # Entity refs untouched
-
-        self._vertex_specs = new_specs
-        centroid = self._calculate_centroid()
-        self._position = centroid
-        return self
-
-    def scale(self, factor: float, origin: CoordLike | None = None) -> Polygon:
-        """
-        Scale the polygon around a point.
-
-        Only static (Coord) vertices are scaled. Entity-reference vertices
-        follow their entity and are not affected by polygon transforms.
-
-        Args:
-            factor: Scale factor (1.0 = no change, 2.0 = double size).
-            origin: Center of scaling (default: polygon centroid).
-
-        Returns:
-            self, for method chaining.
-        """
-        self._to_pixel_mode()
-        origin = self._calculate_centroid() if origin is None else Coord.coerce(origin)
-
-        new_specs = []
-        for spec in self._vertex_specs:
-            if isinstance(spec, Coord):
-                new_x = origin.x + (spec.x - origin.x) * factor
-                new_y = origin.y + (spec.y - origin.y) * factor
-                new_specs.append(Coord(new_x, new_y))
-            else:
-                new_specs.append(spec)  # Entity refs untouched
-
-        self._vertex_specs = new_specs
-        centroid = self._calculate_centroid()
-        self._position = centroid
-        return self
 
     def _move_by(self, dx: float = 0, dy: float = 0) -> Polygon:
         """
@@ -281,7 +218,7 @@ class Polygon(Entity):
             self, for method chaining.
         """
         if self._relative_vertices is not None:
-            self._to_pixel_mode()
+            self._resolve_to_absolute()
         new_specs = []
         for spec in self._vertex_specs:
             if isinstance(spec, Coord):
@@ -293,19 +230,21 @@ class Polygon(Entity):
         return self
 
     def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
-        """Get bounding box (resolved from specs).
+        """Get bounding box (world space).
 
         Args:
             visual: If True, expand by stroke width / 2 to reflect
                     the rendered extent.
         """
         verts = self.vertices
+        if self._rotation != 0 or self._scale_factor != 1.0:
+            verts = [self._to_world_space(v) for v in verts]
         min_x = min(v.x for v in verts)
         min_y = min(v.y for v in verts)
         max_x = max(v.x for v in verts)
         max_y = max(v.y for v in verts)
         if visual and self.stroke_width:
-            half = self.stroke_width / 2
+            half = self.stroke_width * self._scale_factor / 2
             min_x -= half
             min_y -= half
             max_x += half
@@ -324,12 +263,14 @@ class Polygon(Entity):
         rad = math.radians(angle)
         cos_a, sin_a = math.cos(rad), math.sin(rad)
         verts = self.vertices
+        if self._rotation != 0 or self._scale_factor != 1.0:
+            verts = [self._to_world_space(v) for v in verts]
         rx = [v.x * cos_a - v.y * sin_a for v in verts]
         ry = [v.x * sin_a + v.y * cos_a for v in verts]
         min_x, max_x = min(rx), max(rx)
         min_y, max_y = min(ry), max(ry)
         if visual and self.stroke_width:
-            half = self.stroke_width / 2
+            half = self.stroke_width * self._scale_factor / 2
             min_x -= half
             min_y -= half
             max_x += half
@@ -359,6 +300,10 @@ class Polygon(Entity):
             parts.append(f' fill-opacity="{eff_fill_opacity}"')
         if eff_stroke_opacity < 1.0:
             parts.append(f' stroke-opacity="{eff_stroke_opacity}"')
+
+        transform = self._build_svg_transform()
+        if transform:
+            parts.append(transform)
 
         parts.append(" />")
         return "".join(parts)

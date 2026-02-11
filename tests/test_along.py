@@ -393,16 +393,22 @@ class TestCurveMovement:
 
     def test_curve_rotate(self):
         curve = Curve(0, 0, 100, 0, curvature=0.5)
-        midpoint_before = curve.point_at(0.5)
         curve.rotate(90)
-        # After 90° rotation around midpoint, start/end should swap axes
-        assert curve.start.x != 0 or curve.start.y != 0
+        # Non-destructive: rotation stored, model-space unchanged
+        assert curve.rotation == pytest.approx(90.0)
+        # World-space anchor should differ from model-space start
+        ws_start = curve.anchor("start")
+        assert ws_start.x != 0 or ws_start.y != 0
 
     def test_curve_scale(self):
         curve = Curve(0, 0, 100, 0, curvature=0.5)
         curve.scale(2.0)
-        # Distance between start and end should roughly double
-        dx = curve.end.x - curve.start.x
-        dy = curve.end.y - curve.start.y
+        # Non-destructive: scale_factor stored
+        assert curve.scale_factor == pytest.approx(2.0)
+        # World-space distance between anchors should roughly double
+        ws_start = curve.anchor("start")
+        ws_end = curve.anchor("end")
+        dx = ws_end.x - ws_start.x
+        dy = ws_end.y - ws_start.y
         length = math.sqrt(dx * dx + dy * dy)
         assert length == pytest.approx(200.0, abs=1)

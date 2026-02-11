@@ -20,12 +20,13 @@ def test_fit_to_cell_dot():
     # Create a large dot
     dot = cell.add_dot(radius=2.5, color="red")  # Way too big
 
-    # Fit to cell (100% = should shrink to radius 10)
+    # Fit to cell (100% = should shrink to world-space radius 10)
     dot.fit_to_cell(1.0)
 
-    # Should be scaled down to fit
-    assert dot.radius <= 10.0
-    assert dot.radius > 9.9  # Close to 10
+    # Should be scaled down to fit (world-space radius = model * scale_factor)
+    wr = dot.radius * dot.scale_factor
+    assert wr <= 10.0
+    assert wr > 9.9  # Close to 10
 
     # Should be centered in cell
     assert abs(dot.x - (cell.x + cell.width / 2)) < 0.1
@@ -182,8 +183,8 @@ def test_fit_to_cell_already_fits():
     # Fit to cell (should scale up to fill)
     dot.fit_to_cell(1.0)
 
-    # Radius should be scaled up to fill the cell (cell is 20x20, so radius ~10)
-    assert dot.radius > 3
+    # World-space radius should be scaled up to fill the cell
+    assert dot.radius * dot.scale_factor > 3
     min_x, min_y, max_x, max_y = dot.bounds()
     assert max_x - min_x <= cell.width + 0.1
     assert max_y - min_y <= cell.height + 0.1
@@ -203,11 +204,14 @@ def test_fit_to_cell_different_scales():
     dot2.fit_to_cell(0.5)  # 50% of cell
     dot3.fit_to_cell(0.1)  # 10% of cell
 
-    # Verify scaling relationship
-    assert dot1.radius > dot2.radius > dot3.radius
-    assert abs(dot1.radius - 10.0) < 0.1  # Full cell radius
-    assert abs(dot2.radius - 5.0) < 0.1  # Half cell radius
-    assert abs(dot3.radius - 1.0) < 0.1  # 10% cell radius
+    # Verify world-space radius scaling relationship
+    wr1 = dot1.radius * dot1.scale_factor
+    wr2 = dot2.radius * dot2.scale_factor
+    wr3 = dot3.radius * dot3.scale_factor
+    assert wr1 > wr2 > wr3
+    assert abs(wr1 - 10.0) < 0.1  # Full cell radius
+    assert abs(wr2 - 5.0) < 0.1  # Half cell radius
+    assert abs(wr3 - 1.0) < 0.1  # 10% cell radius
 
 
 def test_fit_to_cell_brightness_based_scaling():
@@ -232,9 +236,9 @@ def test_fit_to_cell_brightness_based_scaling():
     ellipse1.fit_to_cell(scale1)
     ellipse2.fit_to_cell(scale2)
 
-    # Bright cell should have larger ellipse
-    assert ellipse2.rx > ellipse1.rx
-    assert ellipse2.ry > ellipse1.ry
+    # Bright cell should have larger world-space ellipse
+    assert ellipse2.rx * ellipse2.scale_factor > ellipse1.rx * ellipse1.scale_factor
+    assert ellipse2.ry * ellipse2.scale_factor > ellipse1.ry * ellipse1.scale_factor
 
 
 # =========================================================================
@@ -250,7 +254,7 @@ def test_fit_to_cell_at_center_same_as_default():
     # Two identical dots — one default, one with at=center
     dot_default = cell.add_dot(radius=2.0, color="red")
     dot_default.fit_to_cell(0.8)
-    r_default = dot_default.radius
+    r_default = dot_default.radius * dot_default.scale_factor
     x_default, y_default = dot_default.x, dot_default.y
 
     scene2 = Scene.with_grid(cols=1, rows=1, cell_size=100)
@@ -258,7 +262,7 @@ def test_fit_to_cell_at_center_same_as_default():
     dot_at = cell2.add_dot(radius=2.0, color="red")
     dot_at.fit_to_cell(0.8, at=(0.5, 0.5))
 
-    assert abs(dot_at.radius - r_default) < 0.1
+    assert abs(dot_at.radius * dot_at.scale_factor - r_default) < 0.1
     assert abs(dot_at.x - x_default) < 0.1
     assert abs(dot_at.y - y_default) < 0.1
 
@@ -298,8 +302,8 @@ def test_fit_to_cell_at_corner_smaller_than_center():
     dot_corner = cell2.add_dot(radius=9.99, color="blue")
     dot_corner.fit_to_cell(1.0, at=(0.25, 0.25))
 
-    # Corner has less available space → smaller radius
-    assert dot_corner.radius < dot_center.radius
+    # Corner has less available space → smaller world-space radius
+    assert dot_corner.radius * dot_corner.scale_factor < dot_center.radius * dot_center.scale_factor
 
 
 def test_fit_to_cell_at_rejects_strings():
@@ -392,7 +396,8 @@ def test_fit_to_cell_backward_compat_no_at():
     dot = cell.add_dot(radius=2.5, color="red")
     dot.fit_to_cell(1.0)
 
-    assert dot.radius <= 10.0
-    assert dot.radius > 9.9
+    wr = dot.radius * dot.scale_factor
+    assert wr <= 10.0
+    assert wr > 9.9
     assert abs(dot.x - (cell.x + cell.width / 2)) < 0.1
     assert abs(dot.y - (cell.y + cell.height / 2)) < 0.1

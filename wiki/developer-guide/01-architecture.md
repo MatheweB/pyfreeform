@@ -123,8 +123,10 @@ Every entity has:
 - **Connections** (`_connections: WeakSet`) -- tracked via weak references
 - **Movement** -- `_move_to()`, `_move_by()` (private pixel movement); public API is `.position`, `.at`, and `move_to_cell()`
 - **Binding** -- `binding` property accepts a `Binding` dataclass (from `core/binding.py`) for relative positioning
-- **Pixel mode** -- `in_pixel_mode` property (read-only) is `True` after `rotate()`/`scale()` bakes geometry into pixels. Builder methods check this to avoid overriding transforms with relative data.
-- **Transforms** -- `rotate()`, `scale()` (base implementations; entities override). Both call `_to_pixel_mode()` which resolves relative coords and sets `in_pixel_mode = True`.
+- **Resolved state** -- `is_resolved` property (read-only) is `True` after transforms with an `origin` parameter resolve all relative properties (position, sizing, geometry) to absolute values. This is a one-way door — builder methods check it to avoid overwriting concrete values with relative data.
+- **Transforms** -- `rotate(angle, origin)` and `scale(factor, origin)` are **non-destructive**: they accumulate `_rotation` and `_scale_factor` without modifying geometry. When called with `origin`, `_resolve_to_absolute()` converts all relative properties to absolute values first, then the position is orbited/scaled around the origin. SVG rendering applies both transforms via `_build_svg_transform()`.
+- **Transform properties** -- `entity.rotation` (degrees), `entity.scale_factor` (multiplier), `entity.rotation_center` (pivot `Coord` -- default: position, overridden by Rect/Polygon/Line/Curve/Path)
+- **World-space helpers** -- `_to_world_space(point)` applies scale then rotation around `rotation_center`. Used by `anchor()` and `bounds()` in all entity types.
 - **Fitting** -- `fit_within()`, `fit_to_cell()` -- scale to fit a target
 - **Connectivity** -- `connect()`, `place_beside()`
 

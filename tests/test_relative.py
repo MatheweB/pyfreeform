@@ -173,40 +173,44 @@ class TestWithinPolygon:
         assert abs(verts[1].y - 75.0) < 0.01
 
     def test_polygon_rotation_not_overridden_by_relative_vertices(self):
-        """Regression: relative_vertices must not be set after rotation.
+        """Rotation and relative_vertices coexist non-destructively.
 
-        add_polygon(rotation=...) calls rotate() which bakes the rotation
-        into pixel-level _vertex_specs and clears _relative_vertices.
-        Setting relative_vertices AFTER that would silently undo the rotation.
+        add_polygon(rotation=...) stores rotation non-destructively.
+        relative_vertices are preserved (no baking), and the SVG transform
+        handles the visual rotation.
         """
         scene, cell = _scene_with_cell(100)
-        # Symmetric triangle — rotation should visibly change vertex positions
         tri_verts = [(0.3, 0.3), (0.7, 0.3), (0.5, 0.7)]
         unrotated = cell.add_polygon(tri_verts, fill="red", rotation=0)
         rotated = cell.add_polygon(tri_verts, fill="blue", rotation=45)
 
-        uv = unrotated.vertices
-        rv = rotated.vertices
+        # Rotation is stored non-destructively
+        assert rotated.rotation == pytest.approx(45.0)
+        assert unrotated.rotation == pytest.approx(0.0)
 
-        # At least one vertex must differ significantly
-        diffs = [abs(a.x - b.x) + abs(a.y - b.y) for a, b in zip(uv, rv)]
-        assert max(diffs) > 1.0, (
-            "Rotated polygon vertices should differ from unrotated — "
-            "relative_vertices may be overriding the rotation"
+        # World-space bounds should differ due to rotation
+        ub = unrotated.bounds()
+        rb = rotated.bounds()
+        u_size = (ub[2] - ub[0], ub[3] - ub[1])
+        r_size = (rb[2] - rb[0], rb[3] - rb[1])
+        assert abs(u_size[0] - r_size[0]) > 1.0 or abs(u_size[1] - r_size[1]) > 1.0, (
+            "Rotated polygon bounds should differ from unrotated"
         )
 
-    def test_in_pixel_mode_set_by_rotation(self):
-        """in_pixel_mode is True after rotate(), False otherwise."""
+    def test_is_resolved_not_set_by_rotation(self):
+        """Non-destructive rotation does NOT resolve relative to absolute."""
         scene, cell = _scene_with_cell(100)
         tri_verts = [(0.3, 0.3), (0.7, 0.3), (0.5, 0.7)]
 
         plain = cell.add_polygon(tri_verts, fill="red")
-        assert not plain.in_pixel_mode
+        assert not plain.is_resolved
         assert plain.relative_vertices is not None
 
         rotated = cell.add_polygon(tri_verts, fill="blue", rotation=45)
-        assert rotated.in_pixel_mode
-        assert rotated.relative_vertices is None
+        # Non-destructive: relative_vertices preserved, not resolved
+        assert not rotated.is_resolved
+        assert rotated.relative_vertices is not None
+        assert rotated.rotation == pytest.approx(45.0)
 
 
 # =========================================================================
@@ -257,7 +261,7 @@ class TestMultiPass:
         # Last dot: was at (0.9, 0.5), now at (0.95, 0.5) → x = 95.0
         assert abs(dots[9].x - 95.0) < 0.01
 
-    def test_at_is_none_for_pixel_mode(self):
+    def test_at_is_none_for_absolute_mode(self):
         scene, cell = _scene_with_cell(100)
         from pyfreeform import Dot
 

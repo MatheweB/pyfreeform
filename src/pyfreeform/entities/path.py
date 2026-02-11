@@ -15,7 +15,7 @@ from ..core.bezier import (
 from ..core.bezier import (
     fit_cubic_beziers as _fit_cubic_beziers,
 )
-from ..core.coord import Coord, CoordLike
+from ..core.coord import Coord
 from ..core.entity import Entity
 from ..core.stroked_path_mixin import StrokedPathMixin
 from ..paths import Lissajous, Spiral, Wave, Zigzag
@@ -173,6 +173,19 @@ class Path(StrokedPathMixin, Entity):
         self._fill = Color(value) if value is not None else None
 
     @property
+    def rotation_center(self) -> Coord:
+        """Natural pivot for rotation/scale: model-space midpoint."""
+        n = len(self._bezier_segments)
+        if n == 0:
+            return self.position
+        segment_t = 0.5 * n
+        idx = int(segment_t)
+        if idx >= n:
+            idx = n - 1
+        local_t = segment_t - idx
+        return _eval_cubic(*self._bezier_segments[idx], local_t)
+
+    @property
     def anchor_names(self) -> list[str]:
         """Available anchors."""
         return ["start", "center", "end"]
@@ -201,13 +214,13 @@ class Path(StrokedPathMixin, Entity):
         """
         n = len(self._bezier_segments)
         if n == 0:
-            return self.position
+            return self._to_world_space(self.position)
 
         t = max(0.0, min(1.0, t))
 
         if t >= 1.0:
             seg = self._bezier_segments[-1]
-            return seg[3]
+            return self._to_world_space(seg[3])
 
         segment_t = t * n
         idx = int(segment_t)
@@ -215,7 +228,7 @@ class Path(StrokedPathMixin, Entity):
             idx = n - 1
         local_t = segment_t - idx
 
-        return _eval_cubic(*self._bezier_segments[idx], local_t)
+        return self._to_world_space(_eval_cubic(*self._bezier_segments[idx], local_t))
 
     def angle_at(self, t: float) -> float:
         """
@@ -249,7 +262,7 @@ class Path(StrokedPathMixin, Entity):
 
         if dx == 0 and dy == 0:
             return 0.0
-        return math.degrees(math.atan2(dy, dx))
+        return math.degrees(math.atan2(dy, dx)) + self._rotation
 
     def arc_length(self, samples: int = 200) -> float:
         """
@@ -279,7 +292,7 @@ class Path(StrokedPathMixin, Entity):
                 dy = curr.y - prev.y
                 total += math.sqrt(dx * dx + dy * dy)
                 prev = curr
-        return total
+        return total * abs(self._scale_factor)
 
     def to_svg_path_d(self) -> str:
         """Return the SVG path ``d`` attribute string."""
@@ -368,7 +381,7 @@ class Path(StrokedPathMixin, Entity):
         return (min_x, min_y, max_x, max_y)
 
     def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
-        """Exact bounding box (solves cubic Bezier extrema per segment).
+        """Exact bounding box (world space, solves cubic Bezier extrema per segment).
 
         Args:
             visual: If True, expand by stroke width / 2 to reflect
@@ -377,9 +390,15 @@ class Path(StrokedPathMixin, Entity):
         if not self._bezier_segments:
             return (self.position.x, self.position.y, self.position.x, self.position.y)
 
+        has_transform = self._rotation != 0 or self._scale_factor != 1.0
         min_x = min_y = math.inf
         max_x = max_y = -math.inf
         for p0, cp1, cp2, p3 in self._bezier_segments:
+            if has_transform:
+                p0 = self._to_world_space(p0)
+                cp1 = self._to_world_space(cp1)
+                cp2 = self._to_world_space(cp2)
+                p3 = self._to_world_space(p3)
             sb = Path._cubic_segment_bounds(
                 p0.x,
                 p0.y,
@@ -399,7 +418,7 @@ class Path(StrokedPathMixin, Entity):
             if sb[3] > max_y:
                 max_y = sb[3]
         if visual:
-            half = self.width / 2
+            half = self.width * self._scale_factor / 2
             min_x -= half
             min_y -= half
             max_x += half
@@ -416,14 +435,18 @@ class Path(StrokedPathMixin, Entity):
         if angle == 0:
             return self.bounds(visual=visual)
         if not self._bezier_segments:
+            pos = self.position
+            if self._rotation != 0 or self._scale_factor != 1.0:
+                pos = self._to_world_space(pos)
             rad = math.radians(angle)
             cos_a, sin_a = math.cos(rad), math.sin(rad)
-            px = self.position.x * cos_a - self.position.y * sin_a
-            py = self.position.x * sin_a + self.position.y * cos_a
+            px = pos.x * cos_a - pos.y * sin_a
+            py = pos.x * sin_a + pos.y * cos_a
             return (px, py, px, py)
 
         rad = math.radians(angle)
         cos_a, sin_a = math.cos(rad), math.sin(rad)
+        has_transform = self._rotation != 0 or self._scale_factor != 1.0
 
         def _rot(x: float, y: float) -> tuple[float, float]:
             return x * cos_a - y * sin_a, x * sin_a + y * cos_a
@@ -431,6 +454,11 @@ class Path(StrokedPathMixin, Entity):
         min_x = min_y = math.inf
         max_x = max_y = -math.inf
         for p0, cp1, cp2, p3 in self._bezier_segments:
+            if has_transform:
+                p0 = self._to_world_space(p0)
+                cp1 = self._to_world_space(cp1)
+                cp2 = self._to_world_space(cp2)
+                p3 = self._to_world_space(p3)
             r0 = _rot(p0.x, p0.y)
             r1 = _rot(cp1.x, cp1.y)
             r2 = _rot(cp2.x, cp2.y)
@@ -454,7 +482,7 @@ class Path(StrokedPathMixin, Entity):
             if sb[3] > max_y:
                 max_y = sb[3]
         if visual:
-            half = self.width / 2
+            half = self.width * self._scale_factor / 2
             min_x -= half
             min_y -= half
             max_x += half
@@ -482,64 +510,6 @@ class Path(StrokedPathMixin, Entity):
             )
             for p0, cp1, cp2, p3 in self._bezier_segments
         ]
-        return self
-
-    def rotate(self, angle: float, origin: CoordLike | None = None) -> Path:
-        """
-        Rotate the path around a point.
-
-        Args:
-            angle: Rotation angle in degrees (counterclockwise).
-            origin: Center of rotation (default: path midpoint).
-
-        Returns:
-            self, for method chaining.
-        """
-        origin = self.point_at(0.5) if origin is None else Coord.coerce(origin)
-
-        angle_rad = math.radians(angle)
-        cos_a = math.cos(angle_rad)
-        sin_a = math.sin(angle_rad)
-
-        def rot(p: Coord) -> Coord:
-            dx = p.x - origin.x
-            dy = p.y - origin.y
-            return Coord(
-                dx * cos_a - dy * sin_a + origin.x,
-                dx * sin_a + dy * cos_a + origin.y,
-            )
-
-        self._bezier_segments = [
-            (rot(p0), rot(cp1), rot(cp2), rot(p3)) for p0, cp1, cp2, p3 in self._bezier_segments
-        ]
-        if self._bezier_segments:
-            self._position = self._bezier_segments[0][0]
-        return self
-
-    def scale(self, factor: float, origin: CoordLike | None = None) -> Path:
-        """
-        Scale the path around a point.
-
-        Args:
-            factor: Scale factor (1.0 = no change).
-            origin: Center of scaling (default: path midpoint).
-
-        Returns:
-            self, for method chaining.
-        """
-        origin = self.point_at(0.5) if origin is None else Coord.coerce(origin)
-
-        def sc(p: Coord) -> Coord:
-            return Coord(
-                origin.x + (p.x - origin.x) * factor,
-                origin.y + (p.y - origin.y) * factor,
-            )
-
-        self._bezier_segments = [
-            (sc(p0), sc(cp1), sc(cp2), sc(p3)) for p0, cp1, cp2, p3 in self._bezier_segments
-        ]
-        if self._bezier_segments:
-            self._position = self._bezier_segments[0][0]
         return self
 
     def to_svg(self) -> str:
@@ -579,6 +549,10 @@ class Path(StrokedPathMixin, Entity):
             parts.append(f' fill-opacity="{eff_fill_opacity}"')
         if eff_stroke_opacity < 1.0:
             parts.append(f' stroke-opacity="{eff_stroke_opacity}"')
+
+        transform = self._build_svg_transform()
+        if transform:
+            parts.append(transform)
 
         parts.append(" />")
         return "".join(parts)
