@@ -353,8 +353,7 @@ class Text(Entity):
 
         # If origin is specified and different from position, also move the position
         if origin is not None:
-            if isinstance(origin, tuple):
-                origin = Coord(*origin)
+            origin = Coord._coerce(origin)
             if origin != self.position:
                 super().rotate(angle, origin)
 

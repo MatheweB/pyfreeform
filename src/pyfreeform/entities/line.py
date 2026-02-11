@@ -108,10 +108,8 @@ class Line(StrokedPathMixin, Entity):
         Returns:
             A new Line entity.
         """
-        if isinstance(start, tuple):
-            start = Coord(*start)
-        if isinstance(end, tuple):
-            end = Coord(*end)
+        start = Coord._coerce(start)
+        end = Coord._coerce(end)
         return cls(start.x, start.y, end.x, end.y, width, color, z_index, cap,
                    start_cap, end_cap, opacity)
 
@@ -132,8 +130,7 @@ class Line(StrokedPathMixin, Entity):
     @end.setter
     def end(self, value: CoordLike) -> None:
         """Set the ending point (clears relative binding)."""
-        if isinstance(value, tuple):
-            value = Coord(*value)
+        value = Coord._coerce(value)
         self._end_offset = value - self.position
         self._relative_end = None
 
@@ -218,6 +215,10 @@ class Line(StrokedPathMixin, Entity):
         s, e = self.start, self.end
         return f"M {s.x} {s.y} L {e.x} {e.y}"
 
+    def _connection_data(self, segments: int = 32) -> tuple[str, list]:
+        """Return shape kind and bezier data for Connection dispatch."""
+        return ("line", [])
+
     def _move_to(self, x: float | Coord, y: float | None = None) -> Line:
         """
         Move the line's start point to a new position.
@@ -250,10 +251,8 @@ class Line(StrokedPathMixin, Entity):
         Returns:
             self, for method chaining.
         """
-        if isinstance(start, tuple):
-            start = Coord(*start)
-        if isinstance(end, tuple):
-            end = Coord(*end)
+        start = Coord._coerce(start)
+        end = Coord._coerce(end)
 
         self._position = start
         self._end_offset = end - start
@@ -277,8 +276,8 @@ class Line(StrokedPathMixin, Entity):
 
         if origin is None:
             origin = self.anchor("center")
-        elif isinstance(origin, tuple):
-            origin = Coord(*origin)
+        else:
+            origin = Coord._coerce(origin)
 
         angle_rad = math.radians(angle)
         cos_a = math.cos(angle_rad)
@@ -319,8 +318,8 @@ class Line(StrokedPathMixin, Entity):
         """
         if origin is None:
             origin = self.anchor("center")
-        elif isinstance(origin, tuple):
-            origin = Coord(*origin)
+        else:
+            origin = Coord._coerce(origin)
 
         start = self.start
         end = self.end
@@ -347,11 +346,7 @@ class Line(StrokedPathMixin, Entity):
             # Adjust end fractions in tandem with start
             ref = self._reference or self._cell
             if ref is not None:
-                if isinstance(ref, Entity):
-                    min_x, min_y, max_x, max_y = ref.bounds()
-                    ref_w, ref_h = max_x - min_x, max_y - min_y
-                else:
-                    ref_w, ref_h = ref._width, ref._height
+                _, _, ref_w, ref_h = ref.ref_frame()
                 drx = dx / ref_w if ref_w > 0 else 0
                 dry = dy / ref_h if ref_h > 0 else 0
                 erx, ery = self._relative_end

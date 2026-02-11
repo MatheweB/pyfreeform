@@ -44,14 +44,12 @@ class Coord:
 
     def __add__(self, other: CoordLike) -> Coord:
         """Add two coords (vector addition)."""
-        if isinstance(other, tuple):
-            other = Coord(*other)
+        other = Coord._coerce(other)
         return Coord(self.x + other.x, self.y + other.y)
 
     def __sub__(self, other: CoordLike) -> Coord:
         """Subtract two coords (vector subtraction)."""
-        if isinstance(other, tuple):
-            other = Coord(*other)
+        other = Coord._coerce(other)
         return Coord(self.x - other.x, self.y - other.y)
 
     def __mul__(self, scalar: float) -> Coord:
@@ -158,6 +156,15 @@ class Coord:
         """Return as a plain tuple."""
         return (self.x, self.y)
 
+    @classmethod
+    def _coerce(cls, value: CoordLike) -> Coord:
+        """Convert a CoordLike to a Coord, passing through if already one."""
+        if isinstance(value, Coord):
+            return value
+        if isinstance(value, tuple):
+            return Coord(*value)
+        return Coord(value.x, value.y)
+
     def __repr__(self) -> str:
         return f"Coord({self.x}, {self.y})"
 
@@ -198,14 +205,12 @@ class RelCoord:
 
     def __add__(self, other: RelCoordLike) -> RelCoord:
         """Add two relative coords."""
-        if isinstance(other, tuple):
-            other = RelCoord(*other)
+        other = RelCoord._coerce(other)
         return RelCoord(self.rx + other.rx, self.ry + other.ry)
 
     def __sub__(self, other: RelCoordLike) -> RelCoord:
         """Subtract two relative coords."""
-        if isinstance(other, tuple):
-            other = RelCoord(*other)
+        other = RelCoord._coerce(other)
         return RelCoord(self.rx - other.rx, self.ry - other.ry)
 
     def __mul__(self, scalar: float) -> RelCoord:
@@ -242,6 +247,11 @@ class RelCoord:
     def as_tuple(self) -> tuple[float, float]:
         """Return as a plain tuple."""
         return (self.rx, self.ry)
+
+    @classmethod
+    def _coerce(cls, value: RelCoordLike) -> RelCoord:
+        """Convert a RelCoordLike to a RelCoord, passing through if already one."""
+        return value if isinstance(value, RelCoord) else RelCoord(*value)
 
     def __repr__(self) -> str:
         return f"RelCoord({self.rx}, {self.ry})"

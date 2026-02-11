@@ -8,7 +8,7 @@ __version__ = "0.3.0"
 from .core.coord import Coord, CoordLike, RelCoord, RelCoordLike
 from .core.entity import Entity
 from .core.connection import Connection
-from .core.pathable import Pathable
+from .core.pathable import FullPathable, Pathable
 from .core.tangent import get_angle_at
 
 # Entities
@@ -118,6 +118,7 @@ __all__ = [
     "Entity",
     "Connection",
     "Pathable",
+    "FullPathable",
     "get_angle_at",
     # Entities
     "Dot",

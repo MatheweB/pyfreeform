@@ -99,12 +99,7 @@ class Cell(Surface):
             >>> cell.add_dot(radius=0.02 + 0.08 * cell.brightness)
         """
         raw = self._data.get("brightness")
-        if raw is None:
-            return 0.5
-        # Normalize to 0-1 if stored as 0-255
-        if isinstance(raw, (int, float)) and raw > 1:
-            return float(raw) / 255.0
-        return float(raw)
+        return float(raw) if raw is not None else 0.5
 
     @property
     def color(self) -> str:
@@ -165,11 +160,7 @@ class Cell(Surface):
         Returns 1.0 if no alpha data is loaded.
         """
         raw = self._data.get("alpha")
-        if raw is None:
-            return 1.0
-        if isinstance(raw, (int, float)) and raw > 1:
-            return float(raw) / 255.0
-        return float(raw)
+        return float(raw) if raw is not None else 1.0
 
     @property
     def data(self) -> dict[str, Any]:

@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any
 
 from .coord import Coord, CoordLike
 from .stroked_path_mixin import StrokedPathMixin
-from .bezier import fit_cubic_beziers, eval_cubic
+from .bezier import eval_cubic
 
 if TYPE_CHECKING:
     from .entity import Entity
@@ -75,7 +75,6 @@ class Connection(StrokedPathMixin):
             segments: Number of Bézier segments for shape rendering.
         """
         from ..config.styles import ConnectionStyle
-        from ..entities.path import Path as PathEntity
 
         self._start = start
         self._end = end
@@ -86,10 +85,7 @@ class Connection(StrokedPathMixin):
         else:
             self._style = {**self.DEFAULT_STYLE, **(style or {})}
 
-        # Shape support
-        from ..entities.line import Line as LineEntity
-        from ..entities.curve import Curve as CurveEntity
-
+        # Shape support — dispatch via _connection_data() on the shape
         self._shape = shape
         self._shape_kind: str = "none"  # "none", "line", "curve", "path"
         self._shape_beziers: list[tuple[Coord, Coord, Coord, Coord]] = []
@@ -97,34 +93,9 @@ class Connection(StrokedPathMixin):
         self._source_end: Coord | None = None
 
         if shape is not None:
-            # Guard against closed paths
-            if isinstance(shape, PathEntity) and shape.closed:
-                raise ValueError(
-                    "Closed paths cannot be used as connection shapes. "
-                    "Use Path(pathable, start_t=0, end_t=0.25) for an arc."
-                )
             self._source_start = shape.point_at(0.0)
             self._source_end = shape.point_at(1.0)
-
-            if isinstance(shape, LineEntity):
-                # Line: no bezier fitting needed — just affine on 2 endpoints
-                self._shape_kind = "line"
-            elif isinstance(shape, CurveEntity):
-                # Curve: exact quadratic→cubic conversion (1 segment)
-                self._shape_kind = "curve"
-                P0 = shape.start
-                Q = shape.control
-                P2 = shape.end
-                # Exact degree elevation: quadratic→cubic
-                CP1 = Coord(P0.x + 2/3 * (Q.x - P0.x), P0.y + 2/3 * (Q.y - P0.y))
-                CP2 = Coord(P2.x + 2/3 * (Q.x - P2.x), P2.y + 2/3 * (Q.y - P2.y))
-                self._shape_beziers = [(P0, CP1, CP2, P2)]
-            else:
-                # Path: sample and fit cubic beziers
-                self._shape_kind = "path"
-                self._shape_beziers = fit_cubic_beziers(
-                    shape, segments, closed=False
-                )
+            self._shape_kind, self._shape_beziers = shape._connection_data(segments)
 
         # Register with both entities
         start.add_connection(self)

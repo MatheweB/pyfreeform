@@ -4,14 +4,14 @@ from __future__ import annotations
 
 import math
 
-from .pathable import Pathable
+from .pathable import FullPathable, Pathable
 
 
 def get_angle_at(path: Pathable, t: float, epsilon: float = 1e-5) -> float:
     """
     Get tangent angle in degrees at parameter t along a path.
 
-    If path has an ``angle_at()`` method, uses it directly.
+    If path implements ``FullPathable``, uses ``angle_at()`` directly.
     Otherwise falls back to numeric differentiation.
 
     Args:
@@ -22,7 +22,7 @@ def get_angle_at(path: Pathable, t: float, epsilon: float = 1e-5) -> float:
     Returns:
         Angle in degrees (0 = rightward, 90 = downward in SVG coords).
     """
-    if hasattr(path, "angle_at"):
+    if isinstance(path, FullPathable):
         return path.angle_at(t)
 
     # Numeric differentiation fallback

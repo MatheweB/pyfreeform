@@ -135,15 +135,9 @@ class Polygon(Entity):
         if self._relative_vertices is not None:
             ref = self._reference or self._cell
             if ref is not None:
-                if isinstance(ref, Entity):
-                    min_x, min_y, max_x, max_y = ref.bounds()
-                    rw, rh = max_x - min_x, max_y - min_y
-                    return [Coord(min_x + rx * rw, min_y + ry * rh)
-                            for rx, ry in self._relative_vertices]
-                else:
-                    return [Coord(ref._x + rx * ref._width,
-                                  ref._y + ry * ref._height)
-                            for rx, ry in self._relative_vertices]
+                ref_x, ref_y, ref_w, ref_h = ref.ref_frame()
+                return [Coord(ref_x + rx * ref_w, ref_y + ry * ref_h)
+                        for rx, ry in self._relative_vertices]
         return [self._resolve_vertex(s) for s in self._vertex_specs]
 
     def _to_pixel_mode(self) -> None:
@@ -209,8 +203,8 @@ class Polygon(Entity):
             self._to_pixel_mode()
         if origin is None:
             origin = self._calculate_centroid()
-        elif isinstance(origin, tuple):
-            origin = Coord(*origin)
+        else:
+            origin = Coord._coerce(origin)
 
         angle_rad = math.radians(angle)
         cos_a = math.cos(angle_rad)
@@ -250,8 +244,8 @@ class Polygon(Entity):
             self._to_pixel_mode()
         if origin is None:
             origin = self._calculate_centroid()
-        elif isinstance(origin, tuple):
-            origin = Coord(*origin)
+        else:
+            origin = Coord._coerce(origin)
 
         new_specs = []
         for spec in self._vertex_specs:

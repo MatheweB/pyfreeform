@@ -132,8 +132,7 @@ class Ellipse(Entity):
         Returns:
             A new Ellipse entity.
         """
-        if isinstance(center, tuple):
-            center = Coord(*center)
+        center = Coord._coerce(center)
         return cls(center.x, center.y, rx, ry, rotation, fill, stroke, stroke_width,
                    z_index, opacity, fill_opacity, stroke_opacity)
 
@@ -369,8 +368,7 @@ class Ellipse(Entity):
             # Rotate position around external origin — switch to pixel mode
             self._to_pixel_mode()
 
-            if isinstance(origin, tuple):
-                origin = Coord(*origin)
+            origin = Coord._coerce(origin)
 
             angle_rad = math.radians(angle)
             cos_a = math.cos(angle_rad)
@@ -403,8 +401,7 @@ class Ellipse(Entity):
 
         if origin is not None:
             self._to_pixel_mode()
-            if isinstance(origin, tuple):
-                origin = Coord(*origin)
+            origin = Coord._coerce(origin)
 
             new_x = origin.x + (self.position.x - origin.x) * factor
             new_y = origin.y + (self.position.y - origin.y) * factor

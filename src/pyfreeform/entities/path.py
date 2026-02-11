@@ -291,6 +291,15 @@ class Path(StrokedPathMixin, Entity):
 
         return "".join(parts)
 
+    def _connection_data(self, segments: int = 32) -> tuple[str, list]:
+        """Return shape kind and bezier data for Connection dispatch."""
+        if self._closed:
+            raise ValueError(
+                "Closed paths cannot be used as connection shapes. "
+                "Use Path(pathable, start_t=0, end_t=0.25) for an arc."
+            )
+        return ("path", list(self._bezier_segments))
+
     @staticmethod
     def _cubic_axis_extrema(p0: float, p1: float, p2: float, p3: float) -> list[float]:
         """Critical t-values where one axis of a cubic Bezier is extremal.
@@ -452,8 +461,8 @@ class Path(StrokedPathMixin, Entity):
         """
         if origin is None:
             origin = self.point_at(0.5)
-        elif isinstance(origin, tuple):
-            origin = Coord(*origin)
+        else:
+            origin = Coord._coerce(origin)
 
         angle_rad = math.radians(angle)
         cos_a = math.cos(angle_rad)
@@ -488,8 +497,8 @@ class Path(StrokedPathMixin, Entity):
         """
         if origin is None:
             origin = self.point_at(0.5)
-        elif isinstance(origin, tuple):
-            origin = Coord(*origin)
+        else:
+            origin = Coord._coerce(origin)
 
         def sc(p: Coord) -> Coord:
             return Coord(

@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Literal
 
 from .coord import Coord, CoordLike, RelCoord
 from .entity import Entity
-from .pathable import Pathable
+from .pathable import FullPathable, Pathable
 from .tangent import get_angle_at
 
 if TYPE_CHECKING:
@@ -214,14 +214,44 @@ class Surface:
             return position, tangent_angle + user_rotation
         return position, user_rotation
 
+    def ref_frame(self) -> tuple[float, float, float, float]:
+        """Return (x, y, width, height) of this surface.
+
+        Provides a unified interface for both Entity and Surface,
+        eliminating the need for isinstance checks when resolving
+        relative coordinates.
+        """
+        return (self._x, self._y, self._width, self._height)
+
     def _get_ref_frame(
         self, within: Entity | None
     ) -> tuple[float, float, float, float]:
         """Get (x, y, width, height) of the reference frame."""
         if within is not None:
-            min_x, min_y, max_x, max_y = within.bounds()
-            return (min_x, min_y, max_x - min_x, max_y - min_y)
-        return (self._x, self._y, self._width, self._height)
+            return within.ref_frame()
+        return self.ref_frame()
+
+    def _resolve_at(
+        self,
+        at: Position,
+        ref_x: float,
+        ref_y: float,
+        ref_w: float,
+        ref_h: float,
+    ) -> tuple[Coord, RelCoord]:
+        """Resolve a named/relative position to absolute pixels and RelCoord.
+
+        Args:
+            at: A named position string, RelCoord, or (rx, ry) tuple.
+            ref_x, ref_y, ref_w, ref_h: Reference frame bounds.
+
+        Returns:
+            (absolute_position, relative_coord) pair.
+        """
+        if isinstance(at, str):
+            at = NAMED_POSITIONS[at]
+        rc = RelCoord._coerce(at)
+        return Coord(ref_x + rc.rx * ref_w, ref_y + rc.ry * ref_h), rc
 
     # =========================================================================
     # BUILDER METHODS
@@ -294,13 +324,10 @@ class Surface:
             dot._along_path = along
             dot._along_t = t if t is not None else 0.5
         else:
-            if isinstance(at, str):
-                at = NAMED_POSITIONS[at]
-            rx, ry = at
-            position = Coord(ref_x + rx * ref_w, ref_y + ry * ref_h)
+            position, at_rc = self._resolve_at(at, ref_x, ref_y, ref_w, ref_h)
             dot = Dot(position.x, position.y, radius=pixel_radius, color=color, z_index=z_index,
                       opacity=opacity)
-            dot._relative_at = RelCoord(*at) if not isinstance(at, RelCoord) else at
+            dot._relative_at = at_rc
 
         dot._relative_radius = radius
         if within is not None:
@@ -389,8 +416,8 @@ class Surface:
             if align:
                 line.rotate(rotation, origin=target)
         else:
-            line._relative_at = RelCoord(*start) if not isinstance(start, RelCoord) else start
-            line._relative_end = RelCoord(*end) if not isinstance(end, RelCoord) else end
+            line._relative_at = RelCoord._coerce(start)
+            line._relative_end = RelCoord._coerce(end)
 
         if within is not None:
             line._reference = within
@@ -534,8 +561,8 @@ class Surface:
             if align:
                 curve.rotate(rotation, origin=target)
         else:
-            curve._relative_at = RelCoord(*start) if not isinstance(start, RelCoord) else start
-            curve._relative_end = RelCoord(*end) if not isinstance(end, RelCoord) else end
+            curve._relative_at = RelCoord._coerce(start)
+            curve._relative_end = RelCoord._coerce(end)
 
         if within is not None:
             curve._reference = within
@@ -701,10 +728,7 @@ class Surface:
         if along is not None:
             position, rotation = self._resolve_along(along, t, align, rotation)
         else:
-            if isinstance(at, str):
-                at = NAMED_POSITIONS[at]
-            at_coord = at if isinstance(at, RelCoord) else RelCoord(*at)
-            position = Coord(ref_x + at_coord.rx * ref_w, ref_y + at_coord.ry * ref_h)
+            position, at_coord = self._resolve_at(at, ref_x, ref_y, ref_w, ref_h)
 
         if rx is None:
             rx = 0.4
@@ -814,7 +838,7 @@ class Surface:
             stroke_opacity=stroke_opacity,
         )
 
-        polygon._relative_vertices = [RelCoord(*v) if not isinstance(v, RelCoord) else v for v in vertices]
+        polygon._relative_vertices = [RelCoord._coerce(v) for v in vertices]
 
         if along is not None:
             target, effective_rotation = self._resolve_along(along, t, align, rotation)
@@ -930,17 +954,14 @@ class Surface:
             # TextPath warp mode — position at path midpoint (used as fallback)
             position, rotation = self._resolve_along(along, 0.5, align, rotation)
         else:
-            if isinstance(at, str):
-                at = NAMED_POSITIONS[at]
-            at_coord = at if isinstance(at, RelCoord) else RelCoord(*at)
-            position = Coord(ref_x + at_coord.rx * ref_w, ref_y + at_coord.ry * ref_h)
+            position, at_coord = self._resolve_at(at, ref_x, ref_y, ref_w, ref_h)
 
         # Compute the span fraction for textPath mode
         span = end_offset - start_offset
 
         # Resolve font_size: fraction of reference height → pixels
         if font_size is None:
-            if is_textpath and (along is not None) and hasattr(along, 'arc_length'):
+            if is_textpath and (along is not None) and isinstance(along, FullPathable):
                 # Auto-size to fill the spanned portion of the path
                 arc_len = along.arc_length() * span
                 chars = max(len(content), 1)
@@ -998,10 +1019,10 @@ class Surface:
 
         # TextPath warp mode: along provided without t
         if is_textpath and (along is not None):
-            if not hasattr(along, 'to_svg_path_d'):
+            if not isinstance(along, FullPathable):
                 raise TypeError(
-                    f"Text warping requires a path with to_svg_path_d(), "
-                    f"but {type(along).__name__} does not have one."
+                    f"Text warping requires a FullPathable (with to_svg_path_d()), "
+                    f"but {type(along).__name__} does not implement it."
                 )
             import itertools
             _textpath_counter = getattr(self, '_textpath_counter', None)
@@ -1011,7 +1032,7 @@ class Surface:
             path_id = f"textpath-{next(_textpath_counter)}"
             # Compute text_length from the spanned portion of the path
             text_length = None
-            if hasattr(along, 'arc_length'):
+            if isinstance(along, FullPathable):
                 text_length = along.arc_length() * span
             svg_start_offset = f"{start_offset * 100:.1f}%"
             text.set_textpath(path_id, along.to_svg_path_d(),
@@ -1093,15 +1114,12 @@ class Surface:
 
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
 
-        center_rx = 0.5
-        center_ry = 0.5
         if along is not None:
             center_pos, rotation = self._resolve_along(along, t, align, rotation)
+            center_rx, center_ry = 0.5, 0.5
         else:
-            if isinstance(at, str):
-                at = NAMED_POSITIONS[at]
-            center_rx, center_ry = at
-            center_pos = Coord(ref_x + center_rx * ref_w, ref_y + center_ry * ref_h)
+            center_pos, at_rc = self._resolve_at(at, ref_x, ref_y, ref_w, ref_h)
+            center_rx, center_ry = at_rc
 
         if width is None:
             width = 0.6
@@ -1258,12 +1276,9 @@ class Surface:
             point._along_path = along
             point._along_t = t if t is not None else 0.5
         else:
-            if isinstance(at, str):
-                at = NAMED_POSITIONS[at]
-            rx, ry = at
-            position = Coord(ref_x + rx * ref_w, ref_y + ry * ref_h)
+            position, at_rc = self._resolve_at(at, ref_x, ref_y, ref_w, ref_h)
             point = Point(position.x, position.y, z_index=z_index)
-            point._relative_at = RelCoord(*at) if not isinstance(at, RelCoord) else at
+            point._relative_at = at_rc
 
         if within is not None:
             point._reference = within
@@ -1292,11 +1307,10 @@ class Surface:
         Returns:
             The added entity (for chaining).
         """
-        position = self.relative_to_absolute(at)
+        ref_x, ref_y, ref_w, ref_h = self.ref_frame()
+        position, at_rc = self._resolve_at(at, ref_x, ref_y, ref_w, ref_h)
         entity._position = position
-        if isinstance(at, str):
-            at = NAMED_POSITIONS[at]
-        entity._relative_at = RelCoord(*at) if not isinstance(at, RelCoord) else at
+        entity._relative_at = at_rc
         entity._along_path = None
         self._register_entity(entity)
         return entity

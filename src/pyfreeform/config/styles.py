@@ -38,6 +38,10 @@ class DotStyle:
         """Return new style with different opacity."""
         return DotStyle(color=self.color, z_index=self.z_index, opacity=opacity)
 
+    def to_kwargs(self) -> dict[str, Any]:
+        """Convert to keyword arguments for add_dot()."""
+        return {"color": self.color, "z_index": self.z_index, "opacity": self.opacity}
+
 
 @dataclass
 class LineStyle:
@@ -107,6 +111,18 @@ class LineStyle:
                          cap=self.cap, start_cap=self.start_cap, end_cap=self.end_cap,
                          opacity=opacity)
 
+    def to_kwargs(self) -> dict[str, Any]:
+        """Convert to keyword arguments for add_line() / add_curve()."""
+        d: dict[str, Any] = {
+            "width": self.width, "color": self.color,
+            "z_index": self.z_index, "cap": self.cap, "opacity": self.opacity,
+        }
+        if self.start_cap is not None:
+            d["start_cap"] = self.start_cap
+        if self.end_cap is not None:
+            d["end_cap"] = self.end_cap
+        return d
+
 
 @dataclass
 class FillStyle:
@@ -135,6 +151,10 @@ class FillStyle:
     def with_opacity(self, opacity: float) -> FillStyle:
         """Return new style with different opacity."""
         return FillStyle(color=self.color, opacity=opacity, z_index=self.z_index)
+
+    def to_kwargs(self) -> dict[str, Any]:
+        """Convert to keyword arguments for add_fill()."""
+        return {"color": self.color, "opacity": self.opacity, "z_index": self.z_index}
 
 
 @dataclass
@@ -170,6 +190,10 @@ class BorderStyle:
     def with_opacity(self, opacity: float) -> BorderStyle:
         """Return new style with different opacity."""
         return BorderStyle(width=self.width, color=self.color, z_index=self.z_index, opacity=opacity)
+
+    def to_kwargs(self) -> dict[str, Any]:
+        """Convert to keyword arguments for add_border()."""
+        return {"width": self.width, "color": self.color, "z_index": self.z_index, "opacity": self.opacity}
 
 
 @dataclass
@@ -245,6 +269,19 @@ class ShapeStyle:
                           z_index=self.z_index, opacity=self.opacity,
                           fill_opacity=self.fill_opacity, stroke_opacity=stroke_opacity)
 
+    def to_kwargs(self) -> dict[str, Any]:
+        """Convert to keyword arguments for add_ellipse() / add_polygon() / add_rect()."""
+        d: dict[str, Any] = {
+            "fill": self.color, "stroke": self.stroke,
+            "stroke_width": self.stroke_width, "z_index": self.z_index,
+            "opacity": self.opacity,
+        }
+        if self.fill_opacity is not None:
+            d["fill_opacity"] = self.fill_opacity
+        if self.stroke_opacity is not None:
+            d["stroke_opacity"] = self.stroke_opacity
+        return d
+
 
 @dataclass
 class TextStyle:
@@ -319,6 +356,16 @@ class TextStyle:
                          bold=self.bold, italic=self.italic, text_anchor=self.text_anchor,
                          baseline=self.baseline, rotation=self.rotation, z_index=self.z_index,
                          opacity=opacity)
+
+    def to_kwargs(self) -> dict[str, Any]:
+        """Convert to keyword arguments for add_text()."""
+        return {
+            "color": self.color, "font_family": self.font_family,
+            "bold": self.bold, "italic": self.italic,
+            "text_anchor": self.text_anchor, "baseline": self.baseline,
+            "rotation": self.rotation, "z_index": self.z_index,
+            "opacity": self.opacity,
+        }
 
 
 @dataclass
@@ -398,6 +445,10 @@ class ConnectionStyle:
         if self.opacity < 1.0:
             d["opacity"] = self.opacity
         return d
+
+    def to_kwargs(self) -> dict[str, Any]:
+        """Convert to keyword arguments for Connection()."""
+        return self.to_dict()
 
 
 # Type alias for any style

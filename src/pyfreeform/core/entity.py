@@ -65,6 +65,16 @@ class Entity(ABC):
     def z_index(self, value: int) -> None:
         self._z_index = value
 
+    def ref_frame(self) -> tuple[float, float, float, float]:
+        """Return (x, y, width, height) of this entity's bounding box.
+
+        Provides a unified interface for both Entity and Surface,
+        eliminating the need for isinstance checks when resolving
+        relative coordinates.
+        """
+        min_x, min_y, max_x, max_y = self.bounds()
+        return (min_x, min_y, max_x - min_x, max_y - min_y)
+
     # --- Position resolution ---
 
     def _resolve_relative(self, rx: float, ry: float) -> Coord | None:
@@ -79,18 +89,8 @@ class Entity(ABC):
             raise ValueError("Circular position reference detected")
         self._resolving = True
         try:
-            if isinstance(ref, Entity):
-                min_x, min_y, max_x, max_y = ref.bounds()
-                return Coord(
-                    min_x + rx * (max_x - min_x),
-                    min_y + ry * (max_y - min_y),
-                )
-            else:
-                # Surface protocol (Cell, Scene, CellGroup)
-                return Coord(
-                    ref._x + rx * ref._width,
-                    ref._y + ry * ref._height,
-                )
+            ref_x, ref_y, ref_w, ref_h = ref.ref_frame()
+            return Coord(ref_x + rx * ref_w, ref_y + ry * ref_h)
         finally:
             self._resolving = False
 
@@ -106,13 +106,7 @@ class Entity(ABC):
         ref = self._reference or self._cell
         if ref is None:
             return None
-        if isinstance(ref, Entity):
-            min_x, min_y, max_x, max_y = ref.bounds()
-            ref_w = max_x - min_x
-            ref_h = max_y - min_y
-        else:
-            ref_w = ref._width
-            ref_h = ref._height
+        _, _, ref_w, ref_h = ref.ref_frame()
         if dimension == "width":
             return fraction * ref_w
         elif dimension == "height":
@@ -145,8 +139,7 @@ class Entity(ABC):
     @position.setter
     def position(self, value: CoordLike) -> None:
         """Set position in pixels (clears relative bindings)."""
-        if isinstance(value, tuple):
-            value = Coord(*value)
+        value = Coord._coerce(value)
         self._position = value
         self._relative_at = None
         self._along_path = None
@@ -169,8 +162,8 @@ class Entity(ABC):
     @at.setter
     def at(self, value: RelCoord | tuple[float, float] | None) -> None:
         """Set relative position (clears along binding)."""
-        if value is not None and not isinstance(value, RelCoord):
-            value = RelCoord(*value)
+        if value is not None:
+            value = RelCoord._coerce(value)
         self._relative_at = value
         if value is not None:
             self._along_path = None
@@ -251,13 +244,7 @@ class Entity(ABC):
             ref = self._reference or self._cell
             if ref is not None:
                 # Convert pixel offset to fraction offset
-                if isinstance(ref, Entity):
-                    min_x, min_y, max_x, max_y = ref.bounds()
-                    ref_w = max_x - min_x
-                    ref_h = max_y - min_y
-                else:
-                    ref_w = ref._width
-                    ref_h = ref._height
+                _, _, ref_w, ref_h = ref.ref_frame()
                 drx = dx / ref_w if ref_w > 0 else 0
                 dry = dy / ref_h if ref_h > 0 else 0
                 rx, ry = self._relative_at
@@ -283,8 +270,7 @@ class Entity(ABC):
         self._cell = cell
         if isinstance(at, str):
             at = NAMED_POSITIONS[at]
-        if not isinstance(at, RelCoord):
-            at = RelCoord(*at)
+        at = RelCoord._coerce(at)
         self._relative_at = at
         self._along_path = None
         self._reference = None
@@ -351,8 +337,7 @@ class Entity(ABC):
         if origin is None:
             return self
 
-        if isinstance(origin, tuple):
-            origin = Coord(*origin)
+        origin = Coord._coerce(origin)
 
         self._to_pixel_mode()
 
@@ -385,8 +370,7 @@ class Entity(ABC):
         if origin is None:
             return self
 
-        if isinstance(origin, tuple):
-            origin = Coord(*origin)
+        origin = Coord._coerce(origin)
 
         self._to_pixel_mode()
 

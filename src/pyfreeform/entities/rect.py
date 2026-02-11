@@ -116,8 +116,7 @@ class Rect(Entity):
         Returns:
             A new Rect entity.
         """
-        if isinstance(center, tuple):
-            center = Coord(*center)
+        center = Coord._coerce(center)
         return cls(
             center.x - width / 2, center.y - height / 2,
             width, height, fill=fill, stroke=stroke,
@@ -244,8 +243,7 @@ class Rect(Entity):
             # Rotate position around external origin — switch to pixel mode
             self._to_pixel_mode()
 
-            if isinstance(origin, tuple):
-                origin = Coord(*origin)
+            origin = Coord._coerce(origin)
 
             angle_rad = math.radians(angle)
             cos_a = math.cos(angle_rad)
@@ -281,8 +279,7 @@ class Rect(Entity):
 
         if origin is not None:
             self._to_pixel_mode()
-            if isinstance(origin, tuple):
-                origin = Coord(*origin)
+            origin = Coord._coerce(origin)
             new_cx = origin.x + (old_center.x - origin.x) * factor
             new_cy = origin.y + (old_center.y - origin.y) * factor
             self._position = Coord(new_cx - self.width / 2, new_cy - self.height / 2)

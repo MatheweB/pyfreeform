@@ -108,10 +108,8 @@ class Curve(StrokedPathMixin, Entity):
         opacity: float = 1.0,
     ) -> Curve:
         """Create a curve from two points."""
-        if isinstance(start, tuple):
-            start = Coord(*start)
-        if isinstance(end, tuple):
-            end = Coord(*end)
+        start = Coord._coerce(start)
+        end = Coord._coerce(end)
         return cls(start.x, start.y, end.x, end.y, curvature, width, color, z_index,
                    cap, start_cap, end_cap, opacity)
 
@@ -131,8 +129,7 @@ class Curve(StrokedPathMixin, Entity):
 
     @end.setter
     def end(self, value: CoordLike) -> None:
-        if isinstance(value, tuple):
-            value = Coord(*value)
+        value = Coord._coerce(value)
         self._end = value
         self._relative_end = None
         self._control = None  # Invalidate cached control point
@@ -300,6 +297,14 @@ class Curve(StrokedPathMixin, Entity):
         s, c, e = self.start, self.control, self.end
         return f"M {s.x} {s.y} Q {c.x} {c.y} {e.x} {e.y}"
 
+    def _connection_data(self, segments: int = 32) -> tuple[str, list]:
+        """Return shape kind and bezier data for Connection dispatch."""
+        P0, Q, P2 = self.start, self.control, self.end
+        # Exact degree elevation: quadratic → cubic
+        CP1 = Coord(P0.x + 2/3 * (Q.x - P0.x), P0.y + 2/3 * (Q.y - P0.y))
+        CP2 = Coord(P2.x + 2/3 * (Q.x - P2.x), P2.y + 2/3 * (Q.y - P2.y))
+        return ("curve", [(P0, CP1, CP2, P2)])
+
     @staticmethod
     def _quad_bezier_bounds(
         p0x: float, p0y: float,
@@ -383,12 +388,7 @@ class Curve(StrokedPathMixin, Entity):
             # Adjust end fractions in tandem with start
             ref = self._reference or self._cell
             if ref is not None:
-                from ..core.entity import Entity as _Entity
-                if isinstance(ref, _Entity):
-                    min_x, min_y, max_x, max_y = ref.bounds()
-                    ref_w, ref_h = max_x - min_x, max_y - min_y
-                else:
-                    ref_w, ref_h = ref._width, ref._height
+                _, _, ref_w, ref_h = ref.ref_frame()
                 drx = dx / ref_w if ref_w > 0 else 0
                 dry = dy / ref_h if ref_h > 0 else 0
                 erx, ery = self._relative_end
@@ -414,8 +414,8 @@ class Curve(StrokedPathMixin, Entity):
         """
         if origin is None:
             origin = self.point_at(0.5)
-        elif isinstance(origin, tuple):
-            origin = Coord(*origin)
+        else:
+            origin = Coord._coerce(origin)
 
         angle_rad = math.radians(angle)
         cos_a = math.cos(angle_rad)
@@ -450,8 +450,8 @@ class Curve(StrokedPathMixin, Entity):
         """
         if origin is None:
             origin = self.point_at(0.5)
-        elif isinstance(origin, tuple):
-            origin = Coord(*origin)
+        else:
+            origin = Coord._coerce(origin)
 
         new_start = Coord(
             origin.x + (self.start.x - origin.x) * factor,

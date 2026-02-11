@@ -11,26 +11,17 @@ if TYPE_CHECKING:
 @runtime_checkable
 class Pathable(Protocol):
     """
-    Protocol for objects that support parametric positioning.
+    Minimal protocol for parametric positioning.
 
     Any object implementing `point_at(t)` can be used with `cell.add_dot(along=...)`
-    for parametric positioning. This enables a unified interface for positioning
-    entities along lines, curves, ellipses, and custom paths.
-
-    The protocol is runtime-checkable, meaning you can use `isinstance(obj, Pathable)`
-    to verify that an object implements the required method.
+    for parametric positioning. This is the only required method — custom path
+    objects need only implement this to work with the positioning system.
 
     Examples:
         Built-in pathable types include Line, Curve, and Ellipse:
 
         >>> line = cell.add_line(start="left", end="right")
         >>> cell.add_dot(along=line, t=0.5)  # Dot at line midpoint
-
-        >>> curve = cell.add_curve(curvature=0.5)
-        >>> cell.add_dot(along=curve, t=cell.brightness)  # Dot slides along curve
-
-        >>> ellipse = cell.add_ellipse(rx=0.3, ry=0.2)
-        >>> cell.add_dot(along=ellipse, t=0.25)  # Dot at top of ellipse
 
         Create custom paths by implementing point_at():
 
@@ -65,6 +56,17 @@ class Pathable(Protocol):
             - Custom paths: Any parametric function you define
         """
         ...
+
+
+@runtime_checkable
+class FullPathable(Pathable, Protocol):
+    """
+    Extended protocol for paths with geometry queries.
+
+    All built-in path entities (Line, Curve, Ellipse, Path) implement this.
+    Use ``isinstance(obj, FullPathable)`` instead of ``hasattr`` checks
+    for ``angle_at``, ``arc_length``, or ``to_svg_path_d``.
+    """
 
     def angle_at(self, t: float) -> float:
         """Tangent angle in degrees at parameter *t*."""
