@@ -124,11 +124,11 @@ def generate():
         # Connect to right neighbor
         if (r, c + 2) in dots:
             conn = dot.connect(dots[(r, c + 2)], shape=Line(), style=conn_style)
-            scene.add(conn)
+            scene.add_connection(conn)
         # Connect to below neighbor
         if (r + 2, c) in dots:
             conn = dot.connect(dots[(r + 2, c)], shape=Line(), style=conn_style)
-            scene.add(conn)
+            scene.add_connection(conn)
     save(scene, "guide/transforms-connections.svg")
 
     # --- 5. Arrow caps on connections ---
@@ -145,10 +145,10 @@ def generate():
     for (r, c), dot in dots_arr.items():
         if (r, c + 2) in dots_arr:
             conn = dot.connect(dots_arr[(r, c + 2)], shape=Line(), style=arrow_style)
-            scene.add(conn)
+            scene.add_connection(conn)
         if (r + 2, c) in dots_arr:
             conn = dot.connect(dots_arr[(r + 2, c)], shape=Line(), style=arrow_style)
-            scene.add(conn)
+            scene.add_connection(conn)
     save(scene, "guide/transforms-arrow-caps.svg")
 
     # --- 6. z_index layering showcase ---

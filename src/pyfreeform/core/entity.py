@@ -496,6 +496,22 @@ class Entity(ABC):
         """
         pass
 
+    def get_required_markers(self) -> list[tuple[str, str]]:
+        """Collect SVG marker definitions needed by this entity.
+
+        Returns:
+            List of (marker_id, marker_svg) tuples. Empty by default.
+        """
+        return []
+
+    def get_required_paths(self) -> list[tuple[str, str]]:
+        """Collect SVG path definitions needed by this entity (e.g. textPath).
+
+        Returns:
+            List of (path_id, path_svg) tuples. Empty by default.
+        """
+        return []
+
     def inner_bounds(self) -> tuple[float, float, float, float]:
         """
         Largest axis-aligned rectangle fully inside this entity.

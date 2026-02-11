@@ -697,13 +697,14 @@ class Surface:
 
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
 
+        at_coord: RelCoord | None = None
         if along is not None:
             position, rotation = self._resolve_along(along, t, align, rotation)
         else:
             if isinstance(at, str):
                 at = NAMED_POSITIONS[at]
-            rx_pos, ry_pos = at
-            position = Coord(ref_x + rx_pos * ref_w, ref_y + ry_pos * ref_h)
+            at_coord = at if isinstance(at, RelCoord) else RelCoord(*at)
+            position = Coord(ref_x + at_coord.rx * ref_w, ref_y + at_coord.ry * ref_h)
 
         if rx is None:
             rx = 0.4
@@ -723,8 +724,8 @@ class Surface:
         if along is not None:
             ellipse._along_path = along
             ellipse._along_t = t if t is not None else 0.5
-        else:
-            ellipse._relative_at = RelCoord(*at) if not isinstance(at, RelCoord) else at
+        elif at_coord is not None:
+            ellipse._relative_at = at_coord
 
         ellipse._relative_rx = rx
         ellipse._relative_ry = ry
@@ -922,6 +923,7 @@ class Surface:
             text_anchor = "start" if is_textpath else "middle"
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
 
+        at_coord: RelCoord | None = None
         if along is not None and t is not None:
             position, rotation = self._resolve_along(along, t, align, rotation)
         elif along is not None:
@@ -930,15 +932,15 @@ class Surface:
         else:
             if isinstance(at, str):
                 at = NAMED_POSITIONS[at]
-            rx, ry = at
-            position = Coord(ref_x + rx * ref_w, ref_y + ry * ref_h)
+            at_coord = at if isinstance(at, RelCoord) else RelCoord(*at)
+            position = Coord(ref_x + at_coord.rx * ref_w, ref_y + at_coord.ry * ref_h)
 
         # Compute the span fraction for textPath mode
         span = end_offset - start_offset
 
         # Resolve font_size: fraction of reference height → pixels
         if font_size is None:
-            if is_textpath and hasattr(along, 'arc_length'):
+            if is_textpath and (along is not None) and hasattr(along, 'arc_length'):
                 # Auto-size to fill the spanned portion of the path
                 arc_len = along.arc_length() * span
                 chars = max(len(content), 1)
@@ -987,15 +989,15 @@ class Surface:
         if along is not None and t is not None:
             text._along_path = along
             text._along_t = t
-        elif along is None:
-            text._relative_at = RelCoord(*at) if not isinstance(at, RelCoord) else at
+        elif at_coord is not None:
+            text._relative_at = at_coord
         # textpath mode (along without t): stays pixel
 
         if within is not None:
             text._reference = within
 
         # TextPath warp mode: along provided without t
-        if is_textpath:
+        if is_textpath and (along is not None):
             if not hasattr(along, 'to_svg_path_d'):
                 raise TypeError(
                     f"Text warping requires a path with to_svg_path_d(), "
@@ -1091,6 +1093,8 @@ class Surface:
 
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
 
+        center_rx = 0.5
+        center_ry = 0.5
         if along is not None:
             center_pos, rotation = self._resolve_along(along, t, align, rotation)
         else:

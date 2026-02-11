@@ -197,15 +197,27 @@ class Connection(StrokedPathMixin):
         """Cap style for both ends."""
         return self._style.get("cap", "round")
 
+    @cap.setter
+    def cap(self, value: str) -> None:
+        self._style["cap"] = value
+
     @property
     def start_cap(self) -> str | None:
         """Override cap for the start end, or None."""
         return self._style.get("start_cap")
 
+    @start_cap.setter
+    def start_cap(self, value: str | None) -> None:
+        self._style["start_cap"] = value
+
     @property
     def end_cap(self) -> str | None:
         """Override cap for the end end, or None."""
         return self._style.get("end_cap")
+
+    @end_cap.setter
+    def end_cap(self, value: str | None) -> None:
+        self._style["end_cap"] = value
 
     @property
     def opacity(self) -> float:

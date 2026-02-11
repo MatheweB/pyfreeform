@@ -269,17 +269,19 @@ class EntityGroup(Entity):
     # DEFS COLLECTION (forward to children)
     # =========================================================================
 
-    def get_required_markers(self):
+    def get_required_markers(self) -> list[tuple[str, str]]:
         """Collect SVG marker definitions from all children."""
+        result: list[tuple[str, str]] = []
         for child in self._children:
-            if hasattr(child, "get_required_markers"):
-                yield from child.get_required_markers()
+            result.extend(child.get_required_markers())
+        return result
 
-    def get_required_paths(self):
+    def get_required_paths(self) -> list[tuple[str, str]]:
         """Collect SVG path definitions from all children."""
+        result: list[tuple[str, str]] = []
         for child in self._children:
-            if hasattr(child, "get_required_paths"):
-                yield from child.get_required_paths()
+            result.extend(child.get_required_paths())
+        return result
 
     def __repr__(self) -> str:
         n = len(self._children)

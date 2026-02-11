@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import math
-from typing import NamedTuple
+from dataclasses import dataclass
 
 
-class Coord(NamedTuple):
+@dataclass(frozen=True, slots=True)
+class Coord:
     """
     An immutable 2D coordinate with math operations.
 
@@ -21,13 +22,25 @@ class Coord(NamedTuple):
         >>> p1 = Coord(100, 200)
         >>> p2 = Coord(50, 50)
         >>> p1 + p2
-        Coord(x=150, y=250)
+        Coord(150, 250)
         >>> p1.distance_to(p2)
         158.11...
     """
 
     x: float
     y: float
+
+    def __iter__(self):
+        """Support unpacking: x, y = coord."""
+        yield self.x
+        yield self.y
+
+    def __getitem__(self, idx: int) -> float:
+        """Support indexing: coord[0], coord[1]."""
+        return (self.x, self.y)[idx]
+
+    def __len__(self) -> int:
+        return 2
 
     def __add__(self, other: CoordLike) -> Coord:
         """Add two coords (vector addition)."""
@@ -79,7 +92,7 @@ class Coord(NamedTuple):
             >>> p1 = Coord(0, 0)
             >>> p2 = Coord(100, 100)
             >>> p1.lerp(p2, 0.5)
-            Coord(x=50.0, y=50.0)
+            Coord(50.0, 50.0)
         """
         return Coord(
             self.x + (other.x - self.x) * t,
@@ -152,9 +165,10 @@ class Coord(NamedTuple):
 CoordLike = Coord | tuple[float, float]
 
 
-class RelCoord(NamedTuple):
+@dataclass(frozen=True, slots=True)
+class RelCoord:
     """
-    An immutable 2D relative coordinate (fractions 0.0–1.0).
+    An immutable 2D relative coordinate (fractions 0.0-1.0).
 
     Used for positioning within surfaces. (0, 0) is top-left, (1, 1) is bottom-right.
     Fields are named ``rx`` and ``ry`` to prevent confusion with pixel ``Coord(x, y)``.
@@ -164,11 +178,23 @@ class RelCoord(NamedTuple):
         >>> p.rx, p.ry
         (0.5, 0.5)
         >>> p + RelCoord(0.1, 0)
-        RelCoord(rx=0.6, ry=0.5)
+        RelCoord(0.6, 0.5)
     """
 
     rx: float
     ry: float
+
+    def __iter__(self):
+        """Support unpacking: rx, ry = relcoord."""
+        yield self.rx
+        yield self.ry
+
+    def __getitem__(self, idx: int) -> float:
+        """Support indexing: relcoord[0], relcoord[1]."""
+        return (self.rx, self.ry)[idx]
+
+    def __len__(self) -> int:
+        return 2
 
     def __add__(self, other: RelCoordLike) -> RelCoord:
         """Add two relative coords."""
@@ -207,7 +233,7 @@ class RelCoord(NamedTuple):
 
     def clamped(self, min_rx: float = 0.0, min_ry: float = 0.0,
                 max_rx: float = 1.0, max_ry: float = 1.0) -> RelCoord:
-        """Return clamped to valid range (default 0.0–1.0)."""
+        """Return clamped to valid range (default 0.0-1.0)."""
         return RelCoord(
             max(min_rx, min(max_rx, self.rx)),
             max(min_ry, min(max_ry, self.ry)),

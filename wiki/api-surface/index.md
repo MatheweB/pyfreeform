@@ -44,8 +44,13 @@ Everything starts with a `Scene`. It is the canvas -- it holds your artwork and 
 
 | Method | Description |
 |---|---|
-| `scene.add(*objects)` | Add entities, connections, or grids. Returns last added. |
-| `scene.remove(obj)` | Remove an object. Returns `True` if found. |
+| `scene.add(entity, at=)` | Add an entity with relative positioning (inherited from Surface). |
+| `scene.place(entity)` | Add an entity at its current pixel position (inherited from Surface). |
+| `scene.add_connection(conn)` | Add a connection to the scene. |
+| `scene.add_grid(grid)` | Add a grid to the scene. |
+| `scene.remove(entity)` | Remove an entity. Returns `True` if found. |
+| `scene.remove_connection(conn)` | Remove a connection. Returns `True` if found. |
+| `scene.remove_grid(grid)` | Remove a grid. Returns `True` if found. |
 | `scene.clear()` | Remove everything. |
 | `scene.to_svg()` | Render to SVG string. |
 | `scene.save(path)` | Save to `.svg` file (adds extension if missing). |
@@ -878,12 +883,12 @@ connection = entity1.connect(
 - **`style`** accepts `ConnectionStyle` or `dict` with `width`, `color`, `z_index`, `cap` keys
 - **`shape=None`** (default) = invisible — `point_at(t)` still works (linear interpolation between anchors)
 - **`segments`** controls Bezier fitting resolution for `Path` shapes (default 32; ignored for Line/Curve)
-- Added to scene via `scene.add(connection)` (`entity.connect()` does not auto-add)
+- Added to scene via `scene.add_connection(connection)` (`entity.connect()` does not auto-add)
 - Supports cap system (arrow, arrow_in, custom) on all visible shapes
 - Closed paths (`Path(pathable, closed=True)`) cannot be used as shapes — raises `ValueError`
 
 !!! warning "Connections must be added to the scene"
-    Calling `entity.connect(other)` creates a `Connection` object but does **not** add it to the scene. You must call `scene.add(connection)` separately.
+    Calling `entity.connect(other)` creates a `Connection` object but does **not** add it to the scene. You must call `scene.add_connection(connection)` separately.
 
 ---
 

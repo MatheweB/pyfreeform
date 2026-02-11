@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import math
-from typing import Union
+from typing import Sequence, Union
 from ..color import Color
 from ..core.entity import Entity
 from ..core.coord import Coord, CoordLike, RelCoord
@@ -55,7 +55,7 @@ class Polygon(Entity):
 
     def __init__(
         self,
-        vertices: list[VertexInput],
+        vertices: Sequence[VertexInput],
         fill: str | tuple[int, int, int] | None = "black",
         stroke: str | tuple[int, int, int] | None = None,
         stroke_width: float = 1,
@@ -91,10 +91,13 @@ class Polygon(Entity):
         for v in vertices:
             if isinstance(v, Entity):
                 self._vertex_specs.append(v)
-            elif isinstance(v, tuple) and len(v) == 2 and isinstance(v[0], Entity):
-                self._vertex_specs.append(v)  # (Entity, anchor_name)
-            else:
-                self._vertex_specs.append(Coord(*v))  # CoordLike → Coord
+            elif isinstance(v, Coord):
+                self._vertex_specs.append(v)
+            elif isinstance(v, tuple):
+                if isinstance(v[0], Entity):
+                    self._vertex_specs.append((v[0], str(v[1])))
+                else:
+                    self._vertex_specs.append(Coord(float(v[0]), float(v[1])))
 
         # Relative vertices (set by Surface.add_polygon in Phase 1C)
         self._relative_vertices: list[RelCoord] | None = None
@@ -146,7 +149,10 @@ class Polygon(Entity):
     def _to_pixel_mode(self) -> None:
         """Resolve relative vertices to pixel Coords."""
         if self._relative_vertices is not None:
-            self._vertex_specs = self.vertices  # resolve all
+            resolved = self.vertices
+            self._vertex_specs = []
+            for v in resolved:
+                self._vertex_specs.append(v)
             self._relative_vertices = None
             centroid = self._calculate_centroid()
             self._position = centroid
@@ -185,7 +191,7 @@ class Polygon(Entity):
                 return self._resolve_vertex(self._vertex_specs[idx])
         raise ValueError(f"Polygon has no anchor '{name}'. Available: {self.anchor_names}")
     
-    def rotate(self, angle: float, origin: Coord | None = None) -> Polygon:
+    def rotate(self, angle: float, origin: CoordLike | None = None) -> Polygon:
         """
         Rotate the polygon around a point.
 
@@ -203,6 +209,8 @@ class Polygon(Entity):
             self._to_pixel_mode()
         if origin is None:
             origin = self._calculate_centroid()
+        elif isinstance(origin, tuple):
+            origin = Coord(*origin)
 
         angle_rad = math.radians(angle)
         cos_a = math.cos(angle_rad)
@@ -224,7 +232,7 @@ class Polygon(Entity):
         self._position = centroid
         return self
     
-    def scale(self, factor: float, origin: Coord | None = None) -> Polygon:
+    def scale(self, factor: float, origin: CoordLike | None = None) -> Polygon:
         """
         Scale the polygon around a point.
 
@@ -242,6 +250,8 @@ class Polygon(Entity):
             self._to_pixel_mode()
         if origin is None:
             origin = self._calculate_centroid()
+        elif isinstance(origin, tuple):
+            origin = Coord(*origin)
 
         new_specs = []
         for spec in self._vertex_specs:
@@ -350,7 +360,7 @@ class Polygon(Entity):
         return ''.join(parts)
     
     def __repr__(self) -> str:
-        return f"Polygon({len(self._vertices)} vertices, fill={self.fill!r})"
+        return f"Polygon({len(self._vertex_specs)} vertices, fill={self.fill!r})"
 
     # ---- Shape classmethods ------------------------------------------------
 

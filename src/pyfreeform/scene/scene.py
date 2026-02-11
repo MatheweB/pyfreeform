@@ -64,8 +64,8 @@ class Scene(Surface):
         """
         self._x = 0.0
         self._y = 0.0
-        self._width = int(width)
-        self._height = int(height)
+        self._width = width
+        self._height = height
         self._background = Color(background) if background else None
 
         self._entities: list[Entity] = []
@@ -222,16 +222,6 @@ class Scene(Surface):
     # =========================================================================
     
     @property
-    def width(self) -> int:
-        """Scene width in pixels."""
-        return self._width
-    
-    @property
-    def height(self) -> int:
-        """Scene height in pixels."""
-        return self._height
-    
-    @property
     def background(self) -> str | None:
         """Background color as string, or None."""
         return self._background.to_hex() if self._background else None
@@ -257,7 +247,7 @@ class Scene(Surface):
                 return self._grids[0]
             raise ValueError(
                 "Scene has no grid. Create with Scene.from_image() or Scene.with_grid(), "
-                "or add a grid with scene.add(grid)."
+                "or add a grid with scene.add_grid(grid)."
             )
         return self._primary_grid
     
@@ -280,98 +270,96 @@ class Scene(Surface):
         return list(self._grids)
     
     # --- Adding objects ---
-    
-    def add(self, obj: Entity | Connection | Grid, at: str | tuple[float, float] = "center") -> Entity | Connection | Grid:
-        """
-        Add an object to the scene.
 
-        Entities are positioned using relative coordinates (via ``at``).
-        Connections and Grids are appended directly (no positioning).
+    def add_connection(self, connection: Connection) -> Connection:
+        """
+        Add a connection to the scene.
+
+        Connections created via ``entity.connect()`` are not automatically
+        added to the scene — you must call this method to include them
+        in the render.
 
         Args:
-            obj: Entity, Connection, or Grid to add.
-            at: Position for entities — relative coords or named position.
-                Ignored for Connections and Grids.
+            connection: The Connection to add.
 
         Returns:
-            The added object (for chaining).
+            The added connection (for chaining).
 
-        Examples:
-            >>> scene.add(conn)  # Connection — just appended
-            >>> scene.add(grid)  # Grid — just appended
-            >>> scene.add(entity, at="center")  # Entity — positioned
+        Example:
+            >>> conn = dot1.connect(dot2, shape=Line(), style=style)
+            >>> scene.add_connection(conn)
         """
-        if isinstance(obj, Grid):
-            self._grids.append(obj)
-            return obj
-        elif isinstance(obj, Connection):
-            self._connections.append(obj)
-            return obj
-        elif isinstance(obj, Entity):
-            return super().add(obj, at=at)
-        raise TypeError(f"Cannot add {type(obj).__name__} to scene")
+        self._connections.append(connection)
+        return connection
 
-    def place(self, *objects: Entity | Connection | Grid) -> Entity | Connection | Grid:
+    def add_grid(self, grid: Grid) -> Grid:
         """
-        Place objects at their current absolute pixel positions.
+        Add a grid to the scene.
 
-        This is the escape hatch for raw pixel placement. Unlike ``add()``,
-        entities are NOT repositioned — they stay at their constructed coordinates.
-        Supports multiple objects in a single call.
+        Grids created via ``Scene.from_image()`` or ``Scene.with_grid()``
+        are added automatically. Use this only for manually-created grids.
 
         Args:
-            *objects: One or more Entity, Connection, or Grid objects.
+            grid: The Grid to add.
 
         Returns:
-            The last placed object (for chaining with single places).
+            The added grid (for chaining).
+        """
+        self._grids.append(grid)
+        return grid
 
-        Examples:
-            >>> scene.place(Line(0, 0, 100, 100))  # Stays at pixel coords
-            >>> scene.place(Dot(50, 50), Line(0, 0, 200, 0))
+    def remove(self, entity: Entity) -> bool:
         """
-        last = None
-        for obj in objects:
-            if isinstance(obj, Grid):
-                self._grids.append(obj)
-                last = obj
-            elif isinstance(obj, Connection):
-                self._connections.append(obj)
-                last = obj
-            elif isinstance(obj, Entity):
-                self._entities.append(obj)
-                last = obj
-            else:
-                raise TypeError(f"Cannot place {type(obj).__name__} in scene")
-        return last
-    
-    def remove(self, obj: Entity | Connection | Grid) -> bool:
-        """
-        Remove an object from the scene.
-        
+        Remove an entity from the scene.
+
+        Searches both direct entities and grid cells.
+
         Args:
-            obj: The object to remove.
-        
+            entity: The entity to remove.
+
         Returns:
-            True if object was found and removed.
+            True if entity was found and removed.
         """
-        if isinstance(obj, Grid):
-            if obj in self._grids:
-                self._grids.remove(obj)
-                return True
-        elif isinstance(obj, Connection):
-            if obj in self._connections:
-                self._connections.remove(obj)
-                obj.disconnect()
-                return True
-        elif isinstance(obj, Entity):
-            if obj in self._entities:
-                self._entities.remove(obj)
-                return True
-            # Check grids
-            for grid in self._grids:
-                for cell in grid:
-                    if cell.remove(obj):
-                        return True
+        if entity in self._entities:
+            self._entities.remove(entity)
+            entity.cell = None
+            return True
+        # Check grids
+        for grid in self._grids:
+            for cell in grid:
+                if cell.remove(entity):
+                    return True
+        return False
+
+    def remove_connection(self, connection: Connection) -> bool:
+        """
+        Remove a connection from the scene.
+
+        Args:
+            connection: The connection to remove.
+
+        Returns:
+            True if connection was found and removed.
+        """
+        if connection in self._connections:
+            self._connections.remove(connection)
+            connection.disconnect()
+            return True
+        return False
+
+    def remove_grid(self, grid: Grid) -> bool:
+        """
+        Remove a grid from the scene.
+
+        Args:
+            grid: The grid to remove.
+
+        Returns:
+            True if grid was found and removed.
+        """
+        if grid in self._grids:
+            self._grids.remove(grid)
+            return True
         return False
     
     def clear(self) -> None:
@@ -399,14 +387,12 @@ class Scene(Surface):
         markers: dict[str, str] = {}  # marker_id -> marker_svg
 
         for entity in entities:
-            if hasattr(entity, "get_required_markers"):
-                for mid, svg in entity.get_required_markers():
-                    markers[mid] = svg
+            for mid, svg in entity.get_required_markers():
+                markers[mid] = svg
 
         for connection in self._connections:
-            if hasattr(connection, "get_required_markers"):
-                for mid, svg in connection.get_required_markers():
-                    markers[mid] = svg
+            for mid, svg in connection.get_required_markers():
+                markers[mid] = svg
 
         return markers
 
@@ -414,9 +400,8 @@ class Scene(Surface):
         """Collect unique SVG path definitions needed by textPath entities."""
         paths: dict[str, str] = {}
         for entity in entities:
-            if hasattr(entity, "get_required_paths"):
-                for pid, svg in entity.get_required_paths():
-                    paths[pid] = svg
+            for pid, svg in entity.get_required_paths():
+                paths[pid] = svg
         return paths
 
     def to_svg(self) -> str:

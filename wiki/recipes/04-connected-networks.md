@@ -17,7 +17,7 @@ for (r, c), dot in dots.items():
     for dr, dc in [(0, 1), (1, 0)]:  # Right and down neighbors
         key = (r + dr, c + dc)
         if key in dots:
-            scene.add(dot.connect(dots[key], shape=Line(), style=conn_style))
+            scene.add_connection(dot.connect(dots[key], shape=Line(), style=conn_style))
 ```
 
 <figure markdown>
@@ -35,7 +35,7 @@ for i, key1 in enumerate(keys):
         dist = cell1.distance_to(cell2)
         if dist < 80:
             opacity = 0.6 * (1 - dist / 80)
-            scene.add(dots[key1].connect(dots[key2], shape=Line(), style=ConnectionStyle(
+            scene.add_connection(dots[key1].connect(dots[key2], shape=Line(), style=ConnectionStyle(
                 width=0.5 + (1 - dist / 80) * 1.5, color=colors.secondary, opacity=opacity,
             )))
 ```
@@ -52,7 +52,7 @@ Use `end_cap="arrow"` for directional connections:
 ```python
 arrow_style = ConnectionStyle(width=1.5, color=colors.primary, opacity=0.5, end_cap="arrow")
 conn = dot1.connect(dot2, shape=Line(), style=arrow_style)
-scene.add(conn)
+scene.add_connection(conn)
 ```
 
 <figure markdown>

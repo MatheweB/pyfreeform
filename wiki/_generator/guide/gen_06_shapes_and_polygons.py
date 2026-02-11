@@ -188,7 +188,8 @@ def generate():
             fill=colors.secondary, opacity=0.6,
             stroke=colors.secondary, stroke_width=1.5, stroke_opacity=0.8,
         )
-        scene.place(tri_left, tri_right)
+        scene.place(tri_left)
+        scene.place(tri_right)
 
         # Dot markers at base vertices
         for v in [l1, l2, r2]:

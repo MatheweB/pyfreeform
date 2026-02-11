@@ -65,3 +65,15 @@ class Pathable(Protocol):
             - Custom paths: Any parametric function you define
         """
         ...
+
+    def angle_at(self, t: float) -> float:
+        """Tangent angle in degrees at parameter *t*."""
+        ...
+
+    def arc_length(self) -> float:
+        """Approximate arc length in pixels."""
+        ...
+
+    def to_svg_path_d(self) -> str:
+        """SVG path ``d`` attribute string."""
+        ...

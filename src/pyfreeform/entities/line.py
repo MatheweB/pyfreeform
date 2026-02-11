@@ -356,7 +356,8 @@ class Line(StrokedPathMixin, Entity):
                 dry = dy / ref_h if ref_h > 0 else 0
                 erx, ery = self._relative_end
                 self._relative_end = RelCoord(erx + drx, ery + dry)
-        return super()._move_by(dx, dy)
+        super()._move_by(dx, dy)
+        return self
 
     def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
         """Get bounding box.

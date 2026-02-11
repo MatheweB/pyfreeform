@@ -394,7 +394,8 @@ class Curve(StrokedPathMixin, Entity):
                 erx, ery = self._relative_end
                 self._relative_end = RelCoord(erx + drx, ery + dry)
             self._control = None
-            return super()._move_by(dx, dy)
+            super()._move_by(dx, dy)
+            return self
         self._position = Coord(self._position.x + dx, self._position.y + dy)
         self._end = Coord(self._end.x + dx, self._end.y + dy)
         self._control = None

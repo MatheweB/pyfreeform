@@ -8,7 +8,7 @@ from PIL import ImageFont
 
 from ..color import Color
 from ..core.entity import Entity
-from ..core.coord import Coord, CoordLike
+from ..core.coord import Coord, CoordLike, RelCoord
 
 # ---------------------------------------------------------------------------
 # Font measurement via Pillow
@@ -267,20 +267,31 @@ class Text(Entity):
             self.y + y_offset + text_height,
         )
 
-    def fit_to_cell(self, fraction: float = 1.0, **kwargs: object) -> Text:
+    def fit_to_cell(
+        self,
+        scale: float = 1.0,
+        recenter: bool = True,
+        *,
+        at: RelCoord | tuple[float, float] | None = None,
+        visual: bool = True,
+        rotate: bool = False,
+        match_aspect: bool = False,
+    ) -> Text:
         """
-        Scale font size so text fills its cell at *fraction*.
+        Scale font size so text fills its cell at *scale*.
 
         Unlike ``fit=True`` on ``add_text()`` (which only shrinks),
         this method scales the font **up or down** to fill the
         available space — matching :meth:`EntityGroup.fit_to_cell`.
 
         Args:
-            fraction: How much of the cell to fill (0.0–1.0).
-                      1.0 = fill entire cell, 0.8 = use 80%.
-            **kwargs: Supports ``rotate`` and ``match_aspect`` booleans.
-                      If either is True, the text is rotated before
-                      font-size scaling.
+            scale: How much of the cell to fill (0.0–1.0).
+                   1.0 = fill entire cell, 0.8 = use 80%.
+            recenter: If True, center text in cell after scaling.
+            at: Optional cell-relative position (rx, ry).
+            visual: Unused for text (kept for signature compatibility).
+            rotate: If True, rotate to maximize fill before scaling.
+            match_aspect: If True, rotate to match cell aspect ratio.
 
         Returns:
             self, for method chaining.
@@ -291,28 +302,26 @@ class Text(Entity):
         if self._cell is None:
             raise ValueError("Cannot fit to cell: text has no cell")
 
+        if rotate and match_aspect:
+            raise ValueError("rotate and match_aspect are mutually exclusive")
+
         # Apply fitting rotation if requested
-        do_rotate = bool(kwargs.get("rotate", False))
-        do_match = bool(kwargs.get("match_aspect", False))
-        if do_rotate or do_match:
-            if do_rotate and do_match:
-                raise ValueError("rotate and match_aspect are mutually exclusive")
-            from ..core.entity import Entity
+        if rotate or match_aspect:
             b = self.bounds(visual=True)
             w, h = b[2] - b[0], b[3] - b[1]
             cell = self._cell
             if w > 1e-9 and h > 1e-9:
-                avail_w = cell.width * fraction
-                avail_h = cell.height * fraction
+                avail_w = cell.width * scale
+                avail_h = cell.height * scale
                 angle = (
                     Entity._compute_optimal_angle(w, h, avail_w, avail_h)
-                    if do_rotate else
+                    if rotate else
                     Entity._compute_aspect_match_angle(w, h, avail_w, avail_h)
                 )
                 self.rotate(angle)
 
         cell = self._cell
-        cell_w, cell_h = cell.width * fraction, cell.height * fraction
+        cell_w, cell_h = cell.width * scale, cell.height * scale
 
         # Compute the font size that fits both dimensions
         width_at_1px = _measure_text_width(
@@ -325,7 +334,7 @@ class Text(Entity):
 
         self._pixel_font_size = new_font_size
         if cell_h > 0:
-            self._relative_font_size = new_font_size / cell_h * fraction
+            self._relative_font_size = new_font_size / cell_h * scale
         return self
 
     def rotate(self, angle: float, origin: CoordLike | None = None) -> Text:
@@ -410,7 +419,7 @@ class Text(Entity):
     def to_svg(self) -> str:
         """Render to SVG text element."""
         if self._textpath_info is not None:
-            return self._to_svg_textpath()
+            return self._to_svg_textpath(self._textpath_info)
         # Build transform attribute if rotation is applied
         transform = ""
         if self.rotation != 0:
@@ -443,10 +452,8 @@ class Text(Entity):
             f'</text>'
         )
 
-    def _to_svg_textpath(self) -> str:
+    def _to_svg_textpath(self, info: dict[str, object]) -> str:
         """Render to SVG text element with textPath warping."""
-        info = self._textpath_info
-
         escaped_content = (
             self.content
             .replace("&", "&amp;")

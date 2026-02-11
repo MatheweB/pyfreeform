@@ -40,7 +40,7 @@ class Point(Entity):
     def to_svg(self) -> str:
         return ""
 
-    def bounds(self) -> tuple[float, float, float, float]:
+    def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
         return (self._position.x, self._position.y,
                 self._position.x, self._position.y)
 

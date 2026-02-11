@@ -13,6 +13,7 @@ from ..core.bezier import (
     eval_cubic as _eval_cubic,
     eval_cubic_derivative as _eval_cubic_derivative,
 )
+from ..paths import Wave, Spiral, Lissajous, Zigzag
 
 
 class Path(StrokedPathMixin, Entity):
@@ -61,6 +62,12 @@ class Path(StrokedPathMixin, Entity):
         >>> spiral = Spiral(center=cell.center, start_radius=5, end_radius=40, turns=3)
         >>> cell.add_path(spiral, color="red", width=1)
     """
+
+    # Built-in path shapes (for IDE visibility)
+    Wave = Wave
+    Spiral = Spiral
+    Lissajous = Lissajous
+    Zigzag = Zigzag
 
     DEFAULT_SEGMENTS = 64
     DEFAULT_WIDTH = 1
@@ -238,21 +245,30 @@ class Path(StrokedPathMixin, Entity):
             return 0.0
         return math.degrees(math.atan2(dy, dx))
 
-    def arc_length(self, samples_per_segment: int = 10) -> float:
+    def arc_length(self, samples: int = 200) -> float:
         """
-        Approximate the total arc length of the path.
+        Approximate the total arc length by sampling each Bézier segment.
+
+        Distributes *samples* evenly across all cubic Bézier segments and
+        sums the polyline chord lengths — accurate for smooth curves with
+        enough samples per segment.
 
         Args:
-            samples_per_segment: Samples per Bézier segment for approximation.
+            samples: Total number of evaluation points distributed across
+                     all Bézier segments.
 
         Returns:
             Approximate arc length in pixels.
         """
+        n_segs = len(self._bezier_segments)
+        if n_segs == 0:
+            return 0.0
+        per_seg = max(1, samples // n_segs)
         total = 0.0
         for seg in self._bezier_segments:
             prev = seg[0]
-            for i in range(1, samples_per_segment + 1):
-                curr = _eval_cubic(*seg, i / samples_per_segment)
+            for i in range(1, per_seg + 1):
+                curr = _eval_cubic(*seg, i / per_seg)
                 dx = curr.x - prev.x
                 dy = curr.y - prev.y
                 total += math.sqrt(dx * dx + dy * dy)
@@ -539,11 +555,3 @@ class Path(StrokedPathMixin, Entity):
             f"color={self.color!r})"
         )
 
-
-# --- Built-in path shapes (accessible as Path.Wave, Path.Spiral, etc.) ---
-from ..paths import Wave, Spiral, Lissajous, Zigzag  # noqa: E402
-
-Path.Wave = Wave
-Path.Spiral = Spiral
-Path.Lissajous = Lissajous
-Path.Zigzag = Zigzag

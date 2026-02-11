@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 
 class StrokedPathMixin:
     """
@@ -11,12 +13,29 @@ class StrokedPathMixin:
     Line, Curve, Path, and Connection.
     """
 
-    # Attributes provided by the host class.
-    cap: str
-    start_cap: str | None
-    end_cap: str | None
-    width: float
-    color: str
+    # Declared as properties so subclasses can provide them as
+    # either plain attributes (Line, Curve, Path) or properties (Connection).
+    if TYPE_CHECKING:
+        @property
+        def cap(self) -> str: ...
+        @cap.setter
+        def cap(self, value: str) -> None: ...
+        @property
+        def start_cap(self) -> str | None: ...
+        @start_cap.setter
+        def start_cap(self, value: str | None) -> None: ...
+        @property
+        def end_cap(self) -> str | None: ...
+        @end_cap.setter
+        def end_cap(self, value: str | None) -> None: ...
+        @property
+        def width(self) -> float: ...
+        @width.setter
+        def width(self, value: float) -> None: ...
+        @property
+        def color(self) -> str: ...
+        @color.setter
+        def color(self, value: str) -> None: ...
 
     @property
     def effective_start_cap(self) -> str:

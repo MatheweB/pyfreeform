@@ -57,7 +57,7 @@ class Layer:
     @property
     def shape(self) -> tuple[int, int]:
         """Shape as (height, width) tuple."""
-        return self._data.shape
+        return (self._data.shape[0], self._data.shape[1])
     
     def __getitem__(self, pos: tuple[int, int]) -> float:
         """

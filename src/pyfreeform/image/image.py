@@ -110,10 +110,11 @@ class Image:
             raise ValueError(f"Could not open image: {e}")
         
         # Handle animated images (GIF, WebP)
-        if hasattr(pil_img, 'n_frames') and pil_img.n_frames > 1:
-            if frame < 0 or frame >= pil_img.n_frames:
+        n_frames = getattr(pil_img, 'n_frames', 1)
+        if n_frames > 1:
+            if frame < 0 or frame >= n_frames:
                 raise ValueError(
-                    f"Frame {frame} out of range (0-{pil_img.n_frames - 1})"
+                    f"Frame {frame} out of range (0-{n_frames - 1})"
                 )
             pil_img.seek(frame)
         
@@ -372,25 +373,30 @@ class Image:
     def quantize(self, cols: int | None = None, rows: int | None = None) -> Image:
         """
         Resize to a specific grid size.
-        
+
         Useful for creating dot art with a specific number of dots.
         If only cols or rows is specified, the other is calculated
         to maintain aspect ratio.
-        
+
         Args:
             cols: Target number of columns (width in pixels).
             rows: Target number of rows (height in pixels).
-        
+
         Returns:
             A new Image with the specified grid dimensions.
         """
-        if cols is None and rows is None:
-            raise ValueError("At least one of cols or rows must be specified")
-        
-        target_cols, target_rows = quantize_dimensions(
-            self._width, self._height, cols, rows
-        )
-        return self.resize(target_cols, target_rows)
+        if cols is not None and rows is not None:
+            return self.resize(cols, rows)
+
+        aspect = self._width / self._height
+
+        if cols is not None:
+            return self.resize(cols, max(1, int(cols / aspect)))
+
+        if rows is not None:
+            return self.resize(max(1, int(rows * aspect)), rows)
+
+        raise ValueError("At least one of cols or rows must be specified")
     
     def __repr__(self) -> str:
         alpha_str = "+alpha" if self.has_alpha else ""

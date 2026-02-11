@@ -101,7 +101,7 @@ def generate():
             start_anchor=start_anchor,
             end_anchor=end_anchor,
         )
-        scene.add(conn)
+        scene.add_connection(conn)
         if label:
             mid = conn.point_at(label_t)
             scene.place(
