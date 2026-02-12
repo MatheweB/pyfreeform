@@ -15,7 +15,8 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from pyfreeform import Scene
-from pyfreeform.core.coord import Coord, RelCoord
+from pyfreeform.core.coord import Coord
+from pyfreeform.core.relcoord import RelCoord
 from pyfreeform.core.binding import Binding
 
 

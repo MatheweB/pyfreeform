@@ -7,7 +7,8 @@ import functools
 from PIL import ImageFont
 
 from ..color import Color
-from ..core.coord import RelCoord
+from ..core.positions import Position
+from ..core.coord import Coord
 from ..core.entity import Entity
 
 # ---------------------------------------------------------------------------
@@ -152,7 +153,7 @@ class Text(Entity):
             font_size: Font size in pixels.
             color: Text color (name, hex, or RGB tuple).
             font_family: Font family — "serif", "sans-serif", "monospace",
-                         or a specific font name.
+                        or a specific font name.
             bold: If True, use bold weight.
             italic: If True, use italic style.
             text_anchor: Horizontal alignment: "start" (left), "middle", "end" (right).
@@ -255,13 +256,16 @@ class Text(Entity):
         and font_size for height (accounts for scale).
         """
         s = self._scale_factor
-        text_width = _measure_text_width(
-            self.content,
-            self.font_size,
-            self.font_family,
-            self.font_weight,
-            self.font_style,
-        ) * s
+        text_width = (
+            _measure_text_width(
+                self.content,
+                self.font_size,
+                self.font_family,
+                self.font_weight,
+                self.font_style,
+            )
+            * s
+        )
         text_height = self.font_size * s
 
         # Adjust based on text_anchor
@@ -292,7 +296,7 @@ class Text(Entity):
         scale: float = 1.0,
         recenter: bool = True,
         *,
-        at: RelCoord | tuple[float, float] | None = None,
+        at: Position | None = None,
         visual: bool = True,
         rotate: bool = False,
         match_aspect: bool = False,
@@ -305,8 +309,8 @@ class Text(Entity):
         available space.
 
         Args:
-            scale: How much of the cell to fill (0.0-1.0).
-                   1.0 = fill entire cell, 0.8 = use 80%.
+            scale:  How much of the cell to fill (0.0-1.0).
+                    1.0 = fill entire cell, 0.8 = use 80%.
             recenter: If True, center text in cell after scaling.
             at: Optional cell-relative position (rx, ry).
             visual: Unused for text (kept for signature compatibility).

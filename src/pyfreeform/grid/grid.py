@@ -109,8 +109,8 @@ class Grid:
         Args:
             image: Source image (will be resized to match grid).
             cols: Number of columns (calculates rows from aspect ratio).
-                  If None and rows is also None, derives both from image
-                  dimensions and cell size (fit-grid-to-image mode).
+                If None and rows is also None, derives both from image
+                dimensions and cell size (fit-grid-to-image mode).
             rows: Number of rows (calculates cols from aspect ratio).
             cell_size: Base size of each cell in pixels.
             cell_ratio: Width-to-height ratio (e.g., 2.0 for domino cells).
@@ -282,10 +282,10 @@ class Grid:
         Args:
             name: Key to store data under in cell.data.
             source: A Layer or Image to sample from.
-            mode: How to store values:
-                  "value" - Store raw numeric value
-                  "normalized" - Store value / 255 (0-1 range)
-                  "hex" - Store hex color string (requires Image source)
+            mode:   How to store values:
+                    "value" - Store raw numeric value
+                    "normalized" - Store value / 255 (0-1 range)
+                    "hex" - Store hex color string (requires Image source)
         """
         # Handle Image source
         from ..image import Image as ImageClass
@@ -504,7 +504,7 @@ class Grid:
         Args:
             start: Top-left corner as ``(row, col)``, inclusive. Default ``(0, 0)``.
             end: Bottom-right corner as ``(row, col)``, inclusive.
-                 Default ``(rows-1, cols-1)`` (entire grid).
+                Default ``(rows-1, cols-1)`` (entire grid).
 
         Returns:
             A CellGroup spanning the selected region.
@@ -637,8 +637,8 @@ class Grid:
         Iterate over cells on a diagonal.
 
         Args:
-            direction: "down" for top-left to bottom-right,
-                      "up" for bottom-left to top-right.
+            direction:  "down" for top-left to bottom-right,
+                        "up" for bottom-left to top-right.
             offset: Diagonal offset (0 = main diagonal).
 
         Yields:

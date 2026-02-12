@@ -1,7 +1,5 @@
 """Generate SVGs for Guide: Scenes and Grids."""
 
-import math
-
 from pyfreeform import Scene, Palette, Polygon
 
 from wiki._generator import save, sample_image

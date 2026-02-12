@@ -41,9 +41,9 @@ class Pathable(Protocol):
         Get a point at parameter t along the path.
 
         Args:
-            t: Parameter from 0.0 (start) to 1.0 (end).
-               For closed paths like ellipses, t=0 and t=1 are the same point.
-               Values outside 0-1 may extrapolate or wrap depending on implementation.
+            t:  Parameter from 0.0 (start) to 1.0 (end).
+                For closed paths like ellipses, t=0 and t=1 are the same point.
+                Values outside 0-1 may extrapolate or wrap depending on implementation.
 
         Returns:
             Coord at position t along the path.

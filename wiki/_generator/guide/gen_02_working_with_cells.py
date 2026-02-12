@@ -1,6 +1,7 @@
 """Generate SVGs for Guide: Working with Cells."""
 
 from pyfreeform import Scene, Palette, Polygon
+from pyfreeform.core import NAMED_POSITIONS
 
 from wiki._generator import save, sample_image
 
@@ -124,7 +125,7 @@ def generate():
                 color = cell.sample_hex(rx, ry)
                 brightness = cell.sample_brightness(rx, ry)
                 r = brightness * 0.219
-                if r > 0.019:
+                if r > 0.019 and pos in NAMED_POSITIONS:
                     cell.add_dot(at=pos, radius=r, color=color)
             except (IndexError, AttributeError):
                 # Cell may not have image data

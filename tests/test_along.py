@@ -88,7 +88,7 @@ class TestGetAngleAt:
                 return Point(t * 100, t * 50)
 
         path = CustomPath()
-        angle = get_angle_at(path, 0.5)
+        angle = get_angle_at(path, 0.5) # pyright: ignore[reportArgumentType]
         expected = math.degrees(math.atan2(50, 100))
         assert angle == pytest.approx(expected, abs=0.5)
 
@@ -306,7 +306,7 @@ class TestTextPathWarp:
         scene = Scene(200, 100)
         curve = Curve(0, 50, 200, 50, curvature=0.5)
         scene.place(curve)
-        text = scene.add_text("Hello", along=curve)
+        scene.add_text("Hello", along=curve)
 
         full_svg = scene.to_svg()
         assert "<defs>" in full_svg
@@ -321,7 +321,7 @@ class TestTextPathWarp:
                 return Point(t * 100, 50)
 
         with pytest.raises(TypeError, match="to_svg_path_d"):
-            scene.add_text("Hello", along=FakePath())
+            scene.add_text("Hello", along=FakePath())  # pyright: ignore[reportArgumentType]
 
     def test_text_along_with_t_does_not_warp(self):
         scene = Scene(200, 100)

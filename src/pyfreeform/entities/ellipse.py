@@ -248,9 +248,9 @@ class Ellipse(Entity):
         This is the key method for parametric positioning (Pathable protocol).
 
         Args:
-            t: Parameter from 0.0 to 1.0 around the ellipse.
-               t=0 and t=1 are the same point (rightmost, 0°).
-               t=0.25 is top (90°), t=0.5 is left (180°), t=0.75 is bottom (270°).
+            t:  Parameter from 0.0 to 1.0 around the ellipse.
+                t=0 and t=1 are the same point (rightmost, 0°).
+                t=0.25 is top (90°), t=0.5 is left (180°), t=0.75 is bottom (270°).
 
         Returns:
             Coord on the ellipse at parameter t.

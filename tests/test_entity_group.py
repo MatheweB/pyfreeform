@@ -1,6 +1,5 @@
 """Tests for EntityGroup: rotation and opacity support."""
 
-import math
 import pytest
 import sys
 from pathlib import Path
@@ -116,7 +115,7 @@ def test_group_rotate_bounds_45():
     group.add(Line(-50, -5, 50, 5, width=1, color="black"))
 
     unrotated = group.bounds()
-    unrotated_w = unrotated[2] - unrotated[0]
+    _unrotated_w = unrotated[2] - unrotated[0]
     unrotated_h = unrotated[3] - unrotated[1]
 
     group.rotate(45)
@@ -298,7 +297,7 @@ def test_fit_within_rotate():
     from pyfreeform.entities.rect import Rect
 
     scene = Scene.with_grid(cols=1, rows=1, cell_size=200)
-    cell = scene.grid[0, 0]
+    _cell = scene.grid[0, 0]
 
     # Tall target rect
     rect = Rect(20, 20, 40, 160, fill="blue")
@@ -344,7 +343,6 @@ def test_fit_to_cell_rotate_works_on_polygon():
 
 def test_fit_to_cell_rotate_works_on_rect():
     """rotate=True should work on Rect (sets self.rotation)."""
-    from pyfreeform.entities.rect import Rect
 
     scene = Scene.with_grid(cols=1, rows=1, cell_width=50, cell_height=200)
     cell = scene.grid[0, 0]
@@ -443,7 +441,7 @@ def test_fit_within_match_aspect():
     from pyfreeform.entities.rect import Rect
 
     scene = Scene.with_grid(cols=1, rows=1, cell_size=200)
-    cell = scene.grid[0, 0]
+    _cell = scene.grid[0, 0]
 
     # Square target
     target = Rect(20, 20, 100, 100, fill="blue")

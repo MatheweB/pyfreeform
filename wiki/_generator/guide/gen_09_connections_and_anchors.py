@@ -137,7 +137,7 @@ def generate():
 
         # Text label
         text_x = label_x + (15 if dx >= 0 else -15)
-        text_y = label_y + (0 if abs(dy) > 0 else 0)
+        text_y = label_y
         text_anchor = "start" if dx >= 0 else "end"
         scene.place(
             Text(text_x, text_y, name, font_size=9, color="#aaaacc", text_anchor=text_anchor)
@@ -258,7 +258,7 @@ def generate():
         edges.append(conn)
 
     # Place small marker dots along each edge at t=0.25, 0.5, 0.75
-    marker_colors = [colors.accent, colors.secondary, colors.accent]
+    _marker_colors = [colors.accent, colors.secondary, colors.accent]
     for edge in edges:
         for t_val in [0.25, 0.5, 0.75]:
             pt = edge.point_at(t_val)
@@ -289,7 +289,7 @@ def generate():
     # Connect dots within distance threshold
     for i, d1 in enumerate(star_dots):
         p1 = d1.position
-        for j, d2 in enumerate(star_dots[i + 1 :], start=i + 1):
+        for _j, d2 in enumerate(star_dots[i + 1 :], start=i + 1):
             p2 = d2.position
             dist = math.hypot(p1.x - p2.x, p1.y - p2.y)
             if dist < 130:
@@ -388,7 +388,7 @@ def generate():
 
     for i, d1 in enumerate(arc_dots):
         p1 = d1.position
-        for j, d2 in enumerate(arc_dots[i + 1 :], start=i + 1):
+        for _j, d2 in enumerate(arc_dots[i + 1 :], start=i + 1):
             p2 = d2.position
             dist = math.hypot(p1.x - p2.x, p1.y - p2.y)
             if dist < 130:

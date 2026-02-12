@@ -21,7 +21,8 @@ from .config.styles import (
     TextStyle,
 )
 from .core.connection import Connection
-from .core.coord import Coord, CoordLike, RelCoord, RelCoordLike
+from .core.coord import Coord, CoordLike
+from .core.relcoord import RelCoord, RelCoordLike
 from .core.entity import Entity
 from .core.pathable import FullPathable, Pathable
 

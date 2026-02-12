@@ -24,6 +24,8 @@ def create_gradient() -> None:
     w, h = 400, 400
     img = PILImage.new("RGB", (w, h))
     pixels = img.load()
+    if pixels is None:
+        raise ValueError("Could not access image pixels")
 
     for y in range(h):
         for x in range(w):
@@ -71,6 +73,8 @@ def create_waves() -> None:
     w, h = 500, 300
     img = PILImage.new("RGB", (w, h), (10, 10, 25))
     pixels = img.load()
+    if pixels is None:
+        raise ValueError("Could not access image pixels")
 
     for y in range(h):
         for x in range(w):

@@ -9,7 +9,7 @@ from pyfreeform import (
     ShapeStyle,
 )
 
-from wiki._generator import save, sample_image
+from wiki._generator import save
 
 
 def generate():

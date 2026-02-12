@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from ..core.coord import Coord, RelCoord
+from ..core.coord import Coord
+from ..core.relcoord import RelCoord
 from ..core.entity import Entity
 from ..core.surface import Surface
 

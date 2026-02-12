@@ -279,6 +279,38 @@ All `at` parameters accept named positions or `(rx, ry)` relative coordinates:
 | `"left"` | `(0.0, 0.5)` | Left center |
 | `"right"` | `(1.0, 0.5)` | Right center |
 
+??? warning "Type checking for `Position`"
+    The `Position` type accepts:
+
+    * A `Coords` object (e.g., `Coords(x=0.5, y=0.5)`)
+    * A tuple `(rx, ry)`
+    * **Exactly** one of the strings in `NAMED_POSITIONS` (like `"center"` or `"top_left"`)
+
+    #### Why type checkers may complain
+
+    If you assign a string indirectly, for example via a list or variable:
+
+    ```python
+    positions = ["center", "top_left", "bottom_right"]
+    for pos in positions:
+        scene.add_dot(at=pos)  # ⚠️ Type checker expects explicit strings
+    ```
+
+    … the checker cannot verify that `pos` matches a valid named position.
+
+    #### How to fix
+
+    Explicitly validate each value against `NAMED_POSITIONS`:
+
+    ```python
+    from pyfreeform.core import NAMED_POSITIONS
+
+    positions = ["center", "top_left", "bottom_right"]
+    for pos in positions:
+        if pos in NAMED_POSITIONS:
+            scene.add_dot(at=pos)  # ✅ safe
+    ```
+
 ### Parametric Positioning: `along` / `t` / `align`
 
 All builder methods (except `add_fill`, `add_border`) support parametric positioning:

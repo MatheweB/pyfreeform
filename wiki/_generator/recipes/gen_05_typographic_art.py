@@ -1,8 +1,6 @@
 """Generate SVGs for Recipe: Typographic Art."""
 
-import math
-
-from pyfreeform import Scene, Palette, Polygon
+from pyfreeform import Scene, Palette
 
 from wiki._generator import save, sample_image
 

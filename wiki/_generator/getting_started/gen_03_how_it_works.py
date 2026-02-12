@@ -1,8 +1,7 @@
 """Generate SVGs for Getting Started: How PyFreeform Works."""
 
-import math
-
 from pyfreeform import Scene, Palette, Polygon
+from pyfreeform.core import NAMED_POSITIONS
 
 from wiki._generator import save
 
@@ -50,16 +49,17 @@ def generate():
         ("right", colors.secondary, 0.05, "middle", "end"),
     ]
     for pos_name, color, radius, baseline, anchor in positions:
-        cell.add_dot(at=pos_name, radius=radius, color=color)
-        cell.add_text(
-            pos_name,
-            at=pos_name,
-            font_size=0.05,
-            color="#aaaacc",
-            baseline=baseline,
-            text_anchor=anchor,
-            fit=True,
-        )
+        if pos_name in NAMED_POSITIONS:
+            cell.add_dot(at=pos_name, radius=radius, color=color)
+            cell.add_text(
+                pos_name,
+                at=pos_name,
+                font_size=0.05,
+                color="#aaaacc",
+                baseline=baseline,
+                text_anchor=anchor,
+                fit=True,
+            )
     save(scene, "getting-started/how-named-positions.svg")
 
     # --- 3. The Surface protocol: same methods on Cell and Scene ---

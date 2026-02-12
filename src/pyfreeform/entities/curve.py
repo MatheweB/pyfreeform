@@ -5,7 +5,8 @@ from __future__ import annotations
 import math
 
 from ..color import Color
-from ..core.coord import Coord, CoordLike, RelCoord
+from ..core.coord import Coord, CoordLike
+from ..core.relcoord import RelCoord
 from ..core.entity import Entity
 from ..core.stroked_path_mixin import StrokedPathMixin
 
@@ -69,11 +70,11 @@ class Curve(StrokedPathMixin, Entity):
         Args:
             x1, y1: Starting point coordinates.
             x2, y2: Ending point coordinates.
-            curvature: How much the curve bows away from straight.
-                       0 = straight line
-                       Positive = bows to the left (when facing end)
-                       Negative = bows to the right
-                       Typical range: -1 to 1
+            curvature:  How much the curve bows away from straight.
+                        0 = straight line
+                        Positive = bows to the left (when facing end)
+                        Negative = bows to the right
+                        Typical range: -1 to 1
             width: Stroke width in pixels.
             color: Stroke color.
             z_index: Layer ordering (higher = on top).

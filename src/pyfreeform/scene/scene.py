@@ -106,12 +106,12 @@ class Scene(Surface):
             - **grid_size=N** (default): N columns, auto rows from aspect ratio.
               Scene size = cols * cell_size x rows * cell_size.
             - **grid_size=None**: Grid fits the image. Cols/rows derived from
-              image dimensions ÷ cell size. Scene size ≈ image dimensions.
+                image dimensions ÷ cell size. Scene size ≈ image dimensions.
 
         Args:
             source: Path to image file, or an Image object.
-            grid_size: Number of columns (rows auto-calculated from aspect ratio).
-                       Pass None to derive grid from image dimensions.
+            grid_size:  Number of columns (rows auto-calculated from aspect ratio).
+                        Pass None to derive grid from image dimensions.
             cell_size: Base size of each cell in pixels.
             cell_ratio: Width-to-height ratio (e.g., 2.0 for domino cells).
             cell_width: Explicit cell width (overrides cell_size and cell_ratio).

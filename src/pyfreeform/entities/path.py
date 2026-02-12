@@ -102,15 +102,15 @@ class Path(StrokedPathMixin, Entity):
 
         Args:
             pathable: Any object implementing ``point_at(t)``.
-            segments: Number of cubic Bézier segments to approximate with.
-                      Higher = smoother but more SVG data. 64 is good for most
-                      curves; use 128+ for very detailed spirals.
+            segments:   Number of cubic Bézier segments to approximate with.
+                        Higher = smoother but more SVG data. 64 is good for most
+                        curves; use 128+ for very detailed spirals.
             closed: If True, the path closes smoothly back to the start and
                     SVG ``Z`` is appended. Enables ``fill``.
             start_t: Start parameter on the pathable (0.0-1.0). Use with
-                     ``end_t`` to render a sub-section of the path.
+                    ``end_t`` to render a sub-section of the path.
             end_t: End parameter on the pathable (0.0-1.0). Use with
-                   ``start_t`` to render a sub-section (arc) of any path.
+                    ``start_t`` to render a sub-section (arc) of any path.
             width: Stroke width in pixels.
             color: Stroke color.
             fill: Fill color for closed paths (ignored if not closed).
@@ -270,7 +270,7 @@ class Path(StrokedPathMixin, Entity):
 
         Args:
             samples: Total number of evaluation points distributed across
-                     all Bézier segments.
+                    all Bézier segments.
 
         Returns:
             Approximate arc length in pixels.

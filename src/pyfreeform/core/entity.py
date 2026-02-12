@@ -9,8 +9,10 @@ from weakref import WeakSet
 
 from .binding import Binding
 from .connection import Connection
-from .coord import Coord, CoordLike, RelCoord
-from .surface import NAMED_POSITIONS
+from .coord import Coord, CoordLike
+from .relcoord import RelCoord
+from .positions import Position, NAMED_POSITIONS
+
 
 def shape_opacity_attrs(
     opacity: float, fill_opacity: float | None, stroke_opacity: float | None
@@ -224,7 +226,7 @@ class Entity(ABC):
         return self._relative_at
 
     @at.setter
-    def at(self, value: RelCoord | tuple[float, float] | None) -> None:
+    def at(self, value: Position | None) -> None:  # RelCoord | tuple[float, float]
         """Set relative position (clears along binding)."""
         if value is not None:
             value = RelCoord.coerce(value)
@@ -353,9 +355,7 @@ class Entity(ABC):
         self._position = Coord(self._position.x + dx, self._position.y + dy)
         return self
 
-    def move_to_cell(
-        self, cell: Surface, at: RelCoord | tuple[float, float] | str = "center"
-    ) -> Entity:
+    def move_to_cell(self, cell: Surface, at: Position = "center") -> Entity:
         """
         Move entity to a position within a cell (stores relative coords).
 
@@ -370,8 +370,12 @@ class Entity(ABC):
         """
 
         self._cell = cell
-        if isinstance(at, str):
+        if isinstance(at, str) and at in NAMED_POSITIONS:
             at = NAMED_POSITIONS[at]
+        else:
+            raise TypeError(
+                f'Cannot use "{at}" for move_to_cell. String must be in NAMED_POSITIONS (e.g. "center")'
+            )
         at = RelCoord.coerce(at)
         self._relative_at = at
         self._along_path = None
@@ -394,12 +398,12 @@ class Entity(ABC):
 
         Args:
             other: The entity to connect to.
-            style: Visual style — ConnectionStyle object or dict with
-                   "width", "color", "z_index" keys.
+            style:  Visual style — ConnectionStyle object or dict with
+                    "width", "color", "z_index" keys.
             start_anchor: Anchor name on this entity.
             end_anchor: Anchor name on the other entity.
-            shape: Visual shape — Line(), Curve(), Path(), or None
-                   for invisible.
+            shape:  Visual shape — Line(), Curve(), Path(), or None
+                    for invisible.
             segments: Number of Bézier segments for shape rendering.
 
         Returns:
@@ -753,7 +757,7 @@ class Entity(ABC):
         scale: float = 1.0,
         recenter: bool = True,
         *,
-        at: RelCoord | tuple[float, float] | None = None,
+        at: Position | None = None,
         visual: bool = True,
         rotate: bool = False,
         match_aspect: bool = False,
@@ -764,8 +768,8 @@ class Entity(ABC):
         Args:
             target: Entity (uses inner_bounds()) or raw (min_x, min_y, max_x, max_y) tuple.
             scale: Fraction of target inner bounds to fill (0.0-1.0].
-            recenter: If True, center entity within target after scaling.
-                      Ignored when ``at`` is provided.
+            recenter:   If True, center entity within target after scaling.
+                        Ignored when ``at`` is provided.
             at: Optional relative position (rx, ry) within the target's
                 inner bounds, where (0,0) is top-left and (1,1) is
                 bottom-right. Available space is constrained by the
@@ -776,9 +780,9 @@ class Entity(ABC):
             rotate: If True, find the rotation angle that maximizes how
                     much of the target space the entity fills before
                     scaling.
-            match_aspect: If True, rotate the entity so its bounding box
-                          aspect ratio matches the target's. Mutually
-                          exclusive with ``rotate``.
+            match_aspect:   If True, rotate the entity so its bounding box
+                            aspect ratio matches the target's. Mutually
+                            exclusive with ``rotate``.
 
         Returns:
             self, for method chaining.
@@ -810,7 +814,7 @@ class Entity(ABC):
             w, h = b[2] - b[0], b[3] - b[1]
             if w > 1e-9 and h > 1e-9:
                 if at is not None:
-                    rx, ry = at
+                    rx, ry = RelCoord.coerce(at)
                     avail_w = min(rx, 1 - rx) * 2 * target_w * scale
                     avail_h = min(ry, 1 - ry) * 2 * target_h * scale
                 else:
@@ -825,7 +829,7 @@ class Entity(ABC):
 
         if at is not None:
             # --- Position-aware mode ---
-            rx, ry = at
+            rx, ry = RelCoord.coerce(at)
             if not (0.0 < rx < 1.0 and 0.0 < ry < 1.0):
                 raise ValueError(f"at=({rx}, {ry}) must be inside the bounds (0.0-1.0 exclusive).")
 
@@ -901,7 +905,7 @@ class Entity(ABC):
         scale: float = 1.0,
         recenter: bool = True,
         *,
-        at: RelCoord | tuple[float, float] | None = None,
+        at: Position | None = None,
         visual: bool = True,
         rotate: bool = False,
         match_aspect: bool = False,
@@ -913,18 +917,18 @@ class Entity(ABC):
         containing cell as the target region.
 
         Args:
-            scale: Fraction of available space to fill (0.0-1.0).
-                   1.0 = fill entire cell, 0.85 = use 85%.
-            recenter: If True, center entity in cell after scaling.
-                      Ignored when ``at`` is provided.
+            scale:  Fraction of available space to fill (0.0-1.0).
+                    1.0 = fill entire cell, 0.85 = use 85%.
+            recenter:   If True, center entity in cell after scaling.
+                        Ignored when ``at`` is provided.
             at: Position within the cell as (rx, ry) fractions. Constrains
                 fitting to the space available at that point so the entity
                 doesn't overflow. (0.5, 0.5) uses the full cell (default).
             visual: If True (default), include stroke width in bounds
                     measurement so stroked shapes don't overflow.
             rotate: If True, auto-rotate to maximize cell coverage.
-            match_aspect: If True, rotate to match the cell's aspect ratio.
-                          Mutually exclusive with ``rotate``.
+            match_aspect:   If True, rotate to match the cell's aspect ratio.
+                            Mutually exclusive with ``rotate``.
 
         Returns:
             self, for method chaining
@@ -932,8 +936,8 @@ class Entity(ABC):
         Raises:
             ValueError: If entity has no cell, scale is out of range,
                         or both ``rotate`` and ``match_aspect`` are True.
-            TypeError: If ``at`` is a string (named anchors sit on cell
-                       edges where available space is 0).
+            TypeError:  If ``at`` is a string (named anchors sit on cell
+                        edges where available space is 0).
 
         Example:
             >>> ellipse = cell.add_ellipse(rx=2.0, ry=1.2, rotation=45)
@@ -943,11 +947,6 @@ class Entity(ABC):
         """
         if self._cell is None:
             raise ValueError("Cannot fit to cell: entity has no cell")
-        if isinstance(at, str):
-            raise TypeError(
-                f"fit_to_cell(at=) only accepts (rx, ry) tuples, not '{at}'. "
-                f"Named positions are at cell edges where available space is 0."
-            )
         cell = self._cell
         return self.fit_within(
             (cell.x, cell.y, cell.x + cell.width, cell.y + cell.height),

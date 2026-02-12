@@ -12,7 +12,8 @@ pyfreeform/
     binding.py      # Binding dataclass -- immutable positioning config
     pathable.py     # Pathable protocol -- point_at(t) interface
     connection.py   # Connection -- reactive link between entities
-    coord.py        # Coord (x, y) and RelCoord (rx, ry) NamedTuples
+    coord.py        # Coord (x, y) NamedTuple
+    relcoord.py     # RelCoord (rx, ry) NamedTuple
     tangent.py      # Tangent angle utilities for pathables
     stroked_path_mixin.py  # Shared cap/marker logic
 
@@ -283,7 +284,7 @@ Polygon vertices can be static `Coord` values or live entity references (`Entity
 
 Surface builder methods accept named positions (`"center"`, `"top_left"`) or relative tuples `(rx, ry)` where `(0, 0)` is top-left and `(1, 1)` is bottom-right. This keeps cell-level code resolution-independent.
 
-Internally, relative positions are stored as `RelCoord(rx, ry)` — a `NamedTuple` with `rx` and `ry` fields (see `core/coord.py`). The `.at` property on every entity returns and accepts `RelCoord` values. The `.binding` property accepts a `Binding` dataclass for full positioning configuration (relative position, path-following, reference entity). Users reposition entities through `.position`, `.at`, or `move_to_cell()` — low-level pixel movement (`_move_to`, `_move_by`) is private.
+Internally, relative positions are stored as `RelCoord(rx, ry)` — a `NamedTuple` with `rx` and `ry` fields (see `core/relcoord.py`). The `.at` property on every entity returns and accepts `RelCoord` values. The `.binding` property accepts a `Binding` dataclass for full positioning configuration (relative position, path-following, reference entity). Users reposition entities through `.position`, `.at`, or `move_to_cell()` — low-level pixel movement (`_move_to`, `_move_by`) is private.
 
 ### Entity.cell back-reference
 

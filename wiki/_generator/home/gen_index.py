@@ -26,7 +26,7 @@ def generate():
     for cell in scene.grid:
         nx, ny = cell.normalized_position
         t = (nx + ny) / 2
-        hue_shift = t
+        # hue_shift = t
         fill = colors.primary if (cell.row + cell.col) % 3 == 0 else colors.secondary
         rotation = t * 60
         cell.add_polygon(

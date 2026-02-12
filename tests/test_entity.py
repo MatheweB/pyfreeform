@@ -8,7 +8,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from pyfreeform import Scene
-from pyfreeform.entities.point import Point
 from pyfreeform.entities.dot import Dot
 
 
@@ -80,7 +79,7 @@ def test_fit_to_cell_polygon():
     cell = scene.grid[0, 0]
 
     # Create a large polygon (square)
-    vertices = [(0, 0), (1, 0), (1, 1), (0, 1)]
+    vertices = [(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)]
     polygon = cell.add_polygon(vertices=vertices, fill="blue")
 
     # Fit to 90% of cell
@@ -306,14 +305,22 @@ def test_fit_to_cell_at_corner_smaller_than_center():
     assert dot_corner.radius * dot_corner.scale_factor < dot_center.radius * dot_center.scale_factor
 
 
-def test_fit_to_cell_at_rejects_strings():
+def test_fit_to_cell_at_rejects_corners_or_edges():
     """Named positions should be rejected with helpful error."""
     scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
     cell = scene.grid[0, 0]
     dot = cell.add_dot(radius=0.1, color="red")
 
-    with pytest.raises(TypeError, match="only accepts"):
-        dot.fit_to_cell(0.8, at="top_left")
+    with pytest.raises(ValueError, match="must be inside the bounds"):
+        dot.fit_to_cell(0.8, at="top_left") 
+
+def test_fit_to_cell_at_accepts_center():
+    """Named positions should be rejected with helpful error."""
+    scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
+    cell = scene.grid[0, 0]
+    dot = cell.add_dot(radius=0.1, color="red")
+
+    assert dot.fit_to_cell(0.8, at="center") is not None
 
 
 def test_fit_to_cell_at_rejects_edge_zero():

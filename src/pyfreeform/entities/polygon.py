@@ -6,7 +6,8 @@ import math
 from typing import TYPE_CHECKING
 
 from ..color import Color
-from ..core.coord import Coord, CoordLike, RelCoord
+from ..core.coord import Coord, CoordLike
+from ..core.relcoord import RelCoord
 from ..core.entity import Entity, shape_opacity_attrs
 
 if TYPE_CHECKING:

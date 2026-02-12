@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .coord import RelCoord
+    from .relcoord import RelCoord
     from .entity import Entity
     from .pathable import Pathable
     from .surface import Surface

@@ -10,7 +10,7 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from pyfreeform import Scene, Grid, Point, Dot, Rect, Text, Image
-from pyfreeform.core.coord import RelCoord
+from pyfreeform.core.relcoord import RelCoord
 
 
 # =========================================================================

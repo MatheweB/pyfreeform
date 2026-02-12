@@ -5,7 +5,8 @@ from __future__ import annotations
 import math
 
 from ..color import Color
-from ..core.coord import Coord, CoordLike, RelCoord
+from ..core.coord import Coord, CoordLike
+from ..core.relcoord import RelCoord
 from ..core.entity import Entity
 from ..core.stroked_path_mixin import StrokedPathMixin
 
@@ -205,8 +206,8 @@ class Line(StrokedPathMixin, Entity):
         Get a point along the line (world space).
 
         Args:
-            t: Parameter from 0 (start) to 1 (end).
-               Values outside 0-1 extrapolate beyond the line.
+            t:  Parameter from 0 (start) to 1 (end).
+                Values outside 0-1 extrapolate beyond the line.
 
         Returns:
             Coord at that position along the line.

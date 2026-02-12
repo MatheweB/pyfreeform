@@ -6,9 +6,11 @@ import itertools
 from typing import TYPE_CHECKING, Literal
 
 from .binding import Binding
-from .coord import Coord, RelCoord
+from .coord import Coord
+from .relcoord import RelCoord
 from .pathable import FullPathable, Pathable
 from .tangent import get_angle_at
+from .positions import Position, NAMED_POSITIONS
 
 if TYPE_CHECKING:
     from ..config.styles import (
@@ -29,37 +31,6 @@ if TYPE_CHECKING:
     from ..entities.rect import Rect
     from ..entities.text import Text
     from .entity import Entity
-
-
-# Named positions within a surface (relative coordinates)
-NAMED_POSITIONS: dict[str, RelCoord] = {
-    "center": RelCoord(0.5, 0.5),
-    "top_left": RelCoord(0.0, 0.0),
-    "top_right": RelCoord(1.0, 0.0),
-    "bottom_left": RelCoord(0.0, 1.0),
-    "bottom_right": RelCoord(1.0, 1.0),
-    "top": RelCoord(0.5, 0.0),
-    "bottom": RelCoord(0.5, 1.0),
-    "left": RelCoord(0.0, 0.5),
-    "right": RelCoord(1.0, 0.5),
-}
-
-# Position type for method signatures
-Position = (
-    RelCoord
-    | tuple[float, float]
-    | Literal[
-        "center",
-        "top_left",
-        "top_right",
-        "bottom_left",
-        "bottom_right",
-        "top",
-        "bottom",
-        "left",
-        "right",
-    ]
-)
 
 
 class Surface:
@@ -257,6 +228,8 @@ class Surface:
             (absolute_position, relative_coord) pair.
         """
         if isinstance(at, str):
+            if at not in NAMED_POSITIONS:
+                raise ValueError(f"Invalid named position: '{at}'")
             at = NAMED_POSITIONS[at]
         rc = RelCoord.coerce(at)
         return Coord(ref_x + rc.rx * ref_w, ref_y + rc.ry * ref_h), rc
@@ -959,8 +932,8 @@ class Surface:
             content: The text string to display.
             at: Position ("center", "top_left", or (rx, ry) tuple).
             along: Path to position or warp text along.
-            t: Parameter on the path (0.0 to 1.0). If omitted with
-               ``along``, text warps along the full path.
+            t:  Parameter on the path (0.0 to 1.0). If omitted with
+                ``along``, text warps along the full path.
             align: Rotate text to follow path tangent (only with ``t``).
             font_size: Font size as fraction of surface height (e.g. 0.25
                 = 25% of cell height). When omitted, defaults to 0.25.

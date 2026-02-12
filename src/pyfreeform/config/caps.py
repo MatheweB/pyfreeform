@@ -37,12 +37,12 @@ def register_cap(
 
     Args:
         name: Cap name (e.g. "arrow", "diamond").
-        generator: Function producing the SVG ``<marker>`` element
-                   (used for ``marker-end``).
-        start_generator: Optional separate generator for ``marker-start``.
-                         If provided, the start marker uses an explicitly
-                         reversed shape instead of relying on SVG2
-                         ``orient="auto-start-reverse"``.
+        generator:  Function producing the SVG ``<marker>`` element
+                    (used for ``marker-end``).
+        start_generator:    Optional separate generator for ``marker-start``.
+                            If provided, the start marker uses an explicitly
+                            reversed shape instead of relying on SVG2
+                            ``orient="auto-start-reverse"``.
 
     Example::
 
@@ -84,7 +84,7 @@ def get_marker(
         color: Stroke color.
         size: Marker size (typically stroke_width * scale).
         for_start: If True and a ``start_generator`` is registered,
-                   use it to produce an explicitly reversed marker.
+                    use it to produce an explicitly reversed marker.
 
     Returns:
         (marker_id, marker_svg) if the cap needs a marker, else None.
