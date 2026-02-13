@@ -216,7 +216,7 @@ class TestCellDistanceTo:
         scene = Scene.with_grid(cols=5, rows=5, cell_size=10)
         cell = scene.grid[0, 0]
         with pytest.raises(TypeError):
-            cell.distance_to("invalid")
+            cell.distance_to("invalid")  # type: ignore
 
 
 class TestNormalizedPosition:
