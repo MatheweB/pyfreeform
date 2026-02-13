@@ -8,10 +8,10 @@ from typing import TYPE_CHECKING, Literal
 from ..color import ColorLike
 from .binding import Binding
 from .coord import Coord
-from .relcoord import RelCoord
+from .relcoord import RelCoord, RelCoordLike
 from .pathable import FullPathable, Pathable
 from .tangent import get_angle_at
-from .positions import Position, NAMED_POSITIONS
+from .positions import NAMED_POSITIONS
 
 if TYPE_CHECKING:
     from ..config.styles import (
@@ -122,7 +122,7 @@ class Surface:
         """Center position."""
         return Coord(self._x + self._width / 2, self._y + self._height / 2)
 
-    def relative_to_absolute(self, pos: Position) -> Coord:
+    def relative_to_absolute(self, pos: RelCoordLike) -> Coord:
         """
         Convert relative position to absolute pixels.
 
@@ -213,7 +213,7 @@ class Surface:
 
     def _resolve_at(
         self,
-        at: Position,
+        at: RelCoordLike,
         ref_x: float,
         ref_y: float,
         ref_w: float,
@@ -242,7 +242,7 @@ class Surface:
     def add_dot(
         self,
         *,
-        at: Position = "center",
+        at: RelCoordLike = "center",
         within: Entity | None = None,
         along: Pathable | None = None,
         t: float | None = None,
@@ -256,7 +256,7 @@ class Surface:
         Add a dot to this surface.
 
         Args:
-            at: Position ("center", "top_left", or (rx, ry) tuple).
+            at: RelCoordLike ("center", "top_left", or (rx, ry) tuple).
             within: Size/position relative to another entity's bounds.
             along: Path to position the dot along.
             t: Parameter on the path (0.0 to 1.0).
@@ -318,8 +318,8 @@ class Surface:
     def add_line(
         self,
         *,
-        start: Position = "center",
-        end: Position = "center",
+        start: RelCoordLike = "center",
+        end: RelCoordLike = "center",
         within: Entity | None = None,
         along: Pathable | None = None,
         t: float | None = None,
@@ -487,8 +487,8 @@ class Surface:
     def add_curve(
         self,
         *,
-        start: Position = "bottom_left",
-        end: Position = "top_right",
+        start: RelCoordLike = "bottom_left",
+        end: RelCoordLike = "top_right",
         curvature: float = 0.5,
         within: Entity | None = None,
         along: Pathable | None = None,
@@ -691,7 +691,7 @@ class Surface:
     def add_ellipse(
         self,
         *,
-        at: Position = "center",
+        at: RelCoordLike = "center",
         within: Entity | None = None,
         along: Pathable | None = None,
         t: float | None = None,
@@ -716,7 +716,7 @@ class Surface:
         Use ``align=True`` to rotate the ellipse to follow the tangent.
 
         Args:
-            at: Position (center of ellipse)
+            at: RelCoordLike (center of ellipse)
             along: Path to position the ellipse center along
             t: Parameter on the path (0.0 to 1.0, default 0.5)
             align: Rotate ellipse to follow path tangent
@@ -899,7 +899,7 @@ class Surface:
         self,
         content: str,
         *,
-        at: Position = "center",
+        at: RelCoordLike = "center",
         within: Entity | None = None,
         along: Pathable | None = None,
         t: float | None = None,
@@ -931,7 +931,7 @@ class Surface:
 
         Args:
             content: The text string to display.
-            at: Position ("center", "top_left", or (rx, ry) tuple).
+            at: RelCoordLike ("center", "top_left", or (rx, ry) tuple).
             along: Path to position or warp text along.
             t:  Parameter on the path (0.0 to 1.0). If omitted with
                 ``along``, text warps along the full path.
@@ -1089,7 +1089,7 @@ class Surface:
     def add_rect(
         self,
         *,
-        at: Position = "center",
+        at: RelCoordLike = "center",
         within: Entity | None = None,
         along: Pathable | None = None,
         t: float | None = None,
@@ -1119,7 +1119,7 @@ class Surface:
         For full-surface fills use add_fill(). For borders use add_border().
 
         Args:
-            at: Position of rectangle center.
+            at: RelCoordLike of rectangle center.
             along: Path to position the rectangle center along.
             t: Parameter on the path (0.0 to 1.0, default 0.5).
             align: Rotate rectangle to follow path tangent.
@@ -1297,7 +1297,7 @@ class Surface:
     def add_point(
         self,
         *,
-        at: Position = "center",
+        at: RelCoordLike = "center",
         within: Entity | None = None,
         along: Pathable | None = None,
         t: float | None = None,
@@ -1311,7 +1311,7 @@ class Surface:
         reference positions for ``within=``.
 
         Args:
-            at: Position ("center", "top_left", or (rx, ry) tuple)
+            at: RelCoordLike ("center", "top_left", or (rx, ry) tuple)
             within: Size/position relative to another entity's bounds
             along: Path to position the point along
             t: Parameter on the path (0.0 to 1.0, default 0.5)
@@ -1352,7 +1352,7 @@ class Surface:
     def add(
         self,
         entity: Entity,
-        at: Position = "center",
+        at: RelCoordLike = "center",
     ) -> Entity:
         """
         Add an existing entity to this surface with relative positioning.
@@ -1362,7 +1362,7 @@ class Surface:
 
         Args:
             entity: The entity to add.
-            at: Position - relative coords or named position.
+            at: RelCoordLike - relative coords or named position.
 
         Returns:
             The added entity (for chaining).

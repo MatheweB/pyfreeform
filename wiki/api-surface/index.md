@@ -279,8 +279,8 @@ All `at` parameters accept named positions or `(rx, ry)` relative coordinates:
 | `"left"` | `(0.0, 0.5)` | Left center |
 | `"right"` | `(1.0, 0.5)` | Right center |
 
-??? warning "Type checking for `Position`"
-    The `Position` type accepts:
+??? warning "Type checking for `RelCoordLike`"
+    The `RelCoordLike` type accepts:
 
     * A `Coords` object (e.g., `Coords(x=0.5, y=0.5)`)
     * A tuple `(rx, ry)`

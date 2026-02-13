@@ -1,13 +1,21 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Union, TYPE_CHECKING
+from typing import Literal, TypeAlias, Union
 
-if TYPE_CHECKING:
-    from .positions import Position  # type-only import
+NamedPosition: TypeAlias = Literal[
+    "center",
+    "top_left",
+    "top_right",
+    "bottom_left",
+    "bottom_right",
+    "top",
+    "bottom",
+    "left",
+    "right",
+]
 
-
-RelCoordLike = Union["RelCoord", tuple[float, float]]
+RelCoordLike = Union["RelCoord", tuple[float, float], NamedPosition]
 
 
 @dataclass(frozen=True, slots=True)
@@ -88,8 +96,8 @@ class RelCoord:
         return (self.rx, self.ry)
 
     @classmethod
-    def coerce(cls, value: Position) -> RelCoord:
-        """Convert a Position to a RelCoord, passing through if already a RelCoord."""
+    def coerce(cls, value: RelCoordLike) -> RelCoord:
+        """Convert a RelCoordLike to a RelCoord, passing through if already a RelCoord."""
         if isinstance(value, RelCoord):
             return value
 

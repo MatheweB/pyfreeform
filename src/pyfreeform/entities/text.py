@@ -7,7 +7,7 @@ import functools
 from PIL import ImageFont
 
 from ..color import Color
-from ..core.positions import Position
+from ..core.relcoord import RelCoordLike
 from ..core.coord import Coord
 from ..core.entity import Entity
 
@@ -296,7 +296,7 @@ class Text(Entity):
         scale: float = 1.0,
         recenter: bool = True,
         *,
-        at: Position | None = None,
+        at: RelCoordLike | None = None,
         visual: bool = True,
         rotate: bool = False,
         match_aspect: bool = False,

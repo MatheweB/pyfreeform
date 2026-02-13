@@ -9,8 +9,8 @@ from typing import TYPE_CHECKING, Any
 from .binding import Binding
 from .connection import Connection
 from .coord import Coord, CoordLike
-from .relcoord import RelCoord
-from .positions import Position, NAMED_POSITIONS
+from .relcoord import RelCoord, RelCoordLike
+from .positions import NAMED_POSITIONS
 
 
 if TYPE_CHECKING:
@@ -213,7 +213,7 @@ class Entity(ABC):
         return self._relative_at
 
     @at.setter
-    def at(self, value: Position | None) -> None:  # RelCoord | tuple[float, float]
+    def at(self, value: RelCoordLike | None) -> None:  # RelCoord | tuple[float, float]
         """Set relative position (clears along binding)."""
         if value is not None:
             value = RelCoord.coerce(value)
@@ -342,13 +342,13 @@ class Entity(ABC):
         self._position = Coord(self._position.x + dx, self._position.y + dy)
         return self
 
-    def move_to_cell(self, cell: Surface, at: Position = "center") -> Entity:
+    def move_to_cell(self, cell: Surface, at: RelCoordLike = "center") -> Entity:
         """
         Move entity to a position within a cell (stores relative coords).
 
         Args:
             cell: The target cell/surface.
-            at: Position within cell - either a RelCoord / (rx, ry) tuple
+            at: RelCoordLike within cell - either a RelCoord / (rx, ry) tuple
                 where (0,0) is top-left and (1,1) is bottom-right,
                 or a named position like "center", "top_left", etc.
 
@@ -801,7 +801,7 @@ class Entity(ABC):
         scale: float = 1.0,
         recenter: bool = True,
         *,
-        at: Position | None = None,
+        at: RelCoordLike | None = None,
         visual: bool = True,
         rotate: bool = False,
         match_aspect: bool = False,
@@ -949,7 +949,7 @@ class Entity(ABC):
         scale: float = 1.0,
         recenter: bool = True,
         *,
-        at: Position | None = None,
+        at: RelCoordLike | None = None,
         visual: bool = True,
         rotate: bool = False,
         match_aspect: bool = False,
@@ -965,7 +965,7 @@ class Entity(ABC):
                     1.0 = fill entire cell, 0.85 = use 85%.
             recenter:   If True, center entity in cell after scaling.
                         Ignored when ``at`` is provided.
-            at: Position within the cell as (rx, ry) fractions. Constrains
+            at: RelCoordLike within the cell as (rx, ry) fractions. Constrains
                 fitting to the space available at that point so the entity
                 doesn't overflow. (0.5, 0.5) uses the full cell (default).
             visual: If True (default), include stroke width in bounds
