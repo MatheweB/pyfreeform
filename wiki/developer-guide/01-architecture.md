@@ -15,7 +15,6 @@ pyfreeform/
     coord.py        # Coord (x, y) NamedTuple
     relcoord.py     # RelCoord (rx, ry) NamedTuple
     tangent.py      # Tangent angle utilities for pathables
-    stroked_path_mixin.py  # Shared cap/marker logic
 
   entities/       # Concrete entity implementations
     dot.py          # Dot (circle)
@@ -46,7 +45,8 @@ pyfreeform/
 
   config/         # Configuration and extensibility
     styles.py       # Style dataclasses (DotStyle, LineStyle, etc.)
-    caps.py         # Cap registry (arrow markers, custom caps)
+    caps.py         # Cap registry engine (register, resolve, render)
+    cap_shapes.py   # Built-in cap shapes (arrow, arrow_in) -- add new caps here
     palette.py      # Color palette utilities
 
   image/          # Image loading and processing
@@ -104,13 +104,13 @@ class Cell(Surface):
 ```
 Entity (ABC)
   |-- Dot              # Simple circle
-  |-- Line             # Segment, has StrokedPathMixin
-  |-- Curve            # Quadratic Bezier, has StrokedPathMixin
+  |-- Line             # Segment with cap support
+  |-- Curve            # Quadratic Bezier with cap support
   |-- Ellipse          # Oval with parametric support
   |-- Rect             # Rectangle with rotation
   |-- Polygon          # Arbitrary vertices (static or entity-reference)
   |-- Text             # Text with optional textPath
-  |-- Path             # Renders any Pathable, has StrokedPathMixin
+  |-- Path             # Renders any Pathable with cap support
   |-- Point            # Invisible positional anchor
   |-- EntityGroup      # Composite entity (children in <g>)
 ```
@@ -153,20 +153,14 @@ def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
     """Return (min_x, min_y, max_x, max_y). visual=True includes stroke width."""
 ```
 
-### The StrokedPathMixin
+### Cap/Marker Functions
 
-Entities with stroked paths (Line, Curve, Path, Connection) share cap/marker logic through `StrokedPathMixin`:
+Entities with stroked paths (Line, Curve, Path, Connection) share cap/marker logic through free functions in `config/caps.py`:
 
-```python
-class Line(StrokedPathMixin, Entity):
-    ...
-```
+- `collect_markers(cap, start_cap, end_cap, width, color)` -- returns SVG `<marker>` definitions needed for caps
+- `svg_cap_and_marker_attrs(cap, start_cap, end_cap, width, color)` -- computes `stroke-linecap` and `marker-start`/`marker-end` attributes
 
-The mixin provides:
-
-- `effective_start_cap` / `effective_end_cap` -- resolves per-end overrides
-- `get_required_markers()` -- returns SVG `<marker>` definitions needed for caps
-- `_svg_cap_and_marker_attrs()` -- computes `stroke-linecap` and `marker-start`/`marker-end` attributes
+Each stroked entity also provides `effective_start_cap` / `effective_end_cap` properties for resolving per-end overrides.
 
 ## SVG Rendering Pipeline
 
@@ -256,7 +250,7 @@ def make_marker_id(cap_name, color, size, *, for_start=False):
 
 ### Composition over inheritance
 
-Surfaces contain entities; entities reference their surface. There is no deep inheritance tree. The `StrokedPathMixin` adds cap behavior via mixin rather than a deeper class hierarchy.
+Surfaces contain entities; entities reference their surface. There is no deep inheritance tree. Cap/marker behavior is shared through explicit free functions (`collect_markers`, `svg_cap_and_marker_attrs`) rather than mixins or deeper class hierarchies.
 
 ### Weak references for connections
 

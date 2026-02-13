@@ -8,12 +8,12 @@ from ..color import Color
 from ..core.bezier import curvature_control_point, quadratic_to_cubic
 from ..core.coord import Coord, CoordLike
 from ..core.relcoord import RelCoord
+from ..config.caps import collect_markers, svg_cap_and_marker_attrs
 from ..core.entity import Entity
 from ..core.svg_utils import sample_arc_length
-from ..core.stroked_path_mixin import StrokedPathMixin
 
 
-class Curve(StrokedPathMixin, Entity):
+class Curve(Entity):
     """
     A quadratic Bezier curve between two points.
 
@@ -428,12 +428,28 @@ class Curve(StrokedPathMixin, Entity):
         self._control = None
         return self
 
+    @property
+    def effective_start_cap(self) -> str:
+        """Resolved cap for the start end."""
+        return self.start_cap if self.start_cap is not None else self.cap
+
+    @property
+    def effective_end_cap(self) -> str:
+        """Resolved cap for the end end."""
+        return self.end_cap if self.end_cap is not None else self.cap
+
+    def get_required_markers(self) -> list[tuple[str, str]]:
+        """Collect SVG marker definitions needed by this curve's caps."""
+        return collect_markers(self.cap, self.start_cap, self.end_cap, self.width, self.color)
+
     def to_svg(self) -> str:
         """Render to SVG path element (quadratic Bezier)."""
         s = self.start
         c = self.control
         e = self.end
-        svg_cap, marker_attrs = self._svg_cap_and_marker_attrs()
+        svg_cap, marker_attrs = svg_cap_and_marker_attrs(
+            self.cap, self.start_cap, self.end_cap, self.width, self.color
+        )
 
         parts = [
             f'<path d="M {s.x} {s.y} Q {c.x} {c.y} {e.x} {e.y}" '

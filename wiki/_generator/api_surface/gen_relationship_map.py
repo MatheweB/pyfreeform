@@ -194,9 +194,9 @@ def generate():
         colors.secondary,
         font_size=0.15,
     )
-    # StrokedPathMixin annotation
+    # Cap functions annotation
     conn_area.add_text(
-        "StrokedPathMixin",
+        "cap functions",
         at=(0.5, 0.78),
         font_size=0.10,
         color=DIM,

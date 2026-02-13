@@ -7,11 +7,11 @@ import math
 from ..color import Color
 from ..core.coord import Coord, CoordLike
 from ..core.relcoord import RelCoord
+from ..config.caps import collect_markers, svg_cap_and_marker_attrs
 from ..core.entity import Entity
-from ..core.stroked_path_mixin import StrokedPathMixin
 
 
-class Line(StrokedPathMixin, Entity):
+class Line(Entity):
     """
     A line segment between two points.
 
@@ -347,11 +347,27 @@ class Line(StrokedPathMixin, Entity):
             max_y += half
         return (min_x, min_y, max_x, max_y)
 
+    @property
+    def effective_start_cap(self) -> str:
+        """Resolved cap for the start end."""
+        return self.start_cap if self.start_cap is not None else self.cap
+
+    @property
+    def effective_end_cap(self) -> str:
+        """Resolved cap for the end end."""
+        return self.end_cap if self.end_cap is not None else self.cap
+
+    def get_required_markers(self) -> list[tuple[str, str]]:
+        """Collect SVG marker definitions needed by this line's caps."""
+        return collect_markers(self.cap, self.start_cap, self.end_cap, self.width, self.color)
+
     def to_svg(self) -> str:
         """Render to SVG line element (model-space coords + transform)."""
         s = self.start
         e = self.end
-        svg_cap, marker_attrs = self._svg_cap_and_marker_attrs()
+        svg_cap, marker_attrs = svg_cap_and_marker_attrs(
+            self.cap, self.start_cap, self.end_cap, self.width, self.color
+        )
 
         parts = [
             f'<line x1="{s.x}" y1="{s.y}" '

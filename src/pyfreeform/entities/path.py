@@ -9,15 +9,15 @@ from ..color import Color
 from ..core.bezier import eval_cubic, eval_cubic_derivative, fit_cubic_beziers
 from ..core.coord import Coord
 from ..core.entity import Entity
+from ..config.caps import collect_markers, svg_cap_and_marker_attrs
 from ..core.svg_utils import shape_opacity_attrs
-from ..core.stroked_path_mixin import StrokedPathMixin
 from ..paths import Lissajous, Spiral, Wave, Zigzag
 
 if TYPE_CHECKING:
     from ..core.pathable import Pathable
 
 
-class Path(StrokedPathMixin, Entity):
+class Path(Entity):
     """
     Renders any Pathable as a smooth SVG ``<path>`` using cubic Bézier curves.
 
@@ -522,12 +522,28 @@ class Path(StrokedPathMixin, Entity):
         ]
         return self
 
+    @property
+    def effective_start_cap(self) -> str:
+        """Resolved cap for the start end."""
+        return self.start_cap if self.start_cap is not None else self.cap
+
+    @property
+    def effective_end_cap(self) -> str:
+        """Resolved cap for the end end."""
+        return self.end_cap if self.end_cap is not None else self.cap
+
+    def get_required_markers(self) -> list[tuple[str, str]]:
+        """Collect SVG marker definitions needed by this path's caps."""
+        return collect_markers(self.cap, self.start_cap, self.end_cap, self.width, self.color)
+
     def to_svg(self) -> str:
         """Render to SVG path element."""
         if not self._bezier_segments:
             return ""
 
-        svg_cap, marker_attrs = self._svg_cap_and_marker_attrs()
+        svg_cap, marker_attrs = svg_cap_and_marker_attrs(
+            self.cap, self.start_cap, self.end_cap, self.width, self.color
+        )
 
         segs = self._bezier_segments
 

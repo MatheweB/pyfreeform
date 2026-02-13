@@ -98,58 +98,63 @@ def get_marker(
     return (mid, svg)
 
 
-# ---------------------------------------------------------------------------
-# Built-in marker caps: arrow, arrow_in
-# ---------------------------------------------------------------------------
-#
-# Arrow shapes:
-#   FORWARD  = "M 0 0 L 10 5 L 0 10 z"   (points right → outward)
-#   REVERSE  = "M 10 0 L 0 5 L 10 10 z"   (points left  → inward)
-#
-# Positioning rule — refX must always align the marker's reference point
-# with the path endpoint it's attached to:
-#   marker-end   → refX="10"  (right edge = path endpoint)
-#   marker-start → refX="0"   (left edge  = path endpoint)
-#
-# This means each (shape x position) combination needs its own generator:
-#
-#   cap        position     shape      refX
-#   ─────────  ──────────   ─────────  ────
-#   arrow      end          FORWARD    10
-#   arrow      start        REVERSE     0
-#   arrow_in   end          REVERSE    10
-#   arrow_in   start        FORWARD     0
+def collect_markers(
+    cap: str,
+    start_cap: str | None,
+    end_cap: str | None,
+    width: float,
+    color: str,
+) -> list[tuple[str, str]]:
+    """Collect SVG marker definitions needed for the given cap configuration.
 
-_FORWARD = "M 0 0 L 10 5 L 0 10 z"
-_REVERSE = "M 10 0 L 0 5 L 10 10 z"
+    Returns:
+        List of (marker_id, marker_svg) tuples.
+    """
+    effective_sc = start_cap if start_cap is not None else cap
+    effective_ec = end_cap if end_cap is not None else cap
+    markers: list[tuple[str, str]] = []
+    size = width * DEFAULT_ARROW_SCALE
+    for cap_name, for_start in ((effective_sc, True), (effective_ec, False)):
+        result = get_marker(cap_name, color, size, for_start=for_start)
+        if result is not None:
+            markers.append(result)
+    return markers
 
 
-def _make_arrow_gen(path_d: str, ref_x: int):
-    """Create an arrow marker generator with the given shape and refX."""
+def svg_cap_and_marker_attrs(
+    cap: str,
+    start_cap: str | None,
+    end_cap: str | None,
+    width: float,
+    color: str,
+) -> tuple[str, str]:
+    """Compute SVG stroke-linecap value and marker attribute string.
 
-    def _gen(marker_id: str, color: str, size: float) -> str:
-        return (
-            f'<marker id="{marker_id}" viewBox="0 0 10 10" '
-            f'refX="{ref_x}" refY="5" '
-            f'markerWidth="{size}" markerHeight="{size}" '
-            f'orient="auto" overflow="visible">'
-            f'<path d="{path_d}" fill="{color}" />'
-            f"</marker>"
-        )
+    Returns:
+        (svg_cap, marker_attrs_str) where svg_cap is "butt", "round",
+        or "square", and marker_attrs_str contains any marker-start/
+        marker-end attributes (or empty string).
+    """
+    effective_sc = start_cap if start_cap is not None else cap
+    effective_ec = end_cap if end_cap is not None else cap
+    has_marker_start = is_marker_cap(effective_sc)
+    has_marker_end = is_marker_cap(effective_ec)
 
-    return _gen
+    svg_cap = cap
 
+    parts: list[str] = []
+    size = width * DEFAULT_ARROW_SCALE
+    if has_marker_start:
+        mid = make_marker_id(effective_sc, color, size, for_start=True)
+        parts.append(f' marker-start="url(#{mid})"')
+    if has_marker_end:
+        mid = make_marker_id(effective_ec, color, size, for_start=False)
+        parts.append(f' marker-end="url(#{mid})"')
 
-# "arrow" — outward-facing (default): tip points away from the path.
-register_cap(
-    "arrow",
-    _make_arrow_gen(_FORWARD, ref_x=10),  # end: → at endpoint
-    start_generator=_make_arrow_gen(_REVERSE, ref_x=0),  # start: ← at startpoint
-)
+    # When any marker cap is present, use "butt" linecap so the stroke
+    # ends flush at the endpoint — prevents round/square caps from
+    # poking out past the arrow tip.
+    if has_marker_start or has_marker_end:
+        svg_cap = "butt"
 
-# "arrow_in" — inward-facing: tip points into the path.
-register_cap(
-    "arrow_in",
-    _make_arrow_gen(_REVERSE, ref_x=10),  # end: ← at endpoint
-    start_generator=_make_arrow_gen(_FORWARD, ref_x=0),  # start: → at startpoint
-)
+    return svg_cap, "".join(parts)

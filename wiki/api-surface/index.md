@@ -1114,26 +1114,51 @@ Methods: `with_background(color)`, `inverted()`, `all_colors()`, iteration.
 
 ## 10. Cap System
 
-Line/Curve/Connection endpoints support custom caps:
+Line, Curve, Path, and Connection endpoints support caps. SVG provides three native caps (`"round"`, `"square"`, `"butt"`). PyFreeform extends this with marker-based caps that use SVG `<marker>` elements.
 
-| Built-in Cap | Description |
-|---|---|
-| `"round"` | Standard SVG round cap |
-| `"square"` | SVG square cap |
-| `"butt"` | SVG butt cap (flat) |
-| `"arrow"` | Arrowhead marker at endpoint |
-| `"arrow_in"` | Inward-pointing arrowhead |
+| Built-in Cap | Type | Description |
+|---|---|---|
+| `"round"` | SVG native | Semicircle extending past the endpoint |
+| `"square"` | SVG native | Rectangle extending past the endpoint |
+| `"butt"` | SVG native | Flat end, flush with the endpoint |
+| `"arrow"` | Marker | Arrowhead pointing away from the path |
+| `"arrow_in"` | Marker | Arrowhead pointing into the path |
 
 Per-end caps: `start_cap` and `end_cap` override the base `cap`:
 ```python
 cell.add_line(start="left", end="right", cap="round", end_cap="arrow")
 ```
 
-Custom caps via registry:
+### Creating custom caps
+
+Cap shapes are defined in `config/cap_shapes.py`. To add a new cap, write a generator function that receives `(marker_id, color_hex, size)` and returns a complete SVG `<marker>` element, then register it:
+
 ```python
 from pyfreeform import register_cap
-register_cap("diamond", my_diamond_generator)
+
+def _diamond_marker(marker_id, color, size):
+    return (
+        f'<marker id="{marker_id}" viewBox="0 0 10 10" '
+        f'refX="5" refY="5" markerWidth="{size}" markerHeight="{size}" '
+        f'orient="auto" overflow="visible">'
+        f'<polygon points="5,0 10,5 5,10 0,5" fill="{color}" />'
+        f'</marker>'
+    )
+
+register_cap("diamond", _diamond_marker)
 ```
+
+Then use it like any built-in cap:
+```python
+cell.add_line(start="left", end="right", end_cap="diamond")
+```
+
+If the cap looks different when reversed (like arrows do), pass a separate `start_generator`:
+```python
+register_cap("my_arrow", forward_gen, start_generator=reverse_gen)
+```
+
+The `refX`/`refY` attributes control where the marker's reference point aligns with the path endpoint. See the built-in arrow definitions in `config/cap_shapes.py` for a complete example.
 
 ---
 

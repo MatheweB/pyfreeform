@@ -6,17 +6,17 @@ import math
 from typing import TYPE_CHECKING
 
 from ..color import Color
+from ..config.caps import collect_markers, svg_cap_and_marker_attrs
 from ..config.styles import ConnectionStyle
 from .bezier import curvature_control_point, eval_cubic, quadratic_to_cubic
 from .coord import Coord
-from .stroked_path_mixin import StrokedPathMixin
 
 if TYPE_CHECKING:
     from ..entities.path import Path
     from .entity import Entity
 
 
-class Connection(StrokedPathMixin):
+class Connection:
     """
     A connection between two entities.
 
@@ -215,6 +215,20 @@ class Connection(StrokedPathMixin):
         """The custom path geometry, or None."""
         return self._path
 
+    @property
+    def effective_start_cap(self) -> str:
+        """Resolved cap for the start end."""
+        return self.start_cap if self.start_cap is not None else self.cap
+
+    @property
+    def effective_end_cap(self) -> str:
+        """Resolved cap for the end end."""
+        return self.end_cap if self.end_cap is not None else self.cap
+
+    def get_required_markers(self) -> list[tuple[str, str]]:
+        """Collect SVG marker definitions needed by this connection's caps."""
+        return collect_markers(self.cap, self.start_cap, self.end_cap, self.width, self.color)
+
     # --- Affine transform (source space → world space) ---
 
     def _compute_transform(self) -> tuple[float, float, float, Coord, Coord] | None:
@@ -359,7 +373,9 @@ class Connection(StrokedPathMixin):
         if self._shape_kind == "line":
             p1 = self.start_point
             p2 = self.end_point
-            svg_cap, marker_attrs = self._svg_cap_and_marker_attrs()
+            svg_cap, marker_attrs = svg_cap_and_marker_attrs(
+                self.cap, self.start_cap, self.end_cap, self.width, self.color
+            )
             parts = [
                 f'<line x1="{p1.x}" y1="{p1.y}" '
                 f'x2="{p2.x}" y2="{p2.y}" '
@@ -375,7 +391,9 @@ class Connection(StrokedPathMixin):
 
         # Curve or path — render as <path>
         d_attr = self.to_svg_path_d()
-        svg_cap, marker_attrs = self._svg_cap_and_marker_attrs()
+        svg_cap, marker_attrs = svg_cap_and_marker_attrs(
+            self.cap, self.start_cap, self.end_cap, self.width, self.color
+        )
 
         parts = [
             f'<path d="{d_attr}" '
