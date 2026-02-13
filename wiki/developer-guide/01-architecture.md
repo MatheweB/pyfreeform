@@ -260,7 +260,7 @@ def make_marker_id(cap_name, color, size, *, for_start=False):
 
 ### Composition over inheritance
 
-Surfaces contain entities; entities reference their surface. There is no deep inheritance tree. Cap/marker behavior is shared through explicit free functions (`collect_markers`, `svg_cap_and_marker_attrs`) rather than mixins or deeper class hierarchies.
+Surfaces contain entities; entities reference their surface. There is no deep inheritance tree.
 
 ### Connectable protocol
 

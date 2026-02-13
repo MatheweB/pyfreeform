@@ -108,10 +108,20 @@ nav:
     - Connected Networks: recipes/04-connected-networks.md
     - Typographic Art: recipes/05-typographic-art.md
     - Advanced Compositions: recipes/06-advanced-compositions.md
-  - API Surface: api-surface/index.md
+  - API Reference:
+    - api-reference/index.md
+    - Scene: api-reference/scene.md
+    - Grid & Cells: api-reference/grid-and-cells.md
+    - Drawing: api-reference/drawing.md
+    - Entities: api-reference/entities.md
+    - Connections & Paths: api-reference/connections.md
+    - Transforms: api-reference/transforms.md
+    - Styling & Caps: api-reference/styling.md
+    - Types & Utilities: api-reference/types.md
   - Developer Guide:
     - developer-guide/index.md
     - Architecture Overview: developer-guide/01-architecture.md
     - Creating Custom Entities: developer-guide/02-creating-entities.md
     - The Pathable Protocol: developer-guide/03-pathable-protocol.md
+    - Internal API Reference: developer-guide/04-internals.md
   - Gallery: gallery/index.md

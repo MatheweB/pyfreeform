@@ -76,13 +76,13 @@ scene.save("artwork.svg")
 
     [Browse recipes &rarr;](recipes/01-image-to-art.md)
 
--   **API Surface**
+-   **API Reference**
 
     ---
 
     Comprehensive reference for every class, method, and parameter.
 
-    [Explore the API &rarr;](api-surface/index.md)
+    [Explore the API &rarr;](api-reference/index.md)
 
 </div>
 

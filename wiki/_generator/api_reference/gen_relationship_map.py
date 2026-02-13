@@ -321,4 +321,4 @@ def generate():
         label_dx=-35,
     )
 
-    save(scene, "api-surface/relationship-map.svg")
+    save(scene, "api-reference/relationship-map.svg")

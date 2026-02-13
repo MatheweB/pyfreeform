@@ -76,7 +76,7 @@ wave = Path.Wave(start=(cx - 10, cy), end=(cx + 10, cy), amplitude=8, frequency=
 cell.add_path(wave, segments=32, width=1.5, color=colors.primary)
 ```
 
-All four work with `add_path()`, `along=`/`t=` positioning, and as connection shapes. See the [API Reference](../api-surface/index.md#built-in-path-shapes) for full parameter details.
+All four work with `add_path()`, `along=`/`t=` positioning, and as connection shapes. See [Connections & Paths](../api-reference/connections.md#built-in-path-shapes) for full parameter details.
 
 ### Filled Closed Paths
 

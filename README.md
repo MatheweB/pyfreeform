@@ -55,7 +55,7 @@ Everything you need is in the docs:
 - [**Getting Started**](https://matheweb.github.io/pyfreeform/getting-started/) — install and create your first artwork
 - [**Guide**](https://matheweb.github.io/pyfreeform/guide/) — every feature, explained visually
 - [**Recipes**](https://matheweb.github.io/pyfreeform/recipes/) — portraits, patterns, typography, networks
-- [**API Surface**](https://matheweb.github.io/pyfreeform/api-surface/) — complete reference
+- [**API Reference**](https://matheweb.github.io/pyfreeform/api-reference/) — complete reference
 
 ## License
 
