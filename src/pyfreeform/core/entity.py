@@ -29,8 +29,6 @@ def shape_opacity_attrs(
 
 if TYPE_CHECKING:
     from ..config.styles import ConnectionStyle
-    from ..entities.curve import Curve
-    from ..entities.line import Line
     from ..entities.path import Path
     from .pathable import Pathable
     from .surface import Surface
@@ -393,7 +391,9 @@ class Entity(ABC):
         start_anchor: str = "center",
         end_anchor: str = "center",
         *,
-        shape: Line | Curve | Path | None = None,
+        path: Path | None = None,
+        curvature: float | None = None,
+        visible: bool = True,
         width: float = 1,
         color: str = "black",
         z_index: int = 0,
@@ -411,8 +411,11 @@ class Entity(ABC):
             other: The entity to connect to.
             start_anchor: Anchor name on this entity.
             end_anchor: Anchor name on the other entity.
-            shape: Visual shape — Line(), Curve(), Path(), or None
-                   for invisible.
+            path: Custom path geometry (e.g. Path.Wave()). For simple arcs
+                  use ``curvature`` instead.
+            curvature: Arc curvature (-1 to 1). Positive bows left,
+                       negative bows right. Cannot be used with ``path``.
+            visible: Whether the connection renders. Default True.
             width: Line width in pixels.
             color: Line color.
             z_index: Layer order (higher = on top).
@@ -421,7 +424,7 @@ class Entity(ABC):
             end_cap: Override cap for end end (e.g. "arrow").
             opacity: Opacity (0.0 transparent to 1.0 opaque).
             style: ConnectionStyle object (overrides individual params).
-            segments: Number of Bézier segments for shape rendering.
+            segments: Number of Bézier segments for path rendering.
 
         Returns:
             The created Connection.
@@ -432,7 +435,9 @@ class Entity(ABC):
             end=other,
             start_anchor=start_anchor,
             end_anchor=end_anchor,
-            shape=shape,
+            path=path,
+            curvature=curvature,
+            visible=visible,
             width=width,
             color=color,
             z_index=z_index,

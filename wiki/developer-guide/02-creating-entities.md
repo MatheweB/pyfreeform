@@ -328,7 +328,7 @@ ch2 = CrossHair(200, 150, size=15, color="navy")
 scene.place(ch1, ch2)
 
 # Connect right anchor of ch1 to left anchor of ch2
-ch1.connect(ch2, shape=Line(), start_anchor="right", end_anchor="left",
+ch1.connect(ch2, start_anchor="right", end_anchor="left",
             style={"color": "gray", "width": 1})
 ```
 

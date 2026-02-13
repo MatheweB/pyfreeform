@@ -183,7 +183,7 @@ This is already a fully functional pathable. You can use it immediately:
 
 ```python
 scene = Scene.with_grid(cols=20, rows=20, cell_size=15)
-liss = Lissajous(center=scene.grid[10][10].center, a=3, b=2, size=80)
+liss = Lissajous(center=scene.grid[10, 10].center, a=3, b=2, size=80)
 
 for cell in scene.grid:
     cell.add_dot(along=liss, t=cell.brightness, color="coral", radius=0.15)
@@ -303,7 +303,6 @@ import math
 from ..core.coord import Coord, CoordLike
 from .base import PathShape
 
-from pyfreeform.core.coord import Coord
 
 class Lissajous(PathShape):
     """
@@ -397,13 +396,44 @@ scene.add_text(
 )
 ```
 
+## Closed Paths and Connections
+
+Some pathables are **closed loops** — `point_at(0)` and `point_at(1)` return the same point. The built-in `Lissajous` shape is closed; `Wave`, `Spiral`, and `Zigzag` are open.
+
+PathShape subclasses expose this via the `is_closed` property:
+
+```python
+Path.Lissajous().is_closed   # True
+Path.Wave().is_closed         # False
+```
+
+Closed paths cannot be used directly as connection shapes (the zero-length chord breaks the affine transform). Use `start_t`/`end_t` to take an arc:
+
+```python
+# Take the first half of a Lissajous as a connection shape
+liss_arc = Path(Path.Lissajous(size=50), start_t=0, end_t=0.5)
+dot_a.connect(dot_b, path=liss_arc)
+
+# A quarter-arc works too
+quarter = Path(Path.Lissajous(), start_t=0.1, end_t=0.4)
+dot_a.connect(dot_b, path=quarter)
+```
+
+This same pattern works for any closed pathable, including `Ellipse`:
+
+```python
+ellipse_arc = Path(my_ellipse, start_t=0, end_t=0.5)
+dot_a.connect(dot_b, path=ellipse_arc)
+```
+
 ## Protocol Summary
 
-| Method | Required? | Enables |
+| Method / Property | Required? | Enables |
 |---|---|---|
 | `point_at(t) -> Coord` | **Yes** | `along=`/`t=` positioning for all builder methods |
 | `angle_at(t) -> float` | No | Exact tangent for `align=True` (fallback: numeric diff) |
 | `arc_length() -> float` | No | Auto font sizing for textPath mode |
 | `to_svg_path_d() -> str` | No | textPath warping (`add_text(along=...)` without `t`) |
+| `is_closed -> bool` | No | Indicates closed loop; affects `to_svg_path_d()` output |
 
 The minimum viable pathable is a class with a single `point_at(t)` method. Everything else is optional and adds capabilities incrementally.

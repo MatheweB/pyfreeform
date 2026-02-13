@@ -62,6 +62,10 @@ class Path(StrokedPathMixin, Entity):
         >>> ellipse = Ellipse(100, 100, rx=50, ry=30)
         >>> arc = Path(ellipse, start_t=0.0, end_t=0.25, color="red", width=2)
 
+        >>> # Arc of a closed path as connection shape:
+        >>> liss_arc = Path(Path.Lissajous(), start_t=0, end_t=0.5)
+        >>> dot_a.connect(dot_b, path=liss_arc)
+
         >>> # In a cell:
         >>> spiral = Spiral(center=cell.center, start_radius=5, end_radius=40, turns=3)
         >>> cell.add_path(spiral, color="red", width=1)
@@ -307,12 +311,29 @@ class Path(StrokedPathMixin, Entity):
         return "".join(parts)
 
     def connection_data(self, segments: int = 32) -> tuple[str, list]:
-        """Return shape kind and bezier data for Connection dispatch."""
+        """Return shape kind and bezier data for Connection dispatch.
+
+        Raises:
+            ValueError: If the path is closed or has a degenerate chord
+                (start and end coincide). Use ``start_t``/``end_t`` to
+                take an arc from closed paths.
+        """
         if self._closed:
             raise ValueError(
                 "Closed paths cannot be used as connection shapes. "
-                "Use Path(pathable, start_t=0, end_t=0.25) for an arc."
+                "Use start_t/end_t to take an arc, e.g.: "
+                "Path(pathable, start_t=0, end_t=0.5)"
             )
+        # Detect degenerate chord (e.g. inherently closed pathable without closed=True)
+        if self._bezier_segments:
+            p0 = self._bezier_segments[0][0]
+            pN = self._bezier_segments[-1][3]
+            if math.hypot(pN.x - p0.x, pN.y - p0.y) < 1e-6:
+                raise ValueError(
+                    "This path's start and end coincide (zero-length chord). "
+                    "Use start_t/end_t to take an arc, e.g.: "
+                    "Path(pathable, start_t=0, end_t=0.5)"
+                )
         return ("path", list(self._bezier_segments))
 
     @staticmethod

@@ -24,10 +24,10 @@ class Wave(PathShape):
             wave = Wave(start=(50, 100), end=(550, 100), amplitude=40, frequency=4)
             scene.add_path(wave, width=2, color="blue")
 
-        Connection shape::
+        Connection path::
 
             wave = Wave(amplitude=0.15, frequency=3)
-            conn = dot_a.connect(dot_b, shape=Path(wave), style=style)
+            conn = dot_a.connect(dot_b, path=Path(wave), style=style)
 
         In a cell::
 

@@ -3,8 +3,6 @@
 from pyfreeform import (
     Scene,
     Palette,
-    Line,
-    Curve,
     Text,
     ConnectionStyle,
 )
@@ -83,7 +81,7 @@ def generate():
         a,
         b,
         style,
-        shape=None,
+        curvature=None,
         label=None,
         start_anchor="center",
         end_anchor="center",
@@ -92,11 +90,9 @@ def generate():
         label_t=0.5,
     ):
         """Connect two entities and optionally label the midpoint."""
-        if shape is None:
-            shape = Line()
         conn = a.connect(
             b,
-            shape=shape,
+            curvature=curvature,
             style=style,
             start_anchor=start_anchor,
             end_anchor=end_anchor,
@@ -278,7 +274,7 @@ def generate():
         grid_box,
         cg_box,
         ARROW,
-        shape=Curve(curvature=-0.3),
+        curvature=-0.3,
         start_anchor="bottom_right",
         end_anchor="top",
         label=".merge()",
@@ -306,7 +302,7 @@ def generate():
         entity_box,
         conn_box,
         ARROW,
-        shape=Curve(curvature=-0.45),
+        curvature=-0.45,
         start_anchor="right",
         end_anchor="top",
         label=".connect()",

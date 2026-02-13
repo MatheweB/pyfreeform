@@ -11,7 +11,7 @@ from pyfreeform import (
     Dot,
     get_angle_at,
     Point,
-    Connection
+    Connection,
 )
 from pyfreeform.core.coord import Coord
 
@@ -68,7 +68,7 @@ class TestAngleAt:
     def test_connection_angle_at(self):
         dot1 = Dot(0, 0)
         dot2 = Dot(100, 0)
-        conn = Connection(dot1, dot2, shape=Line())
+        conn = Connection(dot1, dot2)
         assert conn.angle_at(0.5) == pytest.approx(0.0)
 
 
@@ -117,17 +117,17 @@ class TestToSvgPathD:
     def test_connection_path_d(self):
         dot1 = Dot(10, 20)
         dot2 = Dot(30, 40)
-        conn = Connection(dot1, dot2, shape=Line())
+        conn = Connection(dot1, dot2)
         d = conn.to_svg_path_d()
-        # Line shape → direct M L, no bezier overhead
+        # Line → direct M L, no bezier overhead
         assert d == "M 10 20 L 30 40"
 
     def test_connection_curve_path_d(self):
         dot1 = Dot(10, 20)
         dot2 = Dot(30, 40)
-        conn = Connection(dot1, dot2, shape=Curve(curvature=0.5))
+        conn = Connection(dot1, dot2, curvature=0.5)
         d = conn.to_svg_path_d()
-        # Curve shape → single cubic bezier (exact degree elevation)
+        # Curve → single cubic bezier (exact degree elevation)
         assert d.startswith("M ")
         assert "C " in d
 
@@ -151,7 +151,7 @@ class TestStrokedPathMixin:
     def test_connection_svg_has_arrow_marker(self):
         dot1 = Dot(0, 0)
         dot2 = Dot(100, 0)
-        conn = Connection(dot1, dot2, end_cap="arrow", shape=Line())
+        conn = Connection(dot1, dot2, end_cap="arrow")
         svg = conn.to_svg()
         assert "marker-end=" in svg
 

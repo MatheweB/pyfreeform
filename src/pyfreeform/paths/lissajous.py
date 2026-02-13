@@ -12,11 +12,18 @@ class Lissajous(PathShape):
     """
     Lissajous curve: ``x = size * sin(a*t + delta)``, ``y = size * sin(b*t)``.
 
-    A closed curve when ``a/b`` is rational. Common ratios:
+    A closed curve (``is_closed = True``) when ``a/b`` is rational.
+    Common ratios:
 
     - ``a=3, b=2`` — figure-eight variant
     - ``a=1, b=2`` — parabola-like
     - ``a=5, b=4`` — complex knot
+
+    Because this is a closed loop, using it directly as a connection shape
+    will raise ``ValueError``. Use ``start_t``/``end_t`` to take an arc::
+
+        arc = Path(Lissajous(), start_t=0, end_t=0.5)
+        dot_a.connect(dot_b, path=arc)
 
     Examples:
         Standalone closed path::
@@ -24,10 +31,10 @@ class Lissajous(PathShape):
             liss = Lissajous(center=(200, 200), a=3, b=2, size=80)
             scene.add_path(liss, closed=True, fill="lightblue", color="navy")
 
-        Connection shape::
+        Connection via arc::
 
             liss = Lissajous(a=3, b=2, size=50)
-            conn = dot_a.connect(dot_b, shape=Path(liss, end_t=0.99))
+            conn = dot_a.connect(dot_b, path=Path(liss, start_t=0, end_t=0.5))
 
         Position dots along curve::
 
@@ -48,6 +55,11 @@ class Lissajous(PathShape):
         self.b = b
         self.delta = delta
         self.size = size
+
+    @property
+    def is_closed(self) -> bool:
+        """Lissajous curves are closed loops."""
+        return True
 
     def point_at(self, t: float) -> Coord:
         """Get point at parameter *t* (0.0 to 1.0)."""

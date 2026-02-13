@@ -5,6 +5,7 @@ from __future__ import annotations
 import math
 
 from ..color import Color
+from ..core.bezier import curvature_control_point, quadratic_to_cubic
 from ..core.coord import Coord, CoordLike
 from ..core.relcoord import RelCoord
 from ..core.entity import Entity
@@ -205,28 +206,7 @@ class Curve(StrokedPathMixin, Entity):
 
     def _calculate_control(self) -> Coord:
         """Calculate control point from curvature."""
-        # Midpoint of the line
-        mid = self.start.midpoint(self.end)
-
-        if self._curvature == 0:
-            return mid
-
-        # Vector from start to end
-        dx = self.end.x - self.start.x
-        dy = self.end.y - self.start.y
-        length = math.sqrt(dx * dx + dy * dy)
-
-        if length == 0:
-            return mid
-
-        # Perpendicular vector (rotated 90 degrees counterclockwise)
-        perp_x = -dy / length
-        perp_y = dx / length
-
-        # Offset by curvature * half the length
-        offset = self._curvature * length * 0.5
-
-        return Coord(mid.x + perp_x * offset, mid.y + perp_y * offset)
+        return curvature_control_point(self.start, self.end, self._curvature)
 
     @property
     def color(self) -> str:
@@ -340,11 +320,7 @@ class Curve(StrokedPathMixin, Entity):
 
     def connection_data(self, segments: int = 32) -> tuple[str, list]:
         """Return shape kind and bezier data for Connection dispatch."""
-        P0, Q, P2 = self.start, self.control, self.end
-        # Exact degree elevation: quadratic → cubic
-        CP1 = Coord(P0.x + 2 / 3 * (Q.x - P0.x), P0.y + 2 / 3 * (Q.y - P0.y))
-        CP2 = Coord(P2.x + 2 / 3 * (Q.x - P2.x), P2.y + 2 / 3 * (Q.y - P2.y))
-        return ("curve", [(P0, CP1, CP2, P2)])
+        return ("curve", [quadratic_to_cubic(self.start, self.control, self.end)])
 
     @staticmethod
     def _quad_bezier_bounds(

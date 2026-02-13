@@ -24,10 +24,10 @@ class Zigzag(PathShape):
             zz = Zigzag(start=(50, 100), end=(550, 100), teeth=8, amplitude=20)
             scene.add_path(zz, width=2, color="orange")
 
-        Connection shape::
+        Connection path::
 
             zz = Zigzag(teeth=6, amplitude=0.12)
-            conn = dot_a.connect(dot_b, shape=Path(zz), style=style)
+            conn = dot_a.connect(dot_b, path=Path(zz), style=style)
     """
 
     def __init__(

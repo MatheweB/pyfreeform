@@ -650,7 +650,7 @@ class Surface:
             The created Path entity.
 
         Examples:
-            >>> wave = Wave(start=cell.center, end=cell.right_center, amplitude=10, frequency=3)
+            >>> wave = Wave(start=cell.center, end=cell.top_right, amplitude=10, frequency=3)
             >>> cell.add_path(wave, color="blue", width=2)
             >>> # Arc of an ellipse (quarter circle):
             >>> ellipse = cell.add_ellipse(rx=0.4, ry=0.4)

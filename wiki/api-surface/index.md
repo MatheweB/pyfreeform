@@ -899,33 +899,38 @@ Where `t` ranges from 0.0 (start) to 1.0 (end). This enables the `along`/`t` par
 
 These methods enable additional features when present:
 
-| Method | Used By | Description |
+| Method / Property | Used By | Description |
 |---|---|---|
 | `arc_length()` | `add_text(along=)` | Total path length for text sizing |
 | `angle_at(t)` | `get_angle_at()` | Tangent angle for alignment |
 | `to_svg_path_d()` | `add_text(along=)` | SVG path for `<textPath>` warping |
+| `is_closed` | `to_svg_path_d()` | Whether start and end coincide (closed loop) |
 
 ### Built-in Path Shapes
 
 Ready-to-use pathable classes, accessible as nested classes on `Path`. All four inherit from `PathShape` (`pyfreeform.paths.base`), which provides shared `arc_length()` and `to_svg_path_d()` implementations — subclasses only need to implement `point_at(t)` and `angle_at(t)`.
 
-| Shape | Description | Parameters |
-|---|---|---|
-| `Path.Wave(start, end, amplitude, frequency)` | Sinusoidal wave | Defaults to `(0,0)->(1,0)`, `amplitude=0.15`, `frequency=2` |
-| `Path.Spiral(center, start_radius, end_radius, turns)` | Archimedean spiral | Defaults to center `(0,0)`, `start_radius=0`, `end_radius=50`, `turns=3` |
-| `Path.Lissajous(center, a, b, delta, size)` | Lissajous curve | Defaults to center `(0,0)`, `a=3`, `b=2`, `delta=pi/2`, `size=50` |
-| `Path.Zigzag(start, end, teeth, amplitude)` | Triangle wave | Defaults to `(0,0)->(1,0)`, `teeth=5`, `amplitude=0.12` |
+| Shape | Description | Closed? | Parameters |
+|---|---|---|---|
+| `Path.Wave(start, end, amplitude, frequency)` | Sinusoidal wave | No | Defaults to `(0,0)->(1,0)`, `amplitude=0.15`, `frequency=2` |
+| `Path.Spiral(center, start_radius, end_radius, turns)` | Archimedean spiral | No | Defaults to center `(0,0)`, `start_radius=0`, `end_radius=50`, `turns=3` |
+| `Path.Lissajous(center, a, b, delta, size)` | Lissajous curve | **Yes** | Defaults to center `(0,0)`, `a=3`, `b=2`, `delta=pi/2`, `size=50` |
+| `Path.Zigzag(start, end, teeth, amplitude)` | Triangle wave | No | Defaults to `(0,0)->(1,0)`, `teeth=5`, `amplitude=0.12` |
 
-All four implement the full Pathable interface: `point_at(t)`, `angle_at(t)`, `arc_length()`, and `to_svg_path_d()`.
+All four implement the full Pathable interface: `point_at(t)`, `angle_at(t)`, `arc_length()`, `to_svg_path_d()`, and the `is_closed` property.
 
 ```python
 # As a standalone path
 spiral = Path.Spiral(center=cell.center, end_radius=40, turns=3)
 cell.add_path(spiral, width=1.5, color="coral")
 
-# As a connection shape
+# As a connection path (open shapes work directly)
 wave = Path.Wave(amplitude=0.15, frequency=3)
-conn = dot_a.connect(dot_b, shape=Path(wave), style=style)
+conn = dot_a.connect(dot_b, path=Path(wave), style=style)
+
+# Closed shapes need start_t/end_t to create an arc for connections
+liss_arc = Path(Path.Lissajous(size=50), start_t=0, end_t=0.5)
+conn = dot_a.connect(dot_b, path=liss_arc)
 ```
 
 ### Custom Path Shapes
@@ -940,11 +945,11 @@ Any object with `point_at(t: float) -> Coord` works as a path. See the [Pathable
 
 ## 7. Connections
 
-**Links between entities** that auto-update when entities move. By default, connections are **invisible** — they encode a relationship without rendering anything. Pass a `shape` to give them visual form.
+**Links between entities** that auto-update when entities move. Connections are **visible by default** as a straight line. Use `curvature=` for arcs, `path=` for custom paths, or `visible=False` for invisible relationships.
 
 ```python
 Connection(start, end, start_anchor="center", end_anchor="center",
-           style=None, shape=None, segments=32)
+           visible=True, curvature=None, path=None, style=None, segments=32)
 ```
 
 Or via the entity method:
@@ -954,29 +959,30 @@ connection = entity1.connect(
     style=ConnectionStyle(...),
     start_anchor="center",
     end_anchor="center",
-    shape=Line(),       # or Curve(), Path(pathable), or None
+    curvature=0.3,      # or path=Path(pathable), or visible=False
     segments=32,
 )
 ```
 
-### Shape Options
+### Geometry Options
 
-| Shape | SVG Output | Notes |
+| Mode | SVG Output | Notes |
 |---|---|---|
-| `None` (default) | Nothing (`to_svg()` returns `""`) | Pure relationship — supports `point_at(t)` |
-| `Line()` | `<line>` element | Straight connection |
-| `Curve(curvature=0.3)` | Single cubic Bezier `<path>` | Arc; curvature controls bow direction and amount |
-| `Path(pathable)` | Fitted Bezier `<path>` | Any Pathable — wave, spiral, custom shape |
+| *(default)* | `<line>` element | Straight connection |
+| `curvature=0.3` | Single cubic Bézier `<path>` | Arc; curvature controls bow direction and amount |
+| `path=Path(pathable)` | Fitted Bézier `<path>` | Any Pathable — wave, spiral, custom shape |
+| `visible=False` | Nothing (`to_svg()` returns `""`) | Pure relationship — supports `point_at(t)` |
 
-!!! info "Shape coordinates are auto-mapped"
-    Shape objects define a template curve (e.g. `Line()` defaults to `(0,0)→(1,0)`). The shape is automatically stretched and rotated to connect the actual anchor positions at render time (affine transform).
+!!! info "Coordinates are auto-mapped"
+    For `curvature=`, the arc is built in normalized unit-chord space. For `path=`, the path geometry is pre-computed. Both are automatically stretched and rotated (affine transform) to connect the actual anchor positions at render time.
 
 - **`style`** accepts `ConnectionStyle` or `dict` with `width`, `color`, `z_index`, `cap` keys
-- **`shape=None`** (default) = invisible — `point_at(t)` still works (linear interpolation between anchors)
-- **`segments`** controls Bezier fitting resolution for `Path` shapes (default 32; ignored for Line/Curve)
+- **`visible=False`** = invisible — `point_at(t)` still works (linear interpolation between anchors)
+- **`curvature`** and **`path`** are mutually exclusive — passing both raises `ValueError`
+- **`segments`** controls Bézier fitting resolution for `path=` (default 32; ignored for line/curve)
 - Added to scene via `scene.add_connection(connection)` — `entity.connect()` creates the object but does **not** auto-add it
 - Supports cap system (arrow, arrow_in, custom) on all visible shapes
-- Closed paths (`Path(pathable, closed=True)`) cannot be used as shapes — raises `ValueError`
+- Closed paths (`Path(pathable, closed=True)`) cannot be used as connection paths — raises `ValueError`
 
 !!! warning "Connections must be added to the scene"
     `entity.connect()` returns a `Connection` but does **not** add it to the scene. Call `scene.add_connection(connection)` to make it render.

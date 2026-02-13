@@ -7,13 +7,13 @@
   <circle cx="40" cy="75" r="8.0" fill="#ff6b6b" />
   <circle cx="170" cy="75" r="8.0" fill="#4ecdc4" />
   <text x="105" y="135" font-size="11.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">Line</text>
-  <text x="105" y="25" font-size="9.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#888899" text-anchor="middle" dominant-baseline="middle">shape=Line()</text>
+  <text x="105" y="25" font-size="9.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#888899" text-anchor="middle" dominant-baseline="middle">connect(dot2)</text>
   <circle cx="220" cy="75" r="8.0" fill="#ff6b6b" />
   <circle cx="350" cy="75" r="8.0" fill="#4ecdc4" />
   <text x="285" y="135" font-size="11.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">Curve</text>
-  <text x="285" y="25" font-size="9.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#888899" text-anchor="middle" dominant-baseline="middle">shape=Curve()</text>
+  <text x="285" y="25" font-size="9.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#888899" text-anchor="middle" dominant-baseline="middle">curvature=0.4</text>
   <circle cx="400" cy="75" r="8.0" fill="#ff6b6b" />
   <circle cx="530" cy="75" r="8.0" fill="#4ecdc4" />
   <text x="465" y="135" font-size="11.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">Path (wave)</text>
-  <text x="465" y="25" font-size="9.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#888899" text-anchor="middle" dominant-baseline="middle">shape=Path(wave)</text>
+  <text x="465" y="25" font-size="9.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#888899" text-anchor="middle" dominant-baseline="middle">path=Path(wave)</text>
 </svg>

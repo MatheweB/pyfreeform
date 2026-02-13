@@ -266,15 +266,15 @@ Entity connections use `WeakSet` so that deleting a connection does not require 
 self._connections: WeakSet[Connection] = WeakSet()
 ```
 
-### Shaped connections
+### Connection geometry
 
-Connections optionally carry a `shape` — a `Line`, `Curve`, or `Path` entity that defines the visual form. The shape is processed at construction time based on its type:
+Connections support three geometry modes controlled by constructor arguments:
 
-- **Line**: No pre-computation. Rendered as a direct `<line>` between the live anchor positions.
-- **Curve**: The curve is converted to a precise cubic segment for rendering (degree elevation — no approximation loss).
-- **Path**: The pathable is sampled and fitted into smooth cubic segments via `fit_cubic_beziers()` in `core/bezier.py` (Hermite interpolation).
+- **Line** (default): No pre-computation. Rendered as a direct `<line>` between the live anchor positions.
+- **`curvature=`**: A normalized bezier arc is built from shared utilities in `core/bezier.py` (`curvature_control_point` + `quadratic_to_cubic`). The same degree-elevation math is shared with the `Curve` entity — no duplication.
+- **`path=`**: The pathable is sampled and fitted into smooth cubic segments via `fit_cubic_beziers()` in `core/bezier.py` (Hermite interpolation).
 
-At render time, the shape is automatically stretched and rotated (affine transform) to connect the actual anchor endpoints. When `shape=None` (the default), `to_svg()` returns an empty string — the connection is invisible but still queryable via `point_at(t)`.
+At render time, curve and path geometries are automatically stretched and rotated (affine transform) to connect the actual anchor endpoints. Pass `visible=False` to create an invisible connection — `to_svg()` returns an empty string but `point_at(t)` still works.
 
 ### Entity-reference vertices
 

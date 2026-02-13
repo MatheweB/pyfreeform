@@ -152,6 +152,69 @@ def clamp_control_points(
     return cp1, cp2
 
 
+def curvature_control_point(
+    start: Coord, end: Coord, curvature: float
+) -> Coord:
+    """
+    Compute a quadratic Bézier control point from a curvature value.
+
+    The control point sits at the midpoint of *start*→*end*, offset
+    perpendicularly by ``curvature × half_chord_length``.
+
+    Args:
+        start: Start of the chord.
+        end: End of the chord.
+        curvature: How much the curve bows (-1 to 1 typical).
+                   Positive = left (counterclockwise), negative = right.
+
+    Returns:
+        The quadratic Bézier control point.
+    """
+    mid_x = (start.x + end.x) / 2
+    mid_y = (start.y + end.y) / 2
+
+    if curvature == 0:
+        return Coord(mid_x, mid_y)
+
+    dx = end.x - start.x
+    dy = end.y - start.y
+    length = math.hypot(dx, dy)
+
+    if length == 0:
+        return Coord(mid_x, mid_y)
+
+    perp_x = -dy / length
+    perp_y = dx / length
+    offset = curvature * length * 0.5
+
+    return Coord(mid_x + perp_x * offset, mid_y + perp_y * offset)
+
+
+def quadratic_to_cubic(
+    p0: Coord, control: Coord, p2: Coord
+) -> tuple[Coord, Coord, Coord, Coord]:
+    """
+    Exact degree elevation: quadratic Bézier → cubic Bézier.
+
+    Args:
+        p0: Start point.
+        control: Quadratic control point.
+        p2: End point.
+
+    Returns:
+        (P0, CP1, CP2, P2) cubic Bézier tuple.
+    """
+    cp1 = Coord(
+        p0.x + 2 / 3 * (control.x - p0.x),
+        p0.y + 2 / 3 * (control.y - p0.y),
+    )
+    cp2 = Coord(
+        p2.x + 2 / 3 * (control.x - p2.x),
+        p2.y + 2 / 3 * (control.y - p2.y),
+    )
+    return (p0, cp1, cp2, p2)
+
+
 def eval_cubic(p0: Coord, cp1: Coord, cp2: Coord, p3: Coord, t: float) -> Coord:
     """Evaluate a cubic Bézier at parameter t."""
     mt = 1 - t

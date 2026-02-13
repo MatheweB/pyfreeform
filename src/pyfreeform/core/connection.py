@@ -6,13 +6,11 @@ import math
 from typing import TYPE_CHECKING, ClassVar
 
 from ..config.styles import ConnectionStyle
-from .bezier import eval_cubic
+from .bezier import curvature_control_point, eval_cubic, quadratic_to_cubic
 from .coord import Coord
 from .stroked_path_mixin import StrokedPathMixin
 
 if TYPE_CHECKING:
-    from ..entities.curve import Curve
-    from ..entities.line import Line
     from ..entities.path import Path
     from .entity import Entity
 
@@ -21,9 +19,8 @@ class Connection(StrokedPathMixin):
     """
     A connection between two entities.
 
-    Connections link entities together. By default, connections are invisible
-    — they represent a relationship without rendering anything. Pass a
-    ``shape`` to give the connection a visual form.
+    Connections link entities together with a visible line by default.
+    Use ``visible=False`` for invisible relationships.
 
     Attributes:
         start: The starting entity
@@ -31,17 +28,20 @@ class Connection(StrokedPathMixin):
         start_anchor: Name of anchor on start entity
         end_anchor: Name of anchor on end entity
         style: Visual style properties (width, color, etc.)
-        shape: The visual shape (Line, Curve, Path) or None for invisible
 
     Examples:
         >>> dot1 = Dot(100, 100)
         >>> dot2 = Dot(200, 200)
-        >>> # Invisible relationship
+        >>> # Visible straight line (default)
         >>> conn = dot1.connect(dot2)
-        >>> # Visible straight line
-        >>> conn = dot1.connect(dot2, shape=Line(), width=2, color="red")
-        >>> # Visible arc
-        >>> conn = dot1.connect(dot2, shape=Curve(curvature=0.3))
+        >>> # Styled line
+        >>> conn = dot1.connect(dot2, width=2, color="red")
+        >>> # Arc
+        >>> conn = dot1.connect(dot2, curvature=0.3)
+        >>> # Custom path
+        >>> conn = dot1.connect(dot2, path=Path.Wave())
+        >>> # Invisible relationship
+        >>> conn = dot1.connect(dot2, visible=False)
     """
 
     DEFAULT_STYLE: ClassVar[dict[str, str | int]] = {
@@ -58,7 +58,9 @@ class Connection(StrokedPathMixin):
         start_anchor: str = "center",
         end_anchor: str = "center",
         *,
-        shape: Line | Curve | Path | None = None,
+        path: Path | None = None,
+        curvature: float | None = None,
+        visible: bool = True,
         width: float = 1,
         color: str = "black",
         z_index: int = 0,
@@ -77,8 +79,11 @@ class Connection(StrokedPathMixin):
             end: The ending entity.
             start_anchor: Anchor name on start entity.
             end_anchor: Anchor name on end entity.
-            shape: Visual shape for the connection. None = invisible,
-                   Line() = straight line, Curve() = arc, Path(...) = custom.
+            path: Custom path geometry (e.g. Path.Wave()). For simple arcs
+                  use ``curvature`` instead.
+            curvature: Arc curvature (-1 to 1). Positive bows left,
+                       negative bows right. Cannot be used with ``path``.
+            visible: Whether the connection renders. Default True.
             width: Line width in pixels.
             color: Line color.
             z_index: Layer order (higher = on top).
@@ -87,13 +92,18 @@ class Connection(StrokedPathMixin):
             end_cap: Override cap for end end (e.g. "arrow").
             opacity: Opacity (0.0 transparent to 1.0 opaque).
             style: ConnectionStyle object (overrides individual params).
-            segments: Number of Bézier segments for shape rendering.
+            segments: Number of Bézier segments for path rendering.
         """
+        if curvature is not None and path is not None:
+            raise ValueError(
+                "Use 'curvature' for simple arcs or 'path' for custom paths, not both"
+            )
 
         self._start = start
         self._end = end
         self._start_anchor = start_anchor
         self._end_anchor = end_anchor
+        self._visible = visible
 
         # Style override (same pattern as add_dot, add_line, etc.)
         if style is not None:
@@ -120,17 +130,31 @@ class Connection(StrokedPathMixin):
         if opacity < 1.0:
             self._style["opacity"] = opacity
 
-        # Shape support — dispatch via connection_data() on the shape
-        self._shape = shape
-        self._shape_kind: str = "none"  # "none", "line", "curve", "path"
+        # Geometry: line (default), curve (curvature=), or path (path=)
+        self._curvature = curvature
+        self._path = path
+        self._shape_kind: str = "line"  # "line", "curve", "path"
         self._shape_beziers: list[tuple[Coord, Coord, Coord, Coord]] = []
         self._source_start: Coord | None = None
         self._source_end: Coord | None = None
 
-        if shape is not None:
-            self._source_start = shape.point_at(0.0)
-            self._source_end = shape.point_at(1.0)
-            self._shape_kind, self._shape_beziers = shape.connection_data(segments)
+        if path is not None:
+            self._shape_kind = "path"
+            self._source_start = path.point_at(0.0)
+            self._source_end = path.point_at(1.0)
+            _, self._shape_beziers = path.connection_data(segments)
+        elif curvature is not None:
+            self._shape_kind = "curve"
+            # Normalized unit-chord bezier; affine-transformed to entity
+            # positions at render time (same codepath as path=).
+            self._source_start = Coord(0, 0)
+            self._source_end = Coord(1, 0)
+            control = curvature_control_point(
+                self._source_start, self._source_end, curvature
+            )
+            self._shape_beziers = [
+                quadratic_to_cubic(self._source_start, control, self._source_end)
+            ]
 
         # Register with both entities
         start.add_connection(self)
@@ -235,15 +259,29 @@ class Connection(StrokedPathMixin):
         self._style["opacity"] = value
 
     @property
-    def shape(self):
-        """The visual shape, or None for invisible."""
-        return self._shape
+    def visible(self) -> bool:
+        """Whether this connection renders."""
+        return self._visible
 
-    # --- Affine transform (shape space → world space) ---
+    @visible.setter
+    def visible(self, value: bool) -> None:
+        self._visible = value
+
+    @property
+    def curvature(self) -> float | None:
+        """Arc curvature, or None for straight/path."""
+        return self._curvature
+
+    @property
+    def path(self):
+        """The custom path geometry, or None."""
+        return self._path
+
+    # --- Affine transform (source space → world space) ---
 
     def _compute_transform(self) -> tuple[float, float, float, Coord, Coord] | None:
         """
-        Compute affine transform mapping shape source chord to entity chord.
+        Compute affine transform mapping source chord to entity chord.
 
         Returns:
             (scale, cos_r, sin_r, source_start, target_start) or None.
@@ -278,7 +316,7 @@ class Connection(StrokedPathMixin):
         return (scale, cos_r, sin_r, ss, A)
 
     def _transform_point(self, p: Coord, xform: tuple[float, float, float, Coord, Coord]) -> Coord:
-        """Transform a point from shape space to world space."""
+        """Transform a point from source space to world space."""
         scale, cos_r, sin_r, ss, A = xform
         dx = p.x - ss.x
         dy = p.y - ss.y
@@ -296,10 +334,10 @@ class Connection(StrokedPathMixin):
         Returns:
             Coord at that position along the connection.
         """
-        if self._shape_kind in ("none", "line"):
-            # Invisible or straight line: lerp between entity endpoints
+        if self._shape_kind == "line":
             return self.start_point.lerp(self.end_point, t)
 
+        # Curve or path — evaluate beziers then affine-transform
         n = len(self._shape_beziers)
         t = max(0.0, min(1.0, t))
 
@@ -328,7 +366,7 @@ class Connection(StrokedPathMixin):
         Returns:
             Angle in degrees.
         """
-        if self._shape_kind in ("none", "line"):
+        if self._shape_kind == "line":
             p1 = self.start_point
             p2 = self.end_point
             dx = p2.x - p1.x
@@ -351,10 +389,11 @@ class Connection(StrokedPathMixin):
 
     def to_svg_path_d(self) -> str:
         """Return SVG path ``d`` attribute for this connection."""
-        if self._shape_kind in ("none", "line"):
+        if self._shape_kind == "line":
             p1, p2 = self.start_point, self.end_point
             return f"M {p1.x} {p1.y} L {p2.x} {p2.y}"
 
+        # Curve or path — transform stored beziers
         xform = self._compute_transform()
         if xform is None:
             p1 = self.start_point
@@ -376,11 +415,10 @@ class Connection(StrokedPathMixin):
 
     def to_svg(self) -> str:
         """Render connection as SVG element."""
-        if self._shape is None:
+        if not self._visible:
             return ""
 
         if self._shape_kind == "line":
-            # Line shape — render as <line>, no bezier overhead
             p1 = self.start_point
             p2 = self.end_point
             svg_cap, marker_attrs = self._svg_cap_and_marker_attrs()
@@ -397,7 +435,7 @@ class Connection(StrokedPathMixin):
             parts.append(" />")
             return "".join(parts)
 
-        # Shaped connection — render as <path>
+        # Curve or path — render as <path>
         d_attr = self.to_svg_path_d()
         svg_cap, marker_attrs = self._svg_cap_and_marker_attrs()
 
@@ -418,7 +456,14 @@ class Connection(StrokedPathMixin):
         return "".join(parts)
 
     def __repr__(self) -> str:
-        shape_str = type(self._shape).__name__ if self._shape else "invisible"
+        if not self._visible:
+            kind = "invisible"
+        elif self._shape_kind == "path":
+            kind = type(self._path).__name__
+        elif self._shape_kind == "curve":
+            kind = f"curve({self._curvature})"
+        else:
+            kind = "line"
         return (
-            f"Connection({self._start!r} -> {self._end!r}, shape={shape_str}, style={self._style})"
+            f"Connection({self._start!r} -> {self._end!r}, {kind}, style={self._style})"
         )
