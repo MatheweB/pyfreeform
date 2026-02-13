@@ -71,7 +71,8 @@ class Scene(Surface):
         self._background = Color(background) if background else None
 
         self._entities: list[Entity] = []
-        self._connections: list[Connection] = []
+        self._connections: set[Connection] = set()
+        self._data: dict = {}
         self._grids: list[Grid] = []
         self._primary_grid: Grid | None = None
         self._viewbox: tuple[float, float, float, float] | None = None
@@ -260,7 +261,7 @@ class Scene(Surface):
 
     @property
     def connections(self) -> list[Connection]:
-        """All connections (auto-collected from entities + explicitly added)."""
+        """All connections in the scene (auto-collected from entities and surfaces)."""
         return self._collect_connections()
 
     @property
@@ -269,23 +270,6 @@ class Scene(Surface):
         return list(self._grids)
 
     # --- Adding objects ---
-
-    def add_connection(self, connection: Connection) -> Connection:
-        """
-        Explicitly add a connection to the scene.
-
-        Connections are auto-collected from entities at render time, so
-        calling this is optional. Use it when you want to add a connection
-        that isn't attached to entities already in the scene.
-
-        Args:
-            connection: The Connection to add.
-
-        Returns:
-            The added connection (for chaining).
-        """
-        self._connections.append(connection)
-        return connection
 
     def add_grid(self, grid: Grid) -> Grid:
         """
@@ -326,22 +310,6 @@ class Scene(Surface):
                     return True
         return False
 
-    def remove_connection(self, connection: Connection) -> bool:
-        """
-        Remove a connection from the scene.
-
-        Args:
-            connection: The connection to remove.
-
-        Returns:
-            True if connection was found and removed.
-        """
-        if connection in self._connections:
-            self._connections.remove(connection)
-            connection.disconnect()
-            return True
-        return False
-
     def remove_grid(self, grid: Grid) -> bool:
         """
         Remove a grid from the scene.
@@ -378,10 +346,10 @@ class Scene(Surface):
     # --- Rendering ---
 
     def _collect_connections(self) -> list[Connection]:
-        """Collect connections from entities + explicit adds, deduplicated."""
+        """Collect all connections from entities + surfaces, deduplicated."""
         seen: set[int] = set()
         result: list[Connection] = []
-        # Explicit connections first (backward compat ordering)
+        # Scene's own connections (scene-as-endpoint)
         for conn in self._connections:
             seen.add(id(conn))
             result.append(conn)
@@ -392,6 +360,14 @@ class Scene(Surface):
                 if cid not in seen:
                     seen.add(cid)
                     result.append(conn)
+        # Auto-collect from grid cells
+        for grid in self._grids:
+            for cell in grid:
+                for conn in cell._connections:
+                    cid = id(conn)
+                    if cid not in seen:
+                        seen.add(cid)
+                        result.append(conn)
         return result
 
     def _collect_markers(
@@ -590,5 +566,5 @@ class Scene(Surface):
         return (
             f"Scene({self._width}x{self._height}{bg_str}, "
             f"{len(self.entities)} entities, "
-            f"{len(self._connections)} connections)"
+            f"{len(self._collect_connections())} connections)"
         )

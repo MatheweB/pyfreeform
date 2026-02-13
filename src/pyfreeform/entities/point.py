@@ -36,7 +36,7 @@ class Point(Entity):
     def anchor_names(self) -> list[str]:
         return ["center"]
 
-    def anchor(self, name: str = "center") -> Coord:
+    def _named_anchor(self, name: str) -> Coord:
         if name == "center":
             return self._position
         raise ValueError(f"Point has no anchor '{name}'. Available: {self.anchor_names}")

@@ -1,10 +1,10 @@
 # Connections & Anchors
 
-Connections are live links between entities. Unlike static lines that store coordinates, connections store **entity references** — when an entity moves, its connections follow automatically.
+Connections are live links between connectable objects — entities and surfaces (cells, cell groups, scenes). Unlike static lines that store coordinates, connections store **entity references** — when an entity moves, its connections follow automatically.
 
 ## Your First Connection
 
-Create two entities, connect them, and add the connection to the scene:
+Create two entities and connect them:
 
 ```python
 from pyfreeform import Scene, Dot, ConnectionStyle
@@ -14,11 +14,11 @@ dot1 = Dot(50, 50, radius=10, color="#ff6b6b")
 dot2 = Dot(250, 50, radius=10, color="#4ecdc4")
 scene.place(dot1, dot2)
 
-conn = dot1.connect(dot2, style=ConnectionStyle(width=2, color="#666688"))
-scene.add_connection(conn)  # (1)!
+dot1.connect(dot2, style=ConnectionStyle(width=2, color="#666688"))
 ```
 
-1. Connections must be added to the scene explicitly — they're not auto-added when created.
+!!! note "Auto-collection"
+    Connections are automatically discovered by the scene at render time. There is no need to add them explicitly.
 
 !!! info "Connections are visible by default"
     `dot1.connect(dot2)` draws a straight line using the default style (width=1, color="black"). Use `curvature=` for arcs, `path=` for custom shapes, or `visible=False` for invisible relationships. See [Connection Shapes](#connection-shapes) below.
@@ -80,7 +80,6 @@ This is useful for layout, graph traversal, or placing entities along an invisib
 ```python
 # Invisible — no rendering
 conn = d1.connect(d2, visible=False)
-scene.add_connection(conn)
 
 # But point_at(t) still works
 for t in [0.25, 0.5, 0.75]:
@@ -92,9 +91,6 @@ for t in [0.25, 0.5, 0.75]:
 ![Invisible connections](../_images/guide/connections-invisible.svg){ width="400" }
 <figcaption>An invisible connection between two dots — markers placed via `point_at(t)` reveal the hidden relationship. The faint line is drawn separately for illustration; the connection itself renders nothing.</figcaption>
 </figure>
-
-!!! warning "Invisible connections still need `scene.add_connection()`"
-    Even invisible connections should be added to the scene. The scene won't render them (empty SVG), but adding them keeps your object graph consistent.
 
 ---
 
@@ -115,8 +111,7 @@ for d in corners:
 
 # Connect into a square (4 edges)
 for i in range(4):
-    conn = corners[i].connect(corners[(i + 1) % 4], style=conn_style)
-    scene.add_connection(conn)
+    corners[i].connect(corners[(i + 1) % 4], style=conn_style)
 
 # Move the top-right corner toward center
 corners[1].position = (100, 100)  # (1)!
@@ -152,6 +147,7 @@ Different entity types expose different **anchor points** — named positions th
 | **Ellipse** | `center`, `right`, `top`, `left`, `bottom` |
 | **Line** | `start`, `center`, `end` |
 | **Curve** | `start`, `center`, `end`, `control` |
+| **Surface** (Cell, CellGroup, Scene) | `center`, `top_left`, `top_right`, `bottom_left`, `bottom_right`, `top`, `bottom`, `left`, `right` |
 
 !!! tip "Invisible anchors"
     `Point` entities render nothing — they're ideal when you need a connection endpoint without a visible dot. Think of them as thumbtacks that only connections can see.
@@ -163,8 +159,7 @@ rect = Rect.at_center(Coord(200, 150), width=140, height=90, fill="navy")
 label = Dot(350, 50, radius=5, color="coral")
 scene.place(rect, label)
 
-conn = rect.connect(label, start_anchor="top_right", style=style)  # (1)!
-scene.add_connection(conn)
+rect.connect(label, start_anchor="top_right", style=style)  # (1)!
 ```
 
 1. The connection originates from the rectangle's top-right corner, not its center.
@@ -176,6 +171,32 @@ scene.add_connection(conn)
 
 !!! info "Rotation-aware anchors"
     Rect anchors account for rotation. If you rotate a rectangle 45°, its `top_right` anchor moves to the actual rotated corner position.
+
+### Arbitrary Anchor Points
+
+Anchors aren't limited to named strings. Anywhere an anchor is accepted — `entity.anchor()`, `start_anchor`, `end_anchor` — you can pass a **relative coordinate** as a tuple or `RelCoord`:
+
+```python
+from pyfreeform import RelCoord
+
+# Tuple syntax — 70% across, 30% down within the entity's bounding box
+point = rect.anchor((0.7, 0.3))
+
+# RelCoord syntax — equivalent
+point = rect.anchor(RelCoord(0.7, 0.3))
+
+# Works in connections too
+dot.connect(rect, end_anchor=(0.0, 0.5))  # Connect to rect's left edge midpoint
+cell_a.connect(cell_b, start_anchor=(1.0, 0.5), end_anchor=(0.0, 0.5))
+```
+
+The type that captures all valid anchor values is `AnchorSpec`:
+
+```python
+from pyfreeform import AnchorSpec  # str | RelCoord | tuple[float, float]
+```
+
+For entities, the relative coordinate is resolved against the entity's axis-aligned bounding box (`bounds()`). Rect overrides this to use its local coordinate space, so `(0, 0)` maps to the actual rotated top-left corner rather than the AABB corner.
 
 ---
 
@@ -192,9 +213,9 @@ ell = Ellipse(460, 100, rx=30, ry=20, fill="coral")
 scene.place(dot, rect, poly, ell)
 
 # Chain different entity types with specific anchors
-scene.add_connection(dot.connect(rect, end_anchor="left", style=style))
-scene.add_connection(rect.connect(poly, start_anchor="right", end_anchor="v0", style=arrow_style))
-scene.add_connection(poly.connect(ell, start_anchor="v3", end_anchor="left", style=style))
+dot.connect(rect, end_anchor="left", style=style)
+rect.connect(poly, start_anchor="right", end_anchor="v0", style=arrow_style)
+poly.connect(ell, start_anchor="v3", end_anchor="left", style=style)
 ```
 
 <figure markdown>
@@ -239,7 +260,6 @@ Connections implement `point_at(t)` and `angle_at(t)`, so you can position entit
 
 ```python
 conn = dot1.connect(dot2, style=conn_style)
-scene.add_connection(conn)
 
 # Place markers along the connection
 for t in [0.25, 0.5, 0.75]:
@@ -253,6 +273,57 @@ for t in [0.25, 0.5, 0.75]:
 ![Connections as pathable](../_images/guide/connections-as-pathable.svg){ width="360" }
 <figcaption>Gold markers placed at t=0.25, 0.5, and 0.75 along each edge of a triangle.</figcaption>
 </figure>
+
+---
+
+## Connecting Surfaces
+
+Connections aren't limited to entities — any **surface** (Cell, CellGroup, Scene) is also connectable. This eliminates the need for invisible anchor dots:
+
+```python
+scene = Scene.with_grid(cols=5, rows=1, cell_size=40)
+
+# Cell-to-cell connection — no phantom dots needed
+cell_a = scene.grid[0, 0]
+cell_b = scene.grid[0, 4]
+cell_a.connect(cell_b, color="coral", width=2)
+
+# Entity-to-cell connection
+dot = scene.grid[0, 2].add_dot(color="teal")
+dot.connect(cell_b, end_anchor="left", color="navy")
+
+# Cell-to-entity connection
+cell_a.connect(dot, start_anchor="right", color="gold")
+```
+
+Surfaces expose the same 9 anchor points as `Rect`:
+
+| Anchor | Position |
+|---|---|
+| `center` | Center (default) |
+| `top`, `bottom`, `left`, `right` | Edge midpoints |
+| `top_left`, `top_right`, `bottom_left`, `bottom_right` | Corners |
+
+!!! tip "Cross-grid connections"
+    Cells from different grids can be connected. The scene auto-collects connections from all grids at render time.
+
+---
+
+## Connection Data
+
+Every connectable object — entities, cells, and connections themselves — carries a `data` dictionary for custom metadata:
+
+```python
+conn = cell_a.connect(cell_b)
+conn.data["weight"] = 0.75
+conn.data["label"] = "edge"
+
+# Entities and cells also have data
+cell_a.data["type"] = "source"
+dot.data["visited"] = True
+```
+
+This is useful for graph algorithms, filtering, or storing application-specific state alongside the visual representation.
 
 ---
 
@@ -283,7 +354,6 @@ for i, d1 in enumerate(dots):
                 width=0.4 + (1 - dist / 130) * 1.2,
                 color="#a78bfa", opacity=opacity,
             ))
-            scene.add_connection(conn)
 
             # Midpoint glow on long connections
             if dist > 90:
@@ -320,11 +390,10 @@ for i, d1 in enumerate(dots):
                                d2.position.x - d1.position.x)
             curv = 0.3 * math.sin(angle * 3 + i * 0.5)  # (1)!
             opacity = 0.5 * (1 - dist / 130)
-            conn = d1.connect(d2, curvature=curv,
-                              style=ConnectionStyle(
-                                  width=0.4 + (1 - dist / 130) * 1.2,
-                                  color="#a78bfa", opacity=opacity))
-            scene.add_connection(conn)
+            d1.connect(d2, curvature=curv,
+                       style=ConnectionStyle(
+                           width=0.4 + (1 - dist / 130) * 1.2,
+                           color="#a78bfa", opacity=opacity))
 ```
 
 1. Varying curvature by angle creates arcs that flow in different directions — some bow left, some right.
@@ -364,13 +433,13 @@ style = ConnectionStyle(width=2, color="#666688", opacity=0.6)
 # Root → children
 for child in nodes[1]:
     curv = 0.25 if child.position.x < 220 else -0.25  # (1)!
-    scene.add_connection(nodes[0][0].connect(child, curvature=curv, style=style))
+    nodes[0][0].connect(child, curvature=curv, style=style)
 
 # Children → grandchildren
 for i, parent in enumerate(nodes[1]):
     for child in nodes[2][i * 2: i * 2 + 2]:
         curv = 0.2 if child.position.x < parent.position.x else -0.2
-        scene.add_connection(parent.connect(child, curvature=curv, style=style))
+        parent.connect(child, curvature=curv, style=style)
 ```
 
 1. Positive curvature arcs left, negative arcs right — mirroring the tree structure.

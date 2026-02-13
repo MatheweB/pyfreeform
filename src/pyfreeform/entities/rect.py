@@ -7,6 +7,7 @@ import math
 from ..color import Color
 from ..core.coord import Coord, CoordLike
 from ..core.entity import Entity
+from ..core.relcoord import RelCoord
 from ..core.svg_utils import fill_stroke_attrs, shape_opacity_attrs
 
 
@@ -232,27 +233,18 @@ class Rect(Entity):
             "right",
         ]
 
-    def anchor(self, name: str = "center") -> Coord:
+    def _named_anchor(self, name: str) -> Coord:
         """Get anchor point by name (transform-aware)."""
-        x, y = self.x, self.y
-        w, h = self.width, self.height
+        from ..core.positions import NAMED_POSITIONS
 
-        anchors = {
-            "center": Coord(x + w / 2, y + h / 2),
-            "top_left": Coord(x, y),
-            "top_right": Coord(x + w, y),
-            "bottom_left": Coord(x, y + h),
-            "bottom_right": Coord(x + w, y + h),
-            "top": Coord(x + w / 2, y),
-            "bottom": Coord(x + w / 2, y + h),
-            "left": Coord(x, y + h / 2),
-            "right": Coord(x + w, y + h / 2),
-        }
-
-        if name not in anchors:
+        if name not in NAMED_POSITIONS:
             raise ValueError(f"Rect has no anchor '{name}'. Available: {self.anchor_names}")
+        return self._anchor_from_relcoord(NAMED_POSITIONS[name])
 
-        return self._to_world_space(anchors[name])
+    def _anchor_from_relcoord(self, rc: RelCoord) -> Coord:
+        """Resolve RelCoord in local rect space, then apply world transform."""
+        local = Coord(self.x + rc.rx * self.width, self.y + rc.ry * self.height)
+        return self._to_world_space(local)
 
     def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
         """Get axis-aligned bounding box (accounts for rotation and scale).

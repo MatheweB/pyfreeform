@@ -97,7 +97,6 @@ def generate():
             start_anchor=start_anchor,
             end_anchor=end_anchor,
         )
-        scene.add_connection(conn)
         if label:
             mid = conn.point_at(label_t)
             scene.place(Text(mid.x + label_dx, mid.y + label_dy, label, font_size=9, color=LABEL))

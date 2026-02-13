@@ -1,34 +1,39 @@
-"""Connection - A link between two entities that auto-updates."""
+"""Connection - A link between two connectable objects that auto-updates."""
 
 from __future__ import annotations
 
 import math
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Union
 
 from ..color import Color
 from ..config.caps import CapName, collect_markers, svg_cap_and_marker_attrs
 from ..config.styles import ConnectionStyle
 from .bezier import curvature_control_point, eval_cubic, quadratic_to_cubic
 from .coord import Coord
+from .positions import AnchorSpec
 from .svg_utils import opacity_attr, stroke_attrs
 
 if TYPE_CHECKING:
     from ..entities.path import Path
     from .entity import Entity
+    from .surface import Surface
+
+Connectable = Union["Entity", "Surface"]
 
 
 class Connection:
     """
-    A connection between two entities.
+    A connection between two connectable objects (entities or surfaces).
 
-    Connections link entities together with a visible line by default.
-    Use ``visible=False`` for invisible relationships.
+    Connections link any connectable objects together with a visible line
+    by default. Use ``visible=False`` for invisible relationships.
 
     Attributes:
-        start: The starting entity
-        end: The ending entity
-        start_anchor: Name of anchor on start entity
-        end_anchor: Name of anchor on end entity
+        start: The starting connectable object
+        end: The ending connectable object
+        start_anchor: Name of anchor on start object
+        end_anchor: Name of anchor on end object
+        data: Custom data dictionary
 
     Examples:
         >>> dot1 = Dot(100, 100)
@@ -41,16 +46,18 @@ class Connection:
         >>> conn = dot1.connect(dot2, curvature=0.3)
         >>> # Custom path
         >>> conn = dot1.connect(dot2, path=Path.Wave())
-        >>> # Invisible relationship
-        >>> conn = dot1.connect(dot2, visible=False)
+        >>> # Cell-to-cell connection
+        >>> conn = cell_a.connect(cell_b, color="red")
+        >>> # Entity-to-cell connection
+        >>> conn = dot.connect(cell, end_anchor="left")
     """
 
     def __init__(
         self,
-        start: Entity,
-        end: Entity,
-        start_anchor: str = "center",
-        end_anchor: str = "center",
+        start: Connectable,
+        end: Connectable,
+        start_anchor: AnchorSpec = "center",
+        end_anchor: AnchorSpec = "center",
         *,
         path: Path | None = None,
         curvature: float | None = None,
@@ -66,13 +73,13 @@ class Connection:
         segments: int = 32,
     ) -> None:
         """
-        Create a connection between two entities.
+        Create a connection between two connectable objects.
 
         Args:
-            start: The starting entity.
-            end: The ending entity.
-            start_anchor: Anchor name on start entity.
-            end_anchor: Anchor name on end entity.
+            start: The starting entity or surface.
+            end: The ending entity or surface.
+            start_anchor: Anchor name on start object.
+            end_anchor: Anchor name on end object.
             path: Custom path geometry (e.g. Path.Wave()). For simple arcs
                   use ``curvature`` instead.
             curvature: Arc curvature (-1 to 1). Positive bows left,
@@ -118,6 +125,7 @@ class Connection:
         self.start_cap = start_cap
         self.end_cap = end_cap
         self.opacity = float(opacity)
+        self._data: dict[str, Any] = {}
 
         # Geometry: line (default), curve (curvature=), or path (path=)
         self._curvature = curvature
@@ -150,23 +158,28 @@ class Connection:
         end.add_connection(self)
 
     @property
-    def start(self) -> Entity:
-        """The starting entity."""
+    def start(self) -> Connectable:
+        """The starting connectable object."""
         return self._start
 
     @property
-    def end(self) -> Entity:
-        """The ending entity."""
+    def end(self) -> Connectable:
+        """The ending connectable object."""
         return self._end
 
     @property
-    def start_anchor(self) -> str:
-        """Name of anchor on start entity."""
+    def data(self) -> dict[str, Any]:
+        """Custom data dictionary for this connection."""
+        return self._data
+
+    @property
+    def start_anchor(self) -> AnchorSpec:
+        """Anchor spec on start object."""
         return self._start_anchor
 
     @property
-    def end_anchor(self) -> str:
-        """Name of anchor on end entity."""
+    def end_anchor(self) -> AnchorSpec:
+        """Anchor spec on end object."""
         return self._end_anchor
 
     @property
@@ -362,7 +375,7 @@ class Connection:
         return "".join(parts)
 
     def disconnect(self) -> None:
-        """Remove this connection from both entities."""
+        """Remove this connection from both endpoints."""
         self._start.remove_connection(self)
         self._end.remove_connection(self)
 

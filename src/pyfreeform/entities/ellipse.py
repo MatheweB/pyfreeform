@@ -229,7 +229,7 @@ class Ellipse(Entity):
         """Available anchors: center, right, top, left, bottom."""
         return ["center", "right", "top", "left", "bottom"]
 
-    def anchor(self, name: str = "center") -> Coord:
+    def _named_anchor(self, name: str) -> Coord:
         """Get anchor point by name."""
         if name == "center":
             return self.position

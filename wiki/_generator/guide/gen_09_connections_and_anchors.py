@@ -31,7 +31,6 @@ def generate():
     scene.place(d1)
     scene.place(d2)
     conn = d1.connect(d2, style=ConnectionStyle(width=2, color=colors.line))
-    scene.add_connection(conn)
     # Labels
     scene.place(Text(50, 85, "dot1", font_size=10, color="#aaaacc"))
     scene.place(Text(250, 85, "dot2", font_size=10, color="#aaaacc"))
@@ -69,8 +68,7 @@ def generate():
 
         # 4 edges
         for i in range(4):
-            conn = dots[i].connect(dots[(i + 1) % 4], style=conn_style)
-            scene.add_connection(conn)
+            dots[i].connect(dots[(i + 1) % 4], style=conn_style)
 
         # Highlight the moving corner with accent
         if t > 0:
@@ -81,10 +79,8 @@ def generate():
             ghost_style = ConnectionStyle(width=1, color=colors.grid, opacity=0.3)
             orig_tr = Dot(cx + sq_half, cy - sq_half, radius=0, color=colors.background, opacity=0)
             scene.place(orig_tr)
-            ghost = dots[0].connect(orig_tr, style=ghost_style)
-            scene.add_connection(ghost)
-            ghost2 = orig_tr.connect(dots[2], style=ghost_style)
-            scene.add_connection(ghost2)
+            dots[0].connect(orig_tr, style=ghost_style)
+            orig_tr.connect(dots[2], style=ghost_style)
 
         # Frame label
         scene.place(Text(cx, frame_h + 45, label, font_size=11, color="#aaaacc"))
@@ -130,8 +126,7 @@ def generate():
         scene.place(label_dot)
 
         # Connection from rect anchor to label dot
-        conn = rect.connect(label_dot, start_anchor=name, style=anchor_style)
-        scene.add_connection(conn)
+        rect.connect(label_dot, start_anchor=name, style=anchor_style)
 
         # Text label
         text_x = label_x + (15 if dx >= 0 else -15)
@@ -190,10 +185,6 @@ def generate():
     )
     # Polygon.v3 → Ellipse.left
     conn3 = poly.connect(ell, start_anchor="v3", end_anchor="left", style=link_style)
-    scene.add_connection(conn1)
-    scene.add_connection(conn2)
-    scene.add_connection(conn3)
-
     # Labels
     scene.place(Text(60, 140, "Dot", font_size=10, color="#aaaacc"))
     scene.place(Text(190, 145, "Rect", font_size=10, color="#aaaacc"))
@@ -224,8 +215,7 @@ def generate():
             start_cap=cap,
             end_cap=cap,
         )
-        conn = d1.connect(d2, style=style)
-        scene.add_connection(conn)
+        d1.connect(d2, style=style)
 
         # Label
         scene.place(Text(45, y, cap, font_size=11, color="#aaaacc", text_anchor="end"))
@@ -252,7 +242,6 @@ def generate():
     edges = []
     for i in range(3):
         conn = tri_dots[i].connect(tri_dots[(i + 1) % 3], style=edge_style)
-        scene.add_connection(conn)
         edges.append(conn)
 
     # Place small marker dots along each edge at t=0.25, 0.5, 0.75
@@ -299,7 +288,6 @@ def generate():
                     opacity=opacity,
                 )
                 conn = d1.connect(d2, style=style)
-                scene.add_connection(conn)
 
                 # Midpoint marker on longer connections
                 if dist > 90:
@@ -329,8 +317,7 @@ def generate():
         d2 = Dot(ox + 150, 75, radius=8, color=colors.secondary)
         for _d in [d1, d2]:
             scene.place(_d)
-        conn = d1.connect(d2, **kwargs, style=ConnectionStyle(width=2.5, color=colors.accent))
-        scene.add_connection(conn)
+        d1.connect(d2, **kwargs, style=ConnectionStyle(width=2.5, color=colors.accent))
         scene.place(Text(ox + 85, 135, label, font_size=11, color="#aaaacc"))
         scene.place(Text(ox + 85, 25, code, font_size=9, color="#888899"))
 
@@ -346,7 +333,6 @@ def generate():
 
     # Invisible connection
     conn = d1.connect(d2, visible=False)
-    scene.add_connection(conn)
 
     # Place markers via point_at(t) on the invisible connection
     for i in range(9):
@@ -393,7 +379,6 @@ def generate():
                 curvature = 0.3 * math.sin(angle * 3 + i * 0.5)
                 style = ConnectionStyle(width=width, color="#a78bfa", opacity=opacity)
                 conn = d1.connect(d2, curvature=curvature,style=style)
-                scene.add_connection(conn)
 
                 if dist > 90:
                     mid = conn.point_at(0.5)
@@ -432,15 +417,13 @@ def generate():
     # Root → children
     for child in node_dots[1]:
         curvature = 0.25 if child.position.x < 220 else -0.25
-        conn = node_dots[0][0].connect(child, curvature=curvature,style=arc_style)
-        scene.add_connection(conn)
+        node_dots[0][0].connect(child, curvature=curvature,style=arc_style)
 
     # Children → grandchildren
     for parent_idx, parent in enumerate(node_dots[1]):
         for child in node_dots[2][parent_idx * 2 : parent_idx * 2 + 2]:
             curvature = 0.2 if child.position.x < parent.position.x else -0.2
-            conn = parent.connect(child, curvature=curvature,style=arc_style)
-            scene.add_connection(conn)
+            parent.connect(child, curvature=curvature,style=arc_style)
 
     scene.place(
         Text(220, 270, "Flowing tree with curved connections", font_size=10, color="#aaaacc")

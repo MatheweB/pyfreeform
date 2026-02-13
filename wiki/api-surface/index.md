@@ -46,10 +46,8 @@ Everything starts with a `Scene`. It is the canvas -- it holds your artwork and 
 |---|---|
 | `scene.add(entity, at=)` | Add an entity with relative positioning (inherited from Surface). |
 | `scene.place(entity)` | Add an entity at its current pixel position (inherited from Surface). |
-| `scene.add_connection(conn)` | Add a connection to the scene. |
 | `scene.add_grid(grid)` | Add a grid to the scene. |
 | `scene.remove(entity)` | Remove an entity. Returns `True` if found. |
-| `scene.remove_connection(conn)` | Remove a connection. Returns `True` if found. |
 | `scene.remove_grid(grid)` | Remove a grid. Returns `True` if found. |
 | `scene.clear()` | Remove everything. |
 | `scene.to_svg()` | Render to SVG string. |
@@ -396,6 +394,18 @@ These return `None` when the entity is in absolute mode (constructed directly or
 !!! note "Sizing vs geometry"
     Relative **sizing** (radius, rx/ry, width/height, font_size) is unaffected by transforms — rotation doesn't change how big something is relative to its cell. Relative **geometry** (vertices, start/end) encodes positions that transforms convert to absolute values. After a transform resolves an entity, builder methods won't overwrite those concrete values.
 
+### Surface Anchors, Connections, and Data
+
+All surfaces (Cell, Scene, CellGroup) support anchors, connections, and custom data:
+
+| Method/Property | Description |
+|---|---|
+| `surface.anchor(spec)` | Anchor position by name, `RelCoord`, or `(rx, ry)` tuple. See [AnchorSpec](#anchorspec). |
+| `surface.anchor_names` | List of available anchor names |
+| `surface.connect(other, ..., start_anchor, end_anchor)` | Create a connection. Anchors accept `AnchorSpec`. |
+| `surface.connections` | Set of connections where this surface is an endpoint |
+| `surface.data` | Custom data dictionary |
+
 ### Complete Builder Reference
 
 #### `add_dot`
@@ -595,8 +605,8 @@ See [Transforms and Layout](../guide/08-transforms-and-layout.md) for detailed t
 
 | Method | Description |
 |---|---|
-| `entity.connect(other, style, start_anchor, end_anchor)` | Create a Connection to another entity |
-| `entity.anchor(name)` | Get named anchor point |
+| `entity.connect(other, style, start_anchor, end_anchor)` | Create a Connection. Anchors accept `AnchorSpec` (string, tuple, or `RelCoord`). |
+| `entity.anchor(spec)` | Get anchor point by name, `RelCoord`, or `(rx, ry)` tuple. See [AnchorSpec](#anchorspec). |
 | `entity.anchor_names` | List of available anchor names |
 | `entity.place_beside(other, side="right", gap=0)` | Position beside another entity using bounding boxes |
 
@@ -945,12 +955,16 @@ Any object with `point_at(t: float) -> Coord` works as a path. See the [Pathable
 
 ## 7. Connections
 
-**Links between entities** that auto-update when entities move. Connections are **visible by default** as a straight line. Use `curvature=` for arcs, `path=` for custom paths, or `visible=False` for invisible relationships.
+**Links between connectable objects** (entities or surfaces) that auto-update when endpoints move. Connections are **visible by default** as a straight line. Use `curvature=` for arcs, `path=` for custom paths, or `visible=False` for invisible relationships.
+
+`Connectable = Entity | Surface` -- the type alias for anything that can be a connection endpoint.
 
 ```python
-Connection(start, end, start_anchor="center", end_anchor="center",
+Connection(start, end, start_anchor="center", end_anchor="center",  # AnchorSpec
            visible=True, curvature=None, path=None, style=None, segments=32)
 ```
+
+Anchor parameters accept `AnchorSpec` — a string name, `RelCoord`, or `(rx, ry)` tuple:
 
 Or via the entity method:
 ```python
@@ -976,16 +990,16 @@ connection = entity1.connect(
 !!! info "Coordinates are auto-mapped"
     For `curvature=`, the arc is built in normalized unit-chord space. For `path=`, the path geometry is pre-computed. Both are automatically stretched and rotated (affine transform) to connect the actual anchor positions at render time.
 
+- **`start_anchor`** and **`end_anchor`** accept `AnchorSpec`: string names (`"center"`, `"top_left"`), `RelCoord`, or `(rx, ry)` tuples
 - **`style`** accepts `ConnectionStyle` or `dict` with `width`, `color`, `z_index`, `cap` keys
+- **`start`** and **`end`** accept any `Connectable` (Entity or Surface)
+- **`data`**: `dict[str, Any]` -- custom data dictionary for storing metadata on the connection
 - **`visible=False`** = invisible — `point_at(t)` still works (linear interpolation between anchors)
 - **`curvature`** and **`path`** are mutually exclusive — passing both raises `ValueError`
 - **`segments`** controls Bézier fitting resolution for `path=` (default 32; ignored for line/curve)
-- Added to scene via `scene.add_connection(connection)` — `entity.connect()` creates the object but does **not** auto-add it
+- Connections auto-collect from their endpoints — any connection involving an entity or surface in the scene is automatically included at render time
 - Supports cap system (arrow, arrow_in, custom) on all visible shapes
 - Closed paths (`Path(pathable, closed=True)`) cannot be used as connection paths — raises `ValueError`
-
-!!! warning "Connections must be added to the scene"
-    `entity.connect()` returns a `Connection` but does **not** add it to the scene. Call `scene.add_connection(connection)` to make it render.
 
 ---
 
@@ -1284,7 +1298,37 @@ a / 2   # RelCoord(0.1, 0.15)
 
 ---
 
-## 13. Image Processing
+## 13. The AnchorSpec Type {: #anchorspec }
+
+```python
+from pyfreeform import AnchorSpec  # str | RelCoord | tuple[float, float]
+```
+
+`AnchorSpec` is the type accepted by `entity.anchor()`, `surface.anchor()`, and the `start_anchor`/`end_anchor` parameters of `connect()` and `Connection`. It unifies three forms:
+
+| Form | Example | Description |
+|---|---|---|
+| `str` | `"center"`, `"top_right"`, `"v0"` | Named anchor (entity-specific) |
+| `tuple[float, float]` | `(0.7, 0.3)` | Relative coordinate within bounding box |
+| `RelCoord` | `RelCoord(0.7, 0.3)` | Same as tuple, with named fields |
+
+For **entities**, tuples/RelCoords resolve against the entity's axis-aligned bounding box by default. `Rect` overrides this to use local coordinate space (rotation-aware). For **surfaces** (Cell, Scene, CellGroup), they resolve against the surface's rectangular region.
+
+```python
+# Named anchor — backward compatible
+rect.anchor("top_right")
+
+# Arbitrary position — 70% across, 30% down
+rect.anchor((0.7, 0.3))
+
+# In connections
+dot.connect(rect, end_anchor=(0.0, 0.5))
+cell_a.connect(cell_b, start_anchor=(1.0, 0.5), end_anchor=(0.0, 0.5))
+```
+
+---
+
+## 14. Image Processing
 
 ### Image Class
 
@@ -1322,7 +1366,7 @@ A single-channel grayscale array (used for brightness, individual color channels
 
 ---
 
-## 14. Utility Functions
+## 15. Utility Functions
 
 ### `map_range(value, in_min=0, in_max=1, out_min=0, out_max=1, clamp=False)`
 
@@ -1360,7 +1404,7 @@ Display an SVG in the current environment (Jupyter notebook, etc.).
 
 ---
 
-## 15. Relationship Map
+## 16. Relationship Map
 
 <figure markdown>
 ![Relationship Map](../_images/api-surface/relationship-map.svg){ width="580" }

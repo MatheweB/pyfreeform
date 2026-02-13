@@ -96,7 +96,7 @@ class EntityGroup(Entity):
         """Available anchor names."""
         return ["center"]
 
-    def anchor(self, name: str) -> Coord:
+    def _named_anchor(self, name: str) -> Coord:
         """
         Get anchor point by name.
 

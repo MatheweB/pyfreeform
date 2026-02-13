@@ -192,7 +192,7 @@ class Line(Entity):
         """Available anchors: start, center, end."""
         return ["start", "center", "end"]
 
-    def anchor(self, name: str = "center") -> Coord:
+    def _named_anchor(self, name: str) -> Coord:
         """Get anchor point by name (world space)."""
         if name == "start":
             return self._to_world_space(self.start)

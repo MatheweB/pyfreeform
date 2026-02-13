@@ -80,6 +80,9 @@ Every Surface has a rectangular region (`_x`, `_y`, `_width`, `_height`) and a l
 | **Position resolution** | `relative_to_absolute()`, `absolute_to_relative()`, named positions ("center", "top_left", etc.) |
 | **Builder methods** | `add_dot()`, `add_line()`, `add_curve()`, `add_ellipse()`, `add_polygon()`, `add_rect()`, `add_text()`, `add_path()`, `add_fill()`, `add_border()` |
 | **Entity management** | `add()`, `place()`, `remove()`, `clear()` |
+| **Anchors** | `anchor(spec)`, `anchor_names` -- 9 named positions (center, edges, corners), plus arbitrary `(rx, ry)` coordinates via `AnchorSpec` |
+| **Connections** | `connect()`, `connections`, `add_connection()`, `remove_connection()` |
+| **Data** | `data` -- custom `dict[str, Any]` for user metadata |
 | **Parametric positioning** | `_resolve_along()` -- resolves `along`/`t`/`align` params for any builder |
 
 ### Subclass responsibilities
@@ -89,15 +92,17 @@ Subclasses must initialize these attributes in `__init__`:
 ```python
 class Cell(Surface):
     def __init__(self, ...):
-        self._x = ...       # top-left X
-        self._y = ...       # top-left Y
-        self._width = ...   # width in pixels
-        self._height = ...  # height in pixels
-        self._entities = [] # entity storage
+        self._x = ...            # top-left X
+        self._y = ...            # top-left Y
+        self._width = ...        # width in pixels
+        self._height = ...       # height in pixels
+        self._entities = []      # entity storage
+        self._connections = set() # connection endpoint tracking
+        self._data = {}          # custom data dictionary
 ```
 
 !!! note "Surface vs Entity"
-    `Surface` and `Entity` are independent hierarchies. A Surface **contains** entities (composition). An Entity **references** its containing surface via `entity.cell`. The `EntityGroup` is the one entity that also contains other entities, but it does so through SVG `<g>` transforms, not through the Surface protocol.
+    `Surface` and `Entity` are independent hierarchies. A Surface **contains** entities (composition). An Entity **references** its containing surface via `entity.cell`. Both are **connectable** — they share `anchor()`, `connect()`, `connections`, and `data`. The `EntityGroup` is the one entity that also contains other entities, but it does so through SVG `<g>` transforms, not through the Surface protocol.
 
 ## Entity Class Hierarchy
 
@@ -124,7 +129,8 @@ Every entity has:
 - **Position** (`_position: Coord`) -- the entity's reference point
 - **Z-index** (`_z_index: int`) -- layer ordering for rendering
 - **Cell reference** (`_cell: Surface | None`) -- back-reference to container
-- **Connections** (`_connections: WeakSet`) -- tracked via weak references
+- **Connections** (`_connections: set`) -- connections where this entity is an endpoint
+- **Data** (`_data: dict[str, Any]`) -- custom data dictionary for user metadata
 - **Movement** -- private `_move_to()` / `_move_by()` for pixel movement; public API is `.position`, `.at`, and `move_to_cell()`
 - **Binding** -- `.binding` property accepts a `Binding` dataclass (from `core/binding.py`) for relative positioning configuration
 - **Resolved state** -- `.is_resolved` is `True` after a transform with `origin` converts relative properties to absolute values. This is a one-way door — builder methods check it to avoid overwriting concrete values.
@@ -143,8 +149,8 @@ def anchor_names(self) -> list[str]:
     """List available anchor names."""
 
 @abstractmethod
-def anchor(self, name: str) -> Coord:
-    """Return anchor point by name."""
+def _named_anchor(self, name: str) -> Coord:
+    """Return anchor point by name (called by the concrete anchor() method)."""
 
 @abstractmethod
 def to_svg(self) -> str:
@@ -154,6 +160,8 @@ def to_svg(self) -> str:
 def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
     """Return (min_x, min_y, max_x, max_y). visual=True includes stroke width."""
 ```
+
+The public `anchor(spec)` method is **concrete** on the base class — it dispatches string names to `_named_anchor()` and `RelCoord`/tuple values to `_anchor_from_relcoord()` (which resolves against `bounds()` by default). Entities only override `_named_anchor()` for string anchor resolution, and optionally `_anchor_from_relcoord()` for rotation-aware coordinate mapping (e.g., `Rect`).
 
 ### Cap/Marker Functions
 
@@ -254,13 +262,33 @@ def make_marker_id(cap_name, color, size, *, for_start=False):
 
 Surfaces contain entities; entities reference their surface. There is no deep inheritance tree. Cap/marker behavior is shared through explicit free functions (`collect_markers`, `svg_cap_and_marker_attrs`) rather than mixins or deeper class hierarchies.
 
-### Weak references for connections
+### Connectable protocol
 
-Entity connections use `WeakSet` so that deleting a connection does not require explicit cleanup on both entities:
+Both `Entity` and `Surface` are connectable — they share the same connection interface (`anchor(spec)`, `anchor_names`, `connect()`, `add_connection()`, `remove_connection()`, `connections`). The `Connectable` type alias (`Entity | Surface`) captures this union. Anchors accept `AnchorSpec` — a string name, `RelCoord`, or `(rx, ry)` tuple — for arbitrary anchor positioning.
+
+Connections register themselves with both endpoints on construction and remove themselves via `disconnect()`. Each connectable tracks its own connections in a `set`:
 
 ```python
-self._connections: WeakSet[Connection] = WeakSet()
+# Entity
+self._connections: set[Connection] = set()
+
+# Surface (Cell, CellGroup, Scene)
+self._connections: set[Connection] = set()
 ```
+
+The scene auto-collects all connections at render time by walking entities and grid cells — no explicit adding needed.
+
+### Custom data
+
+Every entity, surface, and connection carries a `data: dict[str, Any]` for user metadata. This provides a consistent way to attach application-specific state:
+
+```python
+cell.data["type"] = "source"
+dot.data["visited"] = True
+conn.data["weight"] = 0.75
+```
+
+Cell additionally has typed data properties (`brightness`, `color`, `alpha`) populated from image loading.
 
 ### Connection geometry
 
@@ -270,7 +298,7 @@ Connections support three geometry modes controlled by constructor arguments:
 - **`curvature=`**: A normalized bezier arc is built from shared utilities in `core/bezier.py` (`curvature_control_point` + `quadratic_to_cubic`). The same degree-elevation math is shared with the `Curve` entity — no duplication.
 - **`path=`**: The pathable is sampled and fitted into smooth cubic segments via `fit_cubic_beziers()` in `core/bezier.py` (Hermite interpolation).
 
-At render time, curve and path geometries are automatically stretched and rotated (affine transform) to connect the actual anchor endpoints. Pass `visible=False` to create an invisible connection — `to_svg()` returns an empty string but `point_at(t)` still works.
+At render time, curve and path geometries are automatically stretched and rotated (affine transform) to connect the actual anchor endpoints. Pass `visible=False` to create an invisible connection — `to_svg()` returns an empty string but `point_at(t)` still works. Connections accept any `Connectable` endpoint — entity-to-entity, cell-to-cell, or entity-to-cell.
 
 ### Entity-reference vertices
 

@@ -20,8 +20,9 @@ from .config.styles import (
     ShapeStyle,
     TextStyle,
 )
-from .core.connection import Connection
+from .core.connection import Connectable, Connection
 from .core.coord import Coord, CoordLike
+from .core.positions import AnchorSpec
 from .core.relcoord import RelCoord, RelCoordLike
 from .core.entity import Entity
 from .core.pathable import FullPathable, Pathable
@@ -112,12 +113,14 @@ def map_range(
 
 
 __all__ = [
+    "AnchorSpec",
     "BorderStyle",
     "CapName",
     "Cell",
     "CellGroup",
     "Color",
     "ColorLike",
+    "Connectable",
     "Connection",
     "ConnectionStyle",
     "Coord",

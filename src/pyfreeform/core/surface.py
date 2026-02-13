@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import itertools
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Any, Literal
 
 from ..color import ColorLike
 from .binding import Binding
@@ -11,12 +11,13 @@ from .coord import Coord
 from .relcoord import RelCoord, RelCoordLike
 from .pathable import FullPathable, Pathable
 from .tangent import get_angle_at
-from .positions import NAMED_POSITIONS
+from .positions import NAMED_POSITIONS, AnchorSpec
 
 if TYPE_CHECKING:
     from ..config.caps import CapName
     from ..config.styles import (
         BorderStyle,
+        ConnectionStyle,
         DotStyle,
         FillStyle,
         LineStyle,
@@ -32,6 +33,7 @@ if TYPE_CHECKING:
     from ..entities.polygon import Polygon
     from ..entities.rect import Rect
     from ..entities.text import Text
+    from .connection import Connection
     from .entity import Entity
 
 
@@ -59,10 +61,17 @@ class Surface:
     _width: float
     _height: float
     _entities: list[Entity]
+    _connections: set[Connection]
+    _data: dict[str, Any]
 
     # =========================================================================
     # PROPERTIES
     # =========================================================================
+
+    @property
+    def data(self) -> dict[str, Any]:
+        """Custom data dictionary for this surface."""
+        return self._data
 
     @property
     def x(self) -> float:
@@ -159,6 +168,117 @@ class Surface:
         return (
             self._x <= point.x <= self._x + self._width
             and self._y <= point.y <= self._y + self._height
+        )
+
+    # =========================================================================
+    # ANCHORS
+    # =========================================================================
+
+    @property
+    def anchor_names(self) -> list[str]:
+        """Available anchor names for connections."""
+        return list(NAMED_POSITIONS)
+
+    def anchor(self, spec: AnchorSpec = "center") -> Coord:
+        """
+        Anchor position on this surface.
+
+        Args:
+            spec: Anchor name ("center", "top_left", etc.), RelCoord,
+                  or (rx, ry) tuple for arbitrary positions.
+
+        Returns:
+            Absolute pixel position of the anchor.
+        """
+        if isinstance(spec, str):
+            if spec not in NAMED_POSITIONS:
+                raise ValueError(
+                    f"Unknown anchor '{spec}'. Available: {self.anchor_names}"
+                )
+            rc = NAMED_POSITIONS[spec]
+        else:
+            from .relcoord import RelCoord
+            rc = RelCoord.coerce(spec)
+        return Coord(self._x + rc.rx * self._width, self._y + rc.ry * self._height)
+
+    # =========================================================================
+    # CONNECTIONS
+    # =========================================================================
+
+    def add_connection(self, connection: Connection) -> None:
+        """Register a connection with this surface (called by Connection)."""
+        self._connections.add(connection)
+
+    def remove_connection(self, connection: Connection) -> None:
+        """Unregister a connection from this surface (called by disconnect)."""
+        self._connections.discard(connection)
+
+    @property
+    def connections(self) -> set[Connection]:
+        """Connections where this surface is an endpoint."""
+        return set(self._connections)
+
+    def connect(
+        self,
+        other: Entity | Surface,
+        start_anchor: AnchorSpec = "center",
+        end_anchor: AnchorSpec = "center",
+        *,
+        path: Path | None = None,
+        curvature: float | None = None,
+        visible: bool = True,
+        width: float = 1,
+        color: str = "black",
+        z_index: int = 0,
+        cap: CapName = "round",
+        start_cap: CapName | None = None,
+        end_cap: CapName | None = None,
+        opacity: float = 1.0,
+        style: ConnectionStyle | None = None,
+        segments: int = 32,
+    ) -> Connection:
+        """
+        Create a connection from this surface to another connectable object.
+
+        Args:
+            other: The entity or surface to connect to.
+            start_anchor: Anchor name on this surface.
+            end_anchor: Anchor name on the other object.
+            path: Custom path geometry (e.g. Path.Wave()).
+            curvature: Arc curvature (-1 to 1).
+            visible: Whether the connection renders. Default True.
+            width: Line width in pixels.
+            color: Line color.
+            z_index: Layer order (higher = on top).
+            cap: Cap style for both ends.
+            start_cap: Override cap for start end (e.g. "arrow").
+            end_cap: Override cap for end end (e.g. "arrow").
+            opacity: Opacity (0.0 transparent to 1.0 opaque).
+            style: ConnectionStyle object (overrides individual params).
+            segments: Number of Bezier segments for path rendering.
+
+        Returns:
+            The created Connection.
+        """
+        from .connection import Connection as Conn  # local import, same pattern as builders
+
+        return Conn(
+            start=self,
+            end=other,
+            start_anchor=start_anchor,
+            end_anchor=end_anchor,
+            path=path,
+            curvature=curvature,
+            visible=visible,
+            width=width,
+            color=color,
+            z_index=z_index,
+            cap=cap,
+            start_cap=start_cap,
+            end_cap=end_cap,
+            opacity=opacity,
+            style=style,
+            segments=segments,
         )
 
     # =========================================================================

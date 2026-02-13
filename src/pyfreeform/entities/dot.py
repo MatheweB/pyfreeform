@@ -107,7 +107,7 @@ class Dot(Entity):
         """Available anchors: just 'center' for dots."""
         return ["center"]
 
-    def anchor(self, name: str = "center") -> Coord:
+    def _named_anchor(self, name: str) -> Coord:
         """Get anchor point by name."""
         if name == "center":
             return self.position

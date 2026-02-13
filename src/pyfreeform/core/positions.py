@@ -1,8 +1,10 @@
 from __future__ import annotations
 
-from typing import Final
+from typing import Final, TypeAlias
 
 from .relcoord import NamedPosition, RelCoord
+
+AnchorSpec: TypeAlias = str | RelCoord | tuple[float, float]
 
 NAMED_POSITIONS: Final[dict[NamedPosition, RelCoord]] = {
     "center": RelCoord(0.5, 0.5),

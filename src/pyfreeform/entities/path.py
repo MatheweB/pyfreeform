@@ -183,7 +183,7 @@ class Path(Entity):
         """Available anchors."""
         return ["start", "center", "end"]
 
-    def anchor(self, name: str = "center") -> Coord:
+    def _named_anchor(self, name: str) -> Coord:
         """Get anchor point by name."""
         if name == "start":
             return self.point_at(0.0)

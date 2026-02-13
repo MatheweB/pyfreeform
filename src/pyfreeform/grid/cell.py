@@ -75,6 +75,7 @@ class Cell(Surface):
         self._width = width
         self._height = height
         self._entities: list[Entity] = []
+        self._connections: set = set()
         self._data: dict[str, Any] = {}
 
     # =========================================================================

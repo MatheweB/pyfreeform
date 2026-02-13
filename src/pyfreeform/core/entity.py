@@ -10,7 +10,7 @@ from .binding import Binding
 from .connection import Connection
 from .coord import Coord, CoordLike
 from .relcoord import RelCoord, RelCoordLike
-from .positions import NAMED_POSITIONS
+from .positions import NAMED_POSITIONS, AnchorSpec
 
 
 if TYPE_CHECKING:
@@ -374,9 +374,9 @@ class Entity(ABC):
 
     def connect(
         self,
-        other: Entity,
-        start_anchor: str = "center",
-        end_anchor: str = "center",
+        other: Entity | Surface,
+        start_anchor: AnchorSpec = "center",
+        end_anchor: AnchorSpec = "center",
         *,
         path: Path | None = None,
         curvature: float | None = None,
@@ -392,12 +392,12 @@ class Entity(ABC):
         segments: int = 32,
     ) -> Connection:
         """
-        Create a connection to another entity.
+        Create a connection to another entity or surface.
 
         Args:
-            other: The entity to connect to.
-            start_anchor: Anchor name on this entity.
-            end_anchor: Anchor name on the other entity.
+            other: The entity or surface to connect to.
+            start_anchor: Anchor spec on this entity (name, RelCoord, or tuple).
+            end_anchor: Anchor spec on the other object.
             path: Custom path geometry (e.g. Path.Wave()). For simple arcs
                   use ``curvature`` instead.
             curvature: Arc curvature (-1 to 1). Positive bows left,
@@ -575,21 +575,21 @@ class Entity(ABC):
         self._scale_factor *= factor
         return self
 
-    def offset_from(self, anchor_name: str, dx: float = 0, dy: float = 0) -> Coord:
+    def offset_from(self, anchor_spec: AnchorSpec, dx: float = 0, dy: float = 0) -> Coord:
         """
-        Get a point offset from a named anchor.
+        Get a point offset from an anchor.
 
-        Sugar for ``entity.anchor(name) + Coord(dx, dy)``.
+        Sugar for ``entity.anchor(spec) + Coord(dx, dy)``.
 
         Args:
-            anchor_name: Name of the anchor (e.g., "center", "top_left").
+            anchor_spec: Anchor name, RelCoord, or (rx, ry) tuple.
             dx: Horizontal offset in pixels.
             dy: Vertical offset in pixels.
 
         Returns:
             The offset point.
         """
-        return self.anchor(anchor_name) + Coord(dx, dy)
+        return self.anchor(anchor_spec) + Coord(dx, dy)
 
     def place_beside(self, other: Entity, side: str = "right", gap: float = 0) -> Entity:
         """
@@ -633,20 +633,45 @@ class Entity(ABC):
     def anchor_names(self) -> list[str]:
         """List of available anchor names for this entity."""
 
-    @abstractmethod
-    def anchor(self, name: str) -> Coord:
+    def anchor(self, spec: AnchorSpec = "center") -> Coord:
         """
-        Get anchor point by name.
+        Get anchor point by name or relative coordinate.
 
         Args:
-            name: Anchor name (e.g., "center", "start", "end").
+            spec: Anchor specification. Can be:
+                - A string name (e.g., "center", "start", "top_left", "v0")
+                - A RelCoord or (rx, ry) tuple (0.0-1.0 fractions of bounding box)
 
         Returns:
             The anchor position as a Coord.
 
         Raises:
-            ValueError: If anchor name is not valid for this entity.
+            ValueError: If string name is not valid for this entity.
         """
+        if isinstance(spec, str):
+            return self._named_anchor(spec)
+        rc = RelCoord.coerce(spec)
+        return self._anchor_from_relcoord(rc)
+
+    @abstractmethod
+    def _named_anchor(self, name: str) -> Coord:
+        """Entity-specific named anchor resolution.
+
+        Each entity type defines its own named anchors here.
+        Called by ``anchor()`` when given a string.
+        """
+
+    def _anchor_from_relcoord(self, rc: RelCoord) -> Coord:
+        """Resolve a RelCoord against this entity's axis-aligned bounding box.
+
+        Maps (0,0) to the min corner and (1,1) to the max corner of ``bounds()``.
+        Override for rotation-aware entities (e.g., Rect).
+        """
+        min_x, min_y, max_x, max_y = self.bounds()
+        return Coord(
+            min_x + rc.rx * (max_x - min_x),
+            min_y + rc.ry * (max_y - min_y),
+        )
 
     @abstractmethod
     def to_svg(self) -> str:

@@ -28,8 +28,7 @@ def generate():
         for dr, dc in [(0, 1), (1, 0)]:
             key = (r + dr, c + dc)
             if key in dots:
-                conn = dot.connect(dots[key], style=conn_style)
-                scene.add_connection(conn)
+                dot.connect(dots[key], style=conn_style)
     save(scene, "recipes/network-bright-dots.svg")
 
     # --- 2. Distance-based connections ---
@@ -55,8 +54,7 @@ def generate():
                     color=colors.secondary,
                     opacity=opacity,
                 )
-                conn = dots[key1].connect(dots[key2], style=style)
-                scene.add_connection(conn)
+                dots[key1].connect(dots[key2], style=style)
     save(scene, "recipes/network-distance.svg")
 
     # --- 3. Arrow-cap directed graph ---
@@ -79,8 +77,7 @@ def generate():
         for dr, dc in [(0, 2), (2, 0)]:
             key = (r + dr, c + dc)
             if key in dots:
-                conn = dot.connect(dots[key], style=arrow_style)
-                scene.add_connection(conn)
+                dot.connect(dots[key], style=arrow_style)
     save(scene, "recipes/network-arrows.svg")
 
     # --- 4. Network overlay on image ---
@@ -109,6 +106,5 @@ def generate():
         for dr, dc in [(0, 1), (1, 0), (1, 1)]:
             key = (r + dr, c + dc)
             if key in dots:
-                conn = dot.connect(dots[key], style=conn_style)
-                scene.add_connection(conn)
+                dot.connect(dots[key], style=conn_style)
     save(scene, "recipes/network-overlay.svg")

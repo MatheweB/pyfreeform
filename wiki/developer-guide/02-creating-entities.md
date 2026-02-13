@@ -11,7 +11,7 @@ Every entity in PyFreeform extends the `Entity` ABC from `pyfreeform.core.entity
 | Method | Purpose |
 |---|---|
 | `anchor_names` (property) | Return a `list[str]` of available anchor names |
-| `anchor(name)` | Return a `Coord` for the given anchor name |
+| `_named_anchor(name)` | Return a `Coord` for the given anchor name |
 | `to_svg()` | Return an SVG element string (e.g., `<circle ... />`) |
 | `bounds()` | Return `(min_x, min_y, max_x, max_y)` bounding box |
 
@@ -86,16 +86,16 @@ class CrossHair(Entity):
 !!! warning "Always call `super().__init__`"
     The base `Entity.__init__` initializes critical internal state: position, cell reference, connections WeakSet, and data dict. Forgetting this call will cause `AttributeError` at runtime.
 
-### Step 2: Implement anchor_names and anchor()
+### Step 2: Implement anchor_names and _named_anchor()
 
-Anchors are named points on your entity that other entities can connect to or reference. Anchors must return **world-space** coordinates -- use `self._to_world_space()` to apply the entity's current rotation and scale transforms.
+Anchors are named points on your entity that other entities can connect to or reference. The base class provides a concrete `anchor(spec)` method that dispatches string names to your `_named_anchor()` implementation. Anchors must return **world-space** coordinates -- use `self._to_world_space()` to apply the entity's current rotation and scale transforms.
 
 ```python
 @property
 def anchor_names(self) -> list[str]:
     return ["center", "top", "bottom", "left", "right"]
 
-def anchor(self, name: str = "center") -> Coord:
+def _named_anchor(self, name: str) -> Coord:
     if name == "center":
         return self._to_world_space(self.position)
     elif name == "top":
@@ -111,6 +111,9 @@ def anchor(self, name: str = "center") -> Coord:
         f"Available: {self.anchor_names}"
     )
 ```
+
+!!! note "anchor() vs _named_anchor()"
+    External callers always use `entity.anchor(spec)`, which accepts strings, `RelCoord`, and `(rx, ry)` tuples (the `AnchorSpec` type). Your entity only implements `_named_anchor(name)` for string names — the base class handles RelCoord/tuple dispatch via `_anchor_from_relcoord()`, which resolves against the entity's bounding box by default.
 
 !!! tip "Anchor naming conventions"
     - Always include `"center"` -- connections default to it.
@@ -246,7 +249,7 @@ class CrossHair(Entity):
     def anchor_names(self) -> list[str]:
         return ["center", "top", "bottom", "left", "right"]
 
-    def anchor(self, name: str = "center") -> Coord:
+    def _named_anchor(self, name: str) -> Coord:
         if name == "center":
             return self._to_world_space(self.position)
         elif name == "top":
@@ -357,7 +360,7 @@ Before considering your entity complete, verify:
 
 - [ ] `super().__init__(x, y, z_index)` is called in `__init__`
 - [ ] `anchor_names` includes `"center"`
-- [ ] `anchor()` uses `_to_world_space()` and raises `ValueError` for unknown names
+- [ ] `_named_anchor()` uses `_to_world_space()` and raises `ValueError` for unknown names
 - [ ] `bounds()` returns world-space `(min_x, min_y, max_x, max_y)` using `self._scale_factor`
 - [ ] `to_svg()` returns a single SVG element (use `<g>` for multiple) with `_build_svg_transform()`
 - [ ] `rotation_center` overridden if the natural pivot isn't `self.position`

@@ -58,6 +58,8 @@ class CellGroup(Surface):
         self._height = max_y - self._y
 
         self._entities: list[Entity] = []
+        self._connections: set = set()
+        self._data: dict = {}
 
     # =========================================================================
     # AVERAGED DATA PROPERTIES

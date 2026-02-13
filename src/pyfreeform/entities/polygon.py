@@ -195,7 +195,7 @@ class Polygon(Entity):
         """Available anchors: center and vertices."""
         return ["center"] + [f"v{i}" for i in range(len(self._vertex_specs))]
 
-    def anchor(self, name: str = "center") -> Coord:
+    def _named_anchor(self, name: str) -> Coord:
         """Get anchor point by name (world space)."""
         if name == "center":
             return self._to_world_space(self._calculate_centroid())
