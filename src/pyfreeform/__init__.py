@@ -113,6 +113,7 @@ def map_range(
 
 __all__ = [
     "BorderStyle",
+    "CapName",
     "Cell",
     "CellGroup",
     "Color",
@@ -148,10 +149,9 @@ __all__ = [
     "Text",
     "TextStyle",
     "__version__",
+    "cap_shape",
     "display",
     "get_angle_at",
     "map_range",
-    "CapName",
-    "cap_shape",
     "register_cap",
 ]
