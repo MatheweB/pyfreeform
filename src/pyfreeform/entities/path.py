@@ -6,17 +6,10 @@ import math
 from typing import TYPE_CHECKING
 
 from ..color import Color
-from ..core.bezier import (
-    eval_cubic as _eval_cubic,
-)
-from ..core.bezier import (
-    eval_cubic_derivative as _eval_cubic_derivative,
-)
-from ..core.bezier import (
-    fit_cubic_beziers as _fit_cubic_beziers,
-)
+from ..core.bezier import eval_cubic, eval_cubic_derivative, fit_cubic_beziers
 from ..core.coord import Coord
-from ..core.entity import Entity, shape_opacity_attrs
+from ..core.entity import Entity
+from ..core.svg_utils import shape_opacity_attrs
 from ..core.stroked_path_mixin import StrokedPathMixin
 from ..paths import Lissajous, Spiral, Wave, Zigzag
 
@@ -145,7 +138,7 @@ class Path(StrokedPathMixin, Entity):
         self.stroke_opacity = stroke_opacity
 
         # Compute cubic Bézier segments from the pathable
-        self._bezier_segments = _fit_cubic_beziers(pathable, segments, closed, start_t, end_t)
+        self._bezier_segments = fit_cubic_beziers(pathable, segments, closed, start_t, end_t)
 
     @property
     def closed(self) -> bool:
@@ -183,7 +176,7 @@ class Path(StrokedPathMixin, Entity):
         if idx >= n:
             idx = n - 1
         local_t = segment_t - idx
-        return _eval_cubic(*self._bezier_segments[idx], local_t)
+        return eval_cubic(*self._bezier_segments[idx], local_t)
 
     @property
     def anchor_names(self) -> list[str]:
@@ -228,7 +221,7 @@ class Path(StrokedPathMixin, Entity):
             idx = n - 1
         local_t = segment_t - idx
 
-        return self._to_world_space(_eval_cubic(*self._bezier_segments[idx], local_t))
+        return self._to_world_space(eval_cubic(*self._bezier_segments[idx], local_t))
 
     def angle_at(self, t: float) -> float:
         """
@@ -250,7 +243,7 @@ class Path(StrokedPathMixin, Entity):
 
         if t >= 1.0:
             seg = self._bezier_segments[-1]
-            dx, dy = _eval_cubic_derivative(*seg, 1.0)
+            dx, dy = eval_cubic_derivative(*seg, 1.0)
         else:
             segment_t = t * n
             idx = int(segment_t)
@@ -258,7 +251,7 @@ class Path(StrokedPathMixin, Entity):
                 idx = n - 1
             local_t = segment_t - idx
             seg = self._bezier_segments[idx]
-            dx, dy = _eval_cubic_derivative(*seg, local_t)
+            dx, dy = eval_cubic_derivative(*seg, local_t)
 
         if dx == 0 and dy == 0:
             return 0.0
@@ -287,7 +280,7 @@ class Path(StrokedPathMixin, Entity):
         for seg in self._bezier_segments:
             prev = seg[0]
             for i in range(1, per_seg + 1):
-                curr = _eval_cubic(*seg, i / per_seg)
+                curr = eval_cubic(*seg, i / per_seg)
                 dx = curr.x - prev.x
                 dy = curr.y - prev.y
                 total += math.sqrt(dx * dx + dy * dy)

@@ -13,20 +13,6 @@ from .relcoord import RelCoord
 from .positions import Position, NAMED_POSITIONS
 
 
-def shape_opacity_attrs(
-    opacity: float, fill_opacity: float | None, stroke_opacity: float | None
-) -> str:
-    """Build SVG fill-opacity/stroke-opacity attribute string for shapes."""
-    eff_fill = fill_opacity if fill_opacity is not None else opacity
-    eff_stroke = stroke_opacity if stroke_opacity is not None else opacity
-    parts: list[str] = []
-    if eff_fill < 1.0:
-        parts.append(f' fill-opacity="{eff_fill}"')
-    if eff_stroke < 1.0:
-        parts.append(f' stroke-opacity="{eff_stroke}"')
-    return "".join(parts)
-
-
 if TYPE_CHECKING:
     from ..config.styles import ConnectionStyle
     from ..entities.path import Path
@@ -470,17 +456,12 @@ class Entity(ABC):
             target = other
         elif isinstance(other, tuple):
             target = Coord(*other)
+        elif hasattr(other, "center"):
+            target = Coord.coerce(other.center)
         else:
-            # Import Surface lazily to avoid circular import
-            from .surface import Surface as _Surface
-
-            if isinstance(other, _Surface):
-                cx, cy = other.center
-                target = Coord(cx, cy)
-            else:
-                raise TypeError(
-                    f"Expected Entity, Surface, Coord, or tuple, got {type(other).__name__}"
-                )
+            raise TypeError(
+                f"Expected Entity, Surface, Coord, or tuple, got {type(other).__name__}"
+            )
         return self.position.distance_to(target)
 
     # --- Transform methods ---

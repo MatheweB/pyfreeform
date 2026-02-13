@@ -6,7 +6,8 @@ import math
 
 from ..color import Color
 from ..core.coord import Coord, CoordLike
-from ..core.entity import Entity, shape_opacity_attrs
+from ..core.entity import Entity
+from ..core.svg_utils import sample_arc_length, shape_opacity_attrs
 
 
 class Ellipse(Entity):
@@ -273,15 +274,7 @@ class Ellipse(Entity):
         Returns:
             Approximate arc length in pixels.
         """
-        total = 0.0
-        prev = self.point_at(0)
-        for i in range(1, segments + 1):
-            curr = self.point_at(i / segments)
-            dx = curr.x - prev.x
-            dy = curr.y - prev.y
-            total += math.sqrt(dx * dx + dy * dy)
-            prev = curr
-        return total
+        return sample_arc_length(self.point_at, segments)
 
     def angle_at(self, t: float) -> float:
         """

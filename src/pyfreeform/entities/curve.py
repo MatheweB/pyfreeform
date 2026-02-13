@@ -9,6 +9,7 @@ from ..core.bezier import curvature_control_point, quadratic_to_cubic
 from ..core.coord import Coord, CoordLike
 from ..core.relcoord import RelCoord
 from ..core.entity import Entity
+from ..core.svg_utils import sample_arc_length
 from ..core.stroked_path_mixin import StrokedPathMixin
 
 
@@ -279,15 +280,7 @@ class Curve(StrokedPathMixin, Entity):
         Returns:
             Approximate arc length in pixels.
         """
-        total = 0.0
-        prev = self.point_at(0)
-        for i in range(1, segments + 1):
-            curr = self.point_at(i / segments)
-            dx = curr.x - prev.x
-            dy = curr.y - prev.y
-            total += math.sqrt(dx * dx + dy * dy)
-            prev = curr
-        return total
+        return sample_arc_length(self.point_at, segments)
 
     def angle_at(self, t: float) -> float:
         """

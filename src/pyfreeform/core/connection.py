@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import math
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING
 
+from ..color import Color
 from ..config.styles import ConnectionStyle
 from .bezier import curvature_control_point, eval_cubic, quadratic_to_cubic
 from .coord import Coord
@@ -27,7 +28,6 @@ class Connection(StrokedPathMixin):
         end: The ending entity
         start_anchor: Name of anchor on start entity
         end_anchor: Name of anchor on end entity
-        style: Visual style properties (width, color, etc.)
 
     Examples:
         >>> dot1 = Dot(100, 100)
@@ -43,13 +43,6 @@ class Connection(StrokedPathMixin):
         >>> # Invisible relationship
         >>> conn = dot1.connect(dot2, visible=False)
     """
-
-    DEFAULT_STYLE: ClassVar[dict[str, str | int]] = {
-        "width": 1,
-        "color": "black",
-        "z_index": 0,
-        "cap": "round",
-    }
 
     def __init__(
         self,
@@ -117,18 +110,13 @@ class Connection(StrokedPathMixin):
                 end_cap = style.end_cap
             opacity = style.opacity
 
-        self._style: dict[str, str | int | float] = {
-            "width": width,
-            "color": color,
-            "z_index": z_index,
-            "cap": cap,
-        }
-        if start_cap is not None:
-            self._style["start_cap"] = start_cap
-        if end_cap is not None:
-            self._style["end_cap"] = end_cap
-        if opacity < 1.0:
-            self._style["opacity"] = opacity
+        self.width = float(width)
+        self._color = Color(color)
+        self._z_index = z_index
+        self.cap = cap
+        self.start_cap = start_cap
+        self.end_cap = end_cap
+        self.opacity = float(opacity)
 
         # Geometry: line (default), curve (curvature=), or path (path=)
         self._curvature = curvature
@@ -191,72 +179,22 @@ class Connection(StrokedPathMixin):
         return self._end.anchor(self._end_anchor)
 
     @property
-    def style(self) -> dict[str, str | int | float]:
-        """Visual style properties."""
-        return self._style
-
-    @property
-    def width(self) -> float:
-        """Line width."""
-        return self._style.get("width", 1)
-
-    @width.setter
-    def width(self, value: float) -> None:
-        self._style["width"] = value
-
-    @property
     def color(self) -> str:
         """Line color."""
-        return self._style.get("color", "black")
+        return self._color.to_hex()
 
     @color.setter
     def color(self, value: str) -> None:
-        self._style["color"] = value
+        self._color = Color(value)
 
     @property
     def z_index(self) -> int:
         """Layer ordering (higher values render on top)."""
-        return self._style.get("z_index", 0)
+        return self._z_index
 
     @z_index.setter
     def z_index(self, value: int) -> None:
-        self._style["z_index"] = value
-
-    @property
-    def cap(self) -> str:
-        """Cap style for both ends."""
-        return self._style.get("cap", "round")
-
-    @cap.setter
-    def cap(self, value: str) -> None:
-        self._style["cap"] = value
-
-    @property
-    def start_cap(self) -> str | None:
-        """Override cap for the start end, or None."""
-        return self._style.get("start_cap")
-
-    @start_cap.setter
-    def start_cap(self, value: str | None) -> None:
-        self._style["start_cap"] = value
-
-    @property
-    def end_cap(self) -> str | None:
-        """Override cap for the end end, or None."""
-        return self._style.get("end_cap")
-
-    @end_cap.setter
-    def end_cap(self, value: str | None) -> None:
-        self._style["end_cap"] = value
-
-    @property
-    def opacity(self) -> float:
-        """Opacity (0.0 transparent to 1.0 opaque)."""
-        return self._style.get("opacity", 1.0)
-
-    @opacity.setter
-    def opacity(self, value: float) -> None:
-        self._style["opacity"] = value
+        self._z_index = value
 
     @property
     def visible(self) -> bool:
@@ -465,5 +403,6 @@ class Connection(StrokedPathMixin):
         else:
             kind = "line"
         return (
-            f"Connection({self._start!r} -> {self._end!r}, {kind}, style={self._style})"
+            f"Connection({self._start!r} -> {self._end!r}, {kind}, "
+            f"color={self.color!r}, width={self.width})"
         )

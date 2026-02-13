@@ -8,7 +8,8 @@ from typing import TYPE_CHECKING
 from ..color import Color
 from ..core.coord import Coord, CoordLike
 from ..core.relcoord import RelCoord
-from ..core.entity import Entity, shape_opacity_attrs
+from ..core.entity import Entity
+from ..core.svg_utils import shape_opacity_attrs
 
 if TYPE_CHECKING:
     from collections.abc import Sequence

@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-import math
-
 from ..core.coord import Coord
+from ..core.svg_utils import sample_arc_length
 
 
 class PathShape:
@@ -30,15 +29,7 @@ class PathShape:
 
     def arc_length(self, samples: int = 200) -> float:
         """Approximate arc length via polyline sampling."""
-        total = 0.0
-        prev = self.point_at(0.0)
-        for i in range(1, samples + 1):
-            curr = self.point_at(i / samples)
-            dx = curr.x - prev.x
-            dy = curr.y - prev.y
-            total += math.sqrt(dx * dx + dy * dy)
-            prev = curr
-        return total
+        return sample_arc_length(self.point_at, samples)
 
     def to_svg_path_d(self, segments: int = 64) -> str:
         """SVG path ``d`` attribute using smooth cubic Bezier curves."""

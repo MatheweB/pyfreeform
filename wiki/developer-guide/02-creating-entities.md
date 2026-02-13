@@ -366,7 +366,7 @@ Before considering your entity complete, verify:
 - [ ] Works with `cell.add()` and `fit_to_cell()`
 
 !!! tip "Shape entities with fill/stroke opacity"
-    If your entity has both `fill` and `stroke` with independent opacity (like Rect, Ellipse, Polygon), use the shared `shape_opacity_attrs(opacity, fill_opacity, stroke_opacity)` helper from `pyfreeform.core.entity` in your `to_svg()`. It returns the correct `fill-opacity`/`stroke-opacity` SVG attribute string, emitting nothing when opacity is 1.0.
+    If your entity has both `fill` and `stroke` with independent opacity (like Rect, Ellipse, Polygon), use the shared `shape_opacity_attrs(opacity, fill_opacity, stroke_opacity)` helper from `pyfreeform.core.svg_utils` in your `to_svg()`. It returns the correct `fill-opacity`/`stroke-opacity` SVG attribute string, emitting nothing when opacity is 1.0.
 
 !!! tip "The simplest built-in entity: Point"
     For a minimal real-world example, look at `pyfreeform/entities/point.py`. The `Point` entity renders nothing (`to_svg()` returns `""`) and exists purely as a movable positional anchor. It has a single `"center"` anchor, zero-size bounds, and no internal geometry to scale or rotate. Its primary use is as a reactive vertex for `Polygon` — see [Reactive Polygons](../guide/06-shapes-and-polygons.md#reactive-polygons).

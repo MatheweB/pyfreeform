@@ -6,7 +6,8 @@ import math
 
 from ..color import Color
 from ..core.coord import Coord, CoordLike
-from ..core.entity import Entity, shape_opacity_attrs
+from ..core.entity import Entity
+from ..core.svg_utils import shape_opacity_attrs
 
 
 class Rect(Entity):
