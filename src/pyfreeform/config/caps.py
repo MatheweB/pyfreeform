@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import TYPE_CHECKING, NamedTuple
 
 if TYPE_CHECKING:
@@ -20,20 +21,24 @@ DEFAULT_ARROW_SCALE = 3.0
 
 
 def cap_shape(
-    path_d: str,
+    vertices: Sequence[tuple[float, float]],
     *,
-    tip: tuple[int, int] = (10, 5),
+    tip: tuple[float, float] = (10, 5),
     view_size: int = 10,
 ) -> Callable[[str, str, float], str]:
-    """Create a cap generator from an SVG path and tip position.
+    """Create a cap generator from a list of vertices and a tip position.
+
+    Each vertex is an ``(x, y)`` point in a ``view_size x view_size``
+    coordinate space (default 10x10).  The vertices are joined into a
+    closed polygon automatically.
 
     Args:
-        path_d:     SVG path ``d`` attribute describing the cap shape
-                    within a ``view_size x view_size`` coordinate space.
+        vertices:   Points forming the cap shape, e.g.
+                    ``[(0, 0), (10, 5), (0, 10)]`` for a right-pointing arrow.
         tip:        ``(x, y)`` point where the cap attaches to the stroke
                     endpoint. For a right-pointing arrow this is the
                     right edge ``(10, 5)``; for a left-pointing one ``(0, 5)``.
-        view_size:  Size of the marker's viewBox (default 10).
+        view_size:  Size of the coordinate space (default 10).
 
     Returns:
         A generator function ``(marker_id, color, size) -> str`` that
@@ -42,10 +47,15 @@ def cap_shape(
     Example::
 
         register_cap("diamond", cap_shape(
-            "M 5 0 L 10 5 L 5 10 L 0 5 z",
+            [(5, 0), (10, 5), (5, 10), (0, 5)],
             tip=(5, 5),
         ))
     """
+    # Build SVG path: M x y L x y L x y ... z
+    first = vertices[0]
+    segments = " ".join(f"L {x} {y}" for x, y in vertices[1:])
+    path_d = f"M {first[0]} {first[1]} {segments} z"
+
     ref_x, ref_y = tip
 
     def _gen(marker_id: str, color: str, size: float) -> str:
@@ -87,7 +97,7 @@ def register_cap(
         from pyfreeform import cap_shape, register_cap
 
         register_cap("diamond", cap_shape(
-            "M 5 0 L 10 5 L 5 10 L 0 5 z",
+            [(5, 0), (10, 5), (5, 10), (0, 5)],
             tip=(5, 5),
         ))
     """

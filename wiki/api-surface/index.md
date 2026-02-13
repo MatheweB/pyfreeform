@@ -1131,29 +1131,43 @@ cell.add_line(start="left", end="right", cap="round", end_cap="arrow")
 
 ### Creating custom caps
 
-Use `cap_shape()` to define a cap from an SVG path and a tip position, then register it:
+A cap shape is just a list of `(x, y)` vertices in a 10x10 grid. That's it -- no SVG knowledge needed.
 
 ```python
 from pyfreeform import cap_shape, register_cap
 
-register_cap("diamond", cap_shape(
-    "M 5 0 L 10 5 L 5 10 L 0 5 z",  # diamond shape in a 10x10 grid
-    tip=(5, 5),                       # center attaches to the stroke endpoint
+# A chevron: just three points
+register_cap("chevron", cap_shape(
+    [(0, 0), (10, 5), (0, 10)],
+    tip=(10, 5),
 ))
 ```
 
 Then use it like any built-in cap:
 ```python
-cell.add_line(start="left", end="right", end_cap="diamond")
+cell.add_line(start="left", end="right", end_cap="chevron")
+```
+
+Here's how the built-in caps are defined -- adding a new one is just adding vertices:
+
+```python
+# config/cap_shapes.py
+
+# ── Arrow ────────────────────────────────────────────────
+_FORWARD_ARROW = [(0, 0), (10, 5), (0, 10)]
+_REVERSE_ARROW = [(10, 0), (0, 5), (10, 10)]
+
+# ── Diamond ──────────────────────────────────────────────
+_DIAMOND = [(5, 0), (10, 5), (5, 10), (0, 5)]
 ```
 
 **`cap_shape()` parameters:**
 
 | Parameter | Default | Description |
 |---|---|---|
-| `path_d` | *(required)* | SVG path `d` attribute -- the shape, drawn in a 10x10 coordinate space |
-| `tip` | `(10, 5)` | `(x, y)` point where the cap attaches to the stroke endpoint |
-| `view_size` | `10` | Size of the coordinate space (change if your shape uses a different grid) |
+| `vertices` | *(required)* | List of `(x, y)` points forming the cap shape, in a 10x10 grid |
+| `tip` | `(10, 5)` | Where the cap attaches to the stroke endpoint |
+| `view_size` | `10` | Size of the coordinate grid (change if your shape uses a different scale) |
 
 **Tip position** controls alignment -- it's the point on your shape that sits exactly at the stroke endpoint:
 
@@ -1161,16 +1175,19 @@ cell.add_line(start="left", end="right", end_cap="diamond")
 - `(0, 5)` -- left edge, center height (left-pointing arrow tip)
 - `(5, 5)` -- dead center (symmetric shapes like diamonds)
 
-**Directional caps** look different when reversed (like arrows). Pass a separate `start_generator`:
+**Directional caps** need a separate reversed shape for the start end (like arrows). Symmetric caps (like diamonds) only need one shape:
+
 ```python
+# Symmetric -- same shape in both directions
+register_cap("diamond", cap_shape(_DIAMOND, tip=(5, 5)))
+
+# Directional -- separate start/end shapes
 register_cap(
-    "my_arrow",
-    cap_shape("M 0 0 L 10 5 L 0 10 z", tip=(10, 5)),                 # end: points outward
-    start_generator=cap_shape("M 10 0 L 0 5 L 10 10 z", tip=(0, 5)),  # start: points outward
+    "arrow",
+    cap_shape([(0, 0), (10, 5), (0, 10)], tip=(10, 5)),                 # end: points outward
+    start_generator=cap_shape([(10, 0), (0, 5), (10, 10)], tip=(0, 5)),  # start: points outward
 )
 ```
-
-See the built-in arrow definitions in `config/cap_shapes.py` for more examples.
 
 ---
 
