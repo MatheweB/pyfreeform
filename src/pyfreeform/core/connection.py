@@ -6,7 +6,7 @@ import math
 from typing import TYPE_CHECKING
 
 from ..color import Color
-from ..config.caps import collect_markers, svg_cap_and_marker_attrs
+from ..config.caps import CapName, collect_markers, svg_cap_and_marker_attrs
 from ..config.styles import ConnectionStyle
 from .bezier import curvature_control_point, eval_cubic, quadratic_to_cubic
 from .coord import Coord
@@ -58,9 +58,9 @@ class Connection:
         width: float = 1,
         color: str = "black",
         z_index: int = 0,
-        cap: str = "round",
-        start_cap: str | None = None,
-        end_cap: str | None = None,
+        cap: CapName = "round",
+        start_cap: CapName | None = None,
+        end_cap: CapName | None = None,
         opacity: float = 1.0,
         style: ConnectionStyle | None = None,
         segments: int = 32,

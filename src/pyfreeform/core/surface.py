@@ -14,6 +14,7 @@ from .tangent import get_angle_at
 from .positions import NAMED_POSITIONS
 
 if TYPE_CHECKING:
+    from ..config.caps import CapName
     from ..config.styles import (
         BorderStyle,
         DotStyle,
@@ -327,9 +328,9 @@ class Surface:
         width: float = 1,
         color: ColorLike = "black",
         z_index: int = 0,
-        cap: str = "round",
-        start_cap: str | None = None,
-        end_cap: str | None = None,
+        cap: CapName = "round",
+        start_cap: CapName | None = None,
+        end_cap: CapName | None = None,
         opacity: float = 1.0,
         style: LineStyle | None = None,
     ) -> Line:
@@ -434,9 +435,9 @@ class Surface:
         width: float = 1,
         color: ColorLike = "black",
         z_index: int = 0,
-        cap: str = "round",
-        start_cap: str | None = None,
-        end_cap: str | None = None,
+        cap: CapName = "round",
+        start_cap: CapName | None = None,
+        end_cap: CapName | None = None,
         opacity: float = 1.0,
         style: LineStyle | None = None,
     ) -> Line:
@@ -497,9 +498,9 @@ class Surface:
         width: float = 1,
         color: ColorLike = "black",
         z_index: int = 0,
-        cap: str = "round",
-        start_cap: str | None = None,
-        end_cap: str | None = None,
+        cap: CapName = "round",
+        start_cap: CapName | None = None,
+        end_cap: CapName | None = None,
         opacity: float = 1.0,
         style: LineStyle | None = None,
     ) -> Curve:
@@ -609,9 +610,9 @@ class Surface:
         color: ColorLike = "black",
         fill: ColorLike | None = None,
         z_index: int = 0,
-        cap: str = "round",
-        start_cap: str | None = None,
-        end_cap: str | None = None,
+        cap: CapName = "round",
+        start_cap: CapName | None = None,
+        end_cap: CapName | None = None,
         opacity: float = 1.0,
         fill_opacity: float | None = None,
         stroke_opacity: float | None = None,

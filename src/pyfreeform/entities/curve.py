@@ -8,7 +8,7 @@ from ..color import Color
 from ..core.bezier import curvature_control_point, quadratic_to_cubic
 from ..core.coord import Coord, CoordLike
 from ..core.relcoord import RelCoord
-from ..config.caps import collect_markers, svg_cap_and_marker_attrs
+from ..config.caps import CapName, collect_markers, svg_cap_and_marker_attrs
 from ..core.entity import Entity
 from ..core.bezier import sample_arc_length
 from ..core.svg_utils import opacity_attr, stroke_attrs
@@ -62,9 +62,9 @@ class Curve(Entity):
         width: float = DEFAULT_WIDTH,
         color: str | tuple[int, int, int] = DEFAULT_COLOR,
         z_index: int = 0,
-        cap: str = DEFAULT_CAP,
-        start_cap: str | None = None,
-        end_cap: str | None = None,
+        cap: CapName = DEFAULT_CAP,
+        start_cap: CapName | None = None,
+        end_cap: CapName | None = None,
         opacity: float = 1.0,
     ) -> None:
         """
@@ -125,9 +125,9 @@ class Curve(Entity):
         width: float = DEFAULT_WIDTH,
         color: str | tuple[int, int, int] = DEFAULT_COLOR,
         z_index: int = 0,
-        cap: str = DEFAULT_CAP,
-        start_cap: str | None = None,
-        end_cap: str | None = None,
+        cap: CapName = DEFAULT_CAP,
+        start_cap: CapName | None = None,
+        end_cap: CapName | None = None,
         opacity: float = 1.0,
     ) -> Curve:
         """Create a curve from two points."""

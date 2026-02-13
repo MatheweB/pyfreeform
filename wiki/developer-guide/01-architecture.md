@@ -48,7 +48,7 @@ pyfreeform/
   config/         # Configuration and extensibility
     styles.py       # Style dataclasses (DotStyle, LineStyle, etc.)
     caps.py         # Cap registry engine (register, resolve, render)
-    cap_shapes.py   # Built-in cap shapes (arrow, arrow_in) -- add new caps here
+    cap_shapes.py   # Built-in cap shapes (arrow, arrow_in, diamond) -- add new caps here
     palette.py      # Color palette utilities
 
   image/          # Image loading and processing

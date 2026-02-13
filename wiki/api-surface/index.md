@@ -1114,7 +1114,13 @@ Methods: `with_background(color)`, `inverted()`, `all_colors()`, iteration.
 
 ## 10. Cap System
 
-Line, Curve, Path, and Connection endpoints support caps. SVG provides three native caps (`"round"`, `"square"`, `"butt"`). PyFreeform extends this with marker-based caps that use SVG `<marker>` elements.
+Line, Curve, Path, and Connection endpoints support caps. All cap parameters are typed as `CapName`, so your IDE will autocomplete the available options.
+
+```python
+from pyfreeform import CapName  # Literal["butt", "round", "square", "arrow", "arrow_in", "diamond"]
+```
+
+SVG provides three native caps (`"round"`, `"square"`, `"butt"`). PyFreeform extends this with marker-based caps that use SVG `<marker>` elements.
 
 | Built-in Cap | Type | Description |
 |---|---|---|
@@ -1123,6 +1129,7 @@ Line, Curve, Path, and Connection endpoints support caps. SVG provides three nat
 | `"butt"` | SVG native | Flat end, flush with the endpoint |
 | `"arrow"` | Marker | Arrowhead pointing away from the path |
 | `"arrow_in"` | Marker | Arrowhead pointing into the path |
+| `"diamond"` | Marker | Diamond shape centered on the endpoint |
 
 Per-end caps: `start_cap` and `end_cap` override the base `cap`:
 ```python
@@ -1154,11 +1161,11 @@ Here's how the built-in caps are defined -- adding a new one is just adding vert
 # config/cap_shapes.py
 
 # ── Arrow ────────────────────────────────────────────────
-_FORWARD_ARROW = [(0, 0), (10, 5), (0, 10)]
-_REVERSE_ARROW = [(10, 0), (0, 5), (10, 10)]
+FORWARD_ARROW = [(0, 0), (10, 5), (0, 10)]
+REVERSE_ARROW = [(10, 0), (0, 5), (10, 10)]
 
 # ── Diamond ──────────────────────────────────────────────
-_DIAMOND = [(5, 0), (10, 5), (5, 10), (0, 5)]
+DIAMOND = [(5, 0), (10, 5), (5, 10), (0, 5)]
 ```
 
 **`cap_shape()` parameters:**
@@ -1179,7 +1186,7 @@ _DIAMOND = [(5, 0), (10, 5), (5, 10), (0, 5)]
 
 ```python
 # Symmetric -- same shape in both directions
-register_cap("diamond", cap_shape(_DIAMOND, tip=(5, 5)))
+register_cap("diamond", cap_shape(DIAMOND, tip=(5, 5)))
 
 # Directional -- separate start/end shapes
 register_cap(

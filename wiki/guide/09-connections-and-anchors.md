@@ -218,7 +218,8 @@ bidirectional = ConnectionStyle(width=2, color="coral", start_cap="arrow", end_c
 
 <figure markdown>
 ![Cap styles](../_images/guide/connections-cap-styles.svg){ width="340" }
-<figcaption>All five cap styles: round, square, butt, arrow, and arrow_in.</figcaption>
+<figcaption>All six cap styles: round, square, butt, arrow, arrow_in, and diamond.</figcaption></invoke>
+
 </figure>
 
 | Cap | Effect |
@@ -228,6 +229,7 @@ bidirectional = ConnectionStyle(width=2, color="coral", start_cap="arrow", end_c
 | `butt` | Flat ends flush at the endpoint |
 | `arrow` | Forward-pointing arrowhead |
 | `arrow_in` | Backward-pointing arrowhead |
+| `diamond` | Diamond shape centered on the endpoint |
 
 ---
 

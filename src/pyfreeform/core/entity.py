@@ -14,6 +14,7 @@ from .positions import NAMED_POSITIONS
 
 
 if TYPE_CHECKING:
+    from ..config.caps import CapName
     from ..config.styles import ConnectionStyle
     from ..entities.path import Path
     from .pathable import Pathable
@@ -383,9 +384,9 @@ class Entity(ABC):
         width: float = 1,
         color: str = "black",
         z_index: int = 0,
-        cap: str = "round",
-        start_cap: str | None = None,
-        end_cap: str | None = None,
+        cap: CapName = "round",
+        start_cap: CapName | None = None,
+        end_cap: CapName | None = None,
         opacity: float = 1.0,
         style: ConnectionStyle | None = None,
         segments: int = 32,

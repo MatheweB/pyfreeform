@@ -207,9 +207,9 @@ def generate():
     save(scene, "guide/connections-mixed-entities.svg")
 
     # --- 5. Cap styles comparison ---
-    scene = Scene(360, 240, background=colors.background)
+    scene = Scene(360, 284, background=colors.background)
 
-    cap_names = ["round", "square", "butt", "arrow", "arrow_in"]
+    cap_names = ["round", "square", "butt", "arrow", "arrow_in", "diamond"]
     for i, cap in enumerate(cap_names):
         y = 30 + i * 44
         d1 = Dot(100, y, radius=4, color=colors.primary)

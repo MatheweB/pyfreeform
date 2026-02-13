@@ -7,7 +7,7 @@ import math
 from ..color import Color
 from ..core.coord import Coord, CoordLike
 from ..core.relcoord import RelCoord
-from ..config.caps import collect_markers, svg_cap_and_marker_attrs
+from ..config.caps import CapName, collect_markers, svg_cap_and_marker_attrs
 from ..core.entity import Entity
 from ..core.svg_utils import opacity_attr, stroke_attrs
 
@@ -50,9 +50,9 @@ class Line(Entity):
         width: float = DEFAULT_WIDTH,
         color: str | tuple[int, int, int] = DEFAULT_COLOR,
         z_index: int = 0,
-        cap: str = DEFAULT_CAP,
-        start_cap: str | None = None,
-        end_cap: str | None = None,
+        cap: CapName = DEFAULT_CAP,
+        start_cap: CapName | None = None,
+        end_cap: CapName | None = None,
         opacity: float = 1.0,
     ) -> None:
         """
@@ -105,9 +105,9 @@ class Line(Entity):
         width: float = DEFAULT_WIDTH,
         color: str | tuple[int, int, int] = DEFAULT_COLOR,
         z_index: int = 0,
-        cap: str = DEFAULT_CAP,
-        start_cap: str | None = None,
-        end_cap: str | None = None,
+        cap: CapName = DEFAULT_CAP,
+        start_cap: CapName | None = None,
+        end_cap: CapName | None = None,
         opacity: float = 1.0,
     ) -> Line:
         """

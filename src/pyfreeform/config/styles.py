@@ -6,6 +6,7 @@ from dataclasses import dataclass, replace
 from typing import Any
 
 from ..color import Color, ColorLike
+from .caps import CapName
 
 
 @dataclass
@@ -76,9 +77,9 @@ class LineStyle:
     width: float = 1
     color: ColorLike = "black"
     z_index: int = 0
-    cap: str = "round"
-    start_cap: str | None = None
-    end_cap: str | None = None
+    cap: CapName = "round"
+    start_cap: CapName | None = None
+    end_cap: CapName | None = None
     opacity: float = 1.0
 
     def __post_init__(self) -> None:
@@ -97,11 +98,11 @@ class LineStyle:
         """Return new style with different z_index."""
         return replace(self, z_index=z_index)
 
-    def with_start_cap(self, start_cap: str | None) -> LineStyle:
+    def with_start_cap(self, start_cap: CapName | None) -> LineStyle:
         """Return new style with different start cap."""
         return replace(self, start_cap=start_cap)
 
-    def with_end_cap(self, end_cap: str | None) -> LineStyle:
+    def with_end_cap(self, end_cap: CapName | None) -> LineStyle:
         """Return new style with different end cap."""
         return replace(self, end_cap=end_cap)
 
@@ -392,9 +393,9 @@ class ConnectionStyle:
     width: float = 1
     color: ColorLike = "black"
     z_index: int = 0
-    cap: str = "round"
-    start_cap: str | None = None
-    end_cap: str | None = None
+    cap: CapName = "round"
+    start_cap: CapName | None = None
+    end_cap: CapName | None = None
     opacity: float = 1.0
 
     def __post_init__(self) -> None:
@@ -413,11 +414,11 @@ class ConnectionStyle:
         """Return new style with different z_index."""
         return replace(self, z_index=z_index)
 
-    def with_start_cap(self, start_cap: str | None) -> ConnectionStyle:
+    def with_start_cap(self, start_cap: CapName | None) -> ConnectionStyle:
         """Return new style with different start cap."""
         return replace(self, start_cap=start_cap)
 
-    def with_end_cap(self, end_cap: str | None) -> ConnectionStyle:
+    def with_end_cap(self, end_cap: CapName | None) -> ConnectionStyle:
         """Return new style with different end cap."""
         return replace(self, end_cap=end_cap)
 

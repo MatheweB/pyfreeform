@@ -3,6 +3,9 @@
 Each shape is a list of ``(x, y)`` vertices in a 10x10 grid.
 The ``tip`` says where the shape attaches to the stroke endpoint.
 
+To add a new cap, define vertices and add an entry to ``CAPS``.
+The cap engine registers everything automatically.
+
 ::
 
     Shape              Vertices                          Tip
@@ -14,32 +17,33 @@ The ``tip`` says where the shape attaches to the stroke endpoint.
 
 from __future__ import annotations
 
-from .caps import cap_shape, register_cap
-
 # ── Arrow ────────────────────────────────────────────────────────────
-_FORWARD_ARROW = [(0, 0), (10, 5), (0, 10)]
-_REVERSE_ARROW = [(10, 0), (0, 5), (10, 10)]
+FORWARD_ARROW = [(0, 0), (10, 5), (0, 10)]
+REVERSE_ARROW = [(10, 0), (0, 5), (10, 10)]
 
 # ── Diamond ──────────────────────────────────────────────────────────
-_DIAMOND = [(5, 0), (10, 5), (5, 10), (0, 5)]
+DIAMOND = [(5, 0), (10, 5), (5, 10), (0, 5)]
 
+# ── Registration table ───────────────────────────────────────────────
+# name → {vertices, tip, [start_vertices, start_tip]}
+# Directional caps need separate start/end shapes (like arrows).
+# Symmetric caps (like diamond) only need vertices + tip.
 
-def register_all() -> None:
-    """Register all built-in cap shapes."""
-
-    # "arrow" -- outward-facing (default): tip points away from the path.
-    register_cap(
-        "arrow",
-        cap_shape(_FORWARD_ARROW, tip=(10, 5)),
-        start_generator=cap_shape(_REVERSE_ARROW, tip=(0, 5)),
-    )
-
-    # "arrow_in" -- inward-facing: tip points into the path.
-    register_cap(
-        "arrow_in",
-        cap_shape(_REVERSE_ARROW, tip=(10, 5)),
-        start_generator=cap_shape(_FORWARD_ARROW, tip=(0, 5)),
-    )
-
-    # "diamond" -- symmetric, same in both directions.
-    register_cap("diamond", cap_shape(_DIAMOND, tip=(5, 5)))
+CAPS: dict[str, dict[str, object]] = {
+    "arrow": {
+        "vertices": FORWARD_ARROW,
+        "tip": (10, 5),
+        "start_vertices": REVERSE_ARROW,
+        "start_tip": (0, 5),
+    },
+    "arrow_in": {
+        "vertices": REVERSE_ARROW,
+        "tip": (10, 5),
+        "start_vertices": FORWARD_ARROW,
+        "start_tip": (0, 5),
+    },
+    "diamond": {
+        "vertices": DIAMOND,
+        "tip": (5, 5),
+    },
+}

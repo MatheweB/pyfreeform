@@ -9,7 +9,7 @@ from ..color import Color
 from ..core.bezier import eval_cubic, eval_cubic_derivative, fit_cubic_beziers
 from ..core.coord import Coord
 from ..core.entity import Entity
-from ..config.caps import collect_markers, svg_cap_and_marker_attrs
+from ..config.caps import CapName, collect_markers, svg_cap_and_marker_attrs
 from ..core.svg_utils import shape_opacity_attrs, stroke_attrs
 from ..paths import Lissajous, Spiral, Wave, Zigzag
 
@@ -87,9 +87,9 @@ class Path(Entity):
         color: str | tuple[int, int, int] = DEFAULT_COLOR,
         fill: str | tuple[int, int, int] | None = None,
         z_index: int = 0,
-        cap: str = DEFAULT_CAP,
-        start_cap: str | None = None,
-        end_cap: str | None = None,
+        cap: CapName = DEFAULT_CAP,
+        start_cap: CapName | None = None,
+        end_cap: CapName | None = None,
         opacity: float = 1.0,
         fill_opacity: float | None = None,
         stroke_opacity: float | None = None,
