@@ -1,6 +1,6 @@
 """Configuration classes for PyFreeform."""
 
-from .caps import register_cap
+from .caps import cap_shape, register_cap
 from .cap_shapes import register_all as _register_cap_shapes
 from .palette import Palette
 
@@ -24,5 +24,6 @@ __all__ = [
     "Palette",
     "ShapeStyle",
     "TextStyle",
+    "cap_shape",
     "register_cap",
 ]

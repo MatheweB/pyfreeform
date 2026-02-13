@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 
 from ..color import Color
 from ..core.entity import Entity
+from ..core.svg_utils import opacity_attr
 
 if TYPE_CHECKING:
     from ..core.coord import Coord
@@ -142,14 +143,11 @@ class Dot(Entity):
 
     def to_svg(self) -> str:
         """Render to SVG circle element."""
-        parts = [f'<circle cx="{self.x}" cy="{self.y}" r="{self.radius}" fill="{self.color}"']
-        if self.opacity < 1.0:
-            parts.append(f' opacity="{self.opacity}"')
-        transform = self._build_svg_transform()
-        if transform:
-            parts.append(transform)
-        parts.append(" />")
-        return "".join(parts)
+        return (
+            f'<circle cx="{self.x}" cy="{self.y}" r="{self.radius}" fill="{self.color}"'
+            f"{opacity_attr(self.opacity)}"
+            f"{self._build_svg_transform()} />"
+        )
 
     def __repr__(self) -> str:
         return f"Dot({self.x}, {self.y}, radius={self.radius}, color={self.color!r})"

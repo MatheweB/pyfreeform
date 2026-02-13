@@ -19,6 +19,49 @@ _MARKER_CAPS: dict[str, _CapEntry] = {}
 DEFAULT_ARROW_SCALE = 3.0
 
 
+def cap_shape(
+    path_d: str,
+    *,
+    tip: tuple[int, int] = (10, 5),
+    view_size: int = 10,
+) -> Callable[[str, str, float], str]:
+    """Create a cap generator from an SVG path and tip position.
+
+    Args:
+        path_d:     SVG path ``d`` attribute describing the cap shape
+                    within a ``view_size x view_size`` coordinate space.
+        tip:        ``(x, y)`` point where the cap attaches to the stroke
+                    endpoint. For a right-pointing arrow this is the
+                    right edge ``(10, 5)``; for a left-pointing one ``(0, 5)``.
+        view_size:  Size of the marker's viewBox (default 10).
+
+    Returns:
+        A generator function ``(marker_id, color, size) -> str`` that
+        produces a complete SVG ``<marker>`` element.
+
+    Example::
+
+        register_cap("diamond", cap_shape(
+            "M 5 0 L 10 5 L 5 10 L 0 5 z",
+            tip=(5, 5),
+        ))
+    """
+    ref_x, ref_y = tip
+
+    def _gen(marker_id: str, color: str, size: float) -> str:
+        return (
+            f'<marker id="{marker_id}" '
+            f'viewBox="0 0 {view_size} {view_size}" '
+            f'refX="{ref_x}" refY="{ref_y}" '
+            f'markerWidth="{size}" markerHeight="{size}" '
+            f'orient="auto" overflow="visible">'
+            f'<path d="{path_d}" fill="{color}" />'
+            f"</marker>"
+        )
+
+    return _gen
+
+
 def register_cap(
     name: str,
     generator: Callable[[str, str, float], str],
@@ -28,16 +71,11 @@ def register_cap(
     """
     Register a new marker-based cap type.
 
-    The generator function receives (marker_id, color_hex, size) and must
-    return a complete SVG ``<marker>`` element string.
-
-    Markers should use ``refX``/``refY`` so the tip of the cap aligns
-    with the path endpoint.  The cap's body extends backward over the
-    stroke, hiding it — no stroke shortening is needed.
+    Use ``cap_shape()`` to create the generator without writing raw SVG.
 
     Args:
         name: Cap name (e.g. "arrow", "diamond").
-        generator:  Function producing the SVG ``<marker>`` element
+        generator:  Function ``(marker_id, color, size) -> svg_string``
                     (used for ``marker-end``).
         start_generator:    Optional separate generator for ``marker-start``.
                             If provided, the start marker uses an explicitly
@@ -46,16 +84,12 @@ def register_cap(
 
     Example::
 
-        def _diamond_marker(marker_id, color, size):
-            return (
-                f'<marker id="{marker_id}" viewBox="0 0 10 10" '
-                f'refX="5" refY="5" markerWidth="{size}" markerHeight="{size}" '
-                f'orient="auto" overflow="visible">'
-                f'<polygon points="5,0 10,5 5,10 0,5" fill="{color}" />'
-                f'</marker>'
-            )
+        from pyfreeform import cap_shape, register_cap
 
-        register_cap("diamond", _diamond_marker)
+        register_cap("diamond", cap_shape(
+            "M 5 0 L 10 5 L 5 10 L 0 5 z",
+            tip=(5, 5),
+        ))
     """
     _MARKER_CAPS[name] = _CapEntry(generator, start_generator)
 

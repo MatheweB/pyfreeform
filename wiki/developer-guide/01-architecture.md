@@ -15,6 +15,8 @@ pyfreeform/
     coord.py        # Coord (x, y) NamedTuple
     relcoord.py     # RelCoord (rx, ry) NamedTuple
     tangent.py      # Tangent angle utilities for pathables
+    bezier.py       # Parametric curve math (arc length, Bézier fitting, curvature)
+    svg_utils.py    # SVG attribute helpers (opacity, fill/stroke, XML escaping)
 
   entities/       # Concrete entity implementations
     dot.py          # Dot (circle)

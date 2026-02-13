@@ -6,6 +6,7 @@ import math
 
 from ..core.coord import Coord, CoordLike
 from ..core.entity import Entity
+from ..core.svg_utils import opacity_attr
 
 
 class EntityGroup(Entity):
@@ -200,8 +201,7 @@ class EntityGroup(Entity):
         transform_str = " ".join(transforms)
 
         sorted_children = sorted(self._children, key=lambda e: e.z_index)
-        opacity_attr = f' opacity="{self.opacity}"' if self.opacity < 1.0 else ""
-        parts = [f'<g transform="{transform_str}"{opacity_attr}>']
+        parts = [f'<g transform="{transform_str}"{opacity_attr(self.opacity)}>']
         parts.extend(f"  {child.to_svg()}" for child in sorted_children)
         parts.append("</g>")
         return "\n".join(parts)

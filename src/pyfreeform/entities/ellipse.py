@@ -7,7 +7,8 @@ import math
 from ..color import Color
 from ..core.coord import Coord, CoordLike
 from ..core.entity import Entity
-from ..core.svg_utils import sample_arc_length, shape_opacity_attrs
+from ..core.bezier import sample_arc_length
+from ..core.svg_utils import fill_stroke_attrs, shape_opacity_attrs
 
 
 class Ellipse(Entity):
@@ -429,30 +430,13 @@ class Ellipse(Entity):
 
     def to_svg(self) -> str:
         """Render to SVG ellipse element."""
-        parts = [
-            f'<ellipse cx="{self.position.x}" cy="{self.position.y}"',
-            f' rx="{self.rx}" ry="{self.ry}"',
-        ]
-
-        # Fill
-        if self.fill:
-            parts.append(f' fill="{self.fill}"')
-        else:
-            parts.append(' fill="none"')
-
-        # Stroke
-        if self.stroke:
-            parts.append(f' stroke="{self.stroke}" stroke-width="{self.stroke_width}"')
-
-        parts.append(shape_opacity_attrs(self.opacity, self.fill_opacity, self.stroke_opacity))
-
-        # Transform (rotation + scale)
-        transform = self._build_svg_transform()
-        if transform:
-            parts.append(transform)
-
-        parts.append(" />")
-        return "".join(parts)
+        return (
+            f'<ellipse cx="{self.position.x}" cy="{self.position.y}"'
+            f' rx="{self.rx}" ry="{self.ry}"'
+            f"{fill_stroke_attrs(self.fill, self.stroke, self.stroke_width)}"
+            f"{shape_opacity_attrs(self.opacity, self.fill_opacity, self.stroke_opacity)}"
+            f"{self._build_svg_transform()} />"
+        )
 
     def __repr__(self) -> str:
         return (

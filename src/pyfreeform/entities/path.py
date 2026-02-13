@@ -10,7 +10,7 @@ from ..core.bezier import eval_cubic, eval_cubic_derivative, fit_cubic_beziers
 from ..core.coord import Coord
 from ..core.entity import Entity
 from ..config.caps import collect_markers, svg_cap_and_marker_attrs
-from ..core.svg_utils import shape_opacity_attrs
+from ..core.svg_utils import shape_opacity_attrs, stroke_attrs
 from ..paths import Lissajous, Spiral, Wave, Zigzag
 
 if TYPE_CHECKING:
@@ -546,7 +546,6 @@ class Path(Entity):
         )
 
         segs = self._bezier_segments
-
         parts_d = [f"M {segs[0][0].x} {segs[0][0].y}"]
         for _, cp1, cp2, p3 in segs:
             parts_d.append(f" C {cp1.x} {cp1.y} {cp2.x} {cp2.y} {p3.x} {p3.y}")
@@ -556,24 +555,13 @@ class Path(Entity):
 
         fill_attr = self._fill.to_hex() if self._closed and self._fill is not None else "none"
 
-        parts = [
-            f'<path d="{d_attr}" '
-            f'fill="{fill_attr}" '
-            f'stroke="{self.color}" stroke-width="{self.width}" '
-            f'stroke-linecap="{svg_cap}" stroke-linejoin="round"'
-        ]
-
-        if marker_attrs:
-            parts.append(marker_attrs)
-
-        parts.append(shape_opacity_attrs(self.opacity, self.fill_opacity, self.stroke_opacity))
-
-        transform = self._build_svg_transform()
-        if transform:
-            parts.append(transform)
-
-        parts.append(" />")
-        return "".join(parts)
+        return (
+            f'<path d="{d_attr}" fill="{fill_attr}"'
+            f"{stroke_attrs(self.color, self.width, svg_cap, marker_attrs)}"
+            f' stroke-linejoin="round"'
+            f"{shape_opacity_attrs(self.opacity, self.fill_opacity, self.stroke_opacity)}"
+            f"{self._build_svg_transform()} />"
+        )
 
     def __repr__(self) -> str:
         kind = "closed" if self._closed else "open"

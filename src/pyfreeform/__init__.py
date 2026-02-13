@@ -9,7 +9,7 @@ __version__ = "0.4.0"
 from .color import Color, ColorLike
 
 # Configuration
-from .config.caps import register_cap
+from .config.caps import cap_shape, register_cap
 from .config.palette import Palette
 from .config.styles import (
     BorderStyle,
@@ -151,5 +151,6 @@ __all__ = [
     "display",
     "get_angle_at",
     "map_range",
+    "cap_shape",
     "register_cap",
 ]

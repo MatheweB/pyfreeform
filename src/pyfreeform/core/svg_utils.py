@@ -2,10 +2,47 @@
 
 from __future__ import annotations
 
-import math
-from collections.abc import Callable
 
-from .coord import Coord
+def xml_escape(text: str) -> str:
+    """Escape special XML characters for safe embedding in SVG."""
+    return (
+        text.replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace('"', "&quot;")
+        .replace("'", "&apos;")
+    )
+
+
+def opacity_attr(opacity: float) -> str:
+    """Build SVG ``opacity`` attribute string (empty when fully opaque)."""
+    if opacity < 1.0:
+        return f' opacity="{opacity}"'
+    return ""
+
+
+def fill_stroke_attrs(
+    fill: str | None, stroke: str | None, stroke_width: float | None
+) -> str:
+    """Build SVG fill/stroke attribute string for shape elements."""
+    parts: list[str] = []
+    if fill:
+        parts.append(f' fill="{fill}"')
+    else:
+        parts.append(' fill="none"')
+    if stroke:
+        parts.append(f' stroke="{stroke}" stroke-width="{stroke_width}"')
+    return "".join(parts)
+
+
+def stroke_attrs(
+    color: str, width: float, svg_cap: str, marker_attrs: str = ""
+) -> str:
+    """Build SVG stroke attribute string for stroked paths (lines, curves)."""
+    return (
+        f' stroke="{color}" stroke-width="{width}" '
+        f'stroke-linecap="{svg_cap}"{marker_attrs}'
+    )
 
 
 def shape_opacity_attrs(
@@ -20,18 +57,3 @@ def shape_opacity_attrs(
     if eff_stroke < 1.0:
         parts.append(f' stroke-opacity="{eff_stroke}"')
     return "".join(parts)
-
-
-def sample_arc_length(
-    point_at_fn: Callable[[float], Coord], samples: int = 200
-) -> float:
-    """Approximate arc length by summing chord lengths over point_at samples."""
-    total = 0.0
-    prev = point_at_fn(0.0)
-    for i in range(1, samples + 1):
-        curr = point_at_fn(i / samples)
-        dx = curr.x - prev.x
-        dy = curr.y - prev.y
-        total += math.sqrt(dx * dx + dy * dy)
-        prev = curr
-    return total

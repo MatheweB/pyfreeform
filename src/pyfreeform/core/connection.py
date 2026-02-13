@@ -10,6 +10,7 @@ from ..config.caps import collect_markers, svg_cap_and_marker_attrs
 from ..config.styles import ConnectionStyle
 from .bezier import curvature_control_point, eval_cubic, quadratic_to_cubic
 from .coord import Coord
+from .svg_utils import opacity_attr, stroke_attrs
 
 if TYPE_CHECKING:
     from ..entities.path import Path
@@ -370,46 +371,27 @@ class Connection:
         if not self._visible:
             return ""
 
-        if self._shape_kind == "line":
-            p1 = self.start_point
-            p2 = self.end_point
-            svg_cap, marker_attrs = svg_cap_and_marker_attrs(
-                self.cap, self.start_cap, self.end_cap, self.width, self.color
-            )
-            parts = [
-                f'<line x1="{p1.x}" y1="{p1.y}" '
-                f'x2="{p2.x}" y2="{p2.y}" '
-                f'stroke="{self.color}" stroke-width="{self.width}" '
-                f'stroke-linecap="{svg_cap}"'
-            ]
-            if marker_attrs:
-                parts.append(marker_attrs)
-            if self.opacity < 1.0:
-                parts.append(f' opacity="{self.opacity}"')
-            parts.append(" />")
-            return "".join(parts)
-
-        # Curve or path — render as <path>
-        d_attr = self.to_svg_path_d()
         svg_cap, marker_attrs = svg_cap_and_marker_attrs(
             self.cap, self.start_cap, self.end_cap, self.width, self.color
         )
 
-        parts = [
-            f'<path d="{d_attr}" '
-            f'fill="none" '
-            f'stroke="{self.color}" stroke-width="{self.width}" '
-            f'stroke-linecap="{svg_cap}" stroke-linejoin="round"'
-        ]
+        if self._shape_kind == "line":
+            p1 = self.start_point
+            p2 = self.end_point
+            return (
+                f'<line x1="{p1.x}" y1="{p1.y}" x2="{p2.x}" y2="{p2.y}"'
+                f"{stroke_attrs(self.color, self.width, svg_cap, marker_attrs)}"
+                f"{opacity_attr(self.opacity)} />"
+            )
 
-        if marker_attrs:
-            parts.append(marker_attrs)
-
-        if self.opacity < 1.0:
-            parts.append(f' opacity="{self.opacity}"')
-
-        parts.append(" />")
-        return "".join(parts)
+        # Curve or path — render as <path>
+        d_attr = self.to_svg_path_d()
+        return (
+            f'<path d="{d_attr}" fill="none"'
+            f"{stroke_attrs(self.color, self.width, svg_cap, marker_attrs)}"
+            f' stroke-linejoin="round"'
+            f"{opacity_attr(self.opacity)} />"
+        )
 
     def __repr__(self) -> str:
         if not self._visible:

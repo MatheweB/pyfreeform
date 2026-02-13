@@ -1,20 +1,36 @@
-"""Cubic Bézier fitting algorithm.
+"""Parametric curve utilities.
 
-Fits cubic Bézier segments to any Pathable using Hermite interpolation,
-giving C1 continuity (matching tangents) at every joint.
+Includes arc-length sampling, Bézier fitting (Hermite interpolation
+with C1 continuity), curvature helpers, and degree elevation.
 
-Used by the Path entity and shaped Connections.
+Used by the Path entity, Curve entity, Ellipse, and shaped Connections.
 """
 
 from __future__ import annotations
 
 import math
+from collections.abc import Callable
 from typing import TYPE_CHECKING
 
 from .coord import Coord
 
 if TYPE_CHECKING:
     from .pathable import Pathable
+
+
+def sample_arc_length(
+    point_at_fn: Callable[[float], Coord], samples: int = 200
+) -> float:
+    """Approximate arc length by summing chord lengths over point_at samples."""
+    total = 0.0
+    prev = point_at_fn(0.0)
+    for i in range(1, samples + 1):
+        curr = point_at_fn(i / samples)
+        dx = curr.x - prev.x
+        dy = curr.y - prev.y
+        total += math.sqrt(dx * dx + dy * dy)
+        prev = curr
+    return total
 
 
 def tangent_at(

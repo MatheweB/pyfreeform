@@ -9,6 +9,7 @@ from ..core.coord import Coord, CoordLike
 from ..core.relcoord import RelCoord
 from ..config.caps import collect_markers, svg_cap_and_marker_attrs
 from ..core.entity import Entity
+from ..core.svg_utils import opacity_attr, stroke_attrs
 
 
 class Line(Entity):
@@ -368,26 +369,12 @@ class Line(Entity):
         svg_cap, marker_attrs = svg_cap_and_marker_attrs(
             self.cap, self.start_cap, self.end_cap, self.width, self.color
         )
-
-        parts = [
-            f'<line x1="{s.x}" y1="{s.y}" '
-            f'x2="{e.x}" y2="{e.y}" '
-            f'stroke="{self.color}" stroke-width="{self.width}" '
-            f'stroke-linecap="{svg_cap}"'
-        ]
-
-        if marker_attrs:
-            parts.append(marker_attrs)
-
-        if self.opacity < 1.0:
-            parts.append(f' opacity="{self.opacity}"')
-
-        transform = self._build_svg_transform()
-        if transform:
-            parts.append(transform)
-
-        parts.append(" />")
-        return "".join(parts)
+        return (
+            f'<line x1="{s.x}" y1="{s.y}" x2="{e.x}" y2="{e.y}"'
+            f"{stroke_attrs(self.color, self.width, svg_cap, marker_attrs)}"
+            f"{opacity_attr(self.opacity)}"
+            f"{self._build_svg_transform()} />"
+        )
 
     def __repr__(self) -> str:
         return (

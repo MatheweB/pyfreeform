@@ -10,6 +10,7 @@ from ..color import Color
 from ..core.relcoord import RelCoordLike
 from ..core.coord import Coord
 from ..core.entity import Entity
+from ..core.svg_utils import opacity_attr, xml_escape
 
 # ---------------------------------------------------------------------------
 # Font measurement via Pillow
@@ -410,19 +411,8 @@ class Text(Entity):
         """Render to SVG text element."""
         if self._textpath_info is not None:
             return self._to_svg_textpath(self._textpath_info)
-        # Build transform attribute for rotation and/or scale
-        transform = self._build_svg_transform()
 
-        # Escape special XML characters in content
-        escaped_content = (
-            self.content.replace("&", "&amp;")
-            .replace("<", "&lt;")
-            .replace(">", "&gt;")
-            .replace('"', "&quot;")
-            .replace("'", "&apos;")
-        )
-
-        opacity_attr = f' opacity="{self.opacity}"' if self.opacity < 1.0 else ""
+        escaped = xml_escape(self.content)
 
         return (
             f'<text x="{self.x}" y="{self.y}" '
@@ -433,23 +423,15 @@ class Text(Entity):
             f'fill="{self.color}" '
             f'text-anchor="{self.text_anchor}" '
             f'dominant-baseline="{self.baseline}"'
-            f"{opacity_attr}"
-            f"{transform}>"
-            f"{escaped_content}"
+            f"{opacity_attr(self.opacity)}"
+            f"{self._build_svg_transform()}>"
+            f"{escaped}"
             f"</text>"
         )
 
     def _to_svg_textpath(self, info: dict[str, object]) -> str:
         """Render to SVG text element with textPath warping."""
-        escaped_content = (
-            self.content.replace("&", "&amp;")
-            .replace("<", "&lt;")
-            .replace(">", "&gt;")
-            .replace('"', "&quot;")
-            .replace("'", "&apos;")
-        )
-
-        opacity_attr = f' opacity="{self.opacity}"' if self.opacity < 1.0 else ""
+        escaped = xml_escape(self.content)
 
         offset = info["start_offset"]
         offset_attr = f' startOffset="{offset}"' if offset not in ("0%", "0.0%") else ""
@@ -465,10 +447,10 @@ class Text(Entity):
             f'fill="{self.color}" '
             f'text-anchor="{self.text_anchor}" '
             f'dominant-baseline="{self.baseline}"'
-            f"{opacity_attr}>"
+            f"{opacity_attr(self.opacity)}>"
             f'<textPath href="#{info["path_id"]}"'
             f"{offset_attr}{textlen_attr}>"
-            f"{escaped_content}"
+            f"{escaped}"
             f"</textPath></text>"
         )
 

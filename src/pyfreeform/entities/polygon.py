@@ -9,7 +9,7 @@ from ..color import Color
 from ..core.coord import Coord, CoordLike
 from ..core.relcoord import RelCoord
 from ..core.entity import Entity
-from ..core.svg_utils import shape_opacity_attrs
+from ..core.svg_utils import fill_stroke_attrs, shape_opacity_attrs
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -282,25 +282,12 @@ class Polygon(Entity):
     def to_svg(self) -> str:
         """Render to SVG polygon element."""
         points_str = " ".join(f"{v.x},{v.y}" for v in self.vertices)
-
-        parts = [f'<polygon points="{points_str}"']
-
-        if self._fill:
-            parts.append(f' fill="{self.fill}"')
-        else:
-            parts.append(' fill="none"')
-
-        if self._stroke:
-            parts.append(f' stroke="{self.stroke}" stroke-width="{self.stroke_width}"')
-
-        parts.append(shape_opacity_attrs(self.opacity, self.fill_opacity, self.stroke_opacity))
-
-        transform = self._build_svg_transform()
-        if transform:
-            parts.append(transform)
-
-        parts.append(" />")
-        return "".join(parts)
+        return (
+            f'<polygon points="{points_str}"'
+            f"{fill_stroke_attrs(self.fill, self.stroke, self.stroke_width)}"
+            f"{shape_opacity_attrs(self.opacity, self.fill_opacity, self.stroke_opacity)}"
+            f"{self._build_svg_transform()} />"
+        )
 
     def __repr__(self) -> str:
         return f"Polygon({len(self._vertex_specs)} vertices, fill={self.fill!r})"

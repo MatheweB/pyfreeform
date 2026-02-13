@@ -1131,21 +1131,15 @@ cell.add_line(start="left", end="right", cap="round", end_cap="arrow")
 
 ### Creating custom caps
 
-Cap shapes are defined in `config/cap_shapes.py`. To add a new cap, write a generator function that receives `(marker_id, color_hex, size)` and returns a complete SVG `<marker>` element, then register it:
+Use `cap_shape()` to define a cap from an SVG path and a tip position, then register it:
 
 ```python
-from pyfreeform import register_cap
+from pyfreeform import cap_shape, register_cap
 
-def _diamond_marker(marker_id, color, size):
-    return (
-        f'<marker id="{marker_id}" viewBox="0 0 10 10" '
-        f'refX="5" refY="5" markerWidth="{size}" markerHeight="{size}" '
-        f'orient="auto" overflow="visible">'
-        f'<polygon points="5,0 10,5 5,10 0,5" fill="{color}" />'
-        f'</marker>'
-    )
-
-register_cap("diamond", _diamond_marker)
+register_cap("diamond", cap_shape(
+    "M 5 0 L 10 5 L 5 10 L 0 5 z",  # diamond shape in a 10x10 grid
+    tip=(5, 5),                       # center attaches to the stroke endpoint
+))
 ```
 
 Then use it like any built-in cap:
@@ -1153,12 +1147,30 @@ Then use it like any built-in cap:
 cell.add_line(start="left", end="right", end_cap="diamond")
 ```
 
-If the cap looks different when reversed (like arrows do), pass a separate `start_generator`:
+**`cap_shape()` parameters:**
+
+| Parameter | Default | Description |
+|---|---|---|
+| `path_d` | *(required)* | SVG path `d` attribute -- the shape, drawn in a 10x10 coordinate space |
+| `tip` | `(10, 5)` | `(x, y)` point where the cap attaches to the stroke endpoint |
+| `view_size` | `10` | Size of the coordinate space (change if your shape uses a different grid) |
+
+**Tip position** controls alignment -- it's the point on your shape that sits exactly at the stroke endpoint:
+
+- `(10, 5)` -- right edge, center height (right-pointing arrow tip)
+- `(0, 5)` -- left edge, center height (left-pointing arrow tip)
+- `(5, 5)` -- dead center (symmetric shapes like diamonds)
+
+**Directional caps** look different when reversed (like arrows). Pass a separate `start_generator`:
 ```python
-register_cap("my_arrow", forward_gen, start_generator=reverse_gen)
+register_cap(
+    "my_arrow",
+    cap_shape("M 0 0 L 10 5 L 0 10 z", tip=(10, 5)),                 # end: points outward
+    start_generator=cap_shape("M 10 0 L 0 5 L 10 10 z", tip=(0, 5)),  # start: points outward
+)
 ```
 
-The `refX`/`refY` attributes control where the marker's reference point aligns with the path endpoint. See the built-in arrow definitions in `config/cap_shapes.py` for a complete example.
+See the built-in arrow definitions in `config/cap_shapes.py` for more examples.
 
 ---
 

@@ -10,7 +10,8 @@ from ..core.coord import Coord, CoordLike
 from ..core.relcoord import RelCoord
 from ..config.caps import collect_markers, svg_cap_and_marker_attrs
 from ..core.entity import Entity
-from ..core.svg_utils import sample_arc_length
+from ..core.bezier import sample_arc_length
+from ..core.svg_utils import opacity_attr, stroke_attrs
 
 
 class Curve(Entity):
@@ -450,25 +451,13 @@ class Curve(Entity):
         svg_cap, marker_attrs = svg_cap_and_marker_attrs(
             self.cap, self.start_cap, self.end_cap, self.width, self.color
         )
-
-        parts = [
-            f'<path d="M {s.x} {s.y} Q {c.x} {c.y} {e.x} {e.y}" '
-            f'fill="none" stroke="{self.color}" stroke-width="{self.width}" '
-            f'stroke-linecap="{svg_cap}"'
-        ]
-
-        if marker_attrs:
-            parts.append(marker_attrs)
-
-        if self.opacity < 1.0:
-            parts.append(f' opacity="{self.opacity}"')
-
-        transform = self._build_svg_transform()
-        if transform:
-            parts.append(transform)
-
-        parts.append(" />")
-        return "".join(parts)
+        return (
+            f'<path d="M {s.x} {s.y} Q {c.x} {c.y} {e.x} {e.y}"'
+            f' fill="none"'
+            f"{stroke_attrs(self.color, self.width, svg_cap, marker_attrs)}"
+            f"{opacity_attr(self.opacity)}"
+            f"{self._build_svg_transform()} />"
+        )
 
     def __repr__(self) -> str:
         return (

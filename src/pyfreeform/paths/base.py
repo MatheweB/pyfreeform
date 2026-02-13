@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from ..core.coord import Coord
-from ..core.svg_utils import sample_arc_length
+from ..core.bezier import sample_arc_length
 
 
 class PathShape:
