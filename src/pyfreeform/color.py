@@ -115,3 +115,7 @@ class Color:
         if isinstance(other, Color):
             return self._hex == other._hex
         return False
+
+
+ColorLike = str | tuple[int, int, int]
+"""Type alias for color values: named color, hex string, or RGB tuple."""

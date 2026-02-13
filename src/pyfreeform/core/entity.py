@@ -5,7 +5,6 @@ from __future__ import annotations
 import math
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
-from weakref import WeakSet
 
 from .binding import Binding
 from .connection import Connection
@@ -29,6 +28,10 @@ def shape_opacity_attrs(
 
 
 if TYPE_CHECKING:
+    from ..config.styles import ConnectionStyle
+    from ..entities.curve import Curve
+    from ..entities.line import Line
+    from ..entities.path import Path
     from .pathable import Pathable
     from .surface import Surface
 
@@ -63,7 +66,7 @@ class Entity(ABC):
         """
         self._position = Coord(x, y)
         self._cell: Surface | None = None
-        self._connections: WeakSet[Connection] = WeakSet()
+        self._connections: set[Connection] = set()
         self._data: dict[str, Any] = {}
         self._z_index = z_index
 
@@ -387,10 +390,18 @@ class Entity(ABC):
     def connect(
         self,
         other: Entity,
-        style: Any | None = None,
         start_anchor: str = "center",
         end_anchor: str = "center",
-        shape: Any | None = None,
+        *,
+        shape: Line | Curve | Path | None = None,
+        width: float = 1,
+        color: str = "black",
+        z_index: int = 0,
+        cap: str = "round",
+        start_cap: str | None = None,
+        end_cap: str | None = None,
+        opacity: float = 1.0,
+        style: ConnectionStyle | None = None,
         segments: int = 32,
     ) -> Connection:
         """
@@ -398,12 +409,18 @@ class Entity(ABC):
 
         Args:
             other: The entity to connect to.
-            style:  Visual style — ConnectionStyle object or dict with
-                    "width", "color", "z_index" keys.
             start_anchor: Anchor name on this entity.
             end_anchor: Anchor name on the other entity.
-            shape:  Visual shape — Line(), Curve(), Path(), or None
-                    for invisible.
+            shape: Visual shape — Line(), Curve(), Path(), or None
+                   for invisible.
+            width: Line width in pixels.
+            color: Line color.
+            z_index: Layer order (higher = on top).
+            cap: Cap style for both ends.
+            start_cap: Override cap for start end (e.g. "arrow").
+            end_cap: Override cap for end end (e.g. "arrow").
+            opacity: Opacity (0.0 transparent to 1.0 opaque).
+            style: ConnectionStyle object (overrides individual params).
             segments: Number of Bézier segments for shape rendering.
 
         Returns:
@@ -415,10 +432,51 @@ class Entity(ABC):
             end=other,
             start_anchor=start_anchor,
             end_anchor=end_anchor,
-            style=style,
             shape=shape,
+            width=width,
+            color=color,
+            z_index=z_index,
+            cap=cap,
+            start_cap=start_cap,
+            end_cap=end_cap,
+            opacity=opacity,
+            style=style,
             segments=segments,
         )
+
+    # --- Distance methods ---
+
+    def distance_to(self, other: Entity | Surface | Coord | tuple[float, float]) -> float:
+        """
+        Euclidean pixel distance from this entity's position to another.
+
+        Accepts: Entity (uses position), Cell/Surface (uses center),
+        Coord, or (x, y) tuple.
+
+        Args:
+            other: An Entity, Surface/Cell, Coord, or (x, y) tuple.
+
+        Returns:
+            Distance in pixels.
+        """
+        if isinstance(other, Entity):
+            target = other.position
+        elif isinstance(other, Coord):
+            target = other
+        elif isinstance(other, tuple):
+            target = Coord(*other)
+        else:
+            # Import Surface lazily to avoid circular import
+            from .surface import Surface as _Surface
+
+            if isinstance(other, _Surface):
+                cx, cy = other.center
+                target = Coord(cx, cy)
+            else:
+                raise TypeError(
+                    f"Expected Entity, Surface, Coord, or tuple, got {type(other).__name__}"
+                )
+        return self.position.distance_to(target)
 
     # --- Transform methods ---
 

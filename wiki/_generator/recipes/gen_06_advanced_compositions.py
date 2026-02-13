@@ -150,7 +150,7 @@ def generate():
                 scene.add_connection(dot.connect(dots[key], shape=Line(), style=conn_style))
 
     # Title overlay
-    title = scene.grid.merge((0, 0), (1, scene.grid.cols - 1))
+    title = scene.grid.merge((0, 0), (1, scene.grid.num_columns - 1))
     title.add_fill(color="#000000", opacity=0.5, z_index=3)
     title.add_text(
         "LAYERED ART", at="center", font_size=0.45, color="#ffffff", bold=True, z_index=4

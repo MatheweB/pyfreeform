@@ -205,7 +205,7 @@ class Cell(Surface):
     @property
     def below(self) -> Cell | None:
         """Cell below this one (south), or None if at edge."""
-        if self._row < self._grid.rows - 1:
+        if self._row < self._grid.num_rows - 1:
             return self._grid[self._row + 1, self._col]
         return None
 
@@ -219,7 +219,7 @@ class Cell(Surface):
     @property
     def right(self) -> Cell | None:
         """Cell to the right (east), or None if at edge."""
-        if self._col < self._grid.cols - 1:
+        if self._col < self._grid.num_columns - 1:
             return self._grid[self._row, self._col + 1]
         return None
 
@@ -233,21 +233,21 @@ class Cell(Surface):
     @property
     def above_right(self) -> Cell | None:
         """Cell diagonally above-right (northeast), or None if at edge."""
-        if self._row > 0 and self._col < self._grid.cols - 1:
+        if self._row > 0 and self._col < self._grid.num_columns - 1:
             return self._grid[self._row - 1, self._col + 1]
         return None
 
     @property
     def below_left(self) -> Cell | None:
         """Cell diagonally below-left (southwest), or None if at edge."""
-        if self._row < self._grid.rows - 1 and self._col > 0:
+        if self._row < self._grid.num_rows - 1 and self._col > 0:
             return self._grid[self._row + 1, self._col - 1]
         return None
 
     @property
     def below_right(self) -> Cell | None:
         """Cell diagonally below-right (southeast), or None if at edge."""
-        if self._row < self._grid.rows - 1 and self._col < self._grid.cols - 1:
+        if self._row < self._grid.num_rows - 1 and self._col < self._grid.num_columns - 1:
             return self._grid[self._row + 1, self._col + 1]
         return None
 
@@ -279,7 +279,7 @@ class Cell(Surface):
     # QOL METHODS
     # =========================================================================
 
-    def distance_to(self, other) -> float:
+    def distance_to(self, other: Cell | Entity | Coord | tuple[float, float]) -> float:
         """
         Euclidean pixel distance from this cell's center to another position.
 
@@ -316,8 +316,8 @@ class Cell(Surface):
         Returns:
             RelCoord(rx, ry) where both are in [0.0, 1.0].
         """
-        cols = self._grid.cols
-        rows = self._grid.rows
+        cols = self._grid.num_columns
+        rows = self._grid.num_rows
         nx = self._col / (cols - 1) if cols > 1 else 0.0
         ny = self._row / (rows - 1) if rows > 1 else 0.0
         return RelCoord(nx, ny)
@@ -348,8 +348,8 @@ class Cell(Surface):
         image = self._grid.source_image
         if image is None:
             raise ValueError("Grid was not created from an image — no source image to sample")
-        px = int(min(max(0, (self._col + rx) * image.width / self._grid.cols), image.width - 1))
-        py = int(min(max(0, (self._row + ry) * image.height / self._grid.rows), image.height - 1))
+        px = int(min(max(0, (self._col + rx) * image.width / self._grid.num_columns), image.width - 1))
+        py = int(min(max(0, (self._row + ry) * image.height / self._grid.num_rows), image.height - 1))
         return image.rgb_at(px, py)
 
     def sample_brightness(self, rx: float = 0.5, ry: float = 0.5) -> float:

@@ -5,6 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from typing import Any
 
+from ..color import Color, ColorLike
+
 
 @dataclass
 class DotStyle:
@@ -22,11 +24,15 @@ class DotStyle:
         opacity: Opacity 0.0-1.0 (default: 1.0, fully opaque)
     """
 
-    color: str = "black"
+    color: ColorLike = "black"
     z_index: int = 0
     opacity: float = 1.0
 
-    def with_color(self, color: str) -> DotStyle:
+    def __post_init__(self) -> None:
+        if isinstance(self.color, tuple):
+            self.color = Color(self.color).to_hex()
+
+    def with_color(self, color: ColorLike) -> DotStyle:
         """Return new style with different color."""
         return replace(self, color=color)
 
@@ -68,18 +74,22 @@ class LineStyle:
     """
 
     width: float = 1
-    color: str = "black"
+    color: ColorLike = "black"
     z_index: int = 0
     cap: str = "round"
     start_cap: str | None = None
     end_cap: str | None = None
     opacity: float = 1.0
 
+    def __post_init__(self) -> None:
+        if isinstance(self.color, tuple):
+            self.color = Color(self.color).to_hex()
+
     def with_width(self, width: float) -> LineStyle:
         """Return new style with different width."""
         return replace(self, width=width)
 
-    def with_color(self, color: str) -> LineStyle:
+    def with_color(self, color: ColorLike) -> LineStyle:
         """Return new style with different color."""
         return replace(self, color=color)
 
@@ -131,11 +141,15 @@ class FillStyle:
         z_index: Layer order (default: 0)
     """
 
-    color: str = "black"
+    color: ColorLike = "black"
     opacity: float = 1.0
     z_index: int = 0
 
-    def with_color(self, color: str) -> FillStyle:
+    def __post_init__(self) -> None:
+        if isinstance(self.color, tuple):
+            self.color = Color(self.color).to_hex()
+
+    def with_color(self, color: ColorLike) -> FillStyle:
         """Return new style with different color."""
         return replace(self, color=color)
 
@@ -166,15 +180,19 @@ class BorderStyle:
     """
 
     width: float = 0.5
-    color: str = "#cccccc"
+    color: ColorLike = "#cccccc"
     z_index: int = 0
     opacity: float = 1.0
+
+    def __post_init__(self) -> None:
+        if isinstance(self.color, tuple):
+            self.color = Color(self.color).to_hex()
 
     def with_width(self, width: float) -> BorderStyle:
         """Return new style with different width."""
         return replace(self, width=width)
 
-    def with_color(self, color: str) -> BorderStyle:
+    def with_color(self, color: ColorLike) -> BorderStyle:
         """Return new style with different color."""
         return replace(self, color=color)
 
@@ -215,19 +233,25 @@ class ShapeStyle:
         stroke_opacity: Override opacity for stroke only (default: None, uses opacity)
     """
 
-    color: str = "black"
-    stroke: str | None = None
+    color: ColorLike = "black"
+    stroke: ColorLike | None = None
     stroke_width: float = 1
     z_index: int = 0
     opacity: float = 1.0
     fill_opacity: float | None = None
     stroke_opacity: float | None = None
 
-    def with_color(self, color: str) -> ShapeStyle:
+    def __post_init__(self) -> None:
+        if isinstance(self.color, tuple):
+            self.color = Color(self.color).to_hex()
+        if isinstance(self.stroke, tuple):
+            self.stroke = Color(self.stroke).to_hex()
+
+    def with_color(self, color: ColorLike) -> ShapeStyle:
         """Return new style with different color."""
         return replace(self, color=color)
 
-    def with_stroke(self, stroke: str | None) -> ShapeStyle:
+    def with_stroke(self, stroke: ColorLike | None) -> ShapeStyle:
         """Return new style with different stroke."""
         return replace(self, stroke=stroke)
 
@@ -289,7 +313,7 @@ class TextStyle:
         opacity: Opacity 0.0-1.0 (default: 1.0, fully opaque)
     """
 
-    color: str = "black"
+    color: ColorLike = "black"
     font_family: str = "sans-serif"
     bold: bool = False
     italic: bool = False
@@ -299,7 +323,11 @@ class TextStyle:
     z_index: int = 0
     opacity: float = 1.0
 
-    def with_color(self, color: str) -> TextStyle:
+    def __post_init__(self) -> None:
+        if isinstance(self.color, tuple):
+            self.color = Color(self.color).to_hex()
+
+    def with_color(self, color: ColorLike) -> TextStyle:
         """Return new style with different color."""
         return replace(self, color=color)
 
@@ -362,18 +390,22 @@ class ConnectionStyle:
     """
 
     width: float = 1
-    color: str = "black"
+    color: ColorLike = "black"
     z_index: int = 0
     cap: str = "round"
     start_cap: str | None = None
     end_cap: str | None = None
     opacity: float = 1.0
 
+    def __post_init__(self) -> None:
+        if isinstance(self.color, tuple):
+            self.color = Color(self.color).to_hex()
+
     def with_width(self, width: float) -> ConnectionStyle:
         """Return new style with different width."""
         return replace(self, width=width)
 
-    def with_color(self, color: str) -> ConnectionStyle:
+    def with_color(self, color: ColorLike) -> ConnectionStyle:
         """Return new style with different color."""
         return replace(self, color=color)
 
@@ -394,7 +426,7 @@ class ConnectionStyle:
         return replace(self, opacity=opacity)
 
     def to_dict(self) -> dict[str, Any]:
-        """Convert to dict for backward compatibility with Connection internals."""
+        """Convert to dict representation."""
         d = {"width": self.width, "color": self.color, "z_index": self.z_index, "cap": self.cap}
         if self.start_cap is not None:
             d["start_cap"] = self.start_cap

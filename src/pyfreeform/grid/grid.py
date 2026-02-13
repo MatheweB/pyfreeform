@@ -22,8 +22,8 @@ class Grid:
     load image data, and organize entities spatially.
 
     Attributes:
-        rows: Number of rows
-        cols: Number of columns
+        num_rows: Number of rows
+        num_columns: Number of columns
         cell_width: Width of each cell in pixels
         cell_height: Height of each cell in pixels
         pixel_width: Total width in pixels
@@ -175,12 +175,12 @@ class Grid:
     # --- Properties ---
 
     @property
-    def cols(self) -> int:
+    def num_columns(self) -> int:
         """Number of columns."""
         return self._cols
 
     @property
-    def rows(self) -> int:
+    def num_rows(self) -> int:
         """Number of rows."""
         return self._rows
 
@@ -250,7 +250,7 @@ class Grid:
         """Total number of cells."""
         return self._rows * self._cols
 
-    def cell_at(self, x: float, y: float) -> Cell | None:
+    def cell_at_pixel(self, x: float, y: float) -> Cell | None:
         """
         Get the cell containing a pixel position.
 
@@ -267,6 +267,30 @@ class Grid:
         if 0 <= row < self._rows and 0 <= col < self._cols:
             return self._cells[row][col]
         return None
+
+    def get(self, row: int, col: int) -> Cell | None:
+        """
+        Safely access a cell by (row, col) index.
+
+        Like ``dict.get()``, returns None instead of raising on
+        out-of-bounds indices. Use ``grid[row, col]`` when you want
+        IndexError on invalid indices.
+
+        Args:
+            row: Row index (0-based).
+            col: Column index (0-based).
+
+        Returns:
+            The Cell at that position, or None if out of bounds.
+        """
+        if 0 <= row < self._rows and 0 <= col < self._cols:
+            return self._cells[row][col]
+        return None
+
+    @property
+    def cells(self) -> list[Cell]:
+        """All cells as a flat list (row by row, left to right)."""
+        return list(self)
 
     # --- Layer data ---
 
@@ -390,12 +414,12 @@ class Grid:
         return [self._cells[row][index] for row in range(self._rows)]
 
     @property
-    def all_rows(self) -> Iterator[list[Cell]]:
+    def rows(self) -> Iterator[list[Cell]]:
         """
-        Iterate over all rows (as lists of cells).
+        Iterate over all rows (as lists of cells, top to bottom).
 
         Example:
-            >>> for row_idx, row in enumerate(grid.all_rows):
+            >>> for row_idx, row in enumerate(grid.rows):
             ...     for cell in row:
             ...         cell.add_dot(color="red" if row_idx % 2 == 0 else "blue")
         """
@@ -403,12 +427,12 @@ class Grid:
             yield list(row)
 
     @property
-    def all_columns(self) -> Iterator[list[Cell]]:
+    def columns(self) -> Iterator[list[Cell]]:
         """
-        Iterate over all columns (as lists of cells).
+        Iterate over all columns (as lists of cells, left to right).
 
         Example:
-            >>> for col_idx, col in enumerate(grid.all_columns):
+            >>> for col_idx, col in enumerate(grid.columns):
             ...     for cell in col:
             ...         cell.add_dot(radius=0.02 * (col_idx + 1))
         """
@@ -440,7 +464,7 @@ class Grid:
 
         Example:
             >>> # Top-left quarter
-            >>> for cell in grid.region(row_end=grid.rows//2, col_end=grid.cols//2):
+            >>> for cell in grid.region(row_end=grid.num_rows//2, col_end=grid.num_columns//2):
             ...     cell.add_fill(color="blue")
         """
         if row_end is None:
@@ -510,7 +534,7 @@ class Grid:
             A CellGroup spanning the selected region.
 
         Examples:
-            >>> header = grid.merge((0, 0), (1, grid.cols - 1))
+            >>> header = grid.merge((0, 0), (1, grid.num_columns - 1))
             >>> header.add_fill(color="#333")
             >>> header.add_text("Title", font_size=16, color="white")
 
@@ -625,7 +649,7 @@ class Grid:
             ...     cell.add_dot(radius=0.3)
 
             >>> # Top half
-            >>> for cell in grid.where(lambda c: c.row < grid.rows // 2):
+            >>> for cell in grid.where(lambda c: c.row < grid.num_rows // 2):
             ...     cell.add_fill(color="blue")
         """
         for cell in self:

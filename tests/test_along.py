@@ -151,7 +151,7 @@ class TestStrokedPathMixin:
     def test_connection_svg_has_arrow_marker(self):
         dot1 = Dot(0, 0)
         dot2 = Dot(100, 0)
-        conn = Connection(dot1, dot2, style={"end_cap": "arrow"}, shape=Line())
+        conn = Connection(dot1, dot2, end_cap="arrow", shape=Line())
         svg = conn.to_svg()
         assert "marker-end=" in svg
 

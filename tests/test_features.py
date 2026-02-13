@@ -92,8 +92,8 @@ class TestRectCells:
         grid = scene.grid
         assert grid.cell_width == 20.0
         assert grid.cell_height == 10.0
-        assert scene.width == grid.cols * 20
-        assert scene.height == grid.rows * 10
+        assert scene.width == grid.num_columns * 20
+        assert scene.height == grid.num_rows * 10
 
     def test_cell_width_only(self):
         """Specifying only cell_width uses cell_size for height."""
@@ -117,14 +117,14 @@ class TestFitGridToImage:
     def test_grid_size_none_square(self):
         """500x500 image, cell_size=10 → 50x50 grid."""
         scene = Scene.from_image(_make_image(500, 500), grid_size=None, cell_size=10)
-        assert scene.grid.cols == 50
-        assert scene.grid.rows == 50
+        assert scene.grid.num_columns == 50
+        assert scene.grid.num_rows == 50
 
     def test_grid_size_none_rectangular(self):
         """1200x800 image, cell_size=15."""
         scene = Scene.from_image(_make_image(1200, 800), grid_size=None, cell_size=15)
-        assert scene.grid.cols == 80  # round(1200/15)
-        assert scene.grid.rows == 53  # round(800/15)
+        assert scene.grid.num_columns == 80  # round(1200/15)
+        assert scene.grid.num_rows == 53  # round(800/15)
 
     def test_scene_matches_image_dims(self):
         """Scene dimensions ≈ image dimensions when grid_size=None."""
@@ -135,9 +135,9 @@ class TestFitGridToImage:
     def test_backward_compat_grid_size_default(self):
         """grid_size=40 (default) still works as before."""
         scene = Scene.from_image(_make_image(400, 200), grid_size=40, cell_size=10)
-        assert scene.grid.cols == 40
+        assert scene.grid.num_columns == 40
         # rows from aspect ratio: round(40 * 200/400) = 20
-        assert scene.grid.rows == 20
+        assert scene.grid.num_rows == 20
 
     def test_fit_with_cell_ratio(self):
         """Fit-to-image works with non-square cells."""
@@ -148,8 +148,8 @@ class TestFitGridToImage:
             cell_ratio=2.0,
         )
         # cell_width=20, cell_height=10
-        assert scene.grid.cols == 20  # round(400/20)
-        assert scene.grid.rows == 20  # round(200/10)
+        assert scene.grid.num_columns == 20  # round(400/20)
+        assert scene.grid.num_rows == 20  # round(200/10)
 
     def test_image_data_loads_in_fit_mode(self):
         """Cell data loads correctly in fit-grid-to-image mode."""

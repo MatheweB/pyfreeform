@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import math
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from ..config.styles import ConnectionStyle
 from .bezier import eval_cubic
@@ -39,7 +39,7 @@ class Connection(StrokedPathMixin):
         >>> # Invisible relationship
         >>> conn = dot1.connect(dot2)
         >>> # Visible straight line
-        >>> conn = dot1.connect(dot2, shape=Line(), style={"width": 2, "color": "red"})
+        >>> conn = dot1.connect(dot2, shape=Line(), width=2, color="red")
         >>> # Visible arc
         >>> conn = dot1.connect(dot2, shape=Curve(curvature=0.3))
     """
@@ -57,8 +57,16 @@ class Connection(StrokedPathMixin):
         end: Entity,
         start_anchor: str = "center",
         end_anchor: str = "center",
-        style: Any = None,
+        *,
         shape: Line | Curve | Path | None = None,
+        width: float = 1,
+        color: str = "black",
+        z_index: int = 0,
+        cap: str = "round",
+        start_cap: str | None = None,
+        end_cap: str | None = None,
+        opacity: float = 1.0,
+        style: ConnectionStyle | None = None,
         segments: int = 32,
     ) -> None:
         """
@@ -69,10 +77,16 @@ class Connection(StrokedPathMixin):
             end: The ending entity.
             start_anchor: Anchor name on start entity.
             end_anchor: Anchor name on end entity.
-            style: ConnectionStyle object or dict with "width", "color",
-                   "z_index" keys.
             shape: Visual shape for the connection. None = invisible,
                    Line() = straight line, Curve() = arc, Path(...) = custom.
+            width: Line width in pixels.
+            color: Line color.
+            z_index: Layer order (higher = on top).
+            cap: Cap style for both ends ("round", "butt", "square").
+            start_cap: Override cap for start end (e.g. "arrow").
+            end_cap: Override cap for end end (e.g. "arrow").
+            opacity: Opacity (0.0 transparent to 1.0 opaque).
+            style: ConnectionStyle object (overrides individual params).
             segments: Number of Bézier segments for shape rendering.
         """
 
@@ -80,10 +94,31 @@ class Connection(StrokedPathMixin):
         self._end = end
         self._start_anchor = start_anchor
         self._end_anchor = end_anchor
-        if isinstance(style, ConnectionStyle):
-            self._style = {**self.DEFAULT_STYLE, **style.to_dict()}
-        else:
-            self._style = {**self.DEFAULT_STYLE, **(style or {})}
+
+        # Style override (same pattern as add_dot, add_line, etc.)
+        if style is not None:
+            width = style.width
+            color = style.color
+            z_index = style.z_index
+            cap = style.cap
+            if style.start_cap is not None:
+                start_cap = style.start_cap
+            if style.end_cap is not None:
+                end_cap = style.end_cap
+            opacity = style.opacity
+
+        self._style: dict[str, str | int | float] = {
+            "width": width,
+            "color": color,
+            "z_index": z_index,
+            "cap": cap,
+        }
+        if start_cap is not None:
+            self._style["start_cap"] = start_cap
+        if end_cap is not None:
+            self._style["end_cap"] = end_cap
+        if opacity < 1.0:
+            self._style["opacity"] = opacity
 
         # Shape support — dispatch via connection_data() on the shape
         self._shape = shape
@@ -132,7 +167,7 @@ class Connection(StrokedPathMixin):
         return self._end.anchor(self._end_anchor)
 
     @property
-    def style(self) -> dict[str, Any]:
+    def style(self) -> dict[str, str | int | float]:
         """Visual style properties."""
         return self._style
 

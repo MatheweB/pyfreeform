@@ -115,13 +115,13 @@ A `Grid` divides the scene into rows and columns of `Cell` objects. It provides 
 
 | Property | Type | Description |
 |---|---|---|
-| `grid.cols` | `int` | Number of columns |
-| `grid.rows` | `int` | Number of rows |
+| `grid.num_columns` | `int` | Number of columns |
+| `grid.num_rows` | `int` | Number of rows |
 | `grid.cell_width` | `float` | Cell width in pixels |
 | `grid.cell_height` | `float` | Cell height in pixels |
 | `grid.cell_size` | `(float, float)` | `(cell_width, cell_height)` tuple |
-| `grid.pixel_width` | `float` | Total width = cols * cell_width |
-| `grid.pixel_height` | `float` | Total height = rows * cell_height |
+| `grid.pixel_width` | `float` | Total width = num_columns * cell_width |
+| `grid.pixel_height` | `float` | Total height = num_rows * cell_height |
 | `grid.origin` | `Coord` | Top-left corner position |
 | `grid.source_image` | `Image \| None` | Original source image (if from_image) |
 
@@ -132,7 +132,7 @@ A `Grid` divides the scene into rows and columns of `Cell` objects. It provides 
 | `grid[row, col]` | Access by (row, col) index |
 | `for cell in grid:` | Iterate row-by-row, left-to-right |
 | `len(grid)` | Total number of cells |
-| `grid.cell_at(x, y)` | Get cell at pixel position (or None) |
+| `grid.cell_at_pixel(x, y)` | Get cell at pixel position (or None) |
 
 ### Row & Column Access
 
@@ -140,8 +140,8 @@ A `Grid` divides the scene into rows and columns of `Cell` objects. It provides 
 |---|---|---|
 | `grid.row(i)` | `list[Cell]` | All cells in row i |
 | `grid.column(i)` | `list[Cell]` | All cells in column i |
-| `grid.all_rows` | `Iterator[list[Cell]]` | Iterate over all rows |
-| `grid.all_columns` | `Iterator[list[Cell]]` | Iterate over all columns |
+| `grid.rows` | `Iterator[list[Cell]]` | Iterate over all rows |
+| `grid.columns` | `Iterator[list[Cell]]` | Iterate over all columns |
 
 ### Region Selection
 
@@ -154,7 +154,7 @@ A `Grid` divides the scene into rows and columns of `Cell` objects. It provides 
 
 | Method | Returns | Description |
 |---|---|---|
-| `grid.merge(start, end)` | `CellGroup` | Merge region into single surface. Both args are `(row, col)` tuples, both inclusive. Default: `start=(0, 0)`, `end=(rows-1, cols-1)`. Example: `merge((0, 0), (2, 2))` selects a 3x3 block. |
+| `grid.merge(start, end)` | `CellGroup` | Merge region into single surface. Both args are `(row, col)` tuples, both inclusive. Default: `start=(0, 0)`, `end=(num_rows-1, num_columns-1)`. Example: `merge((0, 0), (2, 2))` selects a 3x3 block. |
 | `grid.merge_row(i)` | `CellGroup` | Merge full row |
 | `grid.merge_col(i)` | `CellGroup` | Merge full column |
 

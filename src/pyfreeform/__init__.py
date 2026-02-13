@@ -6,7 +6,7 @@ __version__ = "0.4.0"
 
 # Core
 # Utilities
-from .color import Color
+from .color import Color, ColorLike
 
 # Configuration
 from .config.caps import register_cap
@@ -116,6 +116,7 @@ __all__ = [
     "Cell",
     "CellGroup",
     "Color",
+    "ColorLike",
     "Connection",
     "ConnectionStyle",
     "Coord",

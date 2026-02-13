@@ -260,8 +260,8 @@ class Scene(Surface):
 
     @property
     def connections(self) -> list[Connection]:
-        """All connections."""
-        return list(self._connections)
+        """All connections (auto-collected from entities + explicitly added)."""
+        return self._collect_connections()
 
     @property
     def grids(self) -> list[Grid]:
@@ -272,21 +272,17 @@ class Scene(Surface):
 
     def add_connection(self, connection: Connection) -> Connection:
         """
-        Add a connection to the scene.
+        Explicitly add a connection to the scene.
 
-        Connections created via ``entity.connect()`` are not automatically
-        added to the scene — you must call this method to include them
-        in the render.
+        Connections are auto-collected from entities at render time, so
+        calling this is optional. Use it when you want to add a connection
+        that isn't attached to entities already in the scene.
 
         Args:
             connection: The Connection to add.
 
         Returns:
             The added connection (for chaining).
-
-        Example:
-            >>> conn = dot1.connect(dot2, shape=Line(), style=style)
-            >>> scene.add_connection(conn)
         """
         self._connections.append(connection)
         return connection
@@ -381,7 +377,26 @@ class Scene(Surface):
 
     # --- Rendering ---
 
-    def _collect_markers(self, entities: list[Entity]) -> dict[str, str]:
+    def _collect_connections(self) -> list[Connection]:
+        """Collect connections from entities + explicit adds, deduplicated."""
+        seen: set[int] = set()
+        result: list[Connection] = []
+        # Explicit connections first (backward compat ordering)
+        for conn in self._connections:
+            seen.add(id(conn))
+            result.append(conn)
+        # Auto-collect from all entities in the scene
+        for entity in self.entities:
+            for conn in entity._connections:
+                cid = id(conn)
+                if cid not in seen:
+                    seen.add(cid)
+                    result.append(conn)
+        return result
+
+    def _collect_markers(
+        self, entities: list[Entity], connections: list[Connection]
+    ) -> dict[str, str]:
         """Collect unique SVG marker definitions needed by all entities and connections."""
         markers = {
             mid: svg
@@ -390,7 +405,7 @@ class Scene(Surface):
         }
         markers |= {
             mid: svg
-            for connection in self._connections
+            for connection in connections
             for mid, svg in connection.get_required_markers()
         }
         return markers
@@ -414,8 +429,9 @@ class Scene(Surface):
         Returns:
             Complete SVG document as string.
         """
-        # Collect entities once (avoids rebuilding the list 3 times)
+        # Collect entities and connections once
         all_entities = self.entities
+        all_connections = self._collect_connections()
 
         if self._viewbox is not None:
             vb_x, vb_y, vb_w, vb_h = self._viewbox
@@ -439,7 +455,7 @@ class Scene(Surface):
         ]
 
         # Definitions (markers for arrow caps, paths for textPath)
-        markers = self._collect_markers(all_entities)
+        markers = self._collect_markers(all_entities, all_connections)
         path_defs = self._collect_path_defs(all_entities)
         if markers or path_defs:
             lines.append("  <defs>")
@@ -465,15 +481,16 @@ class Scene(Surface):
         renderables: list[tuple[int, str]] = []
 
         # Add connections and entities
-        renderables.extend((c.z_index, c.to_svg()) for c in self._connections)
+        renderables.extend((c.z_index, c.to_svg()) for c in all_connections)
         renderables.extend((e.z_index, e.to_svg()) for e in all_entities)
 
         # Sort by z_index (stable sort preserves add-order for same z_index)
         renderables.sort(key=lambda x: x[0])
 
-        # Render in sorted order
+        # Render in sorted order (skip invisible entities like Point)
         for _, svg in renderables:
-            lines.append(f"  {svg}")
+            if svg:
+                lines.append(f"  {svg}")
 
         lines.append("</svg>")
         return "\n".join(lines)

@@ -87,7 +87,7 @@ def generate():
             cell.add_dot(radius=r, color=cell.color, opacity=0.6)
 
     # Title overlay
-    title = scene.grid.merge((0, 0), (2, scene.grid.cols - 1))
+    title = scene.grid.merge((0, 0), (2, scene.grid.num_columns - 1))
     title.add_fill(color="#000000", opacity=0.6)
     title.add_text(
         "MONA LISA",
@@ -99,7 +99,7 @@ def generate():
     )
 
     # Subtitle
-    sub = scene.grid.merge((scene.grid.rows - 2, 0), (scene.grid.rows - 1, scene.grid.cols - 1))
+    sub = scene.grid.merge((scene.grid.num_rows - 2, 0), (scene.grid.num_rows - 1, scene.grid.num_columns - 1))
     sub.add_fill(color="#000000", opacity=0.4)
     sub.add_text(
         "Leonardo da Vinci",

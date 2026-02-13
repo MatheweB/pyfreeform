@@ -143,8 +143,8 @@ def generate():
             cell.add_dot(radius=r, color=cell.color, opacity=0.7)
     # Merge bottom 2 rows for title overlay
     title = scene.grid.merge(
-        (scene.grid.rows - 3, 0),
-        (scene.grid.rows - 1, scene.grid.cols - 1),
+        (scene.grid.num_rows - 3, 0),
+        (scene.grid.num_rows - 1, scene.grid.num_columns - 1),
     )
     title.add_fill(color="#000000", opacity=0.5)
     title.add_text(

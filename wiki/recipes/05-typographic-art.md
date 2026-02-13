@@ -62,7 +62,7 @@ for cell in scene.grid:
     cell.add_dot(radius=cell.brightness * 0.42, color=cell.color, opacity=0.6)
 
 # Title overlay
-title = scene.grid.merge((0, 0), (2, scene.grid.cols - 1))
+title = scene.grid.merge((0, 0), (2, scene.grid.num_columns - 1))
 title.add_fill(color="#000000", opacity=0.6)
 title.add_text("MONA LISA", at="center", font_size=0.50, color="#ffffff", bold=True)
 ```
