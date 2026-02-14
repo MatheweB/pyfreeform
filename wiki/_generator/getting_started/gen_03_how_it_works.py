@@ -18,7 +18,7 @@ def generate():
     # Highlight a few cells with different entities to show variety
     scene.grid[1, 1].add_dot(radius=0.3, color=colors.primary)
     scene.grid[1, 2].add_dot(radius=0.2, color=colors.secondary)
-    scene.grid[2, 1].add_line(start="bottom_left", end="top_right", width=2, color=colors.accent)
+    scene.grid[2, 1].add_line(start="bottom_left", end="top_right", width=2, color=colors.accent).fit_to_cell()
     scene.grid[2, 2].add_fill(color=colors.primary, opacity=0.3)
     scene.grid[2, 2].add_dot(radius=0.15, color=colors.accent)
     scene.grid[3, 3].add_polygon(Polygon.hexagon(size=0.7), fill=colors.secondary, opacity=0.7)
@@ -28,7 +28,7 @@ def generate():
         curvature=0.5,
         width=2,
         color=colors.primary,
-    )
+    ).fit_to_cell()
     scene.grid[4, 2].add_polygon(Polygon.star(points=5, size=0.65), fill=colors.accent, opacity=0.8)
     save(scene, "getting-started/how-mental-model.svg")
 
@@ -77,8 +77,8 @@ def generate():
     # Scene-level: place entities directly
     from pyfreeform import Dot, Line
 
-    scene.place(Dot(160, 110, radius=15, color=colors.accent, opacity=0.8))
-    scene.place(Line(140, 90, 220, 160, width=2, color=colors.secondary, opacity=0.6))
+    scene.place(Dot(160, 110, radius=15, color=colors.accent, opacity=0.8, z_index=1))
+    scene.place(Line(140, 90, 220, 160, width=2, color=colors.secondary, opacity=0.6, z_index=2))
     save(scene, "getting-started/how-surface-protocol.svg")
 
     # --- 4. z_index layering demo ---

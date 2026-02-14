@@ -33,7 +33,7 @@ def generate():
     cell = scene.grid[0, 0]
     phrases = [
         ("Create beautiful art with code", 0.4),
-        ("PyFreeform makes it elegant", -0.5),
+        ("PyFreeform makes it elegant", -0.3),
         ("Every cell tells a story", 0.6),
     ]
     for i, (text, curv) in enumerate(phrases):
