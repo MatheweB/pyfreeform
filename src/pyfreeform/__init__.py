@@ -6,7 +6,7 @@ __version__ = "0.4.0"
 
 # Core
 # Utilities
-from .color import Color, ColorLike, apply_brightness, gray
+from .color import Color, ColorLike, apply_brightness, average_color, color_mix, gray, hsl
 
 # Configuration
 from .config.caps import CapName, cap_shape, register_cap
@@ -155,8 +155,11 @@ __all__ = [
     "cap_shape",
     "display",
     "apply_brightness",
+    "average_color",
+    "color_mix",
     "get_angle_at",
     "gray",
+    "hsl",
     "map_range",
     "register_cap",
 ]

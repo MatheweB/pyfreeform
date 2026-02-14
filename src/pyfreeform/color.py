@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import colorsys
 from typing import ClassVar
 
 
@@ -128,6 +129,27 @@ class Color:
             f"Use a hex code or RGB tuple instead."
         )
 
+    def to_hsl(self) -> tuple[float, float, float]:
+        """Convert this color to an HSL tuple.
+
+        Returns:
+            (h, s, l) tuple where h is 0-360, s and l are 0.0-1.0.
+
+        Raises:
+            ValueError: If the color is an unrecognized named color that
+                cannot be converted to RGB.
+
+        Example:
+            ```python
+            Color("red").to_hsl()     # (0.0, 1.0, 0.5)
+            Color("#00ff00").to_hsl()  # (120.0, 1.0, 0.5)
+            Color("white").to_hsl()   # (0.0, 0.0, 1.0)
+            ```
+        """
+        r, g, b = self.to_rgb()
+        h, l, s = colorsys.rgb_to_hls(r / 255, g / 255, b / 255)
+        return (round(h * 360, 2), round(s, 4), round(l, 4))
+
     def __str__(self) -> str:
         return self._hex
 
@@ -195,3 +217,100 @@ def gray(brightness: float) -> str:
         ```
     """
     return apply_brightness("white", brightness)
+
+
+def hsl(h: float, s: float = 1.0, lightness: float = 0.5) -> str:
+    """Create a color from hue, saturation, and lightness.
+
+    Args:
+        h: Hue in degrees (0-360). 0 = red, 120 = green, 240 = blue.
+            Values outside 0-360 wrap automatically.
+        s: Saturation from 0.0 (gray) to 1.0 (vivid). Default 1.0.
+        lightness: Lightness from 0.0 (black) through 0.5 (pure color)
+            to 1.0 (white). Default 0.5.
+
+    Returns:
+        Hex color string.
+
+    Example:
+        ```python
+        hsl(0)               # '#ff0000' — pure red
+        hsl(120, 0.8, 0.5)   # saturated green
+        hsl(240, 1.0, 0.3)   # dark blue
+        hsl(50, 0.9, 0.55)   # warm gold
+        ```
+    """
+    s = max(0.0, min(1.0, s))
+    lightness = max(0.0, min(1.0, lightness))
+    r, g, b = colorsys.hls_to_rgb(h / 360 % 1.0, lightness, s)
+    return f"#{round(r * 255):02x}{round(g * 255):02x}{round(b * 255):02x}"
+
+
+def average_color(*colors: ColorLike) -> str:
+    """Return the average of one or more colors.
+
+    Computes the mean of each RGB channel across all input colors.
+
+    Args:
+        *colors: One or more colors in any supported format
+            (named, hex, or RGB tuple).
+
+    Returns:
+        Hex color string.
+
+    Raises:
+        ValueError: If no colors are provided.
+
+    Example:
+        ```python
+        average_color("red", "blue")           # '#800080' — purple
+        average_color("#ff0000", "green", "blue")
+        average_color((255, 0, 0), (0, 255, 0))  # '#808000'
+        ```
+    """
+    if not colors:
+        raise ValueError("average_color requires at least one color")
+    n = len(colors)
+    total_r = total_g = total_b = 0
+    for c in colors:
+        r, g, b = Color(c).to_rgb()
+        total_r += r
+        total_g += g
+        total_b += b
+    return f"#{total_r // n:02x}{total_g // n:02x}{total_b // n:02x}"
+
+
+def color_mix(
+    color_a: ColorLike,
+    color_b: ColorLike,
+    t: float = 0.5,
+) -> str:
+    """Blend two colors together.
+
+    Linearly interpolates each RGB channel. At *t* = 0 you get
+    *color_a*, at *t* = 1 you get *color_b*, and at 0.5 an equal mix.
+
+    Args:
+        color_a: Starting color (any supported format).
+        color_b: Ending color (any supported format).
+        t: Blend factor from 0.0 (pure *color_a*) to 1.0 (pure *color_b*).
+            Default 0.5 (equal mix).
+
+    Returns:
+        Hex color string.
+
+    Example:
+        ```python
+        color_mix("red", "blue")        # '#800080' — purple
+        color_mix("red", "blue", 0.0)   # '#ff0000' — pure red
+        color_mix("red", "blue", 0.25)  # red-leaning purple
+        color_mix("#ff8800", "navy", 0.6)
+        ```
+    """
+    t = max(0.0, min(1.0, t))
+    r1, g1, b1 = Color(color_a).to_rgb()
+    r2, g2, b2 = Color(color_b).to_rgb()
+    r = round(r1 + (r2 - r1) * t)
+    g = round(g1 + (g2 - g1) * t)
+    b = round(b1 + (b2 - b1) * t)
+    return f"#{r:02x}{g:02x}{b:02x}"
