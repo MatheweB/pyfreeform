@@ -60,7 +60,7 @@ class CellGroup(Surface):
         self._height = max_y - self._y
 
         self._entities: list[Entity] = []
-        self._connections: set = set()
+        self._connections: dict = {}
         self._data: dict = {}
 
     # =========================================================================

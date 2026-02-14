@@ -61,7 +61,7 @@ class Surface:
     _width: float
     _height: float
     _entities: list[Entity]
-    _connections: set[Connection]
+    _connections: dict[Connection, None]
     _data: dict[str, Any]
 
     # =========================================================================
@@ -207,11 +207,11 @@ class Surface:
 
     def add_connection(self, connection: Connection) -> None:
         """Register a connection with this surface (called by Connection)."""
-        self._connections.add(connection)
+        self._connections[connection] = None
 
     def remove_connection(self, connection: Connection) -> None:
         """Unregister a connection from this surface (called by disconnect)."""
-        self._connections.discard(connection)
+        self._connections.pop(connection, None)
 
     @property
     def connections(self) -> set[Connection]:

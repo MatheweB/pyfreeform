@@ -73,7 +73,7 @@ class Scene(Surface):
         self._background = Color(background) if background else None
 
         self._entities: list[Entity] = []
-        self._connections: set[Connection] = set()
+        self._connections: dict[Connection, None] = {}
         self._data: dict = {}
         self._grids: list[Grid] = []
         self._primary_grid: Grid | None = None

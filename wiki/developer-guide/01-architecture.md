@@ -87,7 +87,7 @@ class Cell(Surface):
         self._width = ...        # width in pixels
         self._height = ...       # height in pixels
         self._entities = []      # entity storage
-        self._connections = set() # connection endpoint tracking
+        self._connections = {}    # connection endpoint tracking (ordered dict)
         self._data = {}          # custom data dictionary
 ```
 
@@ -119,7 +119,7 @@ Every entity has:
 - **Position** (`_position: Coord`) -- the entity's reference point
 - **Z-index** (`_z_index: int`) -- layer ordering for rendering
 - **Cell reference** (`_cell: Surface | None`) -- back-reference to container
-- **Connections** (`_connections: set`) -- connections where this entity is an endpoint
+- **Connections** (`_connections: dict[Connection, None]`) -- connections where this entity is an endpoint (insertion-ordered)
 - **Data** (`_data: dict[str, Any]`) -- custom data dictionary for user metadata
 - **Movement** -- private `_move_to()` / `_move_by()` for pixel movement; public API is `.position`, `.at`, and `move_to_cell()`
 - **Binding** -- `.binding` property accepts a `Binding` dataclass (from `core/binding.py`) for relative positioning configuration
@@ -256,14 +256,14 @@ Surfaces contain entities; entities reference their surface. There is no deep in
 
 Both `Entity` and `Surface` are connectable — they share the same connection interface (`anchor(spec)`, `anchor_names`, `connect()`, `add_connection()`, `remove_connection()`, `connections`). The `Connectable` type alias (`Entity | Surface`) captures this union. Anchors accept `AnchorSpec` — a string name, `RelCoord`, or `(rx, ry)` tuple — for arbitrary anchor positioning.
 
-Connections register themselves with both endpoints on construction and remove themselves via `disconnect()`. Each connectable tracks its own connections in a `set`:
+Connections register themselves with both endpoints on construction and remove themselves via `disconnect()`. Each connectable tracks its own connections in an insertion-ordered `dict` (used as an ordered set for deterministic SVG output):
 
 ```python
 # Entity
-self._connections: set[Connection] = set()
+self._connections: dict[Connection, None] = {}
 
 # Surface (Cell, CellGroup, Scene)
-self._connections: set[Connection] = set()
+self._connections: dict[Connection, None] = {}
 ```
 
 The scene auto-collects all connections at render time by walking entities and grid cells — no explicit adding needed.

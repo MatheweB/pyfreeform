@@ -127,7 +127,7 @@ Called by every builder method and by `add()`/`place()`. Performs:
 
 ### `add_connection(connection)` / `remove_connection(connection)`
 
-Bookkeeping methods called by `Connection.__init__()` and `Connection.disconnect()`. They add/remove the connection from the surface's `_connections` set. Users never call these directly -- they use `connect()` to create connections and `disconnect()` to remove them.
+Bookkeeping methods called by `Connection.__init__()` and `Connection.disconnect()`. They add/remove the connection from the surface's `_connections` dict (used as an insertion-ordered set). Users never call these directly -- they use `connect()` to create connections and `disconnect()` to remove them.
 
 ---
 
@@ -178,7 +178,7 @@ Key internal attributes on every entity:
 | `_rotation` | `float` | Accumulated rotation in degrees |
 | `_scale_factor` | `float` | Accumulated scale multiplier |
 | `_z_index` | `int` | Layer ordering |
-| `_connections` | `set[Connection]` | Connections involving this entity |
+| `_connections` | `dict[Connection, None]` | Connections involving this entity (insertion-ordered) |
 | `_data` | `dict[str, Any]` | Custom user data |
 
 ### Entity-specific relative sizing
@@ -199,7 +199,7 @@ Key internal attributes on every entity:
 | `_x`, `_y` | `float` | Top-left corner position |
 | `_width`, `_height` | `float` | Dimensions in pixels |
 | `_entities` | `list[Entity]` | Contained entities |
-| `_connections` | `set[Connection]` | Connections with this surface as endpoint |
+| `_connections` | `dict[Connection, None]` | Connections with this surface as endpoint (insertion-ordered) |
 | `_data` | `dict[str, Any]` | Custom user data |
 
 ---

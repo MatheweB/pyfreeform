@@ -33,7 +33,7 @@ class Entity(ABC):
     Attributes:
         position: Current position (center point for most entities)
         cell: The cell containing this entity (if placed in a grid)
-        connections: Set of connections involving this entity
+        connections: Connections involving this entity
 
     Subclasses must implement:
         - `anchor(name)`: Return anchor point by name
@@ -52,7 +52,7 @@ class Entity(ABC):
         """
         self._position = Coord(x, y)
         self._cell: Surface | None = None
-        self._connections: set[Connection] = set()
+        self._connections: dict[Connection, None] = {}
         self._data: dict[str, Any] = {}
         self._z_index = z_index
 
@@ -235,7 +235,7 @@ class Entity(ABC):
 
     @property
     def connections(self) -> set[Connection]:
-        """Set of connections involving this entity."""
+        """Connections involving this entity (insertion-ordered internally)."""
         return set(self._connections)
 
     @property
@@ -245,11 +245,11 @@ class Entity(ABC):
 
     def add_connection(self, connection: Connection) -> None:
         """Register a connection with this entity."""
-        self._connections.add(connection)
+        self._connections[connection] = None
 
     def remove_connection(self, connection: Connection) -> None:
         """Remove a connection from this entity."""
-        self._connections.discard(connection)
+        self._connections.pop(connection, None)
 
     # --- Binding ---
 
