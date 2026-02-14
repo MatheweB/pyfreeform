@@ -34,6 +34,26 @@ Anywhere a color is accepted (ColorLike), you can use:
 - Simple entities (Dot, Line, Curve, Text, Connection): SVG `opacity` attribute.
 - Shapes: SVG `fill-opacity` + `stroke-opacity` attributes.
 
+## Brightness System
+
+Scale any color toward black with a 0–1 multiplier (0.0 = black, 1.0 = unchanged). Mirrors the opacity pattern:
+
+- **`color_brightness`** on `color=` entities and styles (Dot, Line, Curve, Text, Fill, Border, Connection, and their style classes).
+- **`fill_brightness` / `stroke_brightness`** on shapes (Rect, Ellipse, Polygon) and `ShapeStyle` — independent per channel, just like `fill_opacity`/`stroke_opacity`.
+
+Brightness is applied **before** rendering. The original color is multiplied by the brightness value:
+
+```python
+cell.add_dot(color="coral", color_brightness=0.5)  # Half-bright coral
+cell.add_ellipse(fill="gold", fill_brightness=cell.brightness, stroke_brightness=1.0)
+```
+
+### Standalone Functions
+
+::: pyfreeform.apply_brightness
+
+::: pyfreeform.gray
+
 ---
 
 ## Style Classes

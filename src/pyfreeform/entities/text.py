@@ -6,7 +6,7 @@ import functools
 
 from PIL import ImageFont
 
-from ..color import Color
+from ..color import Color, apply_brightness
 from ..core.relcoord import RelCoordLike
 from ..core.coord import Coord
 from ..core.entity import Entity
@@ -145,6 +145,7 @@ class Text(Entity):
         rotation: float = 0,
         z_index: int = 0,
         opacity: float = 1.0,
+        color_brightness: float | None = None,
     ) -> None:
         """
         Create text at the specified position.
@@ -164,11 +165,14 @@ class Text(Entity):
             rotation: Rotation angle in degrees (counterclockwise).
             z_index: Layer ordering (higher = on top).
             opacity: Opacity (0.0 transparent to 1.0 opaque).
+            color_brightness: Brightness multiplier 0.0 (black) to 1.0 (unchanged).
         """
         super().__init__(x, y, z_index)
         self.content = content
         self._pixel_font_size = float(font_size)
         self._relative_font_size: float | None = None
+        if color_brightness is not None:
+            color = apply_brightness(color, color_brightness)
         self._color = Color(color)
         self.font_family = font_family
 

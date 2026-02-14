@@ -68,8 +68,10 @@ class Cell(Surface):
             grid: The parent grid.
             row: Row index.
             col: Column index.
-            x, y: Top-left corner in pixels.
-            width, height: Cell dimensions in pixels.
+            x: Top-left corner x in pixels.
+            y: Top-left corner y in pixels.
+            width: Cell width in pixels.
+            height: Cell height in pixels.
         """
         self._grid = grid
         self._row = row

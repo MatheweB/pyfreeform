@@ -36,6 +36,27 @@ for cell in scene.grid:
 <figcaption>White dots sized by brightness — the classic dot art look.</figcaption>
 </figure>
 
+### Color by Brightness
+
+Use `color_brightness` to dim a color based on cell brightness — no manual RGB math needed:
+
+```python
+for cell in scene.grid:
+    cell.add_dot(radius=0.4, color="white", color_brightness=cell.brightness)
+```
+
+This scales every RGB channel by the brightness value (0.0 = black, 1.0 = unchanged). Works on any color:
+
+```python
+cell.add_dot(color="coral", color_brightness=0.5)   # Half-bright coral
+cell.add_fill(color="navy", color_brightness=cell.brightness)
+```
+
+!!! tip "Shapes use `fill_brightness` / `stroke_brightness`"
+    ```python
+    cell.add_ellipse(fill="gold", fill_brightness=cell.brightness)
+    ```
+
 ### Rotation by Brightness
 
 Drive shape rotation from the image:

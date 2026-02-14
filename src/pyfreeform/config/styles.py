@@ -28,6 +28,7 @@ class DotStyle:
     color: ColorLike = "black"
     z_index: int = 0
     opacity: float = 1.0
+    color_brightness: float | None = None
 
     def __post_init__(self) -> None:
         if isinstance(self.color, tuple):
@@ -45,9 +46,16 @@ class DotStyle:
         """Return new style with different opacity."""
         return replace(self, opacity=opacity)
 
+    def with_color_brightness(self, color_brightness: float | None) -> DotStyle:
+        """Return new style with different color brightness."""
+        return replace(self, color_brightness=color_brightness)
+
     def to_kwargs(self) -> dict[str, Any]:
         """Convert to keyword arguments for add_dot()."""
-        return {"color": self.color, "z_index": self.z_index, "opacity": self.opacity}
+        d: dict[str, Any] = {"color": self.color, "z_index": self.z_index, "opacity": self.opacity}
+        if self.color_brightness is not None:
+            d["color_brightness"] = self.color_brightness
+        return d
 
 
 @dataclass
@@ -81,6 +89,7 @@ class LineStyle:
     start_cap: CapName | None = None
     end_cap: CapName | None = None
     opacity: float = 1.0
+    color_brightness: float | None = None
 
     def __post_init__(self) -> None:
         if isinstance(self.color, tuple):
@@ -110,6 +119,10 @@ class LineStyle:
         """Return new style with different opacity."""
         return replace(self, opacity=opacity)
 
+    def with_color_brightness(self, color_brightness: float | None) -> LineStyle:
+        """Return new style with different color brightness."""
+        return replace(self, color_brightness=color_brightness)
+
     def to_kwargs(self) -> dict[str, Any]:
         """Convert to keyword arguments for add_line() / add_curve()."""
         d: dict[str, Any] = {
@@ -123,6 +136,8 @@ class LineStyle:
             d["start_cap"] = self.start_cap
         if self.end_cap is not None:
             d["end_cap"] = self.end_cap
+        if self.color_brightness is not None:
+            d["color_brightness"] = self.color_brightness
         return d
 
 
@@ -145,6 +160,7 @@ class FillStyle:
     color: ColorLike = "black"
     opacity: float = 1.0
     z_index: int = 0
+    color_brightness: float | None = None
 
     def __post_init__(self) -> None:
         if isinstance(self.color, tuple):
@@ -158,9 +174,16 @@ class FillStyle:
         """Return new style with different opacity."""
         return replace(self, opacity=opacity)
 
+    def with_color_brightness(self, color_brightness: float | None) -> FillStyle:
+        """Return new style with different color brightness."""
+        return replace(self, color_brightness=color_brightness)
+
     def to_kwargs(self) -> dict[str, Any]:
         """Convert to keyword arguments for add_fill()."""
-        return {"color": self.color, "opacity": self.opacity, "z_index": self.z_index}
+        d: dict[str, Any] = {"color": self.color, "opacity": self.opacity, "z_index": self.z_index}
+        if self.color_brightness is not None:
+            d["color_brightness"] = self.color_brightness
+        return d
 
 
 @dataclass
@@ -184,6 +207,7 @@ class BorderStyle:
     color: ColorLike = "#cccccc"
     z_index: int = 0
     opacity: float = 1.0
+    color_brightness: float | None = None
 
     def __post_init__(self) -> None:
         if isinstance(self.color, tuple):
@@ -201,14 +225,21 @@ class BorderStyle:
         """Return new style with different opacity."""
         return replace(self, opacity=opacity)
 
+    def with_color_brightness(self, color_brightness: float | None) -> BorderStyle:
+        """Return new style with different color brightness."""
+        return replace(self, color_brightness=color_brightness)
+
     def to_kwargs(self) -> dict[str, Any]:
         """Convert to keyword arguments for add_border()."""
-        return {
+        d: dict[str, Any] = {
             "width": self.width,
             "color": self.color,
             "z_index": self.z_index,
             "opacity": self.opacity,
         }
+        if self.color_brightness is not None:
+            d["color_brightness"] = self.color_brightness
+        return d
 
 
 @dataclass
@@ -241,6 +272,8 @@ class ShapeStyle:
     opacity: float = 1.0
     fill_opacity: float | None = None
     stroke_opacity: float | None = None
+    fill_brightness: float | None = None
+    stroke_brightness: float | None = None
 
     def __post_init__(self) -> None:
         if isinstance(self.color, tuple):
@@ -276,6 +309,14 @@ class ShapeStyle:
         """Return new style with different stroke opacity override."""
         return replace(self, stroke_opacity=stroke_opacity)
 
+    def with_fill_brightness(self, fill_brightness: float | None) -> ShapeStyle:
+        """Return new style with different fill brightness."""
+        return replace(self, fill_brightness=fill_brightness)
+
+    def with_stroke_brightness(self, stroke_brightness: float | None) -> ShapeStyle:
+        """Return new style with different stroke brightness."""
+        return replace(self, stroke_brightness=stroke_brightness)
+
     def to_kwargs(self) -> dict[str, Any]:
         """Convert to keyword arguments for add_ellipse() / add_polygon() / add_rect()."""
         d: dict[str, Any] = {
@@ -289,6 +330,10 @@ class ShapeStyle:
             d["fill_opacity"] = self.fill_opacity
         if self.stroke_opacity is not None:
             d["stroke_opacity"] = self.stroke_opacity
+        if self.fill_brightness is not None:
+            d["fill_brightness"] = self.fill_brightness
+        if self.stroke_brightness is not None:
+            d["stroke_brightness"] = self.stroke_brightness
         return d
 
 
@@ -323,6 +368,7 @@ class TextStyle:
     rotation: float = 0
     z_index: int = 0
     opacity: float = 1.0
+    color_brightness: float | None = None
 
     def __post_init__(self) -> None:
         if isinstance(self.color, tuple):
@@ -352,9 +398,13 @@ class TextStyle:
         """Return new style with different opacity."""
         return replace(self, opacity=opacity)
 
+    def with_color_brightness(self, color_brightness: float | None) -> TextStyle:
+        """Return new style with different color brightness."""
+        return replace(self, color_brightness=color_brightness)
+
     def to_kwargs(self) -> dict[str, Any]:
         """Convert to keyword arguments for add_text()."""
-        return {
+        d: dict[str, Any] = {
             "color": self.color,
             "font_family": self.font_family,
             "bold": self.bold,
@@ -365,6 +415,9 @@ class TextStyle:
             "z_index": self.z_index,
             "opacity": self.opacity,
         }
+        if self.color_brightness is not None:
+            d["color_brightness"] = self.color_brightness
+        return d
 
 
 @dataclass
@@ -397,6 +450,7 @@ class ConnectionStyle:
     start_cap: CapName | None = None
     end_cap: CapName | None = None
     opacity: float = 1.0
+    color_brightness: float | None = None
 
     def __post_init__(self) -> None:
         if isinstance(self.color, tuple):
@@ -426,15 +480,23 @@ class ConnectionStyle:
         """Return new style with different opacity."""
         return replace(self, opacity=opacity)
 
+    def with_color_brightness(self, color_brightness: float | None) -> ConnectionStyle:
+        """Return new style with different color brightness."""
+        return replace(self, color_brightness=color_brightness)
+
     def to_dict(self) -> dict[str, Any]:
         """Convert to dict representation."""
-        d = {"width": self.width, "color": self.color, "z_index": self.z_index, "cap": self.cap}
+        d: dict[str, Any] = {
+            "width": self.width, "color": self.color, "z_index": self.z_index, "cap": self.cap,
+        }
         if self.start_cap is not None:
             d["start_cap"] = self.start_cap
         if self.end_cap is not None:
             d["end_cap"] = self.end_cap
         if self.opacity < 1.0:
             d["opacity"] = self.opacity
+        if self.color_brightness is not None:
+            d["color_brightness"] = self.color_brightness
         return d
 
     def to_kwargs(self) -> dict[str, Any]:

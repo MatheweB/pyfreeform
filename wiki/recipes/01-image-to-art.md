@@ -20,6 +20,14 @@ for cell in scene.grid:
 <figcaption>White dots on dark background — bright areas shine through larger dots.</figcaption>
 </figure>
 
+!!! tip "Even simpler with `color_brightness`"
+    Instead of manually computing white/gray shades, use `color_brightness` to scale any color:
+    ```python
+    for cell in scene.grid:
+        cell.add_dot(radius=0.4, color="white", color_brightness=cell.brightness)
+    ```
+    This works with any base color — `color="coral"`, `color="gold"`, etc.
+
 ## Color Dot Art
 
 Preserve the original image colors for a vibrant result:
@@ -61,7 +69,11 @@ Replace dots with diagonal lines. Width maps to brightness:
 for cell in scene.grid:
     width = cell.brightness * 3
     if width > 0.2:
-        cell.add_diagonal(width=width, color=cell.color, opacity=0.5 + cell.brightness * 0.5)
+        cell.add_diagonal(
+            width=width, color=cell.color,
+            color_brightness=cell.brightness,  # Dim dark areas further
+            opacity=0.5 + cell.brightness * 0.5,
+        )
 ```
 
 <figure markdown>

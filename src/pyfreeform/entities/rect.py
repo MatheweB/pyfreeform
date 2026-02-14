@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 
-from ..color import Color
+from ..color import Color, apply_brightness
 from ..core.coord import Coord, CoordLike
 from ..core.entity import Entity
 from ..core.relcoord import RelCoord
@@ -56,12 +56,15 @@ class Rect(Entity):
         opacity: float = 1.0,
         fill_opacity: float | None = None,
         stroke_opacity: float | None = None,
+        fill_brightness: float | None = None,
+        stroke_brightness: float | None = None,
     ) -> None:
         """
         Create a rectangle.
 
         Args:
-            x, y: Top-left corner position.
+            x: Top-left corner x.
+            y: Top-left corner y.
             width: Rectangle width.
             height: Rectangle height.
             fill: Fill color (None for transparent).
@@ -72,6 +75,8 @@ class Rect(Entity):
             opacity: Opacity for both fill and stroke (0.0-1.0).
             fill_opacity: Override opacity for fill only (None = use opacity).
             stroke_opacity: Override opacity for stroke only (None = use opacity).
+            fill_brightness: Brightness multiplier for fill 0.0 (black) to 1.0 (unchanged).
+            stroke_brightness: Brightness multiplier for stroke 0.0 (black) to 1.0 (unchanged).
         """
         super().__init__(x, y, z_index)
         self._pixel_width = float(width)
@@ -79,6 +84,10 @@ class Rect(Entity):
         self._relative_width: float | None = None
         self._relative_height: float | None = None
         self.rotation = float(rotation)
+        if fill_brightness is not None and fill is not None:
+            fill = apply_brightness(fill, fill_brightness)
+        if stroke_brightness is not None and stroke is not None:
+            stroke = apply_brightness(stroke, stroke_brightness)
         self._fill = Color(fill) if fill else None
         self._stroke = Color(stroke) if stroke else None
         self.stroke_width = float(stroke_width)
@@ -118,6 +127,8 @@ class Rect(Entity):
         opacity: float = 1.0,
         fill_opacity: float | None = None,
         stroke_opacity: float | None = None,
+        fill_brightness: float | None = None,
+        stroke_brightness: float | None = None,
     ) -> Rect:
         """
         Create a rectangle positioned by its center.
@@ -134,6 +145,8 @@ class Rect(Entity):
             opacity: Opacity for both fill and stroke.
             fill_opacity: Override opacity for fill only.
             stroke_opacity: Override opacity for stroke only.
+            fill_brightness: Brightness multiplier for fill 0.0 (black) to 1.0 (unchanged).
+            stroke_brightness: Brightness multiplier for stroke 0.0 (black) to 1.0 (unchanged).
 
         Returns:
             A new Rect entity.
@@ -152,6 +165,8 @@ class Rect(Entity):
             opacity=opacity,
             fill_opacity=fill_opacity,
             stroke_opacity=stroke_opacity,
+            fill_brightness=fill_brightness,
+            stroke_brightness=stroke_brightness,
         )
 
     @property

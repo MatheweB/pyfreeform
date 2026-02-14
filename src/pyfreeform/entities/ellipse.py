@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 
-from ..color import Color
+from ..color import Color, apply_brightness
 from ..core.coord import Coord, CoordLike
 from ..core.entity import Entity
 from ..core.bezier import sample_arc_length
@@ -70,6 +70,8 @@ class Ellipse(Entity):
         opacity: float = 1.0,
         fill_opacity: float | None = None,
         stroke_opacity: float | None = None,
+        fill_brightness: float | None = None,
+        stroke_brightness: float | None = None,
     ) -> None:
         """
         Create an ellipse at the specified center position.
@@ -87,6 +89,8 @@ class Ellipse(Entity):
             opacity: Opacity for both fill and stroke (0.0-1.0).
             fill_opacity: Override opacity for fill only (None = use opacity).
             stroke_opacity: Override opacity for stroke only (None = use opacity).
+            fill_brightness: Brightness multiplier for fill 0.0 (black) to 1.0 (unchanged).
+            stroke_brightness: Brightness multiplier for stroke 0.0 (black) to 1.0 (unchanged).
         """
         super().__init__(x, y, z_index)
         self._pixel_rx = float(rx)
@@ -99,6 +103,10 @@ class Ellipse(Entity):
         self.fill_opacity = fill_opacity
         self.stroke_opacity = stroke_opacity
 
+        if fill_brightness is not None and fill is not None:
+            fill = apply_brightness(fill, fill_brightness)
+        if stroke_brightness is not None and stroke is not None:
+            stroke = apply_brightness(stroke, stroke_brightness)
         self._fill = Color(fill) if fill is not None else None
         self._stroke = Color(stroke) if stroke is not None else None
 

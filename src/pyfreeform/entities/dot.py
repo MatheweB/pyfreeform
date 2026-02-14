@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING
 
-from ..color import Color
+from ..color import Color, apply_brightness
 from ..core.entity import Entity
 from ..core.svg_utils import opacity_attr
 
@@ -47,6 +47,7 @@ class Dot(Entity):
         color: str | tuple[int, int, int] = DEFAULT_COLOR,
         z_index: int = 0,
         opacity: float = 1.0,
+        color_brightness: float | None = None,
     ) -> None:
         """
         Create a dot at the specified position.
@@ -58,10 +59,13 @@ class Dot(Entity):
             color: Fill color (name, hex, or RGB tuple).
             z_index: Layer ordering (higher = on top).
             opacity: Opacity (0.0 transparent to 1.0 opaque).
+            color_brightness: Brightness multiplier 0.0 (black) to 1.0 (unchanged).
         """
         super().__init__(x, y, z_index)
         self._pixel_radius = float(radius)
         self._relative_radius: float | None = None
+        if color_brightness is not None:
+            color = apply_brightness(color, color_brightness)
         self._color = Color(color)
         self.opacity = float(opacity)
 

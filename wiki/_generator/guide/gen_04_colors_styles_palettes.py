@@ -9,7 +9,7 @@ from pyfreeform import (
     ShapeStyle,
 )
 
-from wiki._generator import save
+from wiki._generator import save, sample_image
 
 
 def generate():
@@ -45,6 +45,43 @@ def generate():
         for cell in scene.grid.border():
             cell.add_border(color=colors.grid, width=0.5)
         save(scene, f"guide/styles-palette-{name}.svg")
+
+    # --- 2a. Brightness-driven dots (color_brightness demo) ---
+    scene = Scene.from_image(
+        sample_image("MonaLisa.jpg"),
+        grid_size=40,
+        cell_size=10,
+    )
+    for cell in scene.grid:
+        r = cell.brightness * 0.48
+        if r > 0.03:
+            cell.add_dot(radius=r, color="white", color_brightness=cell.brightness)
+    save(scene, "guide/styles-brightness-dots.svg")
+
+    # --- 2b. Fill brightness progression ---
+    colors = Palette.midnight()
+    scene = Scene.with_grid(cols=5, rows=1, cell_size=60, background=colors.background)
+    brightness_levels = [0.2, 0.4, 0.6, 0.8, 1.0]
+    for i, cell in enumerate(scene.grid):
+        b = brightness_levels[i]
+        cell.add_ellipse(
+            at="center",
+            rx=0.37,
+            ry=0.37,
+            fill=colors.primary,
+            stroke=colors.accent,
+            stroke_width=3,
+            fill_brightness=b,
+            stroke_brightness=1.0,
+        )
+        cell.add_text(
+            f"{b:.1f}",
+            at="bottom",
+            font_size=0.15,
+            color="#aaaacc",
+            baseline="auto",
+        )
+    save(scene, "guide/styles-fill-brightness.svg")
 
     # --- 2. Opacity layering demo ---
     colors = Palette.midnight()

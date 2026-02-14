@@ -257,7 +257,8 @@ class Grid:
         Get the cell containing a pixel position.
 
         Args:
-            x, y: Pixel coordinates.
+            x: Horizontal pixel position.
+            y: Vertical pixel position.
 
         Returns:
             The Cell at that position, or None if outside grid.

@@ -5,7 +5,7 @@ from __future__ import annotations
 import itertools
 from typing import TYPE_CHECKING, Any, Literal
 
-from ..color import ColorLike
+from ..color import ColorLike, apply_brightness
 from .binding import Binding
 from .coord import Coord
 from .relcoord import RelCoord, RelCoordLike
@@ -228,12 +228,13 @@ class Surface:
         curvature: float | None = None,
         visible: bool = True,
         width: float = 1,
-        color: str = "black",
+        color: ColorLike = "black",
         z_index: int = 0,
         cap: CapName = "round",
         start_cap: CapName | None = None,
         end_cap: CapName | None = None,
         opacity: float = 1.0,
+        color_brightness: float | None = None,
         style: ConnectionStyle | None = None,
         segments: int = 32,
     ) -> Connection:
@@ -254,6 +255,7 @@ class Surface:
             start_cap: Override cap for start end (e.g. "arrow").
             end_cap: Override cap for end end (e.g. "arrow").
             opacity: Opacity (0.0 transparent to 1.0 opaque).
+            color_brightness: Brightness multiplier 0.0 (black) to 1.0 (unchanged).
             style: ConnectionStyle object (overrides individual params).
             segments: Number of Bezier segments for path rendering.
 
@@ -277,6 +279,7 @@ class Surface:
             start_cap=start_cap,
             end_cap=end_cap,
             opacity=opacity,
+            color_brightness=color_brightness,
             style=style,
             segments=segments,
         )
@@ -371,6 +374,7 @@ class Surface:
         color: ColorLike = "black",
         z_index: int = 0,
         opacity: float = 1.0,
+        color_brightness: float | None = None,
         style: DotStyle | None = None,
     ) -> Dot:
         """
@@ -386,6 +390,7 @@ class Surface:
             color: Fill color.
             z_index: Layer order (higher = on top).
             opacity: Opacity (0.0 transparent to 1.0 opaque).
+            color_brightness: Brightness multiplier 0.0 (black) to 1.0 (unchanged).
             style: DotStyle object (overrides individual params).
 
         Returns:
@@ -406,6 +411,11 @@ class Surface:
             color = style.color
             z_index = style.z_index
             opacity = style.opacity
+            if style.color_brightness is not None:
+                color_brightness = style.color_brightness
+
+        if color_brightness is not None:
+            color = apply_brightness(color, color_brightness)
 
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
         ref_min = min(ref_w, ref_h)
@@ -454,6 +464,7 @@ class Surface:
         start_cap: CapName | None = None,
         end_cap: CapName | None = None,
         opacity: float = 1.0,
+        color_brightness: float | None = None,
         style: LineStyle | None = None,
     ) -> Line:
         """
@@ -475,6 +486,7 @@ class Surface:
             cap: Cap style for both ends ("round", "square", "butt", or "arrow")
             start_cap: Override cap for start end only
             end_cap: Override cap for end end only
+            color_brightness: Brightness multiplier 0.0 (black) to 1.0 (unchanged).
             style: LineStyle object (overrides individual params)
 
         Returns:
@@ -499,6 +511,11 @@ class Surface:
             start_cap = style.start_cap
             end_cap = style.end_cap
             opacity = style.opacity
+            if style.color_brightness is not None:
+                color_brightness = style.color_brightness
+
+        if color_brightness is not None:
+            color = apply_brightness(color, color_brightness)
 
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
         if isinstance(start, str):
@@ -563,6 +580,7 @@ class Surface:
         start_cap: CapName | None = None,
         end_cap: CapName | None = None,
         opacity: float = 1.0,
+        color_brightness: float | None = None,
         style: LineStyle | None = None,
     ) -> Line:
         """
@@ -582,6 +600,7 @@ class Surface:
             cap: Cap style for both ends
             start_cap: Override cap for start end only
             end_cap: Override cap for end end only
+            color_brightness: Brightness multiplier 0.0 (black) to 1.0 (unchanged).
             style: LineStyle object
 
         Returns:
@@ -608,6 +627,7 @@ class Surface:
             start_cap=start_cap,
             end_cap=end_cap,
             opacity=opacity,
+            color_brightness=color_brightness,
             style=style,
         )
 
@@ -628,6 +648,7 @@ class Surface:
         start_cap: CapName | None = None,
         end_cap: CapName | None = None,
         opacity: float = 1.0,
+        color_brightness: float | None = None,
         style: LineStyle | None = None,
     ) -> Curve:
         """
@@ -654,6 +675,7 @@ class Surface:
             cap: Cap style for both ends ("round", "square", "butt", or "arrow")
             start_cap: Override cap for start end only
             end_cap: Override cap for end end only
+            color_brightness: Brightness multiplier 0.0 (black) to 1.0 (unchanged).
             style: LineStyle object (overrides width/color/z_index/cap)
 
         Returns:
@@ -676,6 +698,11 @@ class Surface:
             start_cap = style.start_cap
             end_cap = style.end_cap
             opacity = style.opacity
+            if style.color_brightness is not None:
+                color_brightness = style.color_brightness
+
+        if color_brightness is not None:
+            color = apply_brightness(color, color_brightness)
 
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
         if isinstance(start, str):
@@ -837,6 +864,8 @@ class Surface:
         opacity: float = 1.0,
         fill_opacity: float | None = None,
         stroke_opacity: float | None = None,
+        fill_brightness: float | None = None,
+        stroke_brightness: float | None = None,
         style: ShapeStyle | None = None,
     ) -> Ellipse:
         """
@@ -882,6 +911,15 @@ class Surface:
             opacity = style.opacity
             fill_opacity = style.fill_opacity
             stroke_opacity = style.stroke_opacity
+            if style.fill_brightness is not None:
+                fill_brightness = style.fill_brightness
+            if style.stroke_brightness is not None:
+                stroke_brightness = style.stroke_brightness
+
+        if fill_brightness is not None and fill is not None:
+            fill = apply_brightness(fill, fill_brightness)
+        if stroke_brightness is not None and stroke is not None:
+            stroke = apply_brightness(stroke, stroke_brightness)
 
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
 
@@ -938,6 +976,8 @@ class Surface:
         opacity: float = 1.0,
         fill_opacity: float | None = None,
         stroke_opacity: float | None = None,
+        fill_brightness: float | None = None,
+        stroke_brightness: float | None = None,
         rotation: float = 0,
         style: ShapeStyle | None = None,
     ) -> Polygon:
@@ -987,6 +1027,15 @@ class Surface:
             opacity = style.opacity
             fill_opacity = style.fill_opacity
             stroke_opacity = style.stroke_opacity
+            if style.fill_brightness is not None:
+                fill_brightness = style.fill_brightness
+            if style.stroke_brightness is not None:
+                stroke_brightness = style.stroke_brightness
+
+        if fill_brightness is not None and fill is not None:
+            fill = apply_brightness(fill, fill_brightness)
+        if stroke_brightness is not None and stroke is not None:
+            stroke = apply_brightness(stroke, stroke_brightness)
 
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
         absolute_vertices = [Coord(ref_x + v[0] * ref_w, ref_y + v[1] * ref_h) for v in vertices]
@@ -1049,6 +1098,7 @@ class Surface:
         rotation: float = 0,
         z_index: int = 0,
         opacity: float = 1.0,
+        color_brightness: float | None = None,
         fit: bool = False,
         start_offset: float = 0.0,
         end_offset: float = 1.0,
@@ -1118,6 +1168,11 @@ class Surface:
             rotation = style.rotation
             z_index = style.z_index
             opacity = style.opacity
+            if style.color_brightness is not None:
+                color_brightness = style.color_brightness
+
+        if color_brightness is not None:
+            color = apply_brightness(color, color_brightness)
 
         # Resolve text_anchor default based on mode
         is_textpath = along is not None and t is None
@@ -1240,6 +1295,8 @@ class Surface:
         opacity: float = 1.0,
         fill_opacity: float | None = None,
         stroke_opacity: float | None = None,
+        fill_brightness: float | None = None,
+        stroke_brightness: float | None = None,
         z_index: int = 0,
         style: ShapeStyle | None = None,
     ) -> Rect:
@@ -1294,6 +1351,15 @@ class Surface:
             opacity = style.opacity
             fill_opacity = style.fill_opacity
             stroke_opacity = style.stroke_opacity
+            if style.fill_brightness is not None:
+                fill_brightness = style.fill_brightness
+            if style.stroke_brightness is not None:
+                stroke_brightness = style.stroke_brightness
+
+        if fill_brightness is not None and fill is not None:
+            fill = apply_brightness(fill, fill_brightness)
+        if stroke_brightness is not None and stroke is not None:
+            stroke = apply_brightness(stroke, stroke_brightness)
 
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
 
@@ -1347,6 +1413,7 @@ class Surface:
         color: ColorLike = "black",
         opacity: float = 1.0,
         z_index: int = 0,
+        color_brightness: float | None = None,
         style: FillStyle | None = None,
     ) -> Rect:
         """
@@ -1356,6 +1423,7 @@ class Surface:
             color: Fill color
             opacity: Fill opacity (0.0 transparent to 1.0 opaque)
             z_index: Layer order
+            color_brightness: Brightness multiplier 0.0 (black) to 1.0 (unchanged).
             style: FillStyle object
 
         Returns:
@@ -1373,6 +1441,11 @@ class Surface:
             color = style.color
             opacity = style.opacity
             z_index = style.z_index
+            if style.color_brightness is not None:
+                color_brightness = style.color_brightness
+
+        if color_brightness is not None:
+            color = apply_brightness(color, color_brightness)
 
         rect = Rect(
             self._x,
@@ -1394,6 +1467,7 @@ class Surface:
         width: float = 0.5,
         z_index: int = 0,
         opacity: float = 1.0,
+        color_brightness: float | None = None,
         style: BorderStyle | None = None,
     ) -> Rect:
         """
@@ -1404,6 +1478,7 @@ class Surface:
             width: Stroke width
             z_index: Layer order
             opacity: Opacity (0.0 transparent to 1.0 opaque)
+            color_brightness: Brightness multiplier 0.0 (black) to 1.0 (unchanged).
             style: BorderStyle object
 
         Returns:
@@ -1421,6 +1496,11 @@ class Surface:
             width = style.width
             z_index = style.z_index
             opacity = style.opacity
+            if style.color_brightness is not None:
+                color_brightness = style.color_brightness
+
+        if color_brightness is not None:
+            color = apply_brightness(color, color_brightness)
 
         half = width / 2
         rect = Rect(

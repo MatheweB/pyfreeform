@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING
 
-from ..color import Color
+from ..color import Color, apply_brightness
 from ..core.coord import Coord, CoordLike
 from ..core.relcoord import RelCoord
 from ..core.entity import Entity
@@ -71,6 +71,8 @@ class Polygon(Entity):
         opacity: float = 1.0,
         fill_opacity: float | None = None,
         stroke_opacity: float | None = None,
+        fill_brightness: float | None = None,
+        stroke_brightness: float | None = None,
     ) -> None:
         """
         Create a polygon from vertices.
@@ -87,6 +89,8 @@ class Polygon(Entity):
             opacity: Opacity for both fill and stroke (0.0-1.0).
             fill_opacity: Override opacity for fill only (None = use opacity).
             stroke_opacity: Override opacity for stroke only (None = use opacity).
+            fill_brightness: Brightness multiplier for fill 0.0 (black) to 1.0 (unchanged).
+            stroke_brightness: Brightness multiplier for stroke 0.0 (black) to 1.0 (unchanged).
         """
         if len(vertices) < 3:
             raise ValueError("Polygon requires at least 3 vertices")
@@ -112,6 +116,10 @@ class Polygon(Entity):
         centroid = self._calculate_centroid()
         super().__init__(centroid.x, centroid.y, z_index)
 
+        if fill_brightness is not None and fill is not None:
+            fill = apply_brightness(fill, fill_brightness)
+        if stroke_brightness is not None and stroke is not None:
+            stroke = apply_brightness(stroke, stroke_brightness)
         self._fill = Color(fill) if fill else None
         self._stroke = Color(stroke) if stroke else None
         self.stroke_width = float(stroke_width)

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 
-from ..color import Color
+from ..color import Color, apply_brightness
 from ..core.bezier import curvature_control_point, quadratic_to_cubic
 from ..core.coord import Coord, CoordLike
 from ..core.relcoord import RelCoord
@@ -68,13 +68,16 @@ class Curve(Entity):
         start_cap: CapName | None = None,
         end_cap: CapName | None = None,
         opacity: float = 1.0,
+        color_brightness: float | None = None,
     ) -> None:
         """
         Create a curve from (x1, y1) to (x2, y2).
 
         Args:
-            x1, y1: Starting point coordinates.
-            x2, y2: Ending point coordinates.
+            x1: Start x in pixels.
+            y1: Start y in pixels.
+            x2: End x in pixels.
+            y2: End y in pixels.
             curvature:  How much the curve bows away from straight.
                         0 = straight line
                         Positive = bows to the left (when facing end)
@@ -87,12 +90,15 @@ class Curve(Entity):
             start_cap: Override cap for start end only.
             end_cap: Override cap for end end only.
             opacity: Opacity (0.0 transparent to 1.0 opaque).
+            color_brightness: Brightness multiplier 0.0 (black) to 1.0 (unchanged).
         """
         super().__init__(x1, y1, z_index)
         self._end = Coord(x2, y2)
         self._relative_end: RelCoord | None = None
         self._curvature = float(curvature)
         self.width = float(width)
+        if color_brightness is not None:
+            color = apply_brightness(color, color_brightness)
         self._color = Color(color)
         self.cap = cap
         self.start_cap = start_cap
@@ -131,6 +137,7 @@ class Curve(Entity):
         start_cap: CapName | None = None,
         end_cap: CapName | None = None,
         opacity: float = 1.0,
+        color_brightness: float | None = None,
     ) -> Curve:
         """Create a curve from two points."""
         start = Coord.coerce(start)
@@ -148,6 +155,7 @@ class Curve(Entity):
             start_cap,
             end_cap,
             opacity,
+            color_brightness,
         )
 
     @property

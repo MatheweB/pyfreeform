@@ -21,11 +21,11 @@ This is the most important API distinction to remember:
 
 ## Color Formats
 
-All color parameters accept:
+All color parameters accept any `ColorLike` value:
 
 - **Named colors**: `"red"`, `"coral"`, `"navy"`, `"salmon"`
 - **Hex strings**: `"#ff6b6b"`, `"#f00"`, `"#FF6B6B"`
-- **RGB tuples**: Colors from `cell.rgb` can be formatted to hex with `cell.color`
+- **RGB tuples**: `(255, 107, 107)`, `cell.rgb`
 
 ---
 
@@ -69,6 +69,59 @@ Stack semi-transparent shapes for color mixing effects:
 
 ---
 
+## Brightness
+
+Scale any color toward black with a brightness multiplier (0.0 = black, 1.0 = unchanged).
+
+### color_brightness
+
+For `color=` entities (Dot, Line, Curve, Text, Fill, Border, Connection):
+
+```python
+# Map image brightness directly to color intensity
+for cell in scene.grid:
+    cell.add_dot(color="white", color_brightness=cell.brightness)
+```
+
+<figure markdown>
+![Brightness-driven dots](../_images/guide/styles-brightness-dots.svg){ width="420" }
+<figcaption>White dots dimmed by brightness — dark cells produce darker dots.</figcaption>
+</figure>
+
+### fill_brightness & stroke_brightness
+
+For `fill=`/`stroke=` shapes (Rect, Ellipse, Polygon), mirroring `fill_opacity`/`stroke_opacity`:
+
+```python
+cell.add_ellipse(
+    fill="coral", stroke="navy",
+    fill_brightness=cell.brightness,   # Dim the fill
+    stroke_brightness=1.0,             # Keep stroke at full intensity
+)
+```
+
+<figure markdown>
+![Fill brightness progression](../_images/guide/styles-fill-brightness.svg){ width="380" }
+<figcaption>Fill brightness from 0.2 to 1.0 with constant stroke brightness.</figcaption>
+</figure>
+
+### Utility Functions
+
+Two standalone functions for working with brightness outside builders:
+
+```python
+from pyfreeform import apply_brightness, gray
+
+apply_brightness("coral", 0.5)  # Half-bright coral → "#7f3f28"
+apply_brightness("white", 0.0)  # Pure black → "#000000"
+gray(0.5)                       # Mid-gray → "#808080"
+gray(1.0)                       # White → "#ffffff"
+```
+
+`gray(b)` is shorthand for `apply_brightness("white", b)`.
+
+---
+
 ## Style Objects
 
 Instead of repeating parameters, define a **style object** once and reuse it:
@@ -95,13 +148,13 @@ for cell in scene.grid:
 
 | Class | For Methods | Key Fields |
 |---|---|---|
-| `DotStyle` | `add_dot()` | `color`, `opacity` |
-| `LineStyle` | `add_line()`, `add_diagonal()`, `add_curve()`, `add_path()` | `width`, `color`, `cap`, `start_cap`, `end_cap` |
-| `FillStyle` | `add_fill()` | `color`, `opacity` |
-| `BorderStyle` | `add_border()` | `width`, `color`, `opacity` |
-| `ShapeStyle` | `add_ellipse()`, `add_polygon()`, `add_rect()` | `color` (→ fill), `stroke`, `stroke_width` |
-| `TextStyle` | `add_text()` | `color`, `font_family`, `bold`, `italic` |
-| `ConnectionStyle` | `Connection` | `width`, `color`, `cap` |
+| `DotStyle` | `add_dot()` | `color`, `opacity`, `color_brightness` |
+| `LineStyle` | `add_line()`, `add_diagonal()`, `add_curve()`, `add_path()` | `width`, `color`, `cap`, `start_cap`, `end_cap`, `color_brightness` |
+| `FillStyle` | `add_fill()` | `color`, `opacity`, `color_brightness` |
+| `BorderStyle` | `add_border()` | `width`, `color`, `opacity`, `color_brightness` |
+| `ShapeStyle` | `add_ellipse()`, `add_polygon()`, `add_rect()` | `color` (→ fill), `stroke`, `stroke_width`, `fill_brightness`, `stroke_brightness` |
+| `TextStyle` | `add_text()` | `color`, `font_family`, `bold`, `italic`, `color_brightness` |
+| `ConnectionStyle` | `Connection` | `width`, `color`, `cap`, `color_brightness` |
 
 ### Builder Methods
 
@@ -109,8 +162,9 @@ Styles are immutable. Use `.with_*()` to create modified copies:
 
 ```python
 base = LineStyle(width=2, color="coral")
-thick = base.with_width(4)          # New style, width=4
-arrow = base.with_end_cap("arrow")  # New style, with arrow cap
+thick = base.with_width(4)                    # New style, width=4
+arrow = base.with_end_cap("arrow")            # New style, with arrow cap
+dim = base.with_color_brightness(0.5)         # Half-bright coral
 ```
 
 ---

@@ -60,6 +60,7 @@ def generate():
             cell.add_diagonal(
                 width=width,
                 color=cell.color,
+                color_brightness=cell.brightness,
                 opacity=0.5 + cell.brightness * 0.5,
             )
     save(scene, "recipes/image-line-art.svg")

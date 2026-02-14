@@ -1,8 +1,39 @@
-"""Color utilities for PyDraw."""
+"""Color utilities for PyFreeform."""
 
 from __future__ import annotations
 
 from typing import ClassVar
+
+
+# Standard SVG/CSS named color → RGB mapping.
+NAMED_COLOR_RGB: dict[str, tuple[int, int, int]] = {
+    "black": (0, 0, 0),
+    "white": (255, 255, 255),
+    "red": (255, 0, 0),
+    "green": (0, 128, 0),
+    "blue": (0, 0, 255),
+    "yellow": (255, 255, 0),
+    "cyan": (0, 255, 255),
+    "magenta": (255, 0, 255),
+    "orange": (255, 165, 0),
+    "purple": (128, 0, 128),
+    "pink": (255, 192, 203),
+    "brown": (165, 42, 42),
+    "gray": (128, 128, 128),
+    "grey": (128, 128, 128),
+    "coral": (255, 127, 80),
+    "crimson": (220, 20, 60),
+    "gold": (255, 215, 0),
+    "indigo": (75, 0, 130),
+    "lime": (0, 255, 0),
+    "maroon": (128, 0, 0),
+    "navy": (0, 0, 128),
+    "olive": (128, 128, 0),
+    "silver": (192, 192, 192),
+    "teal": (0, 128, 128),
+    "turquoise": (64, 224, 208),
+    "violet": (238, 130, 238),
+}
 
 
 class Color:
@@ -23,34 +54,7 @@ class Color:
     """
 
     # Common named colors - keep it simple
-    NAMED_COLORS: ClassVar[set[str]] = {
-        "black",
-        "white",
-        "red",
-        "green",
-        "blue",
-        "yellow",
-        "cyan",
-        "magenta",
-        "orange",
-        "purple",
-        "pink",
-        "brown",
-        "gray",
-        "grey",
-        "coral",
-        "crimson",
-        "gold",
-        "indigo",
-        "lime",
-        "maroon",
-        "navy",
-        "olive",
-        "silver",
-        "teal",
-        "turquoise",
-        "violet",
-    }
+    NAMED_COLORS: ClassVar[set[str]] = set(NAMED_COLOR_RGB.keys())
 
     def __init__(self, value: str | tuple[int, int, int]) -> None:
         """
@@ -104,6 +108,26 @@ class Color:
         """Return the color as a string suitable for SVG."""
         return self._hex
 
+    def to_rgb(self) -> tuple[int, int, int]:
+        """Convert this color to an RGB tuple.
+
+        Returns:
+            (r, g, b) tuple with values 0-255.
+
+        Raises:
+            ValueError: If the color is an unrecognized named color that
+                cannot be converted to RGB.
+        """
+        h = self._hex
+        if h.startswith("#"):
+            return (int(h[1:3], 16), int(h[3:5], 16), int(h[5:7], 16))
+        if h in NAMED_COLOR_RGB:
+            return NAMED_COLOR_RGB[h]
+        raise ValueError(
+            f"Cannot convert '{h}' to RGB — unknown named color. "
+            f"Use a hex code or RGB tuple instead."
+        )
+
     def __str__(self) -> str:
         return self._hex
 
@@ -118,3 +142,56 @@ class Color:
 
 ColorLike = str | tuple[int, int, int]
 """Type alias for color values: named color, hex string, or RGB tuple."""
+
+
+# =========================================================================
+# Color Transforms
+# =========================================================================
+
+
+def apply_brightness(color: ColorLike, brightness: float) -> str:
+    """Apply a brightness multiplier to a color.
+
+    Scales each RGB channel by *brightness* (0.0 = black, 1.0 = unchanged).
+
+    Args:
+        color: Any supported color format (name, hex, or RGB tuple).
+        brightness: Multiplier from 0.0 (black) to 1.0 (unchanged).
+
+    Returns:
+        Hex color string with brightness applied.
+
+    Example:
+        ```python
+        apply_brightness("coral", 0.5)   # half-bright coral
+        apply_brightness("white", 0.0)   # '#000000'
+        apply_brightness((255, 0, 0), 1) # '#ff0000'
+        ```
+    """
+    brightness = max(0.0, min(1.0, brightness))
+    r, g, b = Color(color).to_rgb()
+    r = round(r * brightness)
+    g = round(g * brightness)
+    b = round(b * brightness)
+    return f"#{r:02x}{g:02x}{b:02x}"
+
+
+def gray(brightness: float) -> str:
+    """Create a grayscale color from a brightness value.
+
+    Shorthand for ``apply_brightness("white", brightness)``.
+
+    Args:
+        brightness: 0.0 (black) to 1.0 (white).
+
+    Returns:
+        Hex color string.
+
+    Example:
+        ```python
+        gray(0.0)   # '#000000'
+        gray(0.5)   # '#808080'
+        gray(1.0)   # '#ffffff'
+        ```
+    """
+    return apply_brightness("white", brightness)

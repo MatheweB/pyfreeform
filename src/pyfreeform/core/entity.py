@@ -6,6 +6,7 @@ import math
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
 
+from ..color import ColorLike
 from .binding import Binding
 from .connection import Connection
 from .coord import Coord, CoordLike
@@ -382,12 +383,13 @@ class Entity(ABC):
         curvature: float | None = None,
         visible: bool = True,
         width: float = 1,
-        color: str = "black",
+        color: ColorLike = "black",
         z_index: int = 0,
         cap: CapName = "round",
         start_cap: CapName | None = None,
         end_cap: CapName | None = None,
         opacity: float = 1.0,
+        color_brightness: float | None = None,
         style: ConnectionStyle | None = None,
         segments: int = 32,
     ) -> Connection:
@@ -398,10 +400,10 @@ class Entity(ABC):
             other: The entity or surface to connect to.
             start_anchor: Anchor spec on this entity (name, RelCoord, or tuple).
             end_anchor: Anchor spec on the other object.
-            path: Custom path geometry (e.g. Path.Wave()). For simple arcs
-                  use ``curvature`` instead.
-            curvature: Arc curvature (-1 to 1). Positive bows left,
-                       negative bows right. Cannot be used with ``path``.
+            path:   Custom path geometry (e.g. Path.Wave()). For simple arcs
+                    use ``curvature`` instead.
+            curvature:  Arc curvature (-1 to 1). Positive bows left,
+                        negative bows right. Cannot be used with ``path``.
             visible: Whether the connection renders. Default True.
             width: Line width in pixels.
             color: Line color.
@@ -410,6 +412,7 @@ class Entity(ABC):
             start_cap: Override cap for start end (e.g. "arrow").
             end_cap: Override cap for end end (e.g. "arrow").
             opacity: Opacity (0.0 transparent to 1.0 opaque).
+            color_brightness: Brightness multiplier 0.0 (black) to 1.0 (unchanged).
             style: ConnectionStyle object (overrides individual params).
             segments: Number of Bézier segments for path rendering.
 
@@ -432,6 +435,7 @@ class Entity(ABC):
             start_cap=start_cap,
             end_cap=end_cap,
             opacity=opacity,
+            color_brightness=color_brightness,
             style=style,
             segments=segments,
         )

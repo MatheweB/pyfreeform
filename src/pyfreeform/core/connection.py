@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING, Any, Union
 
-from ..color import Color
+from ..color import Color, ColorLike, apply_brightness
 from ..config.caps import CapName, collect_markers, svg_cap_and_marker_attrs
 from ..config.styles import ConnectionStyle
 from .bezier import curvature_control_point, eval_cubic, quadratic_to_cubic
@@ -65,12 +65,13 @@ class Connection:
         curvature: float | None = None,
         visible: bool = True,
         width: float = 1,
-        color: str = "black",
+        color: ColorLike = "black",
         z_index: int = 0,
         cap: CapName = "round",
         start_cap: CapName | None = None,
         end_cap: CapName | None = None,
         opacity: float = 1.0,
+        color_brightness: float | None = None,
         style: ConnectionStyle | None = None,
         segments: int = 32,
     ) -> None:
@@ -82,10 +83,10 @@ class Connection:
             end: The ending entity or surface.
             start_anchor: Anchor name on start object.
             end_anchor: Anchor name on end object.
-            path: Custom path geometry (e.g. Path.Wave()). For simple arcs
-                  use ``curvature`` instead.
-            curvature: Arc curvature (-1 to 1). Positive bows left,
-                       negative bows right. Cannot be used with ``path``.
+            path:   Custom path geometry (e.g. Path.Wave()). For simple arcs
+                    use ``curvature`` instead.
+            curvature:  Arc curvature (-1 to 1). Positive bows left,
+                        negative bows right. Cannot be used with ``path``.
             visible: Whether the connection renders. Default True.
             width: Line width in pixels.
             color: Line color.
@@ -94,6 +95,7 @@ class Connection:
             start_cap: Override cap for start end (e.g. "arrow").
             end_cap: Override cap for end end (e.g. "arrow").
             opacity: Opacity (0.0 transparent to 1.0 opaque).
+            color_brightness: Brightness multiplier 0.0 (black) to 1.0 (unchanged).
             style: ConnectionStyle object (overrides individual params).
             segments: Number of Bézier segments for path rendering.
         """
@@ -119,7 +121,11 @@ class Connection:
             if style.end_cap is not None:
                 end_cap = style.end_cap
             opacity = style.opacity
+            if style.color_brightness is not None:
+                color_brightness = style.color_brightness
 
+        if color_brightness is not None:
+            color = apply_brightness(color, color_brightness)
         self.width = float(width)
         self._color = Color(color)
         self._z_index = z_index
@@ -200,7 +206,7 @@ class Connection:
         return self._color.to_hex()
 
     @color.setter
-    def color(self, value: str) -> None:
+    def color(self, value: ColorLike) -> None:
         self._color = Color(value)
 
     @property

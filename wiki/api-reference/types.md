@@ -141,6 +141,22 @@ radius = map_range(cell.brightness, 0, 1, 2, 10)
 radius = map_range(cell.brightness, 0, 1, 10, 2)  # dark = big, bright = small
 ```
 
+::: pyfreeform.apply_brightness
+
+```python
+apply_brightness("coral", 0.5)    # Half-bright coral → "#7f3f28"
+apply_brightness("white", 0.0)    # Pure black → "#000000"
+apply_brightness((255, 0, 0), 1)  # Unchanged red → "#ff0000"
+```
+
+::: pyfreeform.gray
+
+```python
+gray(0.0)   # "#000000" (black)
+gray(0.5)   # "#808080" (mid-gray)
+gray(1.0)   # "#ffffff" (white)
+```
+
 ::: pyfreeform.get_angle_at
 
 ::: pyfreeform.display

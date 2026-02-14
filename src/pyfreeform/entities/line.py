@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 
-from ..color import Color
+from ..color import Color, apply_brightness
 from ..core.coord import Coord, CoordLike
 from ..core.relcoord import RelCoord
 from ..config.caps import CapName, collect_markers, svg_cap_and_marker_attrs
@@ -56,13 +56,16 @@ class Line(Entity):
         start_cap: CapName | None = None,
         end_cap: CapName | None = None,
         opacity: float = 1.0,
+        color_brightness: float | None = None,
     ) -> None:
         """
         Create a line from (x1, y1) to (x2, y2).
 
         Args:
-            x1, y1: Starting point coordinates.
-            x2, y2: Ending point coordinates.
+            x1: Start x in pixels.
+            y1: Start y in pixels.
+            x2: End x in pixels.
+            y2: End y in pixels.
             width: Stroke width in pixels.
             color: Stroke color (name, hex, or RGB tuple).
             z_index: Layer ordering (higher = on top).
@@ -70,11 +73,14 @@ class Line(Entity):
             start_cap: Override cap for start end only.
             end_cap: Override cap for end end only.
             opacity: Opacity (0.0 transparent to 1.0 opaque).
+            color_brightness: Brightness multiplier 0.0 (black) to 1.0 (unchanged).
         """
         super().__init__(x1, y1, z_index)
         self._end_offset = Coord(x2 - x1, y2 - y1)
         self._relative_end: RelCoord | None = None
         self.width = float(width)
+        if color_brightness is not None:
+            color = apply_brightness(color, color_brightness)
         self._color = Color(color)
         self.cap = cap
         self.start_cap = start_cap
@@ -111,6 +117,7 @@ class Line(Entity):
         start_cap: CapName | None = None,
         end_cap: CapName | None = None,
         opacity: float = 1.0,
+        color_brightness: float | None = None,
     ) -> Line:
         """
         Create a line from two points.
@@ -125,6 +132,7 @@ class Line(Entity):
             start_cap: Override cap for start end only.
             end_cap: Override cap for end end only.
             opacity: Opacity (0.0 transparent to 1.0 opaque).
+            color_brightness: Brightness multiplier 0.0 (black) to 1.0 (unchanged).
 
         Returns:
             A new Line entity.
@@ -132,7 +140,8 @@ class Line(Entity):
         start = Coord.coerce(start)
         end = Coord.coerce(end)
         return cls(
-            start.x, start.y, end.x, end.y, width, color, z_index, cap, start_cap, end_cap, opacity
+            start.x, start.y, end.x, end.y, width, color, z_index, cap, start_cap, end_cap,
+            opacity, color_brightness,
         )
 
     @property
