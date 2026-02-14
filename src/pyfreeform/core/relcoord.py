@@ -26,12 +26,12 @@ class RelCoord:
     Used for positioning within surfaces. (0, 0) is top-left, (1, 1) is bottom-right.
     Fields are named ``rx`` and ``ry`` to prevent confusion with pixel ``Coord(x, y)``.
 
-    Examples:
-        >>> p = RelCoord(0.5, 0.5)
-        >>> p.rx, p.ry
-        (0.5, 0.5)
-        >>> p + RelCoord(0.1, 0)
-        RelCoord(0.6, 0.5)
+    Example:
+        ```python
+        p = RelCoord(0.5, 0.5)
+        p.rx, p.ry            # (0.5, 0.5)
+        p + RelCoord(0.1, 0)  # RelCoord(0.6, 0.5)
+        ```
     """
 
     rx: float

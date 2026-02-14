@@ -32,10 +32,12 @@ class Rect(Entity):
         - "top_left", "top_right", "bottom_left", "bottom_right": Corners
         - "top", "bottom", "left", "right": Edge centers
 
-    Examples:
-        >>> rect = Rect(0, 0, 100, 50, fill="blue")
-        >>> rect = Rect(0, 0, 100, 50, fill=None, stroke="black", stroke_width=2)
-        >>> rect = Rect(0, 0, 100, 50, fill="red", rotation=45)
+    Example:
+        ```python
+        rect = Rect(0, 0, 100, 50, fill="blue")
+        rect = Rect(0, 0, 100, 50, fill=None, stroke="black", stroke_width=2)
+        rect = Rect(0, 0, 100, 50, fill="red", rotation=45)
+        ```
     """
 
     DEFAULT_FILL = "black"

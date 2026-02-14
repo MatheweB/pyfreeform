@@ -32,13 +32,13 @@ class Image:
         height: Image height in pixels
         layers: Dictionary of layer name to Layer object
 
-    Examples:
-        >>> img = Image.load("photo.png")
-        >>> img.width, img.height
-        (800, 600)
-        >>> red_layer = img["red"]
-        >>> color = img.hex_at(100, 100)
-        '#ff5733'
+    Example:
+        ```python
+        img = Image.load("photo.png")
+        img.width, img.height       # (800, 600)
+        red_layer = img["red"]
+        color = img.hex_at(100, 100) # '#ff5733'
+        ```
     """
 
     # Standard layer names

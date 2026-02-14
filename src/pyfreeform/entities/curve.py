@@ -36,16 +36,18 @@ class Curve(Entity):
         - "end": The ending point
         - "control": The control point
 
-    Examples:
-        >>> curve = Curve(0, 100, 100, 0, curvature=0.5)
-        >>> midpoint = curve.point_at(0.5)  # Point on the curve
+    Example:
+        ```python
+        curve = Curve(0, 100, 100, 0, curvature=0.5)
+        midpoint = curve.point_at(0.5)  # Point on the curve
 
-        >>> # In a cell:
-        >>> curve = cell.add_curve(start="bottom_left", end="top_right", curvature=0.3)
-        >>> cell.add_dot(along=curve, t=cell.brightness)
+        # In a cell:
+        curve = cell.add_curve(start="bottom_left", end="top_right", curvature=0.3)
+        cell.add_dot(along=curve, t=cell.brightness)
 
-        >>> # With arrow cap:
-        >>> curve = Curve(0, 100, 100, 0, curvature=0.5, end_cap="arrow")
+        # With arrow cap:
+        curve = Curve(0, 100, 100, 0, curvature=0.5, end_cap="arrow")
+        ```
     """
 
     DEFAULT_WIDTH = 1
@@ -254,8 +256,10 @@ class Curve(Entity):
             Coord on the curve at parameter t.
 
         Example:
-            >>> curve = cell.add_curve(curvature=0.5)
-            >>> cell.add_dot(along=curve, t=0.5)  # Dot at curve midpoint
+            ```python
+            curve = cell.add_curve(curvature=0.5)
+            cell.add_dot(along=curve, t=0.5)  # Dot at curve midpoint
+            ```
         """
         # Quadratic Bezier formula: B(t) = (1-t)^2 P0 + 2(1-t)t P1 + t^2 P2
         p0 = self.start

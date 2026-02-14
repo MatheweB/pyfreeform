@@ -28,10 +28,12 @@ class Dot(Entity):
     Anchors:
         - "center": The center point (same as position)
 
-    Examples:
-        >>> dot = Dot(100, 100)
-        >>> dot = Dot(100, 100, radius=10, color="coral")
-        >>> dot.move_to_cell(cell, at=(0.5, 0.5))
+    Example:
+        ```python
+        dot = Dot(100, 100)
+        dot = Dot(100, 100, radius=10, color="coral")
+        dot.move_to_cell(cell, at=(0.5, 0.5))
+        ```
     """
 
     DEFAULT_RADIUS = 5

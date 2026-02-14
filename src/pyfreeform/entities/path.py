@@ -40,28 +40,30 @@ class Path(Entity):
         - "center": The midpoint (t=0.5)
         - "end": The last point (t=1, or same as start if closed)
 
-    Examples:
-        >>> from pyfreeform import Path, Coord
-        >>> # Render a custom Wave path:
-        >>> wave = Wave(start=Coord(0, 50), end=Coord(200, 50), amplitude=20, frequency=3)
-        >>> path = Path(wave, width=2, color="blue")
-        >>> scene.add(path)
+    Example:
+        ```python
+        from pyfreeform import Path, Coord
+        # Render a custom Wave path:
+        wave = Wave(start=Coord(0, 50), end=Coord(200, 50), amplitude=20, frequency=3)
+        path = Path(wave, width=2, color="blue")
+        scene.add(path)
 
-        >>> # Closed Lissajous with fill:
-        >>> liss = Lissajous(center=Coord(100, 100), a=3, b=2, delta=math.pi/2, size=80)
-        >>> path = Path(liss, closed=True, color="navy", fill="lightblue", width=1.5)
+        # Closed Lissajous with fill:
+        liss = Lissajous(center=Coord(100, 100), a=3, b=2, delta=math.pi/2, size=80)
+        path = Path(liss, closed=True, color="navy", fill="lightblue", width=1.5)
 
-        >>> # Sub-path (arc) of an ellipse:
-        >>> ellipse = Ellipse(100, 100, rx=50, ry=30)
-        >>> arc = Path(ellipse, start_t=0.0, end_t=0.25, color="red", width=2)
+        # Sub-path (arc) of an ellipse:
+        ellipse = Ellipse(100, 100, rx=50, ry=30)
+        arc = Path(ellipse, start_t=0.0, end_t=0.25, color="red", width=2)
 
-        >>> # Arc of a closed path as connection shape:
-        >>> liss_arc = Path(Path.Lissajous(), start_t=0, end_t=0.5)
-        >>> dot_a.connect(dot_b, path=liss_arc)
+        # Arc of a closed path as connection shape:
+        liss_arc = Path(Path.Lissajous(), start_t=0, end_t=0.5)
+        dot_a.connect(dot_b, path=liss_arc)
 
-        >>> # In a cell:
-        >>> spiral = Spiral(center=cell.center, start_radius=5, end_radius=40, turns=3)
-        >>> cell.add_path(spiral, color="red", width=1)
+        # In a cell:
+        spiral = Spiral(center=cell.center, start_radius=5, end_radius=40, turns=3)
+        cell.add_path(spiral, color="red", width=1)
+        ```
     """
 
     # Built-in path shapes (for IDE visibility)

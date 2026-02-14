@@ -858,11 +858,13 @@ class Entity(ABC):
             self, for method chaining.
 
         Example:
-            >>> dot = cell.add_dot(radius=0.5, color="navy")
-            >>> label = cell.add_text("0.5", color="white", font_size=50)
-            >>> label.fit_within(dot)
-            >>> # Position in top-left of a rect's inner bounds:
-            >>> label.fit_within(rect, at=(0.25, 0.25))
+            ```python
+            dot = cell.add_dot(radius=0.5, color="navy")
+            label = cell.add_text("0.5", color="white", font_size=50)
+            label.fit_within(dot)
+            # Position in top-left of a rect's inner bounds:
+            label.fit_within(rect, at=(0.25, 0.25))
+            ```
         """
         if rotate and match_aspect:
             raise ValueError("rotate and match_aspect are mutually exclusive")
@@ -1010,10 +1012,12 @@ class Entity(ABC):
                         edges where available space is 0).
 
         Example:
-            >>> ellipse = cell.add_ellipse(rx=2.0, ry=1.2, rotation=45)
-            >>> ellipse.fit_to_cell(0.85)  # Auto-constrain to 85% of cell
-            >>> dot = cell.add_dot(radius=0.8)
-            >>> dot.fit_to_cell(1.0, at=(0.25, 0.25))  # Fit in top-left quadrant
+            ```python
+            ellipse = cell.add_ellipse(rx=2.0, ry=1.2, rotation=45)
+            ellipse.fit_to_cell(0.85)  # Auto-constrain to 85% of cell
+            dot = cell.add_dot(radius=0.8)
+            dot.fit_to_cell(1.0, at=(0.25, 0.25))  # Fit in top-left quadrant
+            ```
         """
         if self._cell is None:
             raise ValueError("Cannot fit to cell: entity has no cell")

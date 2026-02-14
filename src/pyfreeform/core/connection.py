@@ -35,21 +35,23 @@ class Connection:
         end_anchor: Name of anchor on end object
         data: Custom data dictionary
 
-    Examples:
-        >>> dot1 = Dot(100, 100)
-        >>> dot2 = Dot(200, 200)
-        >>> # Visible straight line (default)
-        >>> conn = dot1.connect(dot2)
-        >>> # Styled line
-        >>> conn = dot1.connect(dot2, width=2, color="red")
-        >>> # Arc
-        >>> conn = dot1.connect(dot2, curvature=0.3)
-        >>> # Custom path
-        >>> conn = dot1.connect(dot2, path=Path.Wave())
-        >>> # Cell-to-cell connection
-        >>> conn = cell_a.connect(cell_b, color="red")
-        >>> # Entity-to-cell connection
-        >>> conn = dot.connect(cell, end_anchor="left")
+    Example:
+        ```python
+        dot1 = Dot(100, 100)
+        dot2 = Dot(200, 200)
+        # Visible straight line (default)
+        conn = dot1.connect(dot2)
+        # Styled line
+        conn = dot1.connect(dot2, width=2, color="red")
+        # Arc
+        conn = dot1.connect(dot2, curvature=0.3)
+        # Custom path
+        conn = dot1.connect(dot2, path=Path.Wave())
+        # Cell-to-cell connection
+        conn = cell_a.connect(cell_b, color="red")
+        # Entity-to-cell connection
+        conn = dot.connect(cell, end_anchor="left")
+        ```
     """
 
     def __init__(

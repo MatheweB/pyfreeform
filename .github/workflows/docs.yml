@@ -6,14 +6,23 @@ on:
     paths:
       - 'wiki/**'
       - 'mkdocs.yml'
+      - 'src/pyfreeform/**'
   workflow_dispatch:
 
 permissions:
-  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -22,7 +31,18 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: pip install mkdocs-material mkdocs-glightbox
+        run: |
+          pip install zensical "mkdocstrings[python]>=1.0"
+          pip install -e .
+
+      - name: Build documentation
+        run: zensical build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./site
 
       - name: Deploy to GitHub Pages
-        run: mkdocs gh-deploy --force
+        id: deployment
+        uses: actions/deploy-pages@v4

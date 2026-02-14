@@ -46,16 +46,9 @@ These entity types implement `point_at(t)` out of the box:
 
 ### Built-in path shapes
 
-Four ready-to-use pathable classes are available as nested classes on `Path`:
+Four ready-to-use pathable classes are available as nested classes on `Path`: `Path.Wave`, `Path.Spiral`, `Path.Lissajous`, and `Path.Zigzag`. All four implement `point_at(t)`, `angle_at(t)`, `arc_length()`, and `to_svg_path_d()`. When called with no arguments, they default to normalized coordinate space -- ideal for connection shapes.
 
-| Shape | Description |
-|---|---|
-| `Path.Wave` | Sinusoidal wave between two points |
-| `Path.Spiral` | Archimedean spiral expanding from center |
-| `Path.Lissajous` | Parametric Lissajous curve |
-| `Path.Zigzag` | Triangle wave between two points |
-
-All four implement `point_at(t)`, `angle_at(t)`, `arc_length()`, and `to_svg_path_d()`. When called with no arguments, they default to normalized coordinate space — ideal for connection shapes.
+See [Built-in Path Shapes](../api-reference/connections.md#built-in-path-shapes) for full API details.
 
 ## Optional Methods
 

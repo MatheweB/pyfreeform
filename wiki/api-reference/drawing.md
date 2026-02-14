@@ -23,7 +23,7 @@ All `at` parameters accept named positions or `(rx, ry)` relative coordinates:
 | `"left"` | `(0.0, 0.5)` | Left center |
 | `"right"` | `(1.0, 0.5)` | Right center |
 
-??? warning "Type checking for `RelCoordLike`"
+!!! warning "Type checking for `RelCoordLike`"
     The `RelCoordLike` type accepts:
 
     * A `Coords` object (e.g., `Coords(x=0.5, y=0.5)`)
@@ -93,7 +93,7 @@ print(dot.at.rx)    # 0.25
 dot.at = (0.5, 0.5) # Reposition to center (plain tuples still accepted)
 ```
 
-Returns `None` if the entity was created with pixel coordinates (via `place()` or direct constructor). See [RelCoord](types.md#the-relcoord-type) for details.
+Returns `None` if the entity was created with pixel coordinates (via `place()` or direct constructor). See [RelCoord](types.md#pyfreeform.RelCoord) for details.
 
 ## Relative Sizing Properties
 
@@ -122,7 +122,7 @@ All surfaces (Cell, Scene, CellGroup) support anchors, connections, and custom d
 |---|---|
 | `surface.anchor(spec)` | Anchor position by name, `RelCoord`, or `(rx, ry)` tuple. See [AnchorSpec](types.md#the-anchorspec-type). |
 | `surface.anchor_names` | List of available anchor names |
-| `surface.connect(other, ..., start_anchor, end_anchor)` | Create a connection. Anchors accept `AnchorSpec`. |
+| `surface.connect(other, ..., start_anchor, end_anchor)` | Create a connection. Anchors accept AnchorSpec. |
 | `surface.connections` | Set of connections where this surface is an endpoint |
 | `surface.data` | Custom data dictionary |
 | `surface.contains(point)` | Whether a `Coord` is within the surface bounds |
@@ -131,175 +131,26 @@ All surfaces (Cell, Scene, CellGroup) support anchors, connections, and custom d
 
 ---
 
-## Builder Reference
-
-### `add_dot`
-
-```python
-add_dot(*, at, within, along, t, radius=0.05, color="black", z_index=0, opacity=1.0, style=DotStyle)
-```
-
-Creates a filled circle. `radius` is a fraction of the cell's smaller dimension (0.05 = 5%). Default position: center.
-
-### `add_line`
-
-```python
-add_line(*, start, end, within, along, t, align, width=1, color="black", z_index=0,
-         cap="round", start_cap, end_cap, opacity=1.0, style=LineStyle)
-```
-
-Creates a line segment. Default: center to center (zero-length).
-
-### `add_diagonal`
-
-```python
-add_diagonal(*, start="bottom_left", end="top_right", within, along, t, align, width=1,
-             color="black", z_index=0, cap="round", start_cap, end_cap,
-             opacity=1.0, style=LineStyle)
-```
-
-Convenience for corner-to-corner lines. Delegates to `add_line()`.
-
-### `add_curve`
-
-```python
-add_curve(*, start="bottom_left", end="top_right", curvature=0.5, within, along, t, align,
-          width=1, color="black", z_index=0, cap="round", start_cap, end_cap,
-          opacity=1.0, style=LineStyle)
-```
-
-Creates a smooth curve between two points. `curvature` controls how much it bows: 0 = straight, positive = bows left, negative = bows right (relative to the direction from start to end).
-
-### `add_path`
-
-??? note "Expand full signature"
-
-    ```python
-    add_path(pathable, *, segments=64, closed=False, start_t=0.0, end_t=1.0,
-             width=1, color="black", fill=None, z_index=0, cap="round",
-             start_cap, end_cap, opacity=1.0, fill_opacity, stroke_opacity,
-             style=LineStyle)
-    ```
-
-Renders any Pathable as a smooth SVG `<path>` using cubic Bezier approximation. Supports arcs via `start_t`/`end_t`, closed paths with fill, and dual opacity.
-
-### `add_ellipse`
-
-??? note "Expand full signature"
-
-    ```python
-    add_ellipse(*, at, within, along, t, align, rx, ry, rotation=0, fill="black",
-                stroke=None, stroke_width=1, z_index=0, opacity=1.0,
-                fill_opacity, stroke_opacity, style=ShapeStyle)
-    ```
-
-Creates an ellipse. Default radii: 40% of surface dimensions. The ellipse itself is a Pathable -- you can position other elements along it.
-
-### `add_polygon`
-
-??? note "Expand full signature"
-
-    ```python
-    add_polygon(vertices, *, within, along, t, align, fill="black", stroke=None,
-                stroke_width=1, z_index=0, opacity=1.0, fill_opacity,
-                stroke_opacity, rotation=0, style=ShapeStyle)
-    ```
-
-Creates a polygon from relative-coordinate vertices (0-1). Use `Polygon.hexagon()`, `Polygon.star()`, etc. for common shapes. See [Shapes and Polygons](../guide/06-shapes-and-polygons.md) for shape classmethods.
-
-### `add_rect`
-
-??? note "Expand full signature"
-
-    ```python
-    add_rect(*, at, within, along, t, align, width, height, rotation=0, fill="black",
-             stroke=None, stroke_width=1, opacity=1.0, fill_opacity,
-             stroke_opacity, z_index=0, style=ShapeStyle)
-    ```
-
-Creates a rectangle. `at` specifies the **center** position. Default size: 60% of surface.
-
-### `add_text`
-
-??? note "Expand full signature"
-
-    ```python
-    add_text(content, *, at, within, along, t, align, font_size, color="black",
-             font_family="sans-serif", bold=False, italic=False, text_anchor,
-             baseline="middle", rotation=0, z_index=0, opacity=1.0,
-             fit=False, start_offset=0.0, end_offset=1.0, style=TextStyle)
-    ```
-
-Creates text. `font_size` is a fraction of the surface height (0.25 = 25% of cell height). Default: 0.25.
-
-**`fit=True`**: Shrink `font_size` so the rendered text fits within the cell width. Never upsizes -- `font_size` acts as a ceiling. Ignored in path modes (`along=`).
-
-Two modes with `along`:
-
-- **`along` + `t`**: Position text at a point on the path, optionally align to tangent.
-- **`along` without `t`**: Warp text along the path using SVG `<textPath>` (auto-sizes font to fill path).
-
-See [Text and Typography](../guide/07-text-and-typography.md) for text layout techniques.
-
-### `add_fill`
-
-```python
-add_fill(*, color="black", opacity=1.0, z_index=0, style=FillStyle)
-```
-
-Fill the entire surface with a solid color.
-
-### `add_border`
-
-```python
-add_border(*, color="#cccccc", width=0.5, z_index=0, opacity=1.0, style=BorderStyle)
-```
-
-Add a stroke-only border around the surface.
-
-### `add_point`
-
-```python
-add_point(*, at, within, along, t, z_index=0)
-```
-
-Creates an invisible positional anchor. Points render nothing -- use them as reactive `Polygon` vertices, connection endpoints, or `within=` reference positions.
-
----
-
-## Entity Management
-
-### `add`
-
-```python
-add(entity, at="center")
-```
-
-Add an existing entity to this surface with relative positioning. The entity is moved to the resolved `at` position. Works for any entity type including `EntityGroup`.
-
-### `place` (advanced)
-
-```python
-place(entity)
-```
-
-Place an entity at its current absolute pixel position. Unlike `add()`, this does **not** reposition the entity -- it is registered exactly where it already is.
+::: pyfreeform.Surface
+    options:
+      heading_level: 2
+      members:
+        - add_dot
+        - add_line
+        - add_diagonal
+        - add_curve
+        - add_path
+        - add_ellipse
+        - add_polygon
+        - add_rect
+        - add_text
+        - add_fill
+        - add_border
+        - add_point
+        - add
+        - place
+        - remove
+        - clear
 
 !!! note
     Most of the time you want `add()`. Use `place()` only when you've already positioned an entity at exact pixel coordinates and want to register it with a surface without moving it.
-
-### `remove`
-
-```python
-remove(entity) -> bool
-```
-
-Remove an entity from this surface. Returns `True` if found.
-
-### `clear`
-
-```python
-clear()
-```
-
-Remove all entities from this surface.

@@ -29,15 +29,17 @@ class Grid:
         pixel_width: Total width in pixels
         pixel_height: Total height in pixels
 
-    Examples:
-        >>> grid = Grid(cols=20, rows=20, cell_size=10)
-        >>> cell = grid[5, 10]  # Access by [row, col]
-        >>> cell.add(Dot(color="red"))
+    Example:
+        ```python
+        grid = Grid(cols=20, rows=20, cell_size=10)
+        cell = grid[5, 10]  # Access by [row, col]
+        cell.add(Dot(color="red"))
 
-        >>> # Load image data into cells
-        >>> grid.load_layer("brightness", image["brightness"])
-        >>> for cell in grid:
-        ...     brightness = cell.data["brightness"]
+        # Load image data into cells
+        grid.load_layer("brightness", image["brightness"])
+        for cell in grid:
+            brightness = cell.data["brightness"]
+        ```
     """
 
     def __init__(
@@ -388,8 +390,10 @@ class Grid:
             List of cells in that row (left to right).
 
         Example:
-            >>> for cell in grid.row(0):  # Top row
-            ...     cell.add_dot(color="red")
+            ```python
+            for cell in grid.row(0):  # Top row
+                cell.add_dot(color="red")
+            ```
         """
         if not 0 <= index < self._rows:
             raise IndexError(f"Row {index} out of bounds (0-{self._rows - 1})")
@@ -406,8 +410,10 @@ class Grid:
             List of cells in that column (top to bottom).
 
         Example:
-            >>> for cell in grid.column(0):  # Left column
-            ...     cell.add_dot(color="blue")
+            ```python
+            for cell in grid.column(0):  # Left column
+                cell.add_dot(color="blue")
+            ```
         """
         if not 0 <= index < self._cols:
             raise IndexError(f"Column {index} out of bounds (0-{self._cols - 1})")
@@ -419,9 +425,11 @@ class Grid:
         Iterate over all rows (as lists of cells, top to bottom).
 
         Example:
-            >>> for row_idx, row in enumerate(grid.rows):
-            ...     for cell in row:
-            ...         cell.add_dot(color="red" if row_idx % 2 == 0 else "blue")
+            ```python
+            for row_idx, row in enumerate(grid.rows):
+                for cell in row:
+                    cell.add_dot(color="red" if row_idx % 2 == 0 else "blue")
+            ```
         """
         for row in self._cells:
             yield list(row)
@@ -432,9 +440,11 @@ class Grid:
         Iterate over all columns (as lists of cells, left to right).
 
         Example:
-            >>> for col_idx, col in enumerate(grid.columns):
-            ...     for cell in col:
-            ...         cell.add_dot(radius=0.02 * (col_idx + 1))
+            ```python
+            for col_idx, col in enumerate(grid.columns):
+                for cell in col:
+                    cell.add_dot(radius=0.02 * (col_idx + 1))
+            ```
         """
         for col in range(self._cols):
             yield [self._cells[row][col] for row in range(self._rows)]
@@ -463,9 +473,11 @@ class Grid:
             Cells in the region (row by row).
 
         Example:
-            >>> # Top-left quarter
-            >>> for cell in grid.region(row_end=grid.num_rows//2, col_end=grid.num_columns//2):
-            ...     cell.add_fill(color="blue")
+            ```python
+            # Top-left quarter
+            for cell in grid.region(row_end=grid.num_rows//2, col_end=grid.num_columns//2):
+                cell.add_fill(color="blue")
+            ```
         """
         if row_end is None:
             row_end = self._rows
@@ -492,8 +504,10 @@ class Grid:
             Cells on the border.
 
         Example:
-            >>> for cell in grid.border():
-            ...     cell.add_fill(color="gray")
+            ```python
+            for cell in grid.border():
+                cell.add_fill(color="gray")
+            ```
         """
         for cell in self:
             r, c = cell.row, cell.col
@@ -533,13 +547,15 @@ class Grid:
         Returns:
             A CellGroup spanning the selected region.
 
-        Examples:
-            >>> header = grid.merge((0, 0), (1, grid.num_columns - 1))
-            >>> header.add_fill(color="#333")
-            >>> header.add_text("Title", font_size=16, color="white")
+        Example:
+            ```python
+            header = grid.merge((0, 0), (1, grid.num_columns - 1))
+            header.add_fill(color="#333")
+            header.add_text("Title", font_size=16, color="white")
 
-            >>> single = grid.merge((3, 3), (3, 3))  # one cell
-            >>> block = grid.merge((0, 0), (2, 2))    # 3x3 block
+            single = grid.merge((3, 3), (3, 3))  # one cell
+            block = grid.merge((0, 0), (2, 2))    # 3x3 block
+            ```
         """
         if end is None:
             end = (self._rows - 1, self._cols - 1)
@@ -566,9 +582,11 @@ class Grid:
             A CellGroup spanning the full row.
 
         Example:
-            >>> top = grid.merge_row(0)
-            >>> top.add_fill(color="navy")
-            >>> top.add_text("Header", font_size=14, color="white")
+            ```python
+            top = grid.merge_row(0)
+            top.add_fill(color="navy")
+            top.add_text("Header", font_size=14, color="white")
+            ```
         """
         return self.merge((index, 0), (index, self._cols - 1))
 
@@ -583,8 +601,10 @@ class Grid:
             A CellGroup spanning the full column.
 
         Example:
-            >>> sidebar = grid.merge_col(0)
-            >>> sidebar.add_fill(color="gray")
+            ```python
+            sidebar = grid.merge_col(0)
+            sidebar.add_fill(color="gray")
+            ```
         """
         return self.merge((0, index), (self._rows - 1, index))
 
@@ -606,9 +626,11 @@ class Grid:
             Every Nth cell.
 
         Example:
-            >>> # Checkerboard pattern (every 2nd cell)
-            >>> for cell in grid.every(2):
-            ...     cell.add_fill(color="black")
+            ```python
+            # Checkerboard pattern (every 2nd cell)
+            for cell in grid.every(2):
+                cell.add_fill(color="black")
+            ```
         """
         for i, cell in enumerate(self):
             if (i - offset) % n == 0:
@@ -625,8 +647,10 @@ class Grid:
             Cells in the checkerboard pattern.
 
         Example:
-            >>> for cell in grid.checkerboard("black"):
-            ...     cell.add_fill(color="#333")
+            ```python
+            for cell in grid.checkerboard("black"):
+                cell.add_fill(color="#333")
+            ```
         """
         target_parity = 0 if color == "black" else 1
         for cell in self:
@@ -643,14 +667,16 @@ class Grid:
         Yields:
             Cells where predicate returns True.
 
-        Examples:
-            >>> # Bright cells
-            >>> for cell in grid.where(lambda c: c.brightness > 0.7):
-            ...     cell.add_dot(radius=0.3)
+        Example:
+            ```python
+            # Bright cells
+            for cell in grid.where(lambda c: c.brightness > 0.7):
+                cell.add_dot(radius=0.3)
 
-            >>> # Top half
-            >>> for cell in grid.where(lambda c: c.row < grid.num_rows // 2):
-            ...     cell.add_fill(color="blue")
+            # Top half
+            for cell in grid.where(lambda c: c.row < grid.num_rows // 2):
+                cell.add_fill(color="blue")
+            ```
         """
         for cell in self:
             if predicate(cell):
@@ -669,8 +695,10 @@ class Grid:
             Cells on the diagonal.
 
         Example:
-            >>> for cell in grid.diagonal():
-            ...     cell.add_dot(color="red")
+            ```python
+            for cell in grid.diagonal():
+                cell.add_dot(color="red")
+            ```
         """
         if direction == "down":
             # Top-left to bottom-right

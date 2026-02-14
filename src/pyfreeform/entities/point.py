@@ -21,12 +21,14 @@ class Point(Entity):
     Anchors:
         - "center": The position (same as position)
 
-    Examples:
-        >>> a = Point(0, 0)
-        >>> b = Point(100, 0)
-        >>> c = Point(50, 80)
-        >>> tri = Polygon([a, b, c], fill="coral")
-        >>> b.move_to_cell(cell, at=(0.8, 0.3))  # triangle vertex moves
+    Example:
+        ```python
+        a = Point(0, 0)
+        b = Point(100, 0)
+        c = Point(50, 80)
+        tri = Polygon([a, b, c], fill="coral")
+        b.move_to_cell(cell, at=(0.8, 0.3))  # triangle vertex moves
+        ```
     """
 
     def __init__(self, x: float = 0, y: float = 0, z_index: int = 0) -> None:

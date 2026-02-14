@@ -18,7 +18,7 @@ class Zigzag(PathShape):
     When ``start`` and ``end`` are omitted, defaults to normalized
     ``(0, 0) -> (1, 0)`` space — ideal for connection shapes.
 
-    Examples:
+    Example:
         Standalone path::
 
             zz = Zigzag(start=(50, 100), end=(550, 100), teeth=8, amplitude=20)

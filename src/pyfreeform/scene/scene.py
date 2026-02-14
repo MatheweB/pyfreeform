@@ -35,10 +35,12 @@ class Scene(Surface):
         scene = Scene(800, 600, background="#fafafa")
 
     Working with the Grid:
-        >>> scene = Scene.from_image("photo.jpg", grid_size=40)
-        >>> for cell in scene.grid:
-        ...     cell.add_dot(color=cell.color)
-        >>> scene.save("art.svg")
+        ```python
+        scene = Scene.from_image("photo.jpg", grid_size=40)
+        for cell in scene.grid:
+            cell.add_dot(color=cell.color)
+        scene.save("art.svg")
+        ```
 
     Attributes:
         width: Scene width in pixels
@@ -239,8 +241,10 @@ class Scene(Surface):
             ValueError: If scene was created without a grid.
 
         Example:
-            >>> for cell in scene.grid:
-            ...     cell.add_dot(color=cell.color)
+            ```python
+            for cell in scene.grid:
+                cell.add_dot(color=cell.color)
+            ```
         """
         if self._primary_grid is None:
             if self._grids:
@@ -498,14 +502,15 @@ class Scene(Surface):
         Returns:
             self, for method chaining.
 
-        Example::
-
+        Example:
+            ```python
             scene = Scene.with_grid(cols=1, rows=1, cell_size=200)
             scene.background = None
             cell.add_dot(color="coral")
             scene.crop()       # Tight crop
             scene.crop(10)     # 10px breathing room
             scene.save("icon.svg")
+            ```
         """
         all_entities = self.entities
         if not all_entities:
@@ -542,11 +547,12 @@ class Scene(Surface):
         Returns:
             self, for method chaining.
 
-        Example::
-
+        Example:
+            ```python
             scene.trim(top=20)                # clip 20px from the top
             scene.trim(top=10, bottom=10)     # clip both edges
             scene.crop().trim(left=5, right=5)  # tight crop then shave sides
+            ```
         """
         if self._viewbox is not None:
             vb_x, vb_y, vb_w, vb_h = self._viewbox

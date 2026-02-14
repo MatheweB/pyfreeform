@@ -35,19 +35,21 @@ class Ellipse(Entity):
         - "left": Leftmost point (180°)
         - "bottom": Bottommost point (270°)
 
-    Examples:
-        >>> ellipse = Ellipse(100, 100, rx=30, ry=20, fill="coral")
-        >>> ellipse = Ellipse.at_center(Coord(100, 100), rx=30, ry=20)
+    Example:
+        ```python
+        ellipse = Ellipse(100, 100, rx=30, ry=20, fill="coral")
+        ellipse = Ellipse.at_center(Coord(100, 100), rx=30, ry=20)
 
-        >>> # Parametric positioning (t from 0 to 1)
-        >>> point = ellipse.point_at(0.25)  # Top of ellipse
+        # Parametric positioning (t from 0 to 1)
+        point = ellipse.point_at(0.25)  # Top of ellipse
 
-        >>> # Direct angle positioning (degrees)
-        >>> point = ellipse.point_at_angle(45)  # 45° from right
+        # Direct angle positioning (degrees)
+        point = ellipse.point_at_angle(45)  # 45° from right
 
-        >>> # In a cell:
-        >>> ellipse = cell.add_ellipse(rx=0.3, ry=0.2, rotation=30)
-        >>> cell.add_dot(along=ellipse, t=cell.brightness)
+        # In a cell:
+        ellipse = cell.add_ellipse(rx=0.3, ry=0.2, rotation=30)
+        cell.add_dot(along=ellipse, t=cell.brightness)
+        ```
     """
 
     DEFAULT_FILL = "black"
@@ -258,8 +260,10 @@ class Ellipse(Entity):
             Coord on the ellipse at parameter t.
 
         Example:
-            >>> ellipse = cell.add_ellipse(rx=0.4, ry=0.3)
-            >>> cell.add_dot(along=ellipse, t=0.5)  # Dot at left side
+            ```python
+            ellipse = cell.add_ellipse(rx=0.4, ry=0.3)
+            cell.add_dot(along=ellipse, t=0.5)  # Dot at left side
+            ```
         """
         # Convert t (0-1) to angle in radians
         angle_rad = t * 2 * math.pi
@@ -339,8 +343,10 @@ class Ellipse(Entity):
             Coord on the ellipse at the specified angle.
 
         Example:
-            >>> point = ellipse.point_at_angle(45)  # Northeast
-            >>> point = ellipse.point_at_angle(180)  # Leftmost point
+            ```python
+            point = ellipse.point_at_angle(45)  # Northeast
+            point = ellipse.point_at_angle(180)  # Leftmost point
+            ```
         """
         angle_rad = math.radians(degrees)
         return self._point_at_angle_rad(angle_rad)

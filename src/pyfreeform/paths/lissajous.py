@@ -25,7 +25,7 @@ class Lissajous(PathShape):
         arc = Path(Lissajous(), start_t=0, end_t=0.5)
         dot_a.connect(dot_b, path=arc)
 
-    Examples:
+    Example:
         Standalone closed path::
 
             liss = Lissajous(center=(200, 200), a=3, b=2, size=80)

@@ -24,13 +24,13 @@ class Coord:
         x: Horizontal coordinate
         y: Vertical coordinate
 
-    Examples:
-        >>> p1 = Coord(100, 200)
-        >>> p2 = Coord(50, 50)
-        >>> p1 + p2
-        Coord(150, 250)
-        >>> p1.distance_to(p2)
-        158.11...
+    Example:
+        ```python
+        p1 = Coord(100, 200)
+        p2 = Coord(50, 50)
+        p1 + p2              # Coord(150, 250)
+        p1.distance_to(p2)   # 158.11...
+        ```
     """
 
     x: float
@@ -92,10 +92,12 @@ class Coord:
         Returns:
             The interpolated coord.
 
-        Examples:
-            >>> p1 = Coord(0, 0)
-            >>> p2 = Coord(100, 100)
-            >>> p1.lerp(p2, 0.5)
+        Example:
+            ```python
+            p1 = Coord(0, 0)
+            p2 = Coord(100, 100)
+            p1.lerp(p2, 0.5)
+            ```
             Coord(50.0, 50.0)
         """
         return Coord(self.x + (other.x - self.x) * t, self.y + (other.y - self.y) * t)

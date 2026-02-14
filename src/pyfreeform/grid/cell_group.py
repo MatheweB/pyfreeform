@@ -22,9 +22,11 @@ class CellGroup(Surface):
 
     Created via grid.merge(), not directly:
 
-        >>> group = scene.grid.merge((0, 0), (0, 4))
-        >>> group.add_fill(color=group.color)
-        >>> group.add_text("Title", font_size=20)
+        ```python
+        group = scene.grid.merge((0, 0), (0, 4))
+        group.add_fill(color=group.color)
+        group.add_text("Title", font_size=20)
+        ```
 
     Attributes:
         brightness: Average brightness across constituent cells

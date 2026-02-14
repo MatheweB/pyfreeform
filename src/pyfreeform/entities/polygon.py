@@ -40,23 +40,25 @@ class Polygon(Entity):
         - "center": Centroid of the polygon
         - "v0", "v1", ...: Individual vertices (resolved from specs)
 
-    Examples:
-        >>> # Triangle from static points
-        >>> tri = Polygon([(0, 0), (50, 100), (100, 0)], fill="blue")
+    Example:
+        ```python
+        # Triangle from static points
+        tri = Polygon([(0, 0), (50, 100), (100, 0)], fill="blue")
 
-        >>> # Entity-reference vertices (reactive)
-        >>> a, b, c = Point(0, 0), Point(100, 0), Point(50, 80)
-        >>> tri = Polygon([a, b, c], fill="coral")
-        >>> b.move_to_cell(cell, at=(0.8, 0.3))  # triangle deforms automatically
+        # Entity-reference vertices (reactive)
+        a, b, c = Point(0, 0), Point(100, 0), Point(50, 80)
+        tri = Polygon([a, b, c], fill="coral")
+        b.move_to_cell(cell, at=(0.8, 0.3))  # triangle deforms automatically
 
-        >>> # Mixed static and entity-reference
-        >>> tri = Polygon([(0, 0), dot, (rect, "top_right")], fill="teal")
+        # Mixed static and entity-reference
+        tri = Polygon([(0, 0), dot, (rect, "top_right")], fill="teal")
 
-        >>> # In a cell (relative coordinates 0-1)
-        >>> cell.add_polygon([(0.5, 0), (1, 1), (0, 1)], fill="red")
+        # In a cell (relative coordinates 0-1)
+        cell.add_polygon([(0.5, 0), (1, 1), (0, 1)], fill="red")
 
-        >>> # Using shape classmethods
-        >>> cell.add_polygon(Polygon.hexagon(), fill="purple")
+        # Using shape classmethods
+        cell.add_polygon(Polygon.hexagon(), fill="purple")
+        ```
     """
 
     def __init__(

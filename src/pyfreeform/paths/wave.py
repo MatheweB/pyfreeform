@@ -18,7 +18,7 @@ class Wave(PathShape):
     When ``start`` and ``end`` are omitted, defaults to normalized
     ``(0, 0) -> (1, 0)`` space — ideal for connection shapes.
 
-    Examples:
+    Example:
         Standalone path::
 
             wave = Wave(start=(50, 100), end=(550, 100), amplitude=40, frequency=4)

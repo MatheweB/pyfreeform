@@ -26,17 +26,21 @@ class Cell(Surface):
     - **Neighbor access**: `cell.right`, `cell.below` for cross-cell operations
 
     Basic usage:
-        >>> for cell in scene.grid:
-        ...     # Typed access to image data
-        ...     if cell.brightness > 0.5:
-        ...         cell.add_dot(color=cell.color)
+        ```python
+        for cell in scene.grid:
+            # Typed access to image data
+            if cell.brightness > 0.5:
+                cell.add_dot(color=cell.color)
+        ```
 
     Builder methods:
-        >>> cell.add_dot(radius=0.4, color="red")
-        >>> cell.add_line(start="top_left", end="bottom_right")
-        >>> cell.add_diagonal(direction="up")  # SW to NE
-        >>> cell.add_fill(color="blue")
-        >>> cell.add_border(color="gray")
+        ```python
+        cell.add_dot(radius=0.4, color="red")
+        cell.add_line(start="top_left", end="bottom_right")
+        cell.add_diagonal(direction="up")  # SW to NE
+        cell.add_fill(color="blue")
+        cell.add_border(color="gray")
+        ```
 
     Attributes:
         row: Row index (0-based)
@@ -98,7 +102,9 @@ class Cell(Surface):
         Returns 0.5 if no image is loaded.
 
         Example:
-            >>> cell.add_dot(radius=0.02 + 0.08 * cell.brightness)
+            ```python
+            cell.add_dot(radius=0.02 + 0.08 * cell.brightness)
+            ```
         """
         raw = self._data.get("brightness")
         return float(raw) if raw is not None else 0.5
@@ -117,7 +123,9 @@ class Cell(Surface):
         Returns "#808080" (gray) if no image is loaded.
 
         Example:
-            >>> cell.add_dot(color=cell.color)
+            ```python
+            cell.add_dot(color=cell.color)
+            ```
         """
         return self._data.get("color", "#808080")
 
@@ -135,8 +143,10 @@ class Cell(Surface):
         Returns (128, 128, 128) if no image is loaded.
 
         Example:
-            >>> r, g, b = cell.rgb
-            >>> is_reddish = r > g and r > b
+            ```python
+            r, g, b = cell.rgb
+            is_reddish = r > g and r > b
+            ```
         """
         stored = self._data.get("rgb")
         if stored is not None:

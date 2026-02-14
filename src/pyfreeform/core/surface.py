@@ -391,12 +391,14 @@ class Surface:
         Returns:
             The created Dot entity.
 
-        Examples:
-            >>> cell.add_dot()  # Centered, default style
-            >>> cell.add_dot(color="red", radius=0.1)
-            >>> cell.add_dot(at="top_left")
-            >>> cell.add_dot(at=(0.25, 0.75))  # 25% across, 75% down
-            >>> cell.add_dot(along=line, t=0.5)  # Midpoint of a line
+        Example:
+            ```python
+            cell.add_dot()  # Centered, default style
+            cell.add_dot(color="red", radius=0.1)
+            cell.add_dot(at="top_left")
+            cell.add_dot(at=(0.25, 0.75))  # 25% across, 75% down
+            cell.add_dot(along=line, t=0.5)  # Midpoint of a line
+            ```
         """
         from ..entities.dot import Dot
 
@@ -478,12 +480,14 @@ class Surface:
         Returns:
             The created Line entity.
 
-        Examples:
-            >>> cell.add_line(start="top_left", end="bottom_right")
-            >>> cell.add_line(start="left", end="right", end_cap="arrow")
-            >>> # Position along a curve
-            >>> curve = cell.add_curve()
-            >>> cell.add_line(start=(0,0), end=(20,0), along=curve, t=0.5, align=True)
+        Example:
+            ```python
+            cell.add_line(start="top_left", end="bottom_right")
+            cell.add_line(start="left", end="right", end_cap="arrow")
+            # Position along a curve
+            curve = cell.add_curve()
+            cell.add_line(start=(0,0), end=(20,0), along=curve, t=0.5, align=True)
+            ```
         """
         from ..entities.line import Line
 
@@ -583,10 +587,12 @@ class Surface:
         Returns:
             The created Line entity.
 
-        Examples:
-            >>> line = cell.add_diagonal()  # Bottom-left to top-right (SW to NE)
-            >>> line = cell.add_diagonal(start="top_left", end="bottom_right")  # NW to SE
-            >>> cell.add_dot(along=line, t=cell.brightness)  # Dot slides along
+        Example:
+            ```python
+            line = cell.add_diagonal()  # Bottom-left to top-right (SW to NE)
+            line = cell.add_diagonal(start="top_left", end="bottom_right")  # NW to SE
+            cell.add_dot(along=line, t=cell.brightness)  # Dot slides along
+            ```
         """
         return self.add_line(
             start=start,
@@ -653,10 +659,12 @@ class Surface:
         Returns:
             The created Curve entity.
 
-        Examples:
-            >>> curve = cell.add_curve(curvature=0.5)  # Gentle bow
-            >>> curve = cell.add_curve(curvature=-0.8, end_cap="arrow")
-            >>> cell.add_dot(along=curve, t=cell.brightness)  # Dot slides along!
+        Example:
+            ```python
+            curve = cell.add_curve(curvature=0.5)  # Gentle bow
+            curve = cell.add_curve(curvature=-0.8, end_cap="arrow")
+            cell.add_dot(along=curve, t=cell.brightness)  # Dot slides along!
+            ```
         """
         from ..entities.curve import Curve
 
@@ -770,12 +778,14 @@ class Surface:
         Returns:
             The created Path entity.
 
-        Examples:
-            >>> wave = Wave(start=cell.center, end=cell.top_right, amplitude=10, frequency=3)
-            >>> cell.add_path(wave, color="blue", width=2)
-            >>> # Arc of an ellipse (quarter circle):
-            >>> ellipse = cell.add_ellipse(rx=0.4, ry=0.4)
-            >>> cell.add_path(ellipse, start_t=0.0, end_t=0.25, color="red")
+        Example:
+            ```python
+            wave = Wave(start=cell.center, end=cell.top_right, amplitude=10, frequency=3)
+            cell.add_path(wave, color="blue", width=2)
+            # Arc of an ellipse (quarter circle):
+            ellipse = cell.add_ellipse(rx=0.4, ry=0.4)
+            cell.add_path(ellipse, start_t=0.0, end_t=0.25, color="red")
+            ```
         """
         from ..entities.path import Path
 
@@ -853,12 +863,14 @@ class Surface:
         Returns:
             The created Ellipse entity.
 
-        Examples:
-            >>> ellipse = cell.add_ellipse(rx=0.3, ry=0.2)
-            >>> cell.add_dot(along=ellipse, t=cell.brightness)
-            >>> # Place ellipse along a curve
-            >>> curve = cell.add_curve()
-            >>> cell.add_ellipse(rx=0.1, ry=0.06, along=curve, t=0.5, align=True)
+        Example:
+            ```python
+            ellipse = cell.add_ellipse(rx=0.3, ry=0.2)
+            cell.add_dot(along=ellipse, t=cell.brightness)
+            # Place ellipse along a curve
+            curve = cell.add_curve()
+            cell.add_ellipse(rx=0.1, ry=0.06, along=curve, t=0.5, align=True)
+            ```
         """
         from ..entities.ellipse import Ellipse
 
@@ -955,13 +967,15 @@ class Surface:
         Returns:
             The created Polygon entity.
 
-        Examples:
-            >>> cell.add_polygon([(0.5, 0.1), (0.9, 0.9), (0.1, 0.9)], fill="red")
-            >>> from pyfreeform.entities.polygon import Polygon
-            >>> cell.add_polygon(Polygon.hexagon(), fill="purple")
-            >>> # Place polygon along a curve
-            >>> curve = cell.add_curve()
-            >>> cell.add_polygon(Polygon.hexagon(), along=curve, t=0.5, align=True)
+        Example:
+            ```python
+            cell.add_polygon([(0.5, 0.1), (0.9, 0.9), (0.1, 0.9)], fill="red")
+            from pyfreeform.entities.polygon import Polygon
+            cell.add_polygon(Polygon.hexagon(), fill="purple")
+            # Place polygon along a curve
+            curve = cell.add_curve()
+            cell.add_polygon(Polygon.hexagon(), along=curve, t=0.5, align=True)
+            ```
         """
         from ..entities.polygon import Polygon
 
@@ -1079,16 +1093,18 @@ class Surface:
         Returns:
             The created Text entity.
 
-        Examples:
-            >>> cell.add_text("A")  # Centered letter
-            >>> cell.add_text("Label", at="top", font_size=0.15)
-            >>> # Position text along a curve
-            >>> curve = cell.add_curve()
-            >>> cell.add_text("Hi", along=curve, t=0.5, align=True)
-            >>> # Warp text along a curve (textPath)
-            >>> cell.add_text("Hello World", along=curve)
-            >>> # Warp along middle 60% of the path
-            >>> cell.add_text("Partial", along=curve, start_offset=0.2, end_offset=0.8)
+        Example:
+            ```python
+            cell.add_text("A")  # Centered letter
+            cell.add_text("Label", at="top", font_size=0.15)
+            # Position text along a curve
+            curve = cell.add_curve()
+            cell.add_text("Hi", along=curve, t=0.5, align=True)
+            # Warp text along a curve (textPath)
+            cell.add_text("Hello World", along=curve)
+            # Warp along middle 60% of the path
+            cell.add_text("Partial", along=curve, start_offset=0.2, end_offset=0.8)
+            ```
         """
         from ..entities.text import Text, _measure_text_width
 
@@ -1259,12 +1275,14 @@ class Surface:
         Returns:
             The created Rect entity.
 
-        Examples:
-            >>> rect = cell.add_rect(fill="coral")
-            >>> rect = cell.add_rect(width=0.5, height=0.4, rotation=45)
-            >>> # Place rect along a curve
-            >>> curve = cell.add_curve()
-            >>> cell.add_rect(width=0.2, height=0.1, along=curve, t=0.5, align=True)
+        Example:
+            ```python
+            rect = cell.add_rect(fill="coral")
+            rect = cell.add_rect(width=0.5, height=0.4, rotation=45)
+            # Place rect along a curve
+            curve = cell.add_curve()
+            cell.add_rect(width=0.2, height=0.1, along=curve, t=0.5, align=True)
+            ```
         """
         from ..entities.rect import Rect
 
@@ -1344,8 +1362,10 @@ class Surface:
             The created Rect entity.
 
         Example:
-            >>> cell.add_fill(color=cell.color)
-            >>> cell.add_fill(color="blue", opacity=0.5)
+            ```python
+            cell.add_fill(color=cell.color)
+            cell.add_fill(color="blue", opacity=0.5)
+            ```
         """
         from ..entities.rect import Rect
 
@@ -1390,7 +1410,9 @@ class Surface:
             The created Rect entity.
 
         Example:
-            >>> cell.add_border(color=palette.grid)
+            ```python
+            cell.add_border(color=palette.grid)
+            ```
         """
         from ..entities.rect import Rect
 
@@ -1441,14 +1463,16 @@ class Surface:
         Returns:
             The created Point entity.
 
-        Examples:
-            >>> p = cell.add_point(at=(0.25, 0.75))
-            >>> p = cell.add_point(at="top_left")
-            >>> # Reactive polygon vertex
-            >>> a = cell.add_point(at=(0.5, 0.1))
-            >>> b = cell.add_point(at=(0.9, 0.9))
-            >>> c = cell.add_point(at=(0.1, 0.9))
-            >>> tri = Polygon([a, b, c], fill="coral")
+        Example:
+            ```python
+            p = cell.add_point(at=(0.25, 0.75))
+            p = cell.add_point(at="top_left")
+            # Reactive polygon vertex
+            a = cell.add_point(at=(0.5, 0.1))
+            b = cell.add_point(at=(0.9, 0.9))
+            c = cell.add_point(at=(0.1, 0.9))
+            tri = Polygon([a, b, c], fill="coral")
+            ```
         """
         from ..entities.point import Point
 

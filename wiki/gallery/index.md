@@ -135,7 +135,7 @@ A showcase of the best artwork generated across the wiki. Click any image to zoo
 
 <figure markdown>
 ![Constellation](../_images/guide/connections-constellation.svg)
-<figcaption markdown>[Star Constellation](../guide/09-connections-and-anchors.md#constellation-pattern)</figcaption>
+<figcaption markdown>[Star Constellation](../guide/09-connections-and-anchors.md#creative-pattern-constellation)</figcaption>
 </figure>
 
 <figure markdown>

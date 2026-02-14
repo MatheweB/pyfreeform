@@ -15,7 +15,7 @@ class Spiral(PathShape):
     The spiral makes ``turns`` revolutions while the radius grows
     linearly from ``start_radius`` to ``end_radius``.
 
-    Examples:
+    Example:
         Standalone path::
 
             spiral = Spiral(center=(200, 200), end_radius=80, turns=4)

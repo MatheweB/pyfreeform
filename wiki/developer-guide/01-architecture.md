@@ -73,17 +73,7 @@ Surface (base)
 
 ### What Surface provides
 
-Every Surface has a rectangular region (`_x`, `_y`, `_width`, `_height`) and a list of entities (`_entities`). It provides:
-
-| Capability | Methods |
-|---|---|
-| **Position resolution** | `relative_to_absolute()`, `absolute_to_relative()`, named positions ("center", "top_left", etc.) |
-| **Builder methods** | `add_dot()`, `add_line()`, `add_curve()`, `add_ellipse()`, `add_polygon()`, `add_rect()`, `add_text()`, `add_path()`, `add_fill()`, `add_border()` |
-| **Entity management** | `add()`, `place()`, `remove()`, `clear()` |
-| **Anchors** | `anchor(spec)`, `anchor_names` -- 9 named positions (center, edges, corners), plus arbitrary `(rx, ry)` coordinates via `AnchorSpec` |
-| **Connections** | `connect()`, `connections`, `add_connection()`, `remove_connection()` |
-| **Data** | `data` -- custom `dict[str, Any]` for user metadata |
-| **Parametric positioning** | `_resolve_along()` -- resolves `along`/`t`/`align` params for any builder |
+Every Surface has a rectangular region (`_x`, `_y`, `_width`, `_height`) and a list of entities (`_entities`). It provides position resolution, 12 builder methods, entity management, anchors, connections, custom data, and parametric positioning. See the [Drawing](../api-reference/drawing.md) reference for the complete API.
 
 ### Subclass responsibilities
 

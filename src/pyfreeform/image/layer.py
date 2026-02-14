@@ -17,12 +17,12 @@ class Layer:
         width: Matrix width (number of columns)
         height: Matrix height (number of rows)
 
-    Examples:
-        >>> layer = Layer(np.zeros((100, 100)))
-        >>> layer.width, layer.height
-        (100, 100)
-        >>> layer[50, 50]
-        0.0
+    Example:
+        ```python
+        layer = Layer(np.zeros((100, 100)))
+        layer.width, layer.height  # (100, 100)
+        layer[50, 50]              # 0.0
+        ```
     """
 
     def __init__(self, data: np.ndarray) -> None:

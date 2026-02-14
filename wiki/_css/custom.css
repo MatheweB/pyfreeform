@@ -80,3 +80,21 @@
     color: var(--md-default-fg-color--light);
     margin-top: 0.4em;
 }
+
+/* Generator source attribution */
+.gen-source {
+    font-size: 0.8em;
+    color: var(--md-default-fg-color--lighter);
+    text-align: center;
+    margin-top: -0.5em;
+    margin-bottom: 1em;
+}
+
+.gen-source a {
+    color: var(--md-accent-fg-color);
+}
+
+/* Autodoc section breathing room */
+.doc > .doc-contents {
+    margin-bottom: 2em;
+}

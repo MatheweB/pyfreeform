@@ -17,23 +17,27 @@ class Pathable(Protocol):
     for parametric positioning. This is the only required method — custom path
     objects need only implement this to work with the positioning system.
 
-    Examples:
+    Example:
         Built-in pathable types include Line, Curve, and Ellipse:
 
-        >>> line = cell.add_line(start="left", end="right")
-        >>> cell.add_dot(along=line, t=0.5)  # Dot at line midpoint
+        ```python
+        line = cell.add_line(start="left", end="right")
+        cell.add_dot(along=line, t=0.5)  # Dot at line midpoint
+        ```
 
         Create custom paths by implementing point_at():
 
-        >>> class Spiral:
-        ...     def point_at(self, t: float) -> Coord:
-        ...         angle = t * 2 * math.pi * 3  # 3 turns
-        ...         radius = t * 20
-        ...         return Coord(self.center.x + radius * cos(angle),
-        ...                     self.center.y + radius * sin(angle))
-        >>>
-        >>> spiral = Spiral(center=cell.center)
-        >>> cell.add_dot(along=spiral, t=0.5)  # Works!
+        ```python
+        class Spiral:
+            def point_at(self, t: float) -> Coord:
+                angle = t * 2 * math.pi * 3  # 3 turns
+                radius = t * 20
+                return Coord(self.center.x + radius * cos(angle),
+                            self.center.y + radius * sin(angle))
+
+        spiral = Spiral(center=cell.center)
+        cell.add_dot(along=spiral, t=0.5)  # Works!
+        ```
     """
 
     def point_at(self, t: float) -> Coord:

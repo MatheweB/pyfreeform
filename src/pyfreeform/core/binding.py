@@ -22,8 +22,8 @@ class Binding:
 
     ``reference`` optionally overrides the default cell as the frame of reference.
 
-    Examples::
-
+    Example:
+        ```python
         # Position at 25% x, 75% y within the cell
         entity.binding = Binding(at=RelCoord(0.25, 0.75))
 
@@ -32,6 +32,7 @@ class Binding:
 
         # Position along a path at t=0.3
         entity.binding = Binding(along=line, t=0.3)
+        ```
     """
 
     at: RelCoord | None = None

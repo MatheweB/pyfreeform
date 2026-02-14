@@ -21,13 +21,15 @@ def display(target: Scene | str | Path) -> None:
     Args:
         target: A Scene to render, or a path to an existing SVG file.
 
-    Examples:
-        >>> from pyfreeform import Scene, Dot, display
-        >>> scene = Scene(200, 200)
-        >>> scene.add(Dot(100, 100, radius=50, color="coral"))  # Dot() uses pixels
-        >>> display(scene)  # Opens in browser
+    Example:
+        ```python
+        from pyfreeform import Scene, Dot, display
+        scene = Scene(200, 200)
+        scene.add(Dot(100, 100, radius=50, color="coral"))  # Dot() uses pixels
+        display(scene)  # Opens in browser
 
-        >>> display("my_art.svg")  # Opens existing file
+        display("my_art.svg")  # Opens existing file
+        ```
     """
     # Import here to avoid circular imports
     from .scene import Scene

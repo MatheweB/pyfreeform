@@ -24,8 +24,8 @@ class EntityGroup(Entity):
     For reuse, wrap creation in a factory function — each call returns
     a new independent instance.
 
-    Example::
-
+    Example:
+        ```python
         from pyfreeform import EntityGroup, Dot
         import math
 
@@ -41,6 +41,7 @@ class EntityGroup(Entity):
 
         cell.add(make_flower())
         cell2.add(make_flower(color="blue"))
+        ```
     """
 
     def __init__(

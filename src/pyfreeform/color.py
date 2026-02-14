@@ -14,13 +14,12 @@ class Color:
         - Hex codes: "#ff0000", "#f00"
         - RGB tuples: (255, 0, 0)
 
-    Examples:
-        >>> Color("red").to_hex()
-        'red'
-        >>> Color("#ff0000").to_hex()
-        '#ff0000'
-        >>> Color((255, 0, 0)).to_hex()
-        '#ff0000'
+    Example:
+        ```python
+        Color("red").to_hex()         # 'red'
+        Color("#ff0000").to_hex()      # '#ff0000'
+        Color((255, 0, 0)).to_hex()   # '#ff0000'
+        ```
     """
 
     # Common named colors - keep it simple

@@ -49,12 +49,13 @@ def cap_shape(
         A generator function ``(marker_id, color, size) -> str`` that
         produces a complete SVG ``<marker>`` element.
 
-    Example::
-
+    Example:
+        ```python
         register_cap("diamond", cap_shape(
             [(5, 0), (10, 5), (5, 10), (0, 5)],
             tip=(5, 5),
         ))
+        ```
     """
     # Build SVG path: M x y L x y L x y ... z
     first = vertices[0]
@@ -97,14 +98,15 @@ def register_cap(
                             reversed shape instead of relying on SVG2
                             ``orient="auto-start-reverse"``.
 
-    Example::
-
+    Example:
+        ```python
         from pyfreeform import cap_shape, register_cap
 
         register_cap("diamond", cap_shape(
             [(5, 0), (10, 5), (5, 10), (0, 5)],
             tip=(5, 5),
         ))
+        ```
     """
     _MARKER_CAPS[name] = _CapEntry(generator, start_generator)
 

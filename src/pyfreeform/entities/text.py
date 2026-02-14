@@ -112,10 +112,12 @@ class Text(Entity):
     Anchors:
         - "center": The text position (same as position)
 
-    Examples:
-        >>> text = Text(100, 100, "Hello")
-        >>> text = Text(100, 100, "Label", font_size=16, color="coral")
-        >>> text.rotate(45)
+    Example:
+        ```python
+        text = Text(100, 100, "Hello")
+        text = Text(100, 100, "Label", font_size=16, color="coral")
+        text.rotate(45)
+        ```
     """
 
     DEFAULT_FONT_SIZE = 16

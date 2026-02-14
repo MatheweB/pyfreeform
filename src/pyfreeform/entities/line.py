@@ -30,11 +30,13 @@ class Line(Entity):
         - "center": The midpoint
         - "end": The ending point
 
-    Examples:
-        >>> line = Line(0, 0, 100, 100)  # From (0,0) to (100,100)
-        >>> line = Line.from_points(Coord(0, 0), Coord(100, 100))
-        >>> midpoint = line.anchor("center")
-        >>> line = Line(0, 0, 100, 0, end_cap="arrow")  # Arrow at end
+    Example:
+        ```python
+        line = Line(0, 0, 100, 100)  # From (0,0) to (100,100)
+        line = Line.from_points(Coord(0, 0), Coord(100, 100))
+        midpoint = line.anchor("center")
+        line = Line(0, 0, 100, 0, end_cap="arrow")  # Arrow at end
+        ```
     """
 
     DEFAULT_WIDTH = 1
