@@ -6,7 +6,7 @@ import math
 
 from ..core.coord import Coord, CoordLike
 from ..config.caps import CapName, svg_cap_and_marker_attrs
-from ..core.svg_utils import opacity_attr, stroke_attrs
+from ..core.svg_utils import opacity_attr, stroke_attrs, svg_num
 from .endpoint_entity import EndpointEntity
 
 
@@ -208,7 +208,7 @@ class Line(EndpointEntity):
     def to_svg_path_d(self) -> str:
         """Return SVG path ``d`` attribute for this line."""
         s, e = self.start, self.end
-        return f"M {s.x} {s.y} L {e.x} {e.y}"
+        return f"M {svg_num(s.x)} {svg_num(s.y)} L {svg_num(e.x)} {svg_num(e.y)}"
 
     def connection_data(self, segments: int = 32) -> tuple[str, list]:
         """Return shape kind and bezier data for Connection dispatch."""
@@ -315,7 +315,7 @@ class Line(EndpointEntity):
             self.cap, self.start_cap, self.end_cap, self.width, self.color
         )
         return (
-            f'<line x1="{s.x}" y1="{s.y}" x2="{e.x}" y2="{e.y}"'
+            f'<line x1="{svg_num(s.x)}" y1="{svg_num(s.y)}" x2="{svg_num(e.x)}" y2="{svg_num(e.y)}"'
             f"{stroke_attrs(self.color, self.width, svg_cap, marker_attrs)}"
             f"{opacity_attr(self.opacity)}"
             f"{self._build_svg_transform()} />"

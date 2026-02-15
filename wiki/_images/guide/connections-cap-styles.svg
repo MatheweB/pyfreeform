@@ -9,29 +9,29 @@
     <marker id="cap-diamond-4ecdc4-9_0" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="9.0" markerHeight="9.0" orient="auto" overflow="visible"><path d="M 5 0 L 10 5 L 5 10 L 0 5 z" fill="#4ecdc4" /></marker>
   </defs>
   <rect width="100%" height="100%" fill="#1a1a2e" />
-  <line x1="100" y1="30" x2="300" y2="30" stroke="#4ecdc4" stroke-width="3.0" stroke-linecap="round" opacity="0.8" />
-  <line x1="100" y1="74" x2="300" y2="74" stroke="#4ecdc4" stroke-width="3.0" stroke-linecap="round" opacity="0.8" />
-  <line x1="100" y1="118" x2="300" y2="118" stroke="#4ecdc4" stroke-width="3.0" stroke-linecap="round" opacity="0.8" />
-  <line x1="100" y1="162" x2="300" y2="162" stroke="#4ecdc4" stroke-width="3.0" stroke-linecap="butt" marker-start="url(#cap-arrow-4ecdc4-9_0-start)" marker-end="url(#cap-arrow-4ecdc4-9_0)" opacity="0.8" />
-  <line x1="100" y1="206" x2="300" y2="206" stroke="#4ecdc4" stroke-width="3.0" stroke-linecap="butt" marker-start="url(#cap-arrow_in-4ecdc4-9_0-start)" marker-end="url(#cap-arrow_in-4ecdc4-9_0)" opacity="0.8" />
-  <line x1="100" y1="250" x2="300" y2="250" stroke="#4ecdc4" stroke-width="3.0" stroke-linecap="butt" marker-start="url(#cap-diamond-4ecdc4-9_0-start)" marker-end="url(#cap-diamond-4ecdc4-9_0)" opacity="0.8" />
-  <circle cx="100" cy="30" r="4.0" fill="#ff6b6b" />
-  <circle cx="300" cy="30" r="4.0" fill="#ff6b6b" />
-  <text x="45" y="30" font-size="11.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="end" dominant-baseline="middle">round</text>
-  <circle cx="100" cy="74" r="4.0" fill="#ff6b6b" />
-  <circle cx="300" cy="74" r="4.0" fill="#ff6b6b" />
-  <text x="45" y="74" font-size="11.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="end" dominant-baseline="middle">square</text>
-  <circle cx="100" cy="118" r="4.0" fill="#ff6b6b" />
-  <circle cx="300" cy="118" r="4.0" fill="#ff6b6b" />
-  <text x="45" y="118" font-size="11.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="end" dominant-baseline="middle">butt</text>
-  <circle cx="100" cy="162" r="4.0" fill="#ff6b6b" />
-  <circle cx="300" cy="162" r="4.0" fill="#ff6b6b" />
-  <text x="45" y="162" font-size="11.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="end" dominant-baseline="middle">arrow</text>
-  <circle cx="100" cy="206" r="4.0" fill="#ff6b6b" />
-  <circle cx="300" cy="206" r="4.0" fill="#ff6b6b" />
-  <text x="45" y="206" font-size="11.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="end" dominant-baseline="middle">arrow_in</text>
-  <circle cx="100" cy="250" r="4.0" fill="#ff6b6b" />
-  <circle cx="300" cy="250" r="4.0" fill="#ff6b6b" />
-  <text x="45" y="250" font-size="11.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="end" dominant-baseline="middle">diamond</text>
-  <text x="200" y="16" font-size="12.0" font-family="sans-serif" font-style="normal" font-weight="bold" fill="#ff6b6b" text-anchor="middle" dominant-baseline="middle">Cap Styles</text>
+  <line x1="100" y1="30" x2="300" y2="30" stroke="#4ecdc4" stroke-width="3" stroke-linecap="round" opacity="0.8" />
+  <line x1="100" y1="74" x2="300" y2="74" stroke="#4ecdc4" stroke-width="3" stroke-linecap="round" opacity="0.8" />
+  <line x1="100" y1="118" x2="300" y2="118" stroke="#4ecdc4" stroke-width="3" stroke-linecap="round" opacity="0.8" />
+  <line x1="100" y1="162" x2="300" y2="162" stroke="#4ecdc4" stroke-width="3" stroke-linecap="butt" marker-start="url(#cap-arrow-4ecdc4-9_0-start)" marker-end="url(#cap-arrow-4ecdc4-9_0)" opacity="0.8" />
+  <line x1="100" y1="206" x2="300" y2="206" stroke="#4ecdc4" stroke-width="3" stroke-linecap="butt" marker-start="url(#cap-arrow_in-4ecdc4-9_0-start)" marker-end="url(#cap-arrow_in-4ecdc4-9_0)" opacity="0.8" />
+  <line x1="100" y1="250" x2="300" y2="250" stroke="#4ecdc4" stroke-width="3" stroke-linecap="butt" marker-start="url(#cap-diamond-4ecdc4-9_0-start)" marker-end="url(#cap-diamond-4ecdc4-9_0)" opacity="0.8" />
+  <circle cx="100" cy="30" r="4" fill="#ff6b6b" />
+  <circle cx="300" cy="30" r="4" fill="#ff6b6b" />
+  <text x="45" y="30" font-size="11" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="end" dominant-baseline="middle">round</text>
+  <circle cx="100" cy="74" r="4" fill="#ff6b6b" />
+  <circle cx="300" cy="74" r="4" fill="#ff6b6b" />
+  <text x="45" y="74" font-size="11" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="end" dominant-baseline="middle">square</text>
+  <circle cx="100" cy="118" r="4" fill="#ff6b6b" />
+  <circle cx="300" cy="118" r="4" fill="#ff6b6b" />
+  <text x="45" y="118" font-size="11" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="end" dominant-baseline="middle">butt</text>
+  <circle cx="100" cy="162" r="4" fill="#ff6b6b" />
+  <circle cx="300" cy="162" r="4" fill="#ff6b6b" />
+  <text x="45" y="162" font-size="11" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="end" dominant-baseline="middle">arrow</text>
+  <circle cx="100" cy="206" r="4" fill="#ff6b6b" />
+  <circle cx="300" cy="206" r="4" fill="#ff6b6b" />
+  <text x="45" y="206" font-size="11" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="end" dominant-baseline="middle">arrow_in</text>
+  <circle cx="100" cy="250" r="4" fill="#ff6b6b" />
+  <circle cx="300" cy="250" r="4" fill="#ff6b6b" />
+  <text x="45" y="250" font-size="11" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="end" dominant-baseline="middle">diamond</text>
+  <text x="200" y="16" font-size="12" font-family="sans-serif" font-style="normal" font-weight="bold" fill="#ff6b6b" text-anchor="middle" dominant-baseline="middle">Cap Styles</text>
 </svg>

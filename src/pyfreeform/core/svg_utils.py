@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-_SVG_SIG_FIGS = 10
+_SVG_SIG_FIGS = 6
 
 
 def svg_num(v: float) -> str:
@@ -16,6 +16,7 @@ def svg_num(v: float) -> str:
         # Avoid scientific notation in SVG attributes
         return f"{float(text):.{_SVG_SIG_FIGS}f}".rstrip("0").rstrip(".")
     return text
+
 
 
 def xml_escape(text: str) -> str:
@@ -32,7 +33,7 @@ def xml_escape(text: str) -> str:
 def opacity_attr(opacity: float) -> str:
     """Build SVG ``opacity`` attribute string (empty when fully opaque)."""
     if opacity < 1.0:
-        return f' opacity="{opacity}"'
+        return f' opacity="{svg_num(opacity)}"'
     return ""
 
 
@@ -46,7 +47,7 @@ def fill_stroke_attrs(
     else:
         parts.append(' fill="none"')
     if stroke:
-        parts.append(f' stroke="{stroke}" stroke-width="{stroke_width}"')
+        parts.append(f' stroke="{stroke}" stroke-width="{svg_num(stroke_width)}"')
     return "".join(parts)
 
 
@@ -55,7 +56,7 @@ def stroke_attrs(
 ) -> str:
     """Build SVG stroke attribute string for stroked paths (lines, curves)."""
     return (
-        f' stroke="{color}" stroke-width="{width}" '
+        f' stroke="{color}" stroke-width="{svg_num(width)}" '
         f'stroke-linecap="{svg_cap}"{marker_attrs}'
     )
 
@@ -68,7 +69,7 @@ def shape_opacity_attrs(
     eff_stroke = stroke_opacity if stroke_opacity is not None else opacity
     parts: list[str] = []
     if eff_fill < 1.0:
-        parts.append(f' fill-opacity="{eff_fill}"')
+        parts.append(f' fill-opacity="{svg_num(eff_fill)}"')
     if eff_stroke < 1.0:
-        parts.append(f' stroke-opacity="{eff_stroke}"')
+        parts.append(f' stroke-opacity="{svg_num(eff_stroke)}"')
     return "".join(parts)

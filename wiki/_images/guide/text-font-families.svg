@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="360" height="120" viewBox="0 0 360 120">
   <rect width="100%" height="100%" fill="#1a1a2e" />
-  <text x="60.0" y="42.0" font-size="12.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#ff6b6b" text-anchor="middle" dominant-baseline="middle">PyFreeform</text>
-  <text x="60.0" y="78.0" font-size="12.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">sans-serif</text>
+  <text x="60" y="42" font-size="12" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#ff6b6b" text-anchor="middle" dominant-baseline="middle">PyFreeform</text>
+  <text x="60" y="78" font-size="12" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">sans-serif</text>
   <rect x="0.25" y="0.25" width="119.5" height="119.5" fill="none" stroke="#3d3d5c" stroke-width="0.5" fill-opacity="0.3" stroke-opacity="0.3" />
-  <text x="180.0" y="42.0" font-size="12.0" font-family="serif" font-style="normal" font-weight="normal" fill="#ff6b6b" text-anchor="middle" dominant-baseline="middle">PyFreeform</text>
-  <text x="180.0" y="78.0" font-size="12.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">serif</text>
+  <text x="180" y="42" font-size="12" font-family="serif" font-style="normal" font-weight="normal" fill="#ff6b6b" text-anchor="middle" dominant-baseline="middle">PyFreeform</text>
+  <text x="180" y="78" font-size="12" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">serif</text>
   <rect x="120.25" y="0.25" width="119.5" height="119.5" fill="none" stroke="#3d3d5c" stroke-width="0.5" fill-opacity="0.3" stroke-opacity="0.3" />
-  <text x="300.0" y="42.0" font-size="12.0" font-family="monospace" font-style="normal" font-weight="normal" fill="#ff6b6b" text-anchor="middle" dominant-baseline="middle">PyFreeform</text>
-  <text x="300.0" y="78.0" font-size="12.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">monospace</text>
+  <text x="300" y="42" font-size="12" font-family="monospace" font-style="normal" font-weight="normal" fill="#ff6b6b" text-anchor="middle" dominant-baseline="middle">PyFreeform</text>
+  <text x="300" y="78" font-size="12" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">monospace</text>
   <rect x="240.25" y="0.25" width="119.5" height="119.5" fill="none" stroke="#3d3d5c" stroke-width="0.5" fill-opacity="0.3" stroke-opacity="0.3" />
 </svg>

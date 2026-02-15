@@ -8,7 +8,7 @@ from ..color import Color, apply_brightness
 from ..core.coord import Coord, CoordLike
 from ..core.entity import Entity
 from ..core.bezier import sample_arc_length
-from ..core.svg_utils import fill_stroke_attrs, shape_opacity_attrs
+from ..core.svg_utils import fill_stroke_attrs, shape_opacity_attrs, svg_num
 
 
 class Ellipse(Entity):
@@ -342,9 +342,9 @@ class Ellipse(Entity):
             my = cy
 
         return (
-            f"M {sx} {sy} "
-            f"A {self.rx} {self.ry} {self.rotation} 1 1 {mx} {my} "
-            f"A {self.rx} {self.ry} {self.rotation} 1 1 {sx} {sy}"
+            f"M {svg_num(sx)} {svg_num(sy)} "
+            f"A {svg_num(self.rx)} {svg_num(self.ry)} {svg_num(self.rotation)} 1 1 {svg_num(mx)} {svg_num(my)} "
+            f"A {svg_num(self.rx)} {svg_num(self.ry)} {svg_num(self.rotation)} 1 1 {svg_num(sx)} {svg_num(sy)}"
         )
 
     def point_at_angle(self, degrees: float) -> Coord:
@@ -452,8 +452,8 @@ class Ellipse(Entity):
     def to_svg(self) -> str:
         """Render to SVG ellipse element."""
         return (
-            f'<ellipse cx="{self.position.x}" cy="{self.position.y}"'
-            f' rx="{self.rx}" ry="{self.ry}"'
+            f'<ellipse cx="{svg_num(self.position.x)}" cy="{svg_num(self.position.y)}"'
+            f' rx="{svg_num(self.rx)}" ry="{svg_num(self.ry)}"'
             f"{fill_stroke_attrs(self.fill, self.stroke, self.stroke_width)}"
             f"{shape_opacity_attrs(self.opacity, self.fill_opacity, self.stroke_opacity)}"
             f"{self._build_svg_transform()} />"

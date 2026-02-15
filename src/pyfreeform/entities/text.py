@@ -10,7 +10,7 @@ from ..color import Color, apply_brightness
 from ..core.relcoord import RelCoordLike
 from ..core.coord import Coord
 from ..core.entity import Entity
-from ..core.svg_utils import opacity_attr, xml_escape
+from ..core.svg_utils import opacity_attr, svg_num, xml_escape
 
 # ---------------------------------------------------------------------------
 # Font measurement via Pillow
@@ -424,8 +424,8 @@ class Text(Entity):
         escaped = xml_escape(self.content)
 
         return (
-            f'<text x="{self.x}" y="{self.y}" '
-            f'font-size="{self.font_size}" '
+            f'<text x="{svg_num(self.x)}" y="{svg_num(self.y)}" '
+            f'font-size="{svg_num(self.font_size)}" '
             f'font-family="{self.font_family}" '
             f'font-style="{self.font_style}" '
             f'font-weight="{self.font_weight}" '
@@ -449,7 +449,7 @@ class Text(Entity):
         textlen_attr = f' textLength="{text_len:.1f}" lengthAdjust="spacing"' if text_len else ""
 
         return (
-            f'<text font-size="{self.font_size}" '
+            f'<text font-size="{svg_num(self.font_size)}" '
             f'font-family="{self.font_family}" '
             f'font-style="{self.font_style}" '
             f'font-weight="{self.font_weight}" '

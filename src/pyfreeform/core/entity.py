@@ -511,7 +511,7 @@ class Entity(ABC):
         cx, cy = svg_num(center.x), svg_num(center.y)
         ncx, ncy = svg_num(-center.x), svg_num(-center.y)
         if has_rot and not has_scale:
-            return f' transform="rotate({self._rotation} {cx} {cy})"'
+            return f' transform="rotate({svg_num(self._rotation)} {cx} {cy})"'
         if has_scale and not has_rot:
             s = svg_num(self._scale_factor)
             return f' transform="translate({cx},{cy}) scale({s}) translate({ncx},{ncy})"'
@@ -519,7 +519,7 @@ class Entity(ABC):
         s = svg_num(self._scale_factor)
         return (
             f' transform="translate({cx},{cy})'
-            f" rotate({self._rotation})"
+            f" rotate({svg_num(self._rotation)})"
             f" scale({s})"
             f' translate({ncx},{ncy})"'
         )

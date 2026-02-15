@@ -11,7 +11,7 @@ from ..config.styles import PathStyle
 from .bezier import curvature_control_point, eval_cubic, quadratic_to_cubic
 from .coord import Coord
 from .positions import AnchorSpec
-from .svg_utils import opacity_attr, stroke_attrs
+from .svg_utils import opacity_attr, stroke_attrs, svg_num
 
 if TYPE_CHECKING:
     from ..entities.path import Path
@@ -365,21 +365,21 @@ class Connection:
         """Return SVG path ``d`` attribute for this connection."""
         if self._shape_kind == "line":
             p1, p2 = self.start_point, self.end_point
-            return f"M {p1.x} {p1.y} L {p2.x} {p2.y}"
+            return f"M {svg_num(p1.x)} {svg_num(p1.y)} L {svg_num(p2.x)} {svg_num(p2.y)}"
 
         # Curve or path — transform stored beziers
         xform = self._compute_transform()
         if xform is None:
             p1 = self.start_point
-            return f"M {p1.x} {p1.y} L {p1.x} {p1.y}"
+            return f"M {svg_num(p1.x)} {svg_num(p1.y)} L {svg_num(p1.x)} {svg_num(p1.y)}"
 
         first = self._transform_point(self._shape_beziers[0][0], xform)
-        parts = [f"M {first.x} {first.y}"]
+        parts = [f"M {svg_num(first.x)} {svg_num(first.y)}"]
         for _, cp1, cp2, p3 in self._shape_beziers:
             tcp1 = self._transform_point(cp1, xform)
             tcp2 = self._transform_point(cp2, xform)
             tp3 = self._transform_point(p3, xform)
-            parts.append(f" C {tcp1.x} {tcp1.y} {tcp2.x} {tcp2.y} {tp3.x} {tp3.y}")
+            parts.append(f" C {svg_num(tcp1.x)} {svg_num(tcp1.y)} {svg_num(tcp2.x)} {svg_num(tcp2.y)} {svg_num(tp3.x)} {svg_num(tp3.y)}")
         return "".join(parts)
 
     def disconnect(self) -> None:
@@ -400,7 +400,7 @@ class Connection:
             p1 = self.start_point
             p2 = self.end_point
             return (
-                f'<line x1="{p1.x}" y1="{p1.y}" x2="{p2.x}" y2="{p2.y}"'
+                f'<line x1="{svg_num(p1.x)}" y1="{svg_num(p1.y)}" x2="{svg_num(p2.x)}" y2="{svg_num(p2.y)}"'
                 f"{stroke_attrs(self.color, self.width, svg_cap, marker_attrs)}"
                 f"{opacity_attr(self.opacity)} />"
             )

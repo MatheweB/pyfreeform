@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="280" height="280" viewBox="0 0 280 280">
   <rect width="100%" height="100%" fill="#1a1a2e" />
-  <path d="M 28.0 224.0 Q 190.4 207.2 252.0 56.0" fill="none" stroke="#666688" stroke-width="1.5" stroke-linecap="round" opacity="0.4" />
-  <polygon points="28.0,215.6 35.2746133917893,228.20000000000002 20.725386608210698,228.20000000000002" fill="#ff6b6b" fill-opacity="0.6" stroke-opacity="0.6" transform="rotate(354.0938588862295 28 224)" />
-  <polygon points="59.472000000000016,210.896 66.74661339178931,223.496 52.197386608210714,223.496" fill="#ff6b6b" fill-opacity="0.64" stroke-opacity="0.64" transform="rotate(348.77110817846125 59.472 219.296)" />
-  <polygon points="88.92800000000003,203.50400000000005 96.20261339178933,216.10400000000007 81.65338660821072,216.10400000000007" fill="#ff6b6b" fill-opacity="0.6799999999999999" stroke-opacity="0.6799999999999999" transform="rotate(342.9289787086809 88.928 211.904)" />
-  <polygon points="116.368,193.42399999999998 123.6426133917893,206.024 109.0933866082107,206.024" fill="#ff6b6b" fill-opacity="0.72" stroke-opacity="0.72" transform="rotate(336.6258356349518 116.368 201.824)" />
-  <polygon points="141.79200000000003,180.656 149.06661339178933,193.25600000000003 134.51738660821073,193.25600000000003" fill="#ff6b6b" fill-opacity="0.76" stroke-opacity="0.76" transform="rotate(329.9728757667869 141.792 189.056)" />
-  <polygon points="165.2,165.19999999999996 172.4746133917893,177.79999999999998 157.9253866082107,177.79999999999998" fill="#ff6b6b" fill-opacity="0.8" stroke-opacity="0.8" transform="rotate(323.13010235415595 165.2 173.6)" />
-  <polygon points="186.59199999999998,147.05599999999998 193.8666133917893,159.656 179.31738660821068,159.656" fill="#ff6b6b" fill-opacity="0.84" stroke-opacity="0.84" transform="rotate(316.28732894152506 186.592 155.456)" />
-  <polygon points="205.968,126.22399999999999 213.2426133917893,138.824 198.6933866082107,138.824" fill="#ff6b6b" fill-opacity="0.8799999999999999" stroke-opacity="0.8799999999999999" transform="rotate(309.6343690733602 205.968 134.624)" />
-  <polygon points="223.32800000000003,102.70399999999995 230.60261339178933,115.30399999999997 216.05338660821073,115.30399999999997" fill="#ff6b6b" fill-opacity="0.92" stroke-opacity="0.92" transform="rotate(303.33122599963104 223.328 111.104)" />
-  <polygon points="238.672,76.49599999999997 245.9466133917893,89.09599999999999 231.3973866082107,89.09599999999999" fill="#ff6b6b" fill-opacity="0.96" stroke-opacity="0.96" transform="rotate(297.4890965298507 238.672 84.896)" />
-  <polygon points="252.0,47.59999999999999 259.27461339178933,60.20000000000001 244.7253866082107,60.20000000000001" fill="#ff6b6b" transform="rotate(292.16634582208246 252 56)" />
+  <path d="M 28 224 Q 190.4 207.2 252 56" fill="none" stroke="#666688" stroke-width="1.5" stroke-linecap="round" opacity="0.4" />
+  <polygon points="28,215.6 35.2746,228.2 20.7254,228.2" fill="#ff6b6b" fill-opacity="0.6" stroke-opacity="0.6" transform="rotate(354.094 28 224)" />
+  <polygon points="59.472,210.896 66.7466,223.496 52.1974,223.496" fill="#ff6b6b" fill-opacity="0.64" stroke-opacity="0.64" transform="rotate(348.771 59.472 219.296)" />
+  <polygon points="88.928,203.504 96.2026,216.104 81.6534,216.104" fill="#ff6b6b" fill-opacity="0.68" stroke-opacity="0.68" transform="rotate(342.929 88.928 211.904)" />
+  <polygon points="116.368,193.424 123.643,206.024 109.093,206.024" fill="#ff6b6b" fill-opacity="0.72" stroke-opacity="0.72" transform="rotate(336.626 116.368 201.824)" />
+  <polygon points="141.792,180.656 149.067,193.256 134.517,193.256" fill="#ff6b6b" fill-opacity="0.76" stroke-opacity="0.76" transform="rotate(329.973 141.792 189.056)" />
+  <polygon points="165.2,165.2 172.475,177.8 157.925,177.8" fill="#ff6b6b" fill-opacity="0.8" stroke-opacity="0.8" transform="rotate(323.13 165.2 173.6)" />
+  <polygon points="186.592,147.056 193.867,159.656 179.317,159.656" fill="#ff6b6b" fill-opacity="0.84" stroke-opacity="0.84" transform="rotate(316.287 186.592 155.456)" />
+  <polygon points="205.968,126.224 213.243,138.824 198.693,138.824" fill="#ff6b6b" fill-opacity="0.88" stroke-opacity="0.88" transform="rotate(309.634 205.968 134.624)" />
+  <polygon points="223.328,102.704 230.603,115.304 216.053,115.304" fill="#ff6b6b" fill-opacity="0.92" stroke-opacity="0.92" transform="rotate(303.331 223.328 111.104)" />
+  <polygon points="238.672,76.496 245.947,89.096 231.397,89.096" fill="#ff6b6b" fill-opacity="0.96" stroke-opacity="0.96" transform="rotate(297.489 238.672 84.896)" />
+  <polygon points="252,47.6 259.275,60.2 244.725,60.2" fill="#ff6b6b" transform="rotate(292.166 252 56)" />
 </svg>

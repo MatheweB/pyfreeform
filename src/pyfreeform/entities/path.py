@@ -10,7 +10,7 @@ from ..core.bezier import eval_cubic, eval_cubic_derivative, fit_cubic_beziers
 from ..core.coord import Coord
 from ..core.entity import Entity
 from ..config.caps import CapName, collect_markers, svg_cap_and_marker_attrs
-from ..core.svg_utils import shape_opacity_attrs, stroke_attrs
+from ..core.svg_utils import shape_opacity_attrs, stroke_attrs, svg_num
 from ..paths import Lissajous, Spiral, Wave, Zigzag
 
 if TYPE_CHECKING:
@@ -295,10 +295,10 @@ class Path(Entity):
             return ""
 
         p0 = self._bezier_segments[0][0]
-        parts = [f"M {p0.x} {p0.y}"]
+        parts = [f"M {svg_num(p0.x)} {svg_num(p0.y)}"]
 
         for _, cp1, cp2, p3 in self._bezier_segments:
-            parts.append(f" C {cp1.x} {cp1.y} {cp2.x} {cp2.y} {p3.x} {p3.y}")
+            parts.append(f" C {svg_num(cp1.x)} {svg_num(cp1.y)} {svg_num(cp2.x)} {svg_num(cp2.y)} {svg_num(p3.x)} {svg_num(p3.y)}")
 
         if self._closed:
             parts.append(" Z")
@@ -548,9 +548,9 @@ class Path(Entity):
         )
 
         segs = self._bezier_segments
-        parts_d = [f"M {segs[0][0].x} {segs[0][0].y}"]
+        parts_d = [f"M {svg_num(segs[0][0].x)} {svg_num(segs[0][0].y)}"]
         for _, cp1, cp2, p3 in segs:
-            parts_d.append(f" C {cp1.x} {cp1.y} {cp2.x} {cp2.y} {p3.x} {p3.y}")
+            parts_d.append(f" C {svg_num(cp1.x)} {svg_num(cp1.y)} {svg_num(cp2.x)} {svg_num(cp2.y)} {svg_num(p3.x)} {svg_num(p3.y)}")
         if self._closed:
             parts_d.append(" Z")
         d_attr = "".join(parts_d)

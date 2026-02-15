@@ -8,7 +8,7 @@ from ..color import Color, apply_brightness
 from ..core.coord import Coord, CoordLike
 from ..core.entity import Entity
 from ..core.relcoord import RelCoord
-from ..core.svg_utils import fill_stroke_attrs, shape_opacity_attrs
+from ..core.svg_utils import fill_stroke_attrs, shape_opacity_attrs, svg_num
 
 
 class Rect(Entity):
@@ -332,7 +332,7 @@ class Rect(Entity):
     def to_svg(self) -> str:
         """Render to SVG rect element."""
         return (
-            f'<rect x="{self.x}" y="{self.y}" width="{self.width}" height="{self.height}"'
+            f'<rect x="{svg_num(self.x)}" y="{svg_num(self.y)}" width="{svg_num(self.width)}" height="{svg_num(self.height)}"'
             f"{fill_stroke_attrs(self.fill, self.stroke, self.stroke_width)}"
             f"{shape_opacity_attrs(self.opacity, self.fill_opacity, self.stroke_opacity)}"
             f"{self._build_svg_transform()} />"

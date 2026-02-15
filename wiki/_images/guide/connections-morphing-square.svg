@@ -1,49 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="740" height="220" viewBox="0 0 740 220">
   <rect width="100%" height="100%" fill="#1a1a2e" />
-  <line x1="50.0" y1="50.0" x2="150.0" y2="50.0" stroke="#4ecdc4" stroke-width="2.0" stroke-linecap="round" opacity="0.8" />
-  <line x1="50.0" y1="150.0" x2="50.0" y2="50.0" stroke="#4ecdc4" stroke-width="2.0" stroke-linecap="round" opacity="0.8" />
-  <line x1="150.0" y1="50.0" x2="150.0" y2="150.0" stroke="#4ecdc4" stroke-width="2.0" stroke-linecap="round" opacity="0.8" />
-  <line x1="150.0" y1="150.0" x2="50.0" y2="150.0" stroke="#4ecdc4" stroke-width="2.0" stroke-linecap="round" opacity="0.8" />
-  <line x1="230.0" y1="50.0" x2="313.5" y2="66.5" stroke="#4ecdc4" stroke-width="2.0" stroke-linecap="round" opacity="0.8" />
-  <line x1="230.0" y1="150.0" x2="230.0" y2="50.0" stroke="#4ecdc4" stroke-width="2.0" stroke-linecap="round" opacity="0.8" />
-  <line x1="230.0" y1="50.0" x2="330.0" y2="50.0" stroke="#3d3d5c" stroke-width="1.0" stroke-linecap="round" opacity="0.3" />
-  <line x1="313.5" y1="66.5" x2="330.0" y2="150.0" stroke="#4ecdc4" stroke-width="2.0" stroke-linecap="round" opacity="0.8" />
-  <line x1="330.0" y1="150.0" x2="230.0" y2="150.0" stroke="#4ecdc4" stroke-width="2.0" stroke-linecap="round" opacity="0.8" />
-  <line x1="330.0" y1="50.0" x2="330.0" y2="150.0" stroke="#3d3d5c" stroke-width="1.0" stroke-linecap="round" opacity="0.3" />
-  <line x1="410.0" y1="150.0" x2="410.0" y2="50.0" stroke="#4ecdc4" stroke-width="2.0" stroke-linecap="round" opacity="0.8" />
-  <line x1="410.0" y1="50.0" x2="510.0" y2="50.0" stroke="#3d3d5c" stroke-width="1.0" stroke-linecap="round" opacity="0.3" />
-  <line x1="410.0" y1="50.0" x2="477.0" y2="83.0" stroke="#4ecdc4" stroke-width="2.0" stroke-linecap="round" opacity="0.8" />
-  <line x1="477.0" y1="83.0" x2="510.0" y2="150.0" stroke="#4ecdc4" stroke-width="2.0" stroke-linecap="round" opacity="0.8" />
-  <line x1="510.0" y1="150.0" x2="410.0" y2="150.0" stroke="#4ecdc4" stroke-width="2.0" stroke-linecap="round" opacity="0.8" />
-  <line x1="510.0" y1="50.0" x2="510.0" y2="150.0" stroke="#3d3d5c" stroke-width="1.0" stroke-linecap="round" opacity="0.3" />
-  <line x1="590.0" y1="50.0" x2="690.0" y2="50.0" stroke="#3d3d5c" stroke-width="1.0" stroke-linecap="round" opacity="0.3" />
-  <line x1="590.0" y1="50.0" x2="640.0" y2="100.0" stroke="#4ecdc4" stroke-width="2.0" stroke-linecap="round" opacity="0.8" />
-  <line x1="590.0" y1="150.0" x2="590.0" y2="50.0" stroke="#4ecdc4" stroke-width="2.0" stroke-linecap="round" opacity="0.8" />
-  <line x1="640.0" y1="100.0" x2="690.0" y2="150.0" stroke="#4ecdc4" stroke-width="2.0" stroke-linecap="round" opacity="0.8" />
-  <line x1="690.0" y1="150.0" x2="590.0" y2="150.0" stroke="#4ecdc4" stroke-width="2.0" stroke-linecap="round" opacity="0.8" />
-  <line x1="690.0" y1="50.0" x2="690.0" y2="150.0" stroke="#3d3d5c" stroke-width="1.0" stroke-linecap="round" opacity="0.3" />
-  <circle cx="50.0" cy="50.0" r="6.0" fill="#ff6b6b" />
-  <circle cx="150.0" cy="50.0" r="6.0" fill="#ff6b6b" />
-  <circle cx="150.0" cy="150.0" r="6.0" fill="#ff6b6b" />
-  <circle cx="50.0" cy="150.0" r="6.0" fill="#ff6b6b" />
-  <text x="100.0" y="205" font-size="11.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">Original</text>
-  <circle cx="230.0" cy="50.0" r="6.0" fill="#ff6b6b" />
-  <circle cx="313.5" cy="66.5" r="6.0" fill="#ffe66d" />
-  <circle cx="330.0" cy="150.0" r="6.0" fill="#ff6b6b" />
-  <circle cx="230.0" cy="150.0" r="6.0" fill="#ff6b6b" />
-  <circle cx="330.0" cy="50.0" r="0.0" fill="#1a1a2e" opacity="0.0" />
-  <text x="280.0" y="205" font-size="11.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">t = 0.33</text>
-  <circle cx="410.0" cy="50.0" r="6.0" fill="#ff6b6b" />
-  <circle cx="477.0" cy="83.0" r="6.0" fill="#ffe66d" />
-  <circle cx="510.0" cy="150.0" r="6.0" fill="#ff6b6b" />
-  <circle cx="410.0" cy="150.0" r="6.0" fill="#ff6b6b" />
-  <circle cx="510.0" cy="50.0" r="0.0" fill="#1a1a2e" opacity="0.0" />
-  <text x="460.0" y="205" font-size="11.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">t = 0.66</text>
-  <circle cx="590.0" cy="50.0" r="6.0" fill="#ff6b6b" />
-  <circle cx="640.0" cy="100.0" r="6.0" fill="#ffe66d" />
-  <circle cx="690.0" cy="150.0" r="6.0" fill="#ff6b6b" />
-  <circle cx="590.0" cy="150.0" r="6.0" fill="#ff6b6b" />
-  <circle cx="690.0" cy="50.0" r="0.0" fill="#1a1a2e" opacity="0.0" />
-  <text x="640.0" y="205" font-size="11.0" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">t = 1.0</text>
+  <line x1="50" y1="50" x2="150" y2="50" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+  <line x1="50" y1="150" x2="50" y2="50" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+  <line x1="150" y1="50" x2="150" y2="150" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+  <line x1="150" y1="150" x2="50" y2="150" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+  <line x1="230" y1="50" x2="330" y2="50" stroke="#3d3d5c" stroke-width="1" stroke-linecap="round" opacity="0.3" />
+  <line x1="230" y1="150" x2="230" y2="50" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+  <line x1="230" y1="50" x2="313.5" y2="66.5" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+  <line x1="313.5" y1="66.5" x2="330" y2="150" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+  <line x1="330" y1="150" x2="230" y2="150" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+  <line x1="330" y1="50" x2="330" y2="150" stroke="#3d3d5c" stroke-width="1" stroke-linecap="round" opacity="0.3" />
+  <line x1="410" y1="50" x2="477" y2="83" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+  <line x1="410" y1="150" x2="410" y2="50" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+  <line x1="410" y1="50" x2="510" y2="50" stroke="#3d3d5c" stroke-width="1" stroke-linecap="round" opacity="0.3" />
+  <line x1="477" y1="83" x2="510" y2="150" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+  <line x1="510" y1="50" x2="510" y2="150" stroke="#3d3d5c" stroke-width="1" stroke-linecap="round" opacity="0.3" />
+  <line x1="510" y1="150" x2="410" y2="150" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+  <line x1="590" y1="50" x2="690" y2="50" stroke="#3d3d5c" stroke-width="1" stroke-linecap="round" opacity="0.3" />
+  <line x1="590" y1="150" x2="590" y2="50" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+  <line x1="590" y1="50" x2="640" y2="100" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+  <line x1="640" y1="100" x2="690" y2="150" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+  <line x1="690" y1="50" x2="690" y2="150" stroke="#3d3d5c" stroke-width="1" stroke-linecap="round" opacity="0.3" />
+  <line x1="690" y1="150" x2="590" y2="150" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+  <circle cx="50" cy="50" r="6" fill="#ff6b6b" />
+  <circle cx="150" cy="50" r="6" fill="#ff6b6b" />
+  <circle cx="150" cy="150" r="6" fill="#ff6b6b" />
+  <circle cx="50" cy="150" r="6" fill="#ff6b6b" />
+  <text x="100" y="205" font-size="11" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">Original</text>
+  <circle cx="230" cy="50" r="6" fill="#ff6b6b" />
+  <circle cx="313.5" cy="66.5" r="6" fill="#ffe66d" />
+  <circle cx="330" cy="150" r="6" fill="#ff6b6b" />
+  <circle cx="230" cy="150" r="6" fill="#ff6b6b" />
+  <circle cx="330" cy="50" r="0" fill="#1a1a2e" opacity="0" />
+  <text x="280" y="205" font-size="11" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">t = 0.33</text>
+  <circle cx="410" cy="50" r="6" fill="#ff6b6b" />
+  <circle cx="477" cy="83" r="6" fill="#ffe66d" />
+  <circle cx="510" cy="150" r="6" fill="#ff6b6b" />
+  <circle cx="410" cy="150" r="6" fill="#ff6b6b" />
+  <circle cx="510" cy="50" r="0" fill="#1a1a2e" opacity="0" />
+  <text x="460" y="205" font-size="11" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">t = 0.66</text>
+  <circle cx="590" cy="50" r="6" fill="#ff6b6b" />
+  <circle cx="640" cy="100" r="6" fill="#ffe66d" />
+  <circle cx="690" cy="150" r="6" fill="#ff6b6b" />
+  <circle cx="590" cy="150" r="6" fill="#ff6b6b" />
+  <circle cx="690" cy="50" r="0" fill="#1a1a2e" opacity="0" />
+  <text x="640" y="205" font-size="11" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="middle">t = 1.0</text>
 </svg>

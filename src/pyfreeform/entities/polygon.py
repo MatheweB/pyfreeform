@@ -9,7 +9,7 @@ from ..color import Color, apply_brightness
 from ..core.coord import Coord, CoordLike
 from ..core.relcoord import RelCoord
 from ..core.entity import Entity
-from ..core.svg_utils import fill_stroke_attrs, shape_opacity_attrs
+from ..core.svg_utils import fill_stroke_attrs, shape_opacity_attrs, svg_num
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -306,7 +306,7 @@ class Polygon(Entity):
 
     def to_svg(self) -> str:
         """Render to SVG polygon element."""
-        points_str = " ".join(f"{v.x},{v.y}" for v in self.vertices)
+        points_str = " ".join(f"{svg_num(v.x)},{svg_num(v.y)}" for v in self.vertices)
         return (
             f'<polygon points="{points_str}"'
             f"{fill_stroke_attrs(self.fill, self.stroke, self.stroke_width)}"

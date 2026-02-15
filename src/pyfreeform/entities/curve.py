@@ -7,7 +7,7 @@ import math
 from ..core.bezier import curvature_control_point, quadratic_to_cubic, sample_arc_length
 from ..core.coord import Coord, CoordLike
 from ..config.caps import CapName, svg_cap_and_marker_attrs
-from ..core.svg_utils import opacity_attr, stroke_attrs
+from ..core.svg_utils import opacity_attr, stroke_attrs, svg_num
 from .endpoint_entity import EndpointEntity
 
 
@@ -278,7 +278,7 @@ class Curve(EndpointEntity):
     def to_svg_path_d(self) -> str:
         """Return SVG path ``d`` attribute for this quadratic Bezier curve."""
         s, c, e = self.start, self.control, self.end
-        return f"M {s.x} {s.y} Q {c.x} {c.y} {e.x} {e.y}"
+        return f"M {svg_num(s.x)} {svg_num(s.y)} Q {svg_num(c.x)} {svg_num(c.y)} {svg_num(e.x)} {svg_num(e.y)}"
 
     def connection_data(self, segments: int = 32) -> tuple[str, list]:
         """Return shape kind and bezier data for Connection dispatch."""
@@ -399,7 +399,7 @@ class Curve(EndpointEntity):
             self.cap, self.start_cap, self.end_cap, self.width, self.color
         )
         return (
-            f'<path d="M {s.x} {s.y} Q {c.x} {c.y} {e.x} {e.y}"'
+            f'<path d="M {svg_num(s.x)} {svg_num(s.y)} Q {svg_num(c.x)} {svg_num(c.y)} {svg_num(e.x)} {svg_num(e.y)}"'
             f' fill="none"'
             f"{stroke_attrs(self.color, self.width, svg_cap, marker_attrs)}"
             f"{opacity_attr(self.opacity)}"

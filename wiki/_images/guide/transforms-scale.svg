@@ -1,40 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="300" height="50" viewBox="0 0 300 50">
   <rect width="100%" height="100%" fill="#1a1a2e" />
-  <g transform="translate(25, 25) scale(0.3333333333)">
-  <circle cx="0" cy="0" r="15.0" fill="#ff6b6b" />
-  <line x1="-10" y1="-10" x2="10" y2="10" stroke="#ffe66d" stroke-width="2.0" stroke-linecap="round" />
+  <g transform="translate(25, 25) scale(0.333333)">
+  <circle cx="0" cy="0" r="15" fill="#ff6b6b" />
+  <line x1="-10" y1="-10" x2="10" y2="10" stroke="#ffe66d" stroke-width="2" stroke-linecap="round" />
 </g>
-  <text x="25.0" y="50.0" font-size="12.5" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="auto">0.2</text>
+  <text x="25" y="50" font-size="12.5" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="auto">0.2</text>
   <rect x="0.15" y="0.15" width="49.7" height="49.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <g transform="translate(75, 25) scale(0.6666666667)">
-  <circle cx="0" cy="0" r="15.0" fill="#ff6b6b" />
-  <line x1="-10" y1="-10" x2="10" y2="10" stroke="#ffe66d" stroke-width="2.0" stroke-linecap="round" />
+  <g transform="translate(75, 25) scale(0.666667)">
+  <circle cx="0" cy="0" r="15" fill="#ff6b6b" />
+  <line x1="-10" y1="-10" x2="10" y2="10" stroke="#ffe66d" stroke-width="2" stroke-linecap="round" />
 </g>
-  <text x="75.0" y="50.0" font-size="12.5" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="auto">0.4</text>
+  <text x="75" y="50" font-size="12.5" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="auto">0.4</text>
   <rect x="50.15" y="0.15" width="49.7" height="49.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
   <g transform="translate(125, 25)">
-  <circle cx="0" cy="0" r="15.0" fill="#ff6b6b" />
-  <line x1="-10" y1="-10" x2="10" y2="10" stroke="#ffe66d" stroke-width="2.0" stroke-linecap="round" />
+  <circle cx="0" cy="0" r="15" fill="#ff6b6b" />
+  <line x1="-10" y1="-10" x2="10" y2="10" stroke="#ffe66d" stroke-width="2" stroke-linecap="round" />
 </g>
-  <text x="125.0" y="50.0" font-size="12.5" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="auto">0.6</text>
+  <text x="125" y="50" font-size="12.5" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="auto">0.6</text>
   <rect x="100.15" y="0.15" width="49.7" height="49.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <g transform="translate(175, 25) scale(1.333333333)">
-  <circle cx="0" cy="0" r="15.0" fill="#ff6b6b" />
-  <line x1="-10" y1="-10" x2="10" y2="10" stroke="#ffe66d" stroke-width="2.0" stroke-linecap="round" />
+  <g transform="translate(175, 25) scale(1.33333)">
+  <circle cx="0" cy="0" r="15" fill="#ff6b6b" />
+  <line x1="-10" y1="-10" x2="10" y2="10" stroke="#ffe66d" stroke-width="2" stroke-linecap="round" />
 </g>
-  <text x="175.0" y="50.0" font-size="12.5" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="auto">0.8</text>
+  <text x="175" y="50" font-size="12.5" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="auto">0.8</text>
   <rect x="150.15" y="0.15" width="49.7" height="49.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
   <g transform="translate(225, 25) scale(1.5)">
-  <circle cx="0" cy="0" r="15.0" fill="#ff6b6b" />
-  <line x1="-10" y1="-10" x2="10" y2="10" stroke="#ffe66d" stroke-width="2.0" stroke-linecap="round" />
+  <circle cx="0" cy="0" r="15" fill="#ff6b6b" />
+  <line x1="-10" y1="-10" x2="10" y2="10" stroke="#ffe66d" stroke-width="2" stroke-linecap="round" />
 </g>
-  <text x="225.0" y="50.0" font-size="12.5" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="auto">0.9</text>
+  <text x="225" y="50" font-size="12.5" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="auto">0.9</text>
   <rect x="200.15" y="0.15" width="49.7" height="49.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
-  <g transform="translate(275, 25) scale(1.666666667)">
-  <circle cx="0" cy="0" r="15.0" fill="#ff6b6b" />
-  <line x1="-10" y1="-10" x2="10" y2="10" stroke="#ffe66d" stroke-width="2.0" stroke-linecap="round" />
+  <g transform="translate(275, 25) scale(1.66667)">
+  <circle cx="0" cy="0" r="15" fill="#ff6b6b" />
+  <line x1="-10" y1="-10" x2="10" y2="10" stroke="#ffe66d" stroke-width="2" stroke-linecap="round" />
 </g>
-  <text x="275.0" y="50.0" font-size="12.5" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="auto">1.0</text>
+  <text x="275" y="50" font-size="12.5" font-family="sans-serif" font-style="normal" font-weight="normal" fill="#aaaacc" text-anchor="middle" dominant-baseline="auto">1.0</text>
   <rect x="250.15" y="0.15" width="49.7" height="49.7" fill="none" stroke="#3d3d5c" stroke-width="0.3" fill-opacity="0.3" stroke-opacity="0.3" />
 </svg>
