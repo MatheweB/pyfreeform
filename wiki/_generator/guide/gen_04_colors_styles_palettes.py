@@ -88,11 +88,11 @@ def generate():
     scene = Scene.with_grid(cols=1, rows=1, cell_size=220, background=colors.background)
     cell = scene.grid[0][0]
     # Stack semi-transparent circles
-    offsets = [(-30, -20), (30, -20), (0, 25)]
+    offsets = [(-0.14, -0.09), (0.14, -0.09), (0.0, 0.11)]
     palette_colors = [colors.primary, colors.secondary, colors.accent]
-    for (dx, dy), fill in zip(offsets, palette_colors, strict=False):
+    for (drx, dry), fill in zip(offsets, palette_colors, strict=False):
         cell.add_ellipse(
-            at=(0.5 + dx / cell.width, 0.5 + dy / cell.height),
+            at=(0.5 + drx, 0.5 + dry),
             rx=0.25,
             ry=0.25,
             fill=fill,

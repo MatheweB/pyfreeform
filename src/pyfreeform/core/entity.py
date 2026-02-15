@@ -717,7 +717,7 @@ class Entity(ABC):
         """
         if self._surface is None:
             raise ValueError("Entity must be in a surface for relative_anchor")
-        return self._surface.absolute_to_relative(self.anchor(spec))
+        return self._surface._absolute_to_relative(self.anchor(spec))
 
     def relative_bounds(self) -> tuple[float, float, float, float]:
         """Bounds as fractions of the containing surface.
@@ -735,8 +735,8 @@ class Entity(ABC):
         if self._surface is None:
             raise ValueError("Entity must be in a surface for relative_bounds")
         min_x, min_y, max_x, max_y = self.bounds()
-        tl = self._surface.absolute_to_relative(Coord(min_x, min_y))
-        br = self._surface.absolute_to_relative(Coord(max_x, max_y))
+        tl = self._surface._absolute_to_relative(Coord(min_x, min_y))
+        br = self._surface._absolute_to_relative(Coord(max_x, max_y))
         return (tl.rx, tl.ry, br.rx, br.ry)
 
     @abstractmethod

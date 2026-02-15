@@ -156,7 +156,7 @@ class Surface:
         rx, ry = pos
         return Coord(self._x + rx * self._width, self._y + ry * self._height)
 
-    def absolute_to_relative(self, point: Coord) -> RelCoord:
+    def _absolute_to_relative(self, point: Coord) -> RelCoord:
         """Convert absolute position to relative (0-1) coordinates."""
         rx = (point.x - self._x) / self._width if self._width > 0 else 0
         ry = (point.y - self._y) / self._height if self._height > 0 else 0

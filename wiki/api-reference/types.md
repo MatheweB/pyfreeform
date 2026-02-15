@@ -67,7 +67,6 @@ rx, ry = a  # destructuring works
 | `entity.at` | Returns `RelCoord` (or `None` if in absolute mode) |
 | `add_*(..., at=)` | Accepts `RelCoord`, plain tuple, or named position string |
 | `cell.normalized_position` | Returns `RelCoord` (cell position within grid, 0.0–1.0) |
-| `surface.absolute_to_relative(point)` | Returns `RelCoord` |
 
 !!! tip "Plain tuples work too"
     All APIs that accept `RelCoord` also accept plain `(rx, ry)` tuples. Returned values are `RelCoord` instances with named fields and helper methods.

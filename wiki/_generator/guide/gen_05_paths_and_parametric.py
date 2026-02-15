@@ -94,18 +94,17 @@ def generate():
     # Show dots at t = 0, 0.25, 0.5, 0.75, 1.0
     t_values = [0.0, 0.25, 0.5, 0.75, 1.0]
     for t_val in t_values:
-        cell.add_dot(
+        dot = cell.add_dot(
             along=curve,
             t=t_val,
             radius=0.05,
             color=colors.primary,
             opacity=0.8,
         )
-        pt = curve.point_at(t_val)
         cell.add_text(
             f"t={t_val:.2f}",
-            at=((pt.x - cell.x) / cell.width, (pt.y - cell.y) / cell.height + 0.06),
-            font_size=0.04,
+            within=dot,
+            fit=True,
             color="#aaaacc",
         )
     save(scene, "guide/paths-t-values.svg")

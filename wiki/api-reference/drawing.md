@@ -127,7 +127,6 @@ All surfaces (Cell, Scene, CellGroup) support anchors, connections, and custom d
 | `surface.data` | Custom data dictionary |
 | `surface.contains(point)` | Whether a `Coord` is within the surface bounds |
 | `surface.relative_to_absolute(pos)` | Convert relative position (named string, tuple, or `RelCoord`) to pixel `Coord` |
-| `surface.absolute_to_relative(point)` | Convert pixel `Coord` to `RelCoord` (0.0--1.0) |
 
 ---
 
