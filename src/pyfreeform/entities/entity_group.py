@@ -6,7 +6,7 @@ import math
 
 from ..core.coord import Coord, CoordLike
 from ..core.entity import Entity
-from ..core.svg_utils import opacity_attr
+from ..core.svg_utils import opacity_attr, svg_num
 
 
 class EntityGroup(Entity):
@@ -194,11 +194,11 @@ class EntityGroup(Entity):
         if not self._children:
             return ""
 
-        transforms = [f"translate({self.x}, {self.y})"]
+        transforms = [f"translate({svg_num(self.x)}, {svg_num(self.y)})"]
         if self._rotation != 0:
-            transforms.append(f"rotate({self._rotation})")
+            transforms.append(f"rotate({svg_num(self._rotation)})")
         if self._scale != 1.0:
-            transforms.append(f"scale({self._scale})")
+            transforms.append(f"scale({svg_num(self._scale)})")
         transform_str = " ".join(transforms)
 
         sorted_children = sorted(self._children, key=lambda e: e.z_index)

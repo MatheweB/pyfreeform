@@ -123,8 +123,8 @@ Every entity has:
 - **Data** (`_data: dict[str, Any]`) -- custom data dictionary for user metadata
 - **Movement** -- private `_move_to()` / `_move_by()` for pixel movement; public API is `.position`, `.at`, and `move_to_cell()`
 - **Binding** -- `.binding` property accepts a `Binding` dataclass (from `core/binding.py`) for relative positioning configuration
-- **Resolved state** -- `.is_resolved` is `True` after a transform with `origin` converts relative properties to absolute values. This is a one-way door — builder methods check it to avoid overwriting concrete values.
-- **Transforms** -- `rotate(angle, origin)` and `scale(factor, origin)` are **non-destructive**: they accumulate `_rotation` and `_scale_factor` without modifying geometry. With `origin`, `_resolve_to_absolute()` converts relative properties first, then orbits/scales the position around the origin. SVG rendering applies transforms via `_build_svg_transform()`.
+- **Relative tracking** -- `.is_relative` is `True` when any property is stored as a fraction (position, size, geometry). Relative entities react to container changes; pixel entities are static. Each property is independently relative or absolute.
+- **Transforms** -- `rotate(angle, origin)` and `scale(factor, origin)` are **non-destructive**: they accumulate `_rotation` and `_scale_factor` without modifying geometry or clearing relative state. With `origin`, the entity orbits/scales via `_move_by()`, which preserves relative bindings. SVG rendering applies transforms via `_build_svg_transform()`.
 - **Transform properties** -- `.rotation` (degrees), `.scale_factor` (multiplier), `.rotation_center` (pivot point — default: position; overridden per entity type)
 - **World-space helpers** -- `_to_world_space(point)` applies scale then rotation around `rotation_center`. Used by `anchor()` and `bounds()`.
 - **Fitting** -- `fit_within()` scales to fit a target; `fit_to_cell()` delegates to `fit_within()` using the containing cell's bounds

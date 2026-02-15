@@ -2,103 +2,103 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="260" height="260" viewBox="0 0 260 260">
   <rect width="100%" height="100%" fill="#1a1a2e" />
   <polygon points="5.2,5.2 20.8,5.2 20.8,20.8 5.2,20.8" fill="#ff6b6b" fill-opacity="0.5" stroke-opacity="0.5" />
-  <polygon points="31.2,5.2 46.8,5.2 46.8,20.8 31.2,20.8" fill="#ff6b6b" fill-opacity="0.5555555555555556" stroke-opacity="0.5555555555555556" transform="rotate(20.0 39.0 13.0)" />
-  <polygon points="57.2,5.2 72.8,5.2 72.8,20.8 57.2,20.8" fill="#ff6b6b" fill-opacity="0.6111111111111112" stroke-opacity="0.6111111111111112" transform="rotate(40.0 65.0 13.0)" />
-  <polygon points="83.2,5.2 98.8,5.2 98.8,20.8 83.2,20.8" fill="#ff6b6b" fill-opacity="0.6666666666666666" stroke-opacity="0.6666666666666666" transform="rotate(60.0 91.0 13.0)" />
-  <polygon points="109.2,5.2 124.8,5.2 124.8,20.8 109.2,20.8" fill="#ff6b6b" fill-opacity="0.7222222222222222" stroke-opacity="0.7222222222222222" transform="rotate(80.0 117.0 13.0)" />
-  <polygon points="135.2,5.2 150.8,5.2 150.8,20.8 135.2,20.8" fill="#ff6b6b" fill-opacity="0.7777777777777778" stroke-opacity="0.7777777777777778" transform="rotate(100.0 143.0 13.0)" />
-  <polygon points="161.2,5.2 176.8,5.2 176.8,20.8 161.2,20.8" fill="#ff6b6b" fill-opacity="0.8333333333333333" stroke-opacity="0.8333333333333333" transform="rotate(120.0 169.0 13.0)" />
-  <polygon points="187.2,5.2 202.8,5.2 202.8,20.8 187.2,20.8" fill="#ff6b6b" fill-opacity="0.8888888888888888" stroke-opacity="0.8888888888888888" transform="rotate(140.0 195.0 13.0)" />
-  <polygon points="213.2,5.2 228.8,5.2 228.8,20.8 213.2,20.8" fill="#ff6b6b" fill-opacity="0.9444444444444444" stroke-opacity="0.9444444444444444" transform="rotate(160.0 221.0 13.0)" />
-  <polygon points="239.2,5.2 254.8,5.2 254.8,20.8 239.2,20.8" fill="#ff6b6b" transform="rotate(180.0 247.0 13.0)" />
-  <polygon points="5.2,31.2 20.8,31.2 20.8,46.8 5.2,46.8" fill="#ff6b6b" fill-opacity="0.5" stroke-opacity="0.5" transform="rotate(20.0 13.0 39.0)" />
-  <polygon points="31.2,31.2 46.8,31.2 46.8,46.8 31.2,46.8" fill="#ff6b6b" fill-opacity="0.5555555555555556" stroke-opacity="0.5555555555555556" transform="rotate(40.0 39.0 39.0)" />
-  <polygon points="57.2,31.2 72.8,31.2 72.8,46.8 57.2,46.8" fill="#ff6b6b" fill-opacity="0.6111111111111112" stroke-opacity="0.6111111111111112" transform="rotate(60.0 65.0 39.0)" />
-  <polygon points="83.2,31.2 98.8,31.2 98.8,46.8 83.2,46.8" fill="#ff6b6b" fill-opacity="0.6666666666666666" stroke-opacity="0.6666666666666666" transform="rotate(80.0 91.0 39.0)" />
-  <polygon points="109.2,31.2 124.8,31.2 124.8,46.8 109.2,46.8" fill="#ff6b6b" fill-opacity="0.7222222222222222" stroke-opacity="0.7222222222222222" transform="rotate(100.0 117.0 39.0)" />
-  <polygon points="135.2,31.2 150.8,31.2 150.8,46.8 135.2,46.8" fill="#ff6b6b" fill-opacity="0.7777777777777778" stroke-opacity="0.7777777777777778" transform="rotate(120.00000000000001 143.0 39.0)" />
-  <polygon points="161.2,31.2 176.8,31.2 176.8,46.8 161.2,46.8" fill="#ff6b6b" fill-opacity="0.8333333333333333" stroke-opacity="0.8333333333333333" transform="rotate(139.99999999999997 169.0 39.0)" />
-  <polygon points="187.2,31.2 202.8,31.2 202.8,46.8 187.2,46.8" fill="#ff6b6b" fill-opacity="0.8888888888888888" stroke-opacity="0.8888888888888888" transform="rotate(160.0 195.0 39.0)" />
-  <polygon points="213.2,31.2 228.8,31.2 228.8,46.8 213.2,46.8" fill="#ff6b6b" fill-opacity="0.9444444444444444" stroke-opacity="0.9444444444444444" transform="rotate(180.0 221.0 39.0)" />
-  <polygon points="239.2,31.2 254.8,31.2 254.8,46.8 239.2,46.8" fill="#ff6b6b" transform="rotate(200.0 247.0 39.0)" />
-  <polygon points="5.2,57.2 20.8,57.2 20.8,72.8 5.2,72.8" fill="#ff6b6b" fill-opacity="0.5" stroke-opacity="0.5" transform="rotate(40.0 13.0 65.0)" />
-  <polygon points="31.2,57.2 46.8,57.2 46.8,72.8 31.2,72.8" fill="#ff6b6b" fill-opacity="0.5555555555555556" stroke-opacity="0.5555555555555556" transform="rotate(60.0 39.0 65.0)" />
-  <polygon points="57.2,57.2 72.8,57.2 72.8,72.8 57.2,72.8" fill="#ff6b6b" fill-opacity="0.6111111111111112" stroke-opacity="0.6111111111111112" transform="rotate(80.0 65.0 65.0)" />
-  <polygon points="83.2,57.2 98.8,57.2 98.8,72.8 83.2,72.8" fill="#ff6b6b" fill-opacity="0.6666666666666666" stroke-opacity="0.6666666666666666" transform="rotate(100.0 91.0 65.0)" />
-  <polygon points="109.2,57.2 124.8,57.2 124.8,72.8 109.2,72.8" fill="#ff6b6b" fill-opacity="0.7222222222222222" stroke-opacity="0.7222222222222222" transform="rotate(120.0 117.0 65.0)" />
-  <polygon points="135.2,57.2 150.8,57.2 150.8,72.8 135.2,72.8" fill="#ff6b6b" fill-opacity="0.7777777777777778" stroke-opacity="0.7777777777777778" transform="rotate(140.0 143.0 65.0)" />
-  <polygon points="161.2,57.2 176.8,57.2 176.8,72.8 161.2,72.8" fill="#ff6b6b" fill-opacity="0.8333333333333333" stroke-opacity="0.8333333333333333" transform="rotate(160.0 169.0 65.0)" />
-  <polygon points="187.2,57.2 202.8,57.2 202.8,72.8 187.2,72.8" fill="#ff6b6b" fill-opacity="0.8888888888888888" stroke-opacity="0.8888888888888888" transform="rotate(180.0 195.0 65.0)" />
-  <polygon points="213.2,57.2 228.8,57.2 228.8,72.8 213.2,72.8" fill="#ff6b6b" fill-opacity="0.9444444444444444" stroke-opacity="0.9444444444444444" transform="rotate(200.0 221.0 65.0)" />
-  <polygon points="239.2,57.2 254.8,57.2 254.8,72.8 239.2,72.8" fill="#ff6b6b" transform="rotate(220.00000000000003 247.0 65.0)" />
-  <polygon points="5.2,83.2 20.8,83.2 20.8,98.8 5.2,98.8" fill="#ff6b6b" fill-opacity="0.5" stroke-opacity="0.5" transform="rotate(60.0 13.0 91.0)" />
-  <polygon points="31.2,83.2 46.8,83.2 46.8,98.8 31.2,98.8" fill="#ff6b6b" fill-opacity="0.5555555555555556" stroke-opacity="0.5555555555555556" transform="rotate(80.0 39.0 91.0)" />
-  <polygon points="57.2,83.2 72.8,83.2 72.8,98.8 57.2,98.8" fill="#ff6b6b" fill-opacity="0.6111111111111112" stroke-opacity="0.6111111111111112" transform="rotate(100.0 65.0 91.0)" />
-  <polygon points="83.2,83.2 98.8,83.2 98.8,98.8 83.2,98.8" fill="#ff6b6b" fill-opacity="0.6666666666666666" stroke-opacity="0.6666666666666666" transform="rotate(120.0 91.0 91.0)" />
-  <polygon points="109.2,83.2 124.8,83.2 124.8,98.8 109.2,98.8" fill="#ff6b6b" fill-opacity="0.7222222222222222" stroke-opacity="0.7222222222222222" transform="rotate(139.99999999999997 117.0 91.0)" />
-  <polygon points="135.2,83.2 150.8,83.2 150.8,98.8 135.2,98.8" fill="#ff6b6b" fill-opacity="0.7777777777777778" stroke-opacity="0.7777777777777778" transform="rotate(160.0 143.0 91.0)" />
-  <polygon points="161.2,83.2 176.8,83.2 176.8,98.8 161.2,98.8" fill="#ff6b6b" fill-opacity="0.8333333333333333" stroke-opacity="0.8333333333333333" transform="rotate(180.0 169.0 91.0)" />
-  <polygon points="187.2,83.2 202.8,83.2 202.8,98.8 187.2,98.8" fill="#ff6b6b" fill-opacity="0.8888888888888888" stroke-opacity="0.8888888888888888" transform="rotate(200.0 195.0 91.0)" />
-  <polygon points="213.2,83.2 228.8,83.2 228.8,98.8 213.2,98.8" fill="#ff6b6b" fill-opacity="0.9444444444444444" stroke-opacity="0.9444444444444444" transform="rotate(219.99999999999997 221.0 91.0)" />
-  <polygon points="239.2,83.2 254.8,83.2 254.8,98.8 239.2,98.8" fill="#ff6b6b" transform="rotate(240.0 247.0 91.0)" />
-  <polygon points="5.2,109.2 20.8,109.2 20.8,124.8 5.2,124.8" fill="#ff6b6b" fill-opacity="0.5" stroke-opacity="0.5" transform="rotate(80.0 13.0 117.0)" />
-  <polygon points="31.2,109.2 46.8,109.2 46.8,124.8 31.2,124.8" fill="#ff6b6b" fill-opacity="0.5555555555555556" stroke-opacity="0.5555555555555556" transform="rotate(100.0 39.0 117.0)" />
-  <polygon points="57.2,109.2 72.8,109.2 72.8,124.8 57.2,124.8" fill="#ff6b6b" fill-opacity="0.6111111111111112" stroke-opacity="0.6111111111111112" transform="rotate(120.0 65.0 117.0)" />
-  <polygon points="83.2,109.2 98.8,109.2 98.8,124.8 83.2,124.8" fill="#ff6b6b" fill-opacity="0.6666666666666666" stroke-opacity="0.6666666666666666" transform="rotate(139.99999999999997 91.0 117.0)" />
-  <polygon points="109.2,109.2 124.8,109.2 124.8,124.8 109.2,124.8" fill="#ff6b6b" fill-opacity="0.7222222222222222" stroke-opacity="0.7222222222222222" transform="rotate(160.0 117.0 117.0)" />
-  <polygon points="135.2,109.2 150.8,109.2 150.8,124.8 135.2,124.8" fill="#ff6b6b" fill-opacity="0.7777777777777778" stroke-opacity="0.7777777777777778" transform="rotate(180.0 143.0 117.0)" />
-  <polygon points="161.2,109.2 176.8,109.2 176.8,124.8 161.2,124.8" fill="#ff6b6b" fill-opacity="0.8333333333333333" stroke-opacity="0.8333333333333333" transform="rotate(200.0 169.0 117.0)" />
-  <polygon points="187.2,109.2 202.8,109.2 202.8,124.8 187.2,124.8" fill="#ff6b6b" fill-opacity="0.8888888888888888" stroke-opacity="0.8888888888888888" transform="rotate(220.00000000000003 195.0 117.0)" />
-  <polygon points="213.2,109.2 228.8,109.2 228.8,124.8 213.2,124.8" fill="#ff6b6b" fill-opacity="0.9444444444444444" stroke-opacity="0.9444444444444444" transform="rotate(240.0 221.0 117.0)" />
-  <polygon points="239.2,109.2 254.8,109.2 254.8,124.8 239.2,124.8" fill="#ff6b6b" transform="rotate(260.0 247.0 117.0)" />
-  <polygon points="5.2,135.2 20.8,135.2 20.8,150.8 5.2,150.8" fill="#ff6b6b" fill-opacity="0.5" stroke-opacity="0.5" transform="rotate(100.0 13.0 143.0)" />
-  <polygon points="31.2,135.2 46.8,135.2 46.8,150.8 31.2,150.8" fill="#ff6b6b" fill-opacity="0.5555555555555556" stroke-opacity="0.5555555555555556" transform="rotate(120.00000000000001 39.0 143.0)" />
-  <polygon points="57.2,135.2 72.8,135.2 72.8,150.8 57.2,150.8" fill="#ff6b6b" fill-opacity="0.6111111111111112" stroke-opacity="0.6111111111111112" transform="rotate(140.0 65.0 143.0)" />
-  <polygon points="83.2,135.2 98.8,135.2 98.8,150.8 83.2,150.8" fill="#ff6b6b" fill-opacity="0.6666666666666666" stroke-opacity="0.6666666666666666" transform="rotate(160.0 91.0 143.0)" />
-  <polygon points="109.2,135.2 124.8,135.2 124.8,150.8 109.2,150.8" fill="#ff6b6b" fill-opacity="0.7222222222222222" stroke-opacity="0.7222222222222222" transform="rotate(180.0 117.0 143.0)" />
-  <polygon points="135.2,135.2 150.8,135.2 150.8,150.8 135.2,150.8" fill="#ff6b6b" fill-opacity="0.7777777777777778" stroke-opacity="0.7777777777777778" transform="rotate(200.0 143.0 143.0)" />
-  <polygon points="161.2,135.2 176.8,135.2 176.8,150.8 161.2,150.8" fill="#ff6b6b" fill-opacity="0.8333333333333333" stroke-opacity="0.8333333333333333" transform="rotate(220.00000000000003 169.0 143.0)" />
-  <polygon points="187.2,135.2 202.8,135.2 202.8,150.8 187.2,150.8" fill="#ff6b6b" fill-opacity="0.8888888888888888" stroke-opacity="0.8888888888888888" transform="rotate(240.00000000000003 195.0 143.0)" />
-  <polygon points="213.2,135.2 228.8,135.2 228.8,150.8 213.2,150.8" fill="#ff6b6b" fill-opacity="0.9444444444444444" stroke-opacity="0.9444444444444444" transform="rotate(260.0 221.0 143.0)" />
-  <polygon points="239.2,135.2 254.8,135.2 254.8,150.8 239.2,150.8" fill="#ff6b6b" transform="rotate(280.0 247.0 143.0)" />
-  <polygon points="5.2,161.2 20.8,161.2 20.8,176.8 5.2,176.8" fill="#ff6b6b" fill-opacity="0.5" stroke-opacity="0.5" transform="rotate(120.0 13.0 169.0)" />
-  <polygon points="31.2,161.2 46.8,161.2 46.8,176.8 31.2,176.8" fill="#ff6b6b" fill-opacity="0.5555555555555556" stroke-opacity="0.5555555555555556" transform="rotate(139.99999999999997 39.0 169.0)" />
-  <polygon points="57.2,161.2 72.8,161.2 72.8,176.8 57.2,176.8" fill="#ff6b6b" fill-opacity="0.6111111111111112" stroke-opacity="0.6111111111111112" transform="rotate(160.0 65.0 169.0)" />
-  <polygon points="83.2,161.2 98.8,161.2 98.8,176.8 83.2,176.8" fill="#ff6b6b" fill-opacity="0.6666666666666666" stroke-opacity="0.6666666666666666" transform="rotate(180.0 91.0 169.0)" />
-  <polygon points="109.2,161.2 124.8,161.2 124.8,176.8 109.2,176.8" fill="#ff6b6b" fill-opacity="0.7222222222222222" stroke-opacity="0.7222222222222222" transform="rotate(200.0 117.0 169.0)" />
-  <polygon points="135.2,161.2 150.8,161.2 150.8,176.8 135.2,176.8" fill="#ff6b6b" fill-opacity="0.7777777777777778" stroke-opacity="0.7777777777777778" transform="rotate(220.00000000000003 143.0 169.0)" />
-  <polygon points="161.2,161.2 176.8,161.2 176.8,176.8 161.2,176.8" fill="#ff6b6b" fill-opacity="0.8333333333333333" stroke-opacity="0.8333333333333333" transform="rotate(240.0 169.0 169.0)" />
-  <polygon points="187.2,161.2 202.8,161.2 202.8,176.8 187.2,176.8" fill="#ff6b6b" fill-opacity="0.8888888888888888" stroke-opacity="0.8888888888888888" transform="rotate(260.0 195.0 169.0)" />
-  <polygon points="213.2,161.2 228.8,161.2 228.8,176.8 213.2,176.8" fill="#ff6b6b" fill-opacity="0.9444444444444444" stroke-opacity="0.9444444444444444" transform="rotate(279.99999999999994 221.0 169.0)" />
-  <polygon points="239.2,161.2 254.8,161.2 254.8,176.8 239.2,176.8" fill="#ff6b6b" transform="rotate(300.0 247.0 169.0)" />
-  <polygon points="5.2,187.2 20.8,187.2 20.8,202.8 5.2,202.8" fill="#ff6b6b" fill-opacity="0.5" stroke-opacity="0.5" transform="rotate(140.0 13.0 195.0)" />
-  <polygon points="31.2,187.2 46.8,187.2 46.8,202.8 31.2,202.8" fill="#ff6b6b" fill-opacity="0.5555555555555556" stroke-opacity="0.5555555555555556" transform="rotate(160.0 39.0 195.0)" />
-  <polygon points="57.2,187.2 72.8,187.2 72.8,202.8 57.2,202.8" fill="#ff6b6b" fill-opacity="0.6111111111111112" stroke-opacity="0.6111111111111112" transform="rotate(180.0 65.0 195.0)" />
-  <polygon points="83.2,187.2 98.8,187.2 98.8,202.8 83.2,202.8" fill="#ff6b6b" fill-opacity="0.6666666666666666" stroke-opacity="0.6666666666666666" transform="rotate(200.0 91.0 195.0)" />
-  <polygon points="109.2,187.2 124.8,187.2 124.8,202.8 109.2,202.8" fill="#ff6b6b" fill-opacity="0.7222222222222222" stroke-opacity="0.7222222222222222" transform="rotate(220.00000000000003 117.0 195.0)" />
-  <polygon points="135.2,187.2 150.8,187.2 150.8,202.8 135.2,202.8" fill="#ff6b6b" fill-opacity="0.7777777777777778" stroke-opacity="0.7777777777777778" transform="rotate(240.00000000000003 143.0 195.0)" />
-  <polygon points="161.2,187.2 176.8,187.2 176.8,202.8 161.2,202.8" fill="#ff6b6b" fill-opacity="0.8333333333333333" stroke-opacity="0.8333333333333333" transform="rotate(260.0 169.0 195.0)" />
-  <polygon points="187.2,187.2 202.8,187.2 202.8,202.8 187.2,202.8" fill="#ff6b6b" fill-opacity="0.8888888888888888" stroke-opacity="0.8888888888888888" transform="rotate(280.0 195.0 195.0)" />
-  <polygon points="213.2,187.2 228.8,187.2 228.8,202.8 213.2,202.8" fill="#ff6b6b" fill-opacity="0.9444444444444444" stroke-opacity="0.9444444444444444" transform="rotate(300.0 221.0 195.0)" />
-  <polygon points="239.2,187.2 254.8,187.2 254.8,202.8 239.2,202.8" fill="#ff6b6b" transform="rotate(320.0 247.0 195.0)" />
-  <polygon points="5.2,213.2 20.8,213.2 20.8,228.8 5.2,228.8" fill="#ff6b6b" fill-opacity="0.5" stroke-opacity="0.5" transform="rotate(160.0 13.0 221.0)" />
-  <polygon points="31.2,213.2 46.8,213.2 46.8,228.8 31.2,228.8" fill="#ff6b6b" fill-opacity="0.5555555555555556" stroke-opacity="0.5555555555555556" transform="rotate(180.0 39.0 221.0)" />
-  <polygon points="57.2,213.2 72.8,213.2 72.8,228.8 57.2,228.8" fill="#ff6b6b" fill-opacity="0.6111111111111112" stroke-opacity="0.6111111111111112" transform="rotate(200.0 65.0 221.0)" />
-  <polygon points="83.2,213.2 98.8,213.2 98.8,228.8 83.2,228.8" fill="#ff6b6b" fill-opacity="0.6666666666666666" stroke-opacity="0.6666666666666666" transform="rotate(219.99999999999997 91.0 221.0)" />
-  <polygon points="109.2,213.2 124.8,213.2 124.8,228.8 109.2,228.8" fill="#ff6b6b" fill-opacity="0.7222222222222222" stroke-opacity="0.7222222222222222" transform="rotate(240.0 117.0 221.0)" />
-  <polygon points="135.2,213.2 150.8,213.2 150.8,228.8 135.2,228.8" fill="#ff6b6b" fill-opacity="0.7777777777777778" stroke-opacity="0.7777777777777778" transform="rotate(260.0 143.0 221.0)" />
-  <polygon points="161.2,213.2 176.8,213.2 176.8,228.8 161.2,228.8" fill="#ff6b6b" fill-opacity="0.8333333333333333" stroke-opacity="0.8333333333333333" transform="rotate(279.99999999999994 169.0 221.0)" />
-  <polygon points="187.2,213.2 202.8,213.2 202.8,228.8 187.2,228.8" fill="#ff6b6b" fill-opacity="0.8888888888888888" stroke-opacity="0.8888888888888888" transform="rotate(300.0 195.0 221.0)" />
-  <polygon points="213.2,213.2 228.8,213.2 228.8,228.8 213.2,228.8" fill="#ff6b6b" fill-opacity="0.9444444444444444" stroke-opacity="0.9444444444444444" transform="rotate(320.0 221.0 221.0)" />
-  <polygon points="239.2,213.2 254.8,213.2 254.8,228.8 239.2,228.8" fill="#ff6b6b" transform="rotate(340.0 247.0 221.0)" />
-  <polygon points="5.2,239.2 20.8,239.2 20.8,254.8 5.2,254.8" fill="#ff6b6b" fill-opacity="0.5" stroke-opacity="0.5" transform="rotate(180.0 13.0 247.0)" />
-  <polygon points="31.2,239.2 46.8,239.2 46.8,254.8 31.2,254.8" fill="#ff6b6b" fill-opacity="0.5555555555555556" stroke-opacity="0.5555555555555556" transform="rotate(200.0 39.0 247.0)" />
-  <polygon points="57.2,239.2 72.8,239.2 72.8,254.8 57.2,254.8" fill="#ff6b6b" fill-opacity="0.6111111111111112" stroke-opacity="0.6111111111111112" transform="rotate(220.00000000000003 65.0 247.0)" />
-  <polygon points="83.2,239.2 98.8,239.2 98.8,254.8 83.2,254.8" fill="#ff6b6b" fill-opacity="0.6666666666666666" stroke-opacity="0.6666666666666666" transform="rotate(240.0 91.0 247.0)" />
-  <polygon points="109.2,239.2 124.8,239.2 124.8,254.8 109.2,254.8" fill="#ff6b6b" fill-opacity="0.7222222222222222" stroke-opacity="0.7222222222222222" transform="rotate(260.0 117.0 247.0)" />
-  <polygon points="135.2,239.2 150.8,239.2 150.8,254.8 135.2,254.8" fill="#ff6b6b" fill-opacity="0.7777777777777778" stroke-opacity="0.7777777777777778" transform="rotate(280.0 143.0 247.0)" />
-  <polygon points="161.2,239.2 176.8,239.2 176.8,254.8 161.2,254.8" fill="#ff6b6b" fill-opacity="0.8333333333333333" stroke-opacity="0.8333333333333333" transform="rotate(300.0 169.0 247.0)" />
-  <polygon points="187.2,239.2 202.8,239.2 202.8,254.8 187.2,254.8" fill="#ff6b6b" fill-opacity="0.8888888888888888" stroke-opacity="0.8888888888888888" transform="rotate(320.0 195.0 247.0)" />
-  <polygon points="213.2,239.2 228.8,239.2 228.8,254.8 213.2,254.8" fill="#ff6b6b" fill-opacity="0.9444444444444444" stroke-opacity="0.9444444444444444" transform="rotate(340.0 221.0 247.0)" />
+  <polygon points="31.2,5.2 46.8,5.2 46.8,20.8 31.2,20.8" fill="#ff6b6b" fill-opacity="0.5555555555555556" stroke-opacity="0.5555555555555556" transform="rotate(20.0 39 13)" />
+  <polygon points="57.2,5.2 72.8,5.2 72.8,20.8 57.2,20.8" fill="#ff6b6b" fill-opacity="0.6111111111111112" stroke-opacity="0.6111111111111112" transform="rotate(40.0 65 13)" />
+  <polygon points="83.2,5.2 98.8,5.2 98.8,20.8 83.2,20.8" fill="#ff6b6b" fill-opacity="0.6666666666666666" stroke-opacity="0.6666666666666666" transform="rotate(60.0 91 13)" />
+  <polygon points="109.2,5.2 124.8,5.2 124.8,20.8 109.2,20.8" fill="#ff6b6b" fill-opacity="0.7222222222222222" stroke-opacity="0.7222222222222222" transform="rotate(80.0 117 13)" />
+  <polygon points="135.2,5.2 150.8,5.2 150.8,20.8 135.2,20.8" fill="#ff6b6b" fill-opacity="0.7777777777777778" stroke-opacity="0.7777777777777778" transform="rotate(100.0 143 13)" />
+  <polygon points="161.2,5.2 176.8,5.2 176.8,20.8 161.2,20.8" fill="#ff6b6b" fill-opacity="0.8333333333333333" stroke-opacity="0.8333333333333333" transform="rotate(120.0 169 13)" />
+  <polygon points="187.2,5.2 202.8,5.2 202.8,20.8 187.2,20.8" fill="#ff6b6b" fill-opacity="0.8888888888888888" stroke-opacity="0.8888888888888888" transform="rotate(140.0 195 13)" />
+  <polygon points="213.2,5.2 228.8,5.2 228.8,20.8 213.2,20.8" fill="#ff6b6b" fill-opacity="0.9444444444444444" stroke-opacity="0.9444444444444444" transform="rotate(160.0 221 13)" />
+  <polygon points="239.2,5.2 254.8,5.2 254.8,20.8 239.2,20.8" fill="#ff6b6b" transform="rotate(180.0 247 13)" />
+  <polygon points="5.2,31.2 20.8,31.2 20.8,46.8 5.2,46.8" fill="#ff6b6b" fill-opacity="0.5" stroke-opacity="0.5" transform="rotate(20.0 13 39)" />
+  <polygon points="31.2,31.2 46.8,31.2 46.8,46.8 31.2,46.8" fill="#ff6b6b" fill-opacity="0.5555555555555556" stroke-opacity="0.5555555555555556" transform="rotate(40.0 39 39)" />
+  <polygon points="57.2,31.2 72.8,31.2 72.8,46.8 57.2,46.8" fill="#ff6b6b" fill-opacity="0.6111111111111112" stroke-opacity="0.6111111111111112" transform="rotate(60.0 65 39)" />
+  <polygon points="83.2,31.2 98.8,31.2 98.8,46.8 83.2,46.8" fill="#ff6b6b" fill-opacity="0.6666666666666666" stroke-opacity="0.6666666666666666" transform="rotate(80.0 91 39)" />
+  <polygon points="109.2,31.2 124.8,31.2 124.8,46.8 109.2,46.8" fill="#ff6b6b" fill-opacity="0.7222222222222222" stroke-opacity="0.7222222222222222" transform="rotate(100.0 117 39)" />
+  <polygon points="135.2,31.2 150.8,31.2 150.8,46.8 135.2,46.8" fill="#ff6b6b" fill-opacity="0.7777777777777778" stroke-opacity="0.7777777777777778" transform="rotate(120.00000000000001 143 39)" />
+  <polygon points="161.2,31.2 176.8,31.2 176.8,46.8 161.2,46.8" fill="#ff6b6b" fill-opacity="0.8333333333333333" stroke-opacity="0.8333333333333333" transform="rotate(139.99999999999997 169 39)" />
+  <polygon points="187.2,31.2 202.8,31.2 202.8,46.8 187.2,46.8" fill="#ff6b6b" fill-opacity="0.8888888888888888" stroke-opacity="0.8888888888888888" transform="rotate(160.0 195 39)" />
+  <polygon points="213.2,31.2 228.8,31.2 228.8,46.8 213.2,46.8" fill="#ff6b6b" fill-opacity="0.9444444444444444" stroke-opacity="0.9444444444444444" transform="rotate(180.0 221 39)" />
+  <polygon points="239.2,31.2 254.8,31.2 254.8,46.8 239.2,46.8" fill="#ff6b6b" transform="rotate(200.0 247 39)" />
+  <polygon points="5.2,57.2 20.8,57.2 20.8,72.8 5.2,72.8" fill="#ff6b6b" fill-opacity="0.5" stroke-opacity="0.5" transform="rotate(40.0 13 65)" />
+  <polygon points="31.2,57.2 46.8,57.2 46.8,72.8 31.2,72.8" fill="#ff6b6b" fill-opacity="0.5555555555555556" stroke-opacity="0.5555555555555556" transform="rotate(60.0 39 65)" />
+  <polygon points="57.2,57.2 72.8,57.2 72.8,72.8 57.2,72.8" fill="#ff6b6b" fill-opacity="0.6111111111111112" stroke-opacity="0.6111111111111112" transform="rotate(80.0 65 65)" />
+  <polygon points="83.2,57.2 98.8,57.2 98.8,72.8 83.2,72.8" fill="#ff6b6b" fill-opacity="0.6666666666666666" stroke-opacity="0.6666666666666666" transform="rotate(100.0 91 65)" />
+  <polygon points="109.2,57.2 124.8,57.2 124.8,72.8 109.2,72.8" fill="#ff6b6b" fill-opacity="0.7222222222222222" stroke-opacity="0.7222222222222222" transform="rotate(120.0 117 65)" />
+  <polygon points="135.2,57.2 150.8,57.2 150.8,72.8 135.2,72.8" fill="#ff6b6b" fill-opacity="0.7777777777777778" stroke-opacity="0.7777777777777778" transform="rotate(140.0 143 65)" />
+  <polygon points="161.2,57.2 176.8,57.2 176.8,72.8 161.2,72.8" fill="#ff6b6b" fill-opacity="0.8333333333333333" stroke-opacity="0.8333333333333333" transform="rotate(160.0 169 65)" />
+  <polygon points="187.2,57.2 202.8,57.2 202.8,72.8 187.2,72.8" fill="#ff6b6b" fill-opacity="0.8888888888888888" stroke-opacity="0.8888888888888888" transform="rotate(180.0 195 65)" />
+  <polygon points="213.2,57.2 228.8,57.2 228.8,72.8 213.2,72.8" fill="#ff6b6b" fill-opacity="0.9444444444444444" stroke-opacity="0.9444444444444444" transform="rotate(200.0 221 65)" />
+  <polygon points="239.2,57.2 254.8,57.2 254.8,72.8 239.2,72.8" fill="#ff6b6b" transform="rotate(220.00000000000003 247 65)" />
+  <polygon points="5.2,83.2 20.8,83.2 20.8,98.8 5.2,98.8" fill="#ff6b6b" fill-opacity="0.5" stroke-opacity="0.5" transform="rotate(60.0 13 91)" />
+  <polygon points="31.2,83.2 46.8,83.2 46.8,98.8 31.2,98.8" fill="#ff6b6b" fill-opacity="0.5555555555555556" stroke-opacity="0.5555555555555556" transform="rotate(80.0 39 91)" />
+  <polygon points="57.2,83.2 72.8,83.2 72.8,98.8 57.2,98.8" fill="#ff6b6b" fill-opacity="0.6111111111111112" stroke-opacity="0.6111111111111112" transform="rotate(100.0 65 91)" />
+  <polygon points="83.2,83.2 98.8,83.2 98.8,98.8 83.2,98.8" fill="#ff6b6b" fill-opacity="0.6666666666666666" stroke-opacity="0.6666666666666666" transform="rotate(120.0 91 91)" />
+  <polygon points="109.2,83.2 124.8,83.2 124.8,98.8 109.2,98.8" fill="#ff6b6b" fill-opacity="0.7222222222222222" stroke-opacity="0.7222222222222222" transform="rotate(139.99999999999997 117 91)" />
+  <polygon points="135.2,83.2 150.8,83.2 150.8,98.8 135.2,98.8" fill="#ff6b6b" fill-opacity="0.7777777777777778" stroke-opacity="0.7777777777777778" transform="rotate(160.0 143 91)" />
+  <polygon points="161.2,83.2 176.8,83.2 176.8,98.8 161.2,98.8" fill="#ff6b6b" fill-opacity="0.8333333333333333" stroke-opacity="0.8333333333333333" transform="rotate(180.0 169 91)" />
+  <polygon points="187.2,83.2 202.8,83.2 202.8,98.8 187.2,98.8" fill="#ff6b6b" fill-opacity="0.8888888888888888" stroke-opacity="0.8888888888888888" transform="rotate(200.0 195 91)" />
+  <polygon points="213.2,83.2 228.8,83.2 228.8,98.8 213.2,98.8" fill="#ff6b6b" fill-opacity="0.9444444444444444" stroke-opacity="0.9444444444444444" transform="rotate(219.99999999999997 221 91)" />
+  <polygon points="239.2,83.2 254.8,83.2 254.8,98.8 239.2,98.8" fill="#ff6b6b" transform="rotate(240.0 247 91)" />
+  <polygon points="5.2,109.2 20.8,109.2 20.8,124.8 5.2,124.8" fill="#ff6b6b" fill-opacity="0.5" stroke-opacity="0.5" transform="rotate(80.0 13 117)" />
+  <polygon points="31.2,109.2 46.8,109.2 46.8,124.8 31.2,124.8" fill="#ff6b6b" fill-opacity="0.5555555555555556" stroke-opacity="0.5555555555555556" transform="rotate(100.0 39 117)" />
+  <polygon points="57.2,109.2 72.8,109.2 72.8,124.8 57.2,124.8" fill="#ff6b6b" fill-opacity="0.6111111111111112" stroke-opacity="0.6111111111111112" transform="rotate(120.0 65 117)" />
+  <polygon points="83.2,109.2 98.8,109.2 98.8,124.8 83.2,124.8" fill="#ff6b6b" fill-opacity="0.6666666666666666" stroke-opacity="0.6666666666666666" transform="rotate(139.99999999999997 91 117)" />
+  <polygon points="109.2,109.2 124.8,109.2 124.8,124.8 109.2,124.8" fill="#ff6b6b" fill-opacity="0.7222222222222222" stroke-opacity="0.7222222222222222" transform="rotate(160.0 117 117)" />
+  <polygon points="135.2,109.2 150.8,109.2 150.8,124.8 135.2,124.8" fill="#ff6b6b" fill-opacity="0.7777777777777778" stroke-opacity="0.7777777777777778" transform="rotate(180.0 143 117)" />
+  <polygon points="161.2,109.2 176.8,109.2 176.8,124.8 161.2,124.8" fill="#ff6b6b" fill-opacity="0.8333333333333333" stroke-opacity="0.8333333333333333" transform="rotate(200.0 169 117)" />
+  <polygon points="187.2,109.2 202.8,109.2 202.8,124.8 187.2,124.8" fill="#ff6b6b" fill-opacity="0.8888888888888888" stroke-opacity="0.8888888888888888" transform="rotate(220.00000000000003 195 117)" />
+  <polygon points="213.2,109.2 228.8,109.2 228.8,124.8 213.2,124.8" fill="#ff6b6b" fill-opacity="0.9444444444444444" stroke-opacity="0.9444444444444444" transform="rotate(240.0 221 117)" />
+  <polygon points="239.2,109.2 254.8,109.2 254.8,124.8 239.2,124.8" fill="#ff6b6b" transform="rotate(260.0 247 117)" />
+  <polygon points="5.2,135.2 20.8,135.2 20.8,150.8 5.2,150.8" fill="#ff6b6b" fill-opacity="0.5" stroke-opacity="0.5" transform="rotate(100.0 13 143)" />
+  <polygon points="31.2,135.2 46.8,135.2 46.8,150.8 31.2,150.8" fill="#ff6b6b" fill-opacity="0.5555555555555556" stroke-opacity="0.5555555555555556" transform="rotate(120.00000000000001 39 143)" />
+  <polygon points="57.2,135.2 72.8,135.2 72.8,150.8 57.2,150.8" fill="#ff6b6b" fill-opacity="0.6111111111111112" stroke-opacity="0.6111111111111112" transform="rotate(140.0 65 143)" />
+  <polygon points="83.2,135.2 98.8,135.2 98.8,150.8 83.2,150.8" fill="#ff6b6b" fill-opacity="0.6666666666666666" stroke-opacity="0.6666666666666666" transform="rotate(160.0 91 143)" />
+  <polygon points="109.2,135.2 124.8,135.2 124.8,150.8 109.2,150.8" fill="#ff6b6b" fill-opacity="0.7222222222222222" stroke-opacity="0.7222222222222222" transform="rotate(180.0 117 143)" />
+  <polygon points="135.2,135.2 150.8,135.2 150.8,150.8 135.2,150.8" fill="#ff6b6b" fill-opacity="0.7777777777777778" stroke-opacity="0.7777777777777778" transform="rotate(200.0 143 143)" />
+  <polygon points="161.2,135.2 176.8,135.2 176.8,150.8 161.2,150.8" fill="#ff6b6b" fill-opacity="0.8333333333333333" stroke-opacity="0.8333333333333333" transform="rotate(220.00000000000003 169 143)" />
+  <polygon points="187.2,135.2 202.8,135.2 202.8,150.8 187.2,150.8" fill="#ff6b6b" fill-opacity="0.8888888888888888" stroke-opacity="0.8888888888888888" transform="rotate(240.00000000000003 195 143)" />
+  <polygon points="213.2,135.2 228.8,135.2 228.8,150.8 213.2,150.8" fill="#ff6b6b" fill-opacity="0.9444444444444444" stroke-opacity="0.9444444444444444" transform="rotate(260.0 221 143)" />
+  <polygon points="239.2,135.2 254.8,135.2 254.8,150.8 239.2,150.8" fill="#ff6b6b" transform="rotate(280.0 247 143)" />
+  <polygon points="5.2,161.2 20.8,161.2 20.8,176.8 5.2,176.8" fill="#ff6b6b" fill-opacity="0.5" stroke-opacity="0.5" transform="rotate(120.0 13 169)" />
+  <polygon points="31.2,161.2 46.8,161.2 46.8,176.8 31.2,176.8" fill="#ff6b6b" fill-opacity="0.5555555555555556" stroke-opacity="0.5555555555555556" transform="rotate(139.99999999999997 39 169)" />
+  <polygon points="57.2,161.2 72.8,161.2 72.8,176.8 57.2,176.8" fill="#ff6b6b" fill-opacity="0.6111111111111112" stroke-opacity="0.6111111111111112" transform="rotate(160.0 65 169)" />
+  <polygon points="83.2,161.2 98.8,161.2 98.8,176.8 83.2,176.8" fill="#ff6b6b" fill-opacity="0.6666666666666666" stroke-opacity="0.6666666666666666" transform="rotate(180.0 91 169)" />
+  <polygon points="109.2,161.2 124.8,161.2 124.8,176.8 109.2,176.8" fill="#ff6b6b" fill-opacity="0.7222222222222222" stroke-opacity="0.7222222222222222" transform="rotate(200.0 117 169)" />
+  <polygon points="135.2,161.2 150.8,161.2 150.8,176.8 135.2,176.8" fill="#ff6b6b" fill-opacity="0.7777777777777778" stroke-opacity="0.7777777777777778" transform="rotate(220.00000000000003 143 169)" />
+  <polygon points="161.2,161.2 176.8,161.2 176.8,176.8 161.2,176.8" fill="#ff6b6b" fill-opacity="0.8333333333333333" stroke-opacity="0.8333333333333333" transform="rotate(240.0 169 169)" />
+  <polygon points="187.2,161.2 202.8,161.2 202.8,176.8 187.2,176.8" fill="#ff6b6b" fill-opacity="0.8888888888888888" stroke-opacity="0.8888888888888888" transform="rotate(260.0 195 169)" />
+  <polygon points="213.2,161.2 228.8,161.2 228.8,176.8 213.2,176.8" fill="#ff6b6b" fill-opacity="0.9444444444444444" stroke-opacity="0.9444444444444444" transform="rotate(279.99999999999994 221 169)" />
+  <polygon points="239.2,161.2 254.8,161.2 254.8,176.8 239.2,176.8" fill="#ff6b6b" transform="rotate(300.0 247 169)" />
+  <polygon points="5.2,187.2 20.8,187.2 20.8,202.8 5.2,202.8" fill="#ff6b6b" fill-opacity="0.5" stroke-opacity="0.5" transform="rotate(140.0 13 195)" />
+  <polygon points="31.2,187.2 46.8,187.2 46.8,202.8 31.2,202.8" fill="#ff6b6b" fill-opacity="0.5555555555555556" stroke-opacity="0.5555555555555556" transform="rotate(160.0 39 195)" />
+  <polygon points="57.2,187.2 72.8,187.2 72.8,202.8 57.2,202.8" fill="#ff6b6b" fill-opacity="0.6111111111111112" stroke-opacity="0.6111111111111112" transform="rotate(180.0 65 195)" />
+  <polygon points="83.2,187.2 98.8,187.2 98.8,202.8 83.2,202.8" fill="#ff6b6b" fill-opacity="0.6666666666666666" stroke-opacity="0.6666666666666666" transform="rotate(200.0 91 195)" />
+  <polygon points="109.2,187.2 124.8,187.2 124.8,202.8 109.2,202.8" fill="#ff6b6b" fill-opacity="0.7222222222222222" stroke-opacity="0.7222222222222222" transform="rotate(220.00000000000003 117 195)" />
+  <polygon points="135.2,187.2 150.8,187.2 150.8,202.8 135.2,202.8" fill="#ff6b6b" fill-opacity="0.7777777777777778" stroke-opacity="0.7777777777777778" transform="rotate(240.00000000000003 143 195)" />
+  <polygon points="161.2,187.2 176.8,187.2 176.8,202.8 161.2,202.8" fill="#ff6b6b" fill-opacity="0.8333333333333333" stroke-opacity="0.8333333333333333" transform="rotate(260.0 169 195)" />
+  <polygon points="187.2,187.2 202.8,187.2 202.8,202.8 187.2,202.8" fill="#ff6b6b" fill-opacity="0.8888888888888888" stroke-opacity="0.8888888888888888" transform="rotate(280.0 195 195)" />
+  <polygon points="213.2,187.2 228.8,187.2 228.8,202.8 213.2,202.8" fill="#ff6b6b" fill-opacity="0.9444444444444444" stroke-opacity="0.9444444444444444" transform="rotate(300.0 221 195)" />
+  <polygon points="239.2,187.2 254.8,187.2 254.8,202.8 239.2,202.8" fill="#ff6b6b" transform="rotate(320.0 247 195)" />
+  <polygon points="5.2,213.2 20.8,213.2 20.8,228.8 5.2,228.8" fill="#ff6b6b" fill-opacity="0.5" stroke-opacity="0.5" transform="rotate(160.0 13 221)" />
+  <polygon points="31.2,213.2 46.8,213.2 46.8,228.8 31.2,228.8" fill="#ff6b6b" fill-opacity="0.5555555555555556" stroke-opacity="0.5555555555555556" transform="rotate(180.0 39 221)" />
+  <polygon points="57.2,213.2 72.8,213.2 72.8,228.8 57.2,228.8" fill="#ff6b6b" fill-opacity="0.6111111111111112" stroke-opacity="0.6111111111111112" transform="rotate(200.0 65 221)" />
+  <polygon points="83.2,213.2 98.8,213.2 98.8,228.8 83.2,228.8" fill="#ff6b6b" fill-opacity="0.6666666666666666" stroke-opacity="0.6666666666666666" transform="rotate(219.99999999999997 91 221)" />
+  <polygon points="109.2,213.2 124.8,213.2 124.8,228.8 109.2,228.8" fill="#ff6b6b" fill-opacity="0.7222222222222222" stroke-opacity="0.7222222222222222" transform="rotate(240.0 117 221)" />
+  <polygon points="135.2,213.2 150.8,213.2 150.8,228.8 135.2,228.8" fill="#ff6b6b" fill-opacity="0.7777777777777778" stroke-opacity="0.7777777777777778" transform="rotate(260.0 143 221)" />
+  <polygon points="161.2,213.2 176.8,213.2 176.8,228.8 161.2,228.8" fill="#ff6b6b" fill-opacity="0.8333333333333333" stroke-opacity="0.8333333333333333" transform="rotate(279.99999999999994 169 221)" />
+  <polygon points="187.2,213.2 202.8,213.2 202.8,228.8 187.2,228.8" fill="#ff6b6b" fill-opacity="0.8888888888888888" stroke-opacity="0.8888888888888888" transform="rotate(300.0 195 221)" />
+  <polygon points="213.2,213.2 228.8,213.2 228.8,228.8 213.2,228.8" fill="#ff6b6b" fill-opacity="0.9444444444444444" stroke-opacity="0.9444444444444444" transform="rotate(320.0 221 221)" />
+  <polygon points="239.2,213.2 254.8,213.2 254.8,228.8 239.2,228.8" fill="#ff6b6b" transform="rotate(340.0 247 221)" />
+  <polygon points="5.2,239.2 20.8,239.2 20.8,254.8 5.2,254.8" fill="#ff6b6b" fill-opacity="0.5" stroke-opacity="0.5" transform="rotate(180.0 13 247)" />
+  <polygon points="31.2,239.2 46.8,239.2 46.8,254.8 31.2,254.8" fill="#ff6b6b" fill-opacity="0.5555555555555556" stroke-opacity="0.5555555555555556" transform="rotate(200.0 39 247)" />
+  <polygon points="57.2,239.2 72.8,239.2 72.8,254.8 57.2,254.8" fill="#ff6b6b" fill-opacity="0.6111111111111112" stroke-opacity="0.6111111111111112" transform="rotate(220.00000000000003 65 247)" />
+  <polygon points="83.2,239.2 98.8,239.2 98.8,254.8 83.2,254.8" fill="#ff6b6b" fill-opacity="0.6666666666666666" stroke-opacity="0.6666666666666666" transform="rotate(240.0 91 247)" />
+  <polygon points="109.2,239.2 124.8,239.2 124.8,254.8 109.2,254.8" fill="#ff6b6b" fill-opacity="0.7222222222222222" stroke-opacity="0.7222222222222222" transform="rotate(260.0 117 247)" />
+  <polygon points="135.2,239.2 150.8,239.2 150.8,254.8 135.2,254.8" fill="#ff6b6b" fill-opacity="0.7777777777777778" stroke-opacity="0.7777777777777778" transform="rotate(280.0 143 247)" />
+  <polygon points="161.2,239.2 176.8,239.2 176.8,254.8 161.2,254.8" fill="#ff6b6b" fill-opacity="0.8333333333333333" stroke-opacity="0.8333333333333333" transform="rotate(300.0 169 247)" />
+  <polygon points="187.2,239.2 202.8,239.2 202.8,254.8 187.2,254.8" fill="#ff6b6b" fill-opacity="0.8888888888888888" stroke-opacity="0.8888888888888888" transform="rotate(320.0 195 247)" />
+  <polygon points="213.2,239.2 228.8,239.2 228.8,254.8 213.2,254.8" fill="#ff6b6b" fill-opacity="0.9444444444444444" stroke-opacity="0.9444444444444444" transform="rotate(340.0 221 247)" />
   <polygon points="239.2,239.2 254.8,239.2 254.8,254.8 239.2,254.8" fill="#ff6b6b" />
 </svg>

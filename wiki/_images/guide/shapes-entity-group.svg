@@ -1,274 +1,274 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="288" height="240" viewBox="0 0 288 240">
   <rect width="100%" height="100%" fill="#fef6e4" />
-  <g transform="translate(24.0, 23.999999999999996) scale(0.9951219512195121)">
+  <g transform="translate(24, 24) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(72.0, 23.999999999999996) scale(0.9951219512195121)">
+  <g transform="translate(72, 24) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(120.0, 23.999999999999996) scale(0.9951219512195121)">
+  <g transform="translate(120, 24) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(168.0, 23.999999999999996) scale(0.9951219512195121)">
+  <g transform="translate(168, 24) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(216.0, 23.999999999999996) scale(0.9951219512195121)">
+  <g transform="translate(216, 24) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(264.0, 23.999999999999996) scale(0.9951219512195121)">
+  <g transform="translate(264, 24) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(24.0, 72.0) scale(0.9951219512195121)">
+  <g transform="translate(24, 72) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(72.0, 72.0) scale(0.9951219512195121)">
+  <g transform="translate(72, 72) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(120.0, 72.0) scale(0.9951219512195121)">
+  <g transform="translate(120, 72) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(168.0, 72.0) scale(0.9951219512195121)">
+  <g transform="translate(168, 72) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(216.0, 72.0) scale(0.9951219512195121)">
+  <g transform="translate(216, 72) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(264.0, 72.0) scale(0.9951219512195121)">
+  <g transform="translate(264, 72) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(24.0, 120.0) scale(0.9951219512195121)">
+  <g transform="translate(24, 120) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(72.0, 120.0) scale(0.9951219512195121)">
+  <g transform="translate(72, 120) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(120.0, 120.0) scale(0.9951219512195121)">
+  <g transform="translate(120, 120) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(168.0, 120.0) scale(0.9951219512195121)">
+  <g transform="translate(168, 120) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(216.0, 120.0) scale(0.9951219512195121)">
+  <g transform="translate(216, 120) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(264.0, 120.0) scale(0.9951219512195121)">
+  <g transform="translate(264, 120) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(24.0, 168.0) scale(0.9951219512195121)">
+  <g transform="translate(24, 168) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(72.0, 168.0) scale(0.9951219512195121)">
+  <g transform="translate(72, 168) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(120.0, 168.0) scale(0.9951219512195121)">
+  <g transform="translate(120, 168) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(168.0, 168.0) scale(0.9951219512195121)">
+  <g transform="translate(168, 168) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(216.0, 168.0) scale(0.9951219512195121)">
+  <g transform="translate(216, 168) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(264.0, 168.0) scale(0.9951219512195121)">
+  <g transform="translate(264, 168) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(24.0, 216.0) scale(0.9951219512195121)">
+  <g transform="translate(24, 216) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(72.0, 216.0) scale(0.9951219512195121)">
+  <g transform="translate(72, 216) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(120.0, 216.0) scale(0.9951219512195121)">
+  <g transform="translate(120, 216) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(168.0, 216.0) scale(0.9951219512195121)">
+  <g transform="translate(168, 216) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(216.0, 216.0) scale(0.9951219512195121)">
+  <g transform="translate(216, 216) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
-  <g transform="translate(264.0, 216.0) scale(0.9951219512195121)">
+  <g transform="translate(264, 216) scale(0.9951219512)">
   <ellipse cx="12.0" cy="0.0" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" />
-  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6.000000000000002 10.392304845413264)" />
-  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -5.999999999999997 10.392304845413266)" />
-  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12.0 1.4695761589768238e-15)" />
-  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6.000000000000005 -10.39230484541326)" />
-  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6.0 -10.392304845413264)" />
+  <ellipse cx="6.000000000000002" cy="10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(60.0 6 10.39230485)" />
+  <ellipse cx="-5.999999999999997" cy="10.392304845413266" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(120.0 -6 10.39230485)" />
+  <ellipse cx="-12.0" cy="1.4695761589768238e-15" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(180.0 -12 0)" />
+  <ellipse cx="-6.000000000000005" cy="-10.39230484541326" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(240.0 -6 -10.39230485)" />
+  <ellipse cx="6.0" cy="-10.392304845413264" rx="8.0" ry="4.0" fill="#f582ae" fill-opacity="0.7" stroke-opacity="0.7" transform="rotate(300.0 6 -10.39230485)" />
   <circle cx="0" cy="0" r="5.0" fill="#ffc6c7" />
 </g>
 </svg>

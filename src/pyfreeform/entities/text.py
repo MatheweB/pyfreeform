@@ -214,6 +214,9 @@ class Text(Entity):
         self._pixel_font_size = float(value)
         self._relative_font_size = None
 
+    def _has_relative_properties(self) -> bool:
+        return super()._has_relative_properties() or self._relative_font_size is not None
+
     def _resolve_to_absolute(self) -> None:
         """Resolve relative font size and position to absolute values."""
         if self._relative_font_size is not None:

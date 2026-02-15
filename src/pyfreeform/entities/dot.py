@@ -92,6 +92,9 @@ class Dot(Entity):
         self._pixel_radius = float(value)
         self._relative_radius = None
 
+    def _has_relative_properties(self) -> bool:
+        return super()._has_relative_properties() or self._relative_radius is not None
+
     def _resolve_to_absolute(self) -> None:
         """Resolve relative radius and position to absolute values."""
         if self._relative_radius is not None:

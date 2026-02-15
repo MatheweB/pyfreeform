@@ -2,6 +2,21 @@
 
 from __future__ import annotations
 
+_SVG_SIG_FIGS = 10
+
+
+def svg_num(v: float) -> str:
+    """Format a float for SVG output, rounded to significant figures.
+
+    Strips floating-point noise (e.g. ``12.000000000000002`` → ``"12"``)
+    while preserving all meaningful precision.
+    """
+    text = f"{v:.{_SVG_SIG_FIGS}g}"
+    if "e" in text or "E" in text:
+        # Avoid scientific notation in SVG attributes
+        return f"{float(text):.{_SVG_SIG_FIGS}f}".rstrip("0").rstrip(".")
+    return text
+
 
 def xml_escape(text: str) -> str:
     """Escape special XML characters for safe embedding in SVG."""

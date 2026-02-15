@@ -197,6 +197,13 @@ class Rect(Entity):
         self._pixel_height = float(value)
         self._relative_height = None
 
+    def _has_relative_properties(self) -> bool:
+        return (
+            super()._has_relative_properties()
+            or self._relative_width is not None
+            or self._relative_height is not None
+        )
+
     def _resolve_to_absolute(self) -> None:
         """Resolve relative width/height and position to absolute values."""
         if self._relative_width is not None:

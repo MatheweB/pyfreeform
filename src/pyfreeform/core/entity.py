@@ -12,6 +12,7 @@ from .connection import Connection
 from .coord import Coord, CoordLike
 from .relcoord import RelCoord, RelCoordLike
 from .positions import NAMED_POSITIONS, AnchorSpec
+from .svg_utils import svg_num
 
 
 if TYPE_CHECKING:
@@ -62,7 +63,6 @@ class Entity(ABC):
         self._along_path: Pathable | None = None
         self._along_t: float = 0.5
         self._resolving: bool = False
-        self._is_resolved: bool = False
 
         # Non-destructive transforms (accumulated, resolved at render time)
         self._rotation: float = 0.0
@@ -163,24 +163,34 @@ class Entity(ABC):
                 return result
         return self._position
 
-    @property
-    def is_resolved(self) -> bool:
-        """True after relative properties have been converted to absolute values.
+    def _has_relative_properties(self) -> bool:
+        """Return True if this entity has any relative state.
 
-        Once resolved, relative fractions (position, sizing, geometry)
-        become concrete pixel values and won't be overwritten.
+        Subclasses override to include entity-specific relative properties
+        (e.g. relative_radius, relative_width, relative_vertices).
         """
-        return self._is_resolved
+        return self._relative_at is not None or self._along_path is not None
+
+    @property
+    def is_relative(self) -> bool:
+        """True when any property is relative (entity reacts to container changes).
+
+        Check individual properties (``.at``, ``.relative_radius``, etc.)
+        to see which specific properties are tracked.
+        """
+        return self._has_relative_properties()
 
     def _resolve_to_absolute(self) -> None:
-        """Convert all relative properties to absolute values (one-way).
+        """Convert all relative properties to absolute values.
 
         The base class resolves **position** (relative binding → concrete
         ``Coord``).  Subclasses extend this to also resolve **sizing**
         (e.g. radius, width/height) and **geometry** (e.g. vertices,
         endpoints) from relative fractions to absolute values.
+
+        This is an explicit opt-in escape hatch.  The framework never
+        calls it automatically — only user code that needs pixel values.
         """
-        self._is_resolved = True
         if self._relative_at is not None or self._along_path is not None:
             self._position = self._resolve_position()
             self._relative_at = None
@@ -498,30 +508,30 @@ class Entity(ABC):
         if not has_rot and not has_scale:
             return ""
         center = self.rotation_center
-        cx, cy = center.x, center.y
+        cx, cy = svg_num(center.x), svg_num(center.y)
+        ncx, ncy = svg_num(-center.x), svg_num(-center.y)
         if has_rot and not has_scale:
             return f' transform="rotate({self._rotation} {cx} {cy})"'
         if has_scale and not has_rot:
-            s = self._scale_factor
-            return f' transform="translate({cx},{cy}) scale({s}) translate({-cx},{-cy})"'
+            s = svg_num(self._scale_factor)
+            return f' transform="translate({cx},{cy}) scale({s}) translate({ncx},{ncy})"'
         # Both rotation and scale
-        s = self._scale_factor
+        s = svg_num(self._scale_factor)
         return (
             f' transform="translate({cx},{cy})'
             f" rotate({self._rotation})"
             f" scale({s})"
-            f' translate({-cx},{-cy})"'
+            f' translate({ncx},{ncy})"'
         )
 
     def _orbit_around(self, angle: float, origin: Coord) -> None:
         """Orbit this entity's rotation_center around *origin* by *angle* degrees.
 
-        Resolves all relative properties to absolute values first
-        (``_resolve_to_absolute``), then shifts position so that
-        ``rotation_center`` moves to its new orbital location.
+        Computes the new orbital location lazily from ``rotation_center``
+        (which resolves relative coordinates on access), then shifts
+        position via ``_move_by`` (which preserves relative mode).
         Does **not** accumulate ``_rotation``.
         """
-        self._resolve_to_absolute()
         center = self.rotation_center
         new_center = center.rotated(math.radians(angle), origin=origin)
         self._move_by(new_center.x - center.x, new_center.y - center.y)
@@ -529,12 +539,11 @@ class Entity(ABC):
     def _scale_around(self, factor: float, origin: Coord) -> None:
         """Scale this entity's position relative to *origin* (orbit only).
 
-        Like ``_orbit_around`` but for scaling: resolves relative
-        properties to absolute, then shifts position so that
-        ``rotation_center`` moves toward/away from *origin* by *factor*.
+        Computes the new position lazily from ``rotation_center``
+        (which resolves relative coordinates on access), then shifts
+        position via ``_move_by`` (which preserves relative mode).
         Does **not** accumulate ``_scale_factor``.
         """
-        self._resolve_to_absolute()
         center = self.rotation_center
         new_center = origin + (center - origin) * factor
         self._move_by(new_center.x - center.x, new_center.y - center.y)

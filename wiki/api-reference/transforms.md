@@ -1,6 +1,6 @@
 # Transforms
 
-All entities support non-destructive transforms — rotation and scale are stored as numbers and applied at render time via SVG `transform`, not baked into geometry.
+All entities support non-destructive transforms — rotation and scale are stored as numbers and applied at render time via SVG `transform`, not baked into geometry. Transforms preserve relative bindings: rotating or scaling an entity that tracks a container-relative position does not destroy that binding.
 
 !!! info "See also"
     For hands-on transform examples, see [Transforms and Layout](../guide/08-transforms-and-layout.md).

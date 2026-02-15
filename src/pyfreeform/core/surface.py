@@ -537,6 +537,7 @@ class Surface:
             opacity=opacity,
         )
 
+        positioned_along = False
         if along is not None:
             target, rotation = self._resolve_along(along, t, align, 0)
             midpoint = line.anchor("center")
@@ -554,10 +555,9 @@ class Surface:
             )
             if align:
                 line.rotate(rotation, origin=target)
-            else:
-                line._resolve_to_absolute()
+            positioned_along = True
 
-        if not line.is_resolved:
+        if not positioned_along:
             line.relative_start = RelCoord.coerce(start)
             line.relative_end = RelCoord.coerce(end)
         line.binding = Binding(reference=within)
@@ -725,6 +725,7 @@ class Surface:
             opacity=opacity,
         )
 
+        positioned_along = False
         if along is not None:
             target, rotation = self._resolve_along(along, t, align, 0)
             midpoint = curve.point_at(0.5)
@@ -743,10 +744,9 @@ class Surface:
             )
             if align:
                 curve.rotate(rotation, origin=target)
-            else:
-                curve._resolve_to_absolute()
+            positioned_along = True
 
-        if not curve.is_resolved:
+        if not positioned_along:
             curve.relative_start = RelCoord.coerce(start)
             curve.relative_end = RelCoord.coerce(end)
         curve.binding = Binding(reference=within)
@@ -1051,6 +1051,7 @@ class Surface:
             stroke_opacity=stroke_opacity,
         )
 
+        positioned_along = False
         if along is not None:
             target, effective_rotation = self._resolve_along(along, t, align, rotation)
             center = polygon.position
@@ -1068,12 +1069,11 @@ class Surface:
             )
             if effective_rotation != 0:
                 polygon.rotate(effective_rotation, origin=target)
-            else:
-                polygon._resolve_to_absolute()
+            positioned_along = True
         elif rotation != 0:
             polygon.rotate(rotation)
 
-        if not polygon.is_resolved:
+        if not positioned_along:
             polygon.relative_vertices = [RelCoord.coerce(v) for v in vertices]
         polygon.binding = Binding(reference=within)
         self._register_entity(polygon)

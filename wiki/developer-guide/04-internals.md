@@ -33,12 +33,11 @@ Converts relative fractions (0.0-1.0) to absolute pixel coordinates using the en
 
 ### `_resolve_to_absolute()`
 
-**One-way conversion** from relative to absolute mode. Once called, the entity stores concrete pixel values and stops tracking relative coordinates. This is triggered by:
+"Bakes" the entity — converts all relative properties to absolute pixel values and clears the relative state. After baking, the entity no longer reacts to container changes and `entity.is_relative` becomes `False`.
 
-- `rotate(angle, origin=...)` or `scale(factor, origin=...)` with an explicit origin
-- These transforms need concrete positions to orbit/scale around
+The framework never calls this automatically. It exists as an explicit escape hatch for user code that needs fixed pixel values.
 
-The `_is_resolved` flag prevents double-resolution.
+Subclasses override this to bake entity-specific relative properties (e.g., `_relative_vertices` for Polygon, `_relative_end` for Line/Curve).
 
 ### `_resolve_size(fraction, dimension) -> float | None`
 
@@ -50,20 +49,27 @@ Converts a relative size fraction to pixels. For example, `_resolve_size(0.05, 1
 
 ### `_move_to(x, y) -> Entity`
 
-Move the entity to absolute pixel coordinates. **Clears relative tracking** -- sets `_relative_at = None`, `_along_path = None`.
+Move the entity to absolute pixel coordinates. **Clears relative tracking** — sets `_relative_at = None`, `_along_path = None`. An absolute pixel position cannot be back-computed into a fraction (the reference frame may not exist), so setting one is always a mode switch.
 
 ### `_move_by(dx, dy) -> Entity`
 
-Move the entity by a pixel offset. Only works in absolute mode -- raises if the entity is in relative mode.
+Move the entity by a pixel offset. **Preserves what it can express as a delta**:
+
+- **Relative mode**: converts the pixel delta to a fraction adjustment against the reference frame. The entity stays relative.
+- **Along-path mode**: resolves the current path position, applies the offset, and exits to pixel mode. A 2D pixel offset cannot be expressed as a 1D path parameter `t`.
+- **Pixel mode**: shifts `_position` directly.
+
+Subclasses override `_move_by` to shift their geometry in tandem — Line/Curve shift their end fractions, Polygon shifts all vertex fractions.
 
 ### Why these are private
 
 The public API for positioning is:
+
 - `.at = (rx, ry)` for relative positioning
 - `.position = Coord(x, y)` for pixel positioning
 - `move_to_cell(cell, at=)` for moving between cells
 
-The `_move_to` and `_move_by` methods bypass all validation and relative tracking. They exist for internal use by the resolution system and fitting algorithms.
+`_move_to` and `_move_by` are used internally by transforms (`_orbit_around`, `_scale_around`) and fitting algorithms (`fit_within`). Because `_move_by` preserves relative state, orbiting or fitting an entity does not destroy its container-reactive behavior.
 
 ---
 
@@ -174,7 +180,6 @@ Key internal attributes on every entity:
 | `_along_path` | `Pathable \| None` | Path to follow (from `along=`) |
 | `_along_t` | `float` | Parameter on path (0.0-1.0) |
 | `_resolving` | `bool` | Guard against circular reference loops |
-| `_is_resolved` | `bool` | True after `_resolve_to_absolute()` has run |
 | `_rotation` | `float` | Accumulated rotation in degrees |
 | `_scale_factor` | `float` | Accumulated scale multiplier |
 | `_z_index` | `int` | Layer ordering |

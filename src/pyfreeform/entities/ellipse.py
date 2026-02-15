@@ -206,6 +206,13 @@ class Ellipse(Entity):
         self._pixel_ry = float(value)
         self._relative_ry = None
 
+    def _has_relative_properties(self) -> bool:
+        return (
+            super()._has_relative_properties()
+            or self._relative_rx is not None
+            or self._relative_ry is not None
+        )
+
     def _resolve_to_absolute(self) -> None:
         """Resolve relative radii (rx/ry) and position to absolute values."""
         if self._relative_rx is not None:

@@ -27,56 +27,56 @@ from pyfreeform.paths import Wave
 
 
 class TestRotateAccumulates:
-    """rotate(angle) accumulates _rotation without resolving relative to absolute."""
+    """rotate(angle) accumulates _rotation without affecting relative state."""
 
     def test_dot_rotate(self):
         dot = Dot(10, 20, radius=5)
         dot.rotate(45)
         assert dot.rotation == pytest.approx(45.0)
-        assert not dot.is_resolved
+        assert not dot.is_relative
 
     def test_line_rotate(self):
         line = Line(0, 0, 100, 0)
         line.rotate(30)
         assert line.rotation == pytest.approx(30.0)
-        assert not line.is_resolved
+        assert not line.is_relative
 
     def test_curve_rotate(self):
         curve = Curve(0, 0, 100, 0, curvature=0.5)
         curve.rotate(60)
         assert curve.rotation == pytest.approx(60.0)
-        assert not curve.is_resolved
+        assert not curve.is_relative
 
     def test_rect_rotate(self):
         rect = Rect(0, 0, 50, 30, fill="red")
         rect.rotate(90)
         assert rect.rotation == pytest.approx(90.0)
-        assert not rect.is_resolved
+        assert not rect.is_relative
 
     def test_ellipse_rotate(self):
         ellipse = Ellipse(50, 50, 40, 20)
         ellipse.rotate(120)
         assert ellipse.rotation == pytest.approx(120.0)
-        assert not ellipse.is_resolved
+        assert not ellipse.is_relative
 
     def test_polygon_rotate(self):
         poly = Polygon([(0, 0), (100, 0), (50, 80)], fill="blue")
         poly.rotate(45)
         assert poly.rotation == pytest.approx(45.0)
-        assert not poly.is_resolved
+        assert not poly.is_relative
 
     def test_text_rotate(self):
         text = Text(10, 20, "Hello", font_size=16)
         text.rotate(15)
         assert text.rotation == pytest.approx(15.0)
-        assert not text.is_resolved
+        assert not text.is_relative
 
     def test_path_rotate(self):
         wave = Wave(start=Coord(0, 50), end=Coord(200, 50), amplitude=20, frequency=3)
         path = Path(wave, width=2, color="blue")
         path.rotate(45)
         assert path.rotation == pytest.approx(45.0)
-        assert not path.is_resolved
+        assert not path.is_relative
 
     def test_multiple_rotations_compose(self):
         dot = Dot(10, 20)
@@ -97,31 +97,31 @@ class TestRotateAccumulates:
 
 
 class TestScaleAccumulates:
-    """scale(factor) accumulates _scale_factor without resolving relative to absolute."""
+    """scale(factor) accumulates _scale_factor without affecting relative state."""
 
     def test_dot_scale(self):
         dot = Dot(10, 20, radius=5)
         dot.scale(2.0)
         assert dot.scale_factor == pytest.approx(2.0)
-        assert not dot.is_resolved
+        assert not dot.is_relative
 
     def test_line_scale(self):
         line = Line(0, 0, 100, 0)
         line.scale(3.0)
         assert line.scale_factor == pytest.approx(3.0)
-        assert not line.is_resolved
+        assert not line.is_relative
 
     def test_rect_scale(self):
         rect = Rect(0, 0, 50, 30, fill="red")
         rect.scale(0.5)
         assert rect.scale_factor == pytest.approx(0.5)
-        assert not rect.is_resolved
+        assert not rect.is_relative
 
     def test_polygon_scale(self):
         poly = Polygon([(0, 0), (100, 0), (50, 80)], fill="blue")
         poly.scale(2.0)
         assert poly.scale_factor == pytest.approx(2.0)
-        assert not poly.is_resolved
+        assert not poly.is_relative
 
     def test_multiple_scales_compose(self):
         dot = Dot(10, 20)
@@ -131,17 +131,17 @@ class TestScaleAccumulates:
 
 
 # =========================================================================
-# Rotation with origin (orbits position, resolves relative to absolute)
+# Rotation with origin (orbits position, preserves relative state)
 # =========================================================================
 
 
 class TestRotateWithOrigin:
-    """rotate(angle, origin) orbits position and resolves relative to absolute."""
+    """rotate(angle, origin) orbits position and preserves relative state."""
 
     def test_dot_orbit(self):
         dot = Dot(100, 0)
         dot.rotate(90, origin=(0, 0))
-        assert dot.is_resolved
+        assert not dot.is_relative
         assert dot.rotation == pytest.approx(90.0)
         # Position should orbit: (100, 0) → (0, 100) around origin
         assert dot.x == pytest.approx(0.0, abs=0.01)
@@ -150,28 +150,28 @@ class TestRotateWithOrigin:
     def test_line_orbit(self):
         line = Line(0, 0, 100, 0)
         line.rotate(90, origin=(50, 0))
-        assert line.is_resolved
+        assert not line.is_relative
         assert line.rotation == pytest.approx(90.0)
 
     def test_rect_orbit(self):
         rect = Rect(0, 0, 100, 50, fill="red")
         rect.rotate(180, origin=(50, 25))
-        assert rect.is_resolved
+        assert not rect.is_relative
         assert rect.rotation == pytest.approx(180.0)
 
 
 # =========================================================================
-# Scale with origin (orbits position, resolves relative to absolute)
+# Scale with origin (orbits position, preserves relative state)
 # =========================================================================
 
 
 class TestScaleWithOrigin:
-    """scale(factor, origin) shifts position and resolves relative to absolute."""
+    """scale(factor, origin) shifts position and preserves relative state."""
 
     def test_dot_scale_origin(self):
         dot = Dot(100, 0)
         dot.scale(2.0, origin=(0, 0))
-        assert dot.is_resolved
+        assert not dot.is_relative
         assert dot.scale_factor == pytest.approx(2.0)
         # Position should move: (100, 0) → (200, 0)
         assert dot.x == pytest.approx(200.0, abs=0.01)
@@ -331,7 +331,7 @@ class TestSVGTransform:
         dot.scale(2.0)
         svg = dot.to_svg()
         assert 'transform="translate(' in svg
-        assert "scale(2.0)" in svg
+        assert "scale(2)" in svg
 
     def test_rotation_and_scale(self):
         line = Line(0, 0, 100, 0)

@@ -147,7 +147,7 @@ class Polygon(Entity):
 
     def _calculate_centroid(self) -> Coord:
         """Calculate the centroid (center of mass) of the polygon."""
-        resolved = [self._resolve_vertex(s) for s in self._vertex_specs]
+        resolved = self.vertices
         x = sum(v.x for v in resolved) / len(resolved)
         y = sum(v.y for v in resolved) / len(resolved)
         return Coord(x, y)
@@ -164,6 +164,9 @@ class Polygon(Entity):
                     for rx, ry in self._relative_vertices
                 ]
         return [self._resolve_vertex(s) for s in self._vertex_specs]
+
+    def _has_relative_properties(self) -> bool:
+        return super()._has_relative_properties() or self._relative_vertices is not None
 
     def _resolve_to_absolute(self) -> None:
         """Resolve relative vertices and position to absolute coordinates."""
@@ -217,10 +220,12 @@ class Polygon(Entity):
 
     def _move_by(self, dx: float = 0, dy: float = 0) -> Polygon:
         """
-        Move the polygon by an offset, updating static vertices.
+        Move the polygon by an offset, updating vertices.
 
-        Only static (Coord) vertices are translated. Entity-reference vertices
-        follow their entity and are not affected by polygon transforms.
+        In relative mode, converts the pixel offset to fraction adjustments
+        on ``_relative_vertices``.  In pixel mode, translates static (Coord)
+        vertices directly.  Entity-reference vertices follow their entity
+        and are not affected.
 
         Args:
             dx: Horizontal offset.
@@ -230,7 +235,17 @@ class Polygon(Entity):
             self, for method chaining.
         """
         if self._relative_vertices is not None:
-            self._resolve_to_absolute()
+            ref = self._reference or self._cell
+            if ref is not None:
+                _, _, ref_w, ref_h = ref.ref_frame()
+                drx = dx / ref_w if ref_w > 0 else 0
+                dry = dy / ref_h if ref_h > 0 else 0
+                self._relative_vertices = [
+                    RelCoord(v.rx + drx, v.ry + dry)
+                    for v in self._relative_vertices
+                ]
+                return self
+        # Pixel mode: shift vertex specs directly
         new_specs = []
         for spec in self._vertex_specs:
             if isinstance(spec, Coord):

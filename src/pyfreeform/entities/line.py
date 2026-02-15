@@ -165,6 +165,9 @@ class Line(Entity):
         self._end_offset = value - self.position
         self._relative_end = None
 
+    def _has_relative_properties(self) -> bool:
+        return super()._has_relative_properties() or self._relative_end is not None
+
     def _resolve_to_absolute(self) -> None:
         """Resolve relative start/end positions to absolute coordinates."""
         if (

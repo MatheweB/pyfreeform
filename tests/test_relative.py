@@ -5,6 +5,8 @@ Covers:
 - Multi-pass: reading and writing .at property
 - Reactive positioning: entities auto-update when references move
 - Circular reference detection
+- is_relative property (computed from relative state)
+- Orbit/scale preserving relative state
 """
 
 import sys
@@ -198,18 +200,18 @@ class TestWithinPolygon:
             "Rotated polygon bounds should differ from unrotated"
         )
 
-    def test_is_resolved_not_set_by_rotation(self):
-        """Non-destructive rotation does NOT resolve relative to absolute."""
+    def test_rotation_preserves_relative_state(self):
+        """Non-destructive rotation preserves relative vertices."""
         scene, cell = _scene_with_cell(100)
         tri_verts = [(0.3, 0.3), (0.7, 0.3), (0.5, 0.7)]
 
         plain = cell.add_polygon(tri_verts, fill="red")
-        assert not plain.is_resolved
+        assert plain.is_relative
         assert plain.relative_vertices is not None
 
         rotated = cell.add_polygon(tri_verts, fill="blue", rotation=45)
-        # Non-destructive: relative_vertices preserved, not resolved
-        assert not rotated.is_resolved
+        # Non-destructive: relative_vertices preserved
+        assert rotated.is_relative
         assert rotated.relative_vertices is not None
         assert rotated.rotation == pytest.approx(45.0)
 
@@ -338,3 +340,99 @@ class TestModeSwitching:
         assert dot.at is not None
         dot.position = Coord(10, 10)
         assert dot.at is None
+
+
+# =========================================================================
+# is_relative computed property
+# =========================================================================
+
+
+class TestIsRelative:
+    """is_relative is a computed property based on relative state."""
+
+    def test_pixel_dot_is_not_relative(self):
+        """Dot constructed with pixels has no relative state."""
+        from pyfreeform.entities.dot import Dot
+
+        dot = Dot(10, 20, radius=5)
+        assert not dot.is_relative
+
+    def test_relative_dot_is_relative(self):
+        """Dot added to cell has relative state."""
+        scene, cell = _scene_with_cell(100)
+        dot = cell.add_dot(at=(0.5, 0.5), color="red")
+        assert dot.is_relative
+
+    def test_resolve_to_absolute_clears_relative_state(self):
+        """Calling _resolve_to_absolute() removes relative state."""
+        scene, cell = _scene_with_cell(100)
+        dot = cell.add_dot(at=(0.5, 0.5), color="red")
+        assert dot.is_relative
+        dot._resolve_to_absolute()
+        assert not dot.is_relative
+
+    def test_mixed_mode(self):
+        """Setting one property to pixels keeps entity relative if others remain."""
+        scene, cell = _scene_with_cell(100)
+        dot = cell.add_dot(at=(0.5, 0.5), color="red")
+        assert dot.is_relative
+        # Fix radius to pixels, but position stays relative
+        dot.radius = 10
+        assert dot.is_relative  # position is still relative
+        assert dot.relative_radius is None
+
+    def test_clearing_all_relative_makes_non_relative(self):
+        """Setting all properties to pixels makes entity non-relative."""
+        scene, cell = _scene_with_cell(100)
+        dot = cell.add_dot(at=(0.5, 0.5), color="red")
+        assert dot.is_relative
+        dot.radius = 10
+        dot.position = Coord(50, 50)
+        assert not dot.is_relative
+
+
+# =========================================================================
+# Orbit/scale preserves relative state
+# =========================================================================
+
+
+class TestOrbitPreservesRelative:
+    """rotate(angle, origin) and scale(factor, origin) preserve relative state."""
+
+    def test_orbit_preserves_relative_dot(self):
+        scene, cell = _scene_with_cell(100)
+        dot = cell.add_dot(at=(0.5, 0.5), color="red")
+        original_at = dot.at
+        dot.rotate(90, origin=(50, 50))
+        # Relative state preserved — at is shifted, not destroyed
+        assert dot.is_relative
+        assert dot.at is not None
+
+    def test_scale_preserves_relative_dot(self):
+        scene, cell = _scene_with_cell(100)
+        dot = cell.add_dot(at=(0.5, 0.5), color="red")
+        dot.scale(2.0, origin=(50, 50))
+        assert dot.is_relative
+        assert dot.at is not None
+
+
+# =========================================================================
+# Polygon _move_by preserves relative vertices
+# =========================================================================
+
+
+class TestPolygonMoveByRelative:
+    """Polygon._move_by() shifts relative vertex fractions."""
+
+    def test_move_by_keeps_relative_vertices(self):
+        scene, cell = _scene_with_cell(100)
+        tri = cell.add_polygon([(0.3, 0.3), (0.7, 0.3), (0.5, 0.7)], fill="red")
+        assert tri.relative_vertices is not None
+        tri._move_by(10, 0)
+        # Relative vertices should be shifted, not baked
+        assert tri.relative_vertices is not None
+        assert tri.is_relative
+        # Fractions shifted by 10/100 = 0.1
+        assert abs(tri.relative_vertices[0].rx - 0.4) < 0.01
+        assert abs(tri.relative_vertices[1].rx - 0.8) < 0.01
+        assert abs(tri.relative_vertices[2].rx - 0.6) < 0.01
