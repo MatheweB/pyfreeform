@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 from abc import ABC, abstractmethod
+from collections.abc import Collection
 from typing import TYPE_CHECKING, Any
 
 from ..color import ColorLike
@@ -244,9 +245,9 @@ class Entity(ABC):
         self._cell = value
 
     @property
-    def connections(self) -> set[Connection]:
-        """Connections involving this entity (insertion-ordered internally)."""
-        return set(self._connections)
+    def connections(self) -> Collection[Connection]:
+        """Connections involving this entity (insertion-ordered)."""
+        return self._connections.keys()
 
     @property
     def data(self) -> dict[str, Any]:

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import itertools
+from collections.abc import Collection
 from typing import TYPE_CHECKING, Any, Literal
 
 from ..color import ColorLike, apply_brightness
@@ -212,9 +213,9 @@ class Surface:
         self._connections.pop(connection, None)
 
     @property
-    def connections(self) -> set[Connection]:
-        """Connections where this surface is an endpoint."""
-        return set(self._connections)
+    def connections(self) -> Collection[Connection]:
+        """Connections where this surface is an endpoint (insertion-ordered)."""
+        return self._connections.keys()
 
     def connect(
         self,

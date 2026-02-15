@@ -5,9 +5,9 @@
   <line x1="50" y1="150" x2="50" y2="50" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
   <line x1="150" y1="50" x2="150" y2="150" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
   <line x1="150" y1="150" x2="50" y2="150" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
-  <line x1="230" y1="50" x2="330" y2="50" stroke="#3d3d5c" stroke-width="1" stroke-linecap="round" opacity="0.3" />
-  <line x1="230" y1="150" x2="230" y2="50" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
   <line x1="230" y1="50" x2="313.5" y2="66.5" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+  <line x1="230" y1="150" x2="230" y2="50" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+  <line x1="230" y1="50" x2="330" y2="50" stroke="#3d3d5c" stroke-width="1" stroke-linecap="round" opacity="0.3" />
   <line x1="313.5" y1="66.5" x2="330" y2="150" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
   <line x1="330" y1="150" x2="230" y2="150" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
   <line x1="330" y1="50" x2="330" y2="150" stroke="#3d3d5c" stroke-width="1" stroke-linecap="round" opacity="0.3" />
@@ -15,14 +15,14 @@
   <line x1="410" y1="150" x2="410" y2="50" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
   <line x1="410" y1="50" x2="510" y2="50" stroke="#3d3d5c" stroke-width="1" stroke-linecap="round" opacity="0.3" />
   <line x1="477" y1="83" x2="510" y2="150" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
-  <line x1="510" y1="50" x2="510" y2="150" stroke="#3d3d5c" stroke-width="1" stroke-linecap="round" opacity="0.3" />
   <line x1="510" y1="150" x2="410" y2="150" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
-  <line x1="590" y1="50" x2="690" y2="50" stroke="#3d3d5c" stroke-width="1" stroke-linecap="round" opacity="0.3" />
-  <line x1="590" y1="150" x2="590" y2="50" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+  <line x1="510" y1="50" x2="510" y2="150" stroke="#3d3d5c" stroke-width="1" stroke-linecap="round" opacity="0.3" />
   <line x1="590" y1="50" x2="640" y2="100" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+  <line x1="590" y1="150" x2="590" y2="50" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+  <line x1="590" y1="50" x2="690" y2="50" stroke="#3d3d5c" stroke-width="1" stroke-linecap="round" opacity="0.3" />
   <line x1="640" y1="100" x2="690" y2="150" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
-  <line x1="690" y1="50" x2="690" y2="150" stroke="#3d3d5c" stroke-width="1" stroke-linecap="round" opacity="0.3" />
   <line x1="690" y1="150" x2="590" y2="150" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+  <line x1="690" y1="50" x2="690" y2="150" stroke="#3d3d5c" stroke-width="1" stroke-linecap="round" opacity="0.3" />
   <circle cx="50" cy="50" r="6" fill="#ff6b6b" />
   <circle cx="150" cy="50" r="6" fill="#ff6b6b" />
   <circle cx="150" cy="150" r="6" fill="#ff6b6b" />

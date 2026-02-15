@@ -5,8 +5,8 @@
   <path d="M 220 45 C 260.833 66.6667 294.167 96.6667 320 135" fill="none" stroke="#666688" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.6" />
   <path d="M 120 135 C 96.6667 165 80 198.333 70 235" fill="none" stroke="#666688" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.6" />
   <path d="M 120 135 C 143.333 165 160 198.333 170 235" fill="none" stroke="#666688" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.6" />
-  <path d="M 320 135 C 343.333 165 360 198.333 370 235" fill="none" stroke="#666688" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.6" />
   <path d="M 320 135 C 296.667 165 280 198.333 270 235" fill="none" stroke="#666688" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.6" />
+  <path d="M 320 135 C 343.333 165 360 198.333 370 235" fill="none" stroke="#666688" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.6" />
   <circle cx="220" cy="45" r="10" fill="#ffe66d" />
   <circle cx="120" cy="135" r="8" fill="#ff6b6b" />
   <circle cx="320" cy="135" r="8" fill="#ff6b6b" />
