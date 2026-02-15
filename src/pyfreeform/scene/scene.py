@@ -367,7 +367,7 @@ class Scene(Surface):
             result.append(conn)
         # Auto-collect from all entities in the scene
         for entity in self.entities:
-            for conn in entity._connections:
+            for conn in entity.connections:
                 cid = id(conn)
                 if cid not in seen:
                     seen.add(cid)
@@ -375,7 +375,7 @@ class Scene(Surface):
         # Auto-collect from grid cells
         for grid in self._grids:
             for cell in grid:
-                for conn in cell._connections:
+                for conn in cell.connections:
                     cid = id(conn)
                     if cid not in seen:
                         seen.add(cid)

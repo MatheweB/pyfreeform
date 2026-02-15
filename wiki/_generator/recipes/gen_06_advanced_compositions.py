@@ -8,7 +8,7 @@ from pyfreeform import (
     Dot,
     Line,
     Ellipse,
-    ConnectionStyle,
+    PathStyle,
 )
 
 from wiki._generator import save, sample_image
@@ -142,7 +142,7 @@ def generate():
             )
             dots[(cell.row, cell.col)] = dot
 
-    conn_style = ConnectionStyle(width=0.4, color="#ffffff", opacity=0.15)
+    conn_style = PathStyle(width=0.4, color="#ffffff", opacity=0.15)
     for (r, c), dot in dots.items():
         for dr, dc in [(0, 1), (1, 0)]:
             key = (r + dr, c + dc)

@@ -110,7 +110,7 @@ cell.add_ellipse(
 Two standalone functions for working with brightness outside builders:
 
 ```python
-from pyfreeform import apply_brightness, gray
+from pyfreeform.color import apply_brightness, gray
 
 apply_brightness("coral", 0.5)  # Half-bright coral → "#7f3f28"
 apply_brightness("white", 0.0)  # Pure black → "#000000"
@@ -127,11 +127,11 @@ gray(1.0)                       # White → "#ffffff"
 Instead of repeating parameters, define a **style object** once and reuse it:
 
 ```python
-from pyfreeform import DotStyle, LineStyle, ShapeStyle
+from pyfreeform import FillStyle, PathStyle, ShapeStyle
 
-dot_small = DotStyle(color="coral", opacity=0.6)
-dot_large = DotStyle(color="gold", opacity=0.9)
-line_thin = LineStyle(width=1, color="#666688", opacity=0.4)
+dot_small = FillStyle(color="coral", opacity=0.6)
+dot_large = FillStyle(color="gold", opacity=0.9)
+line_thin = PathStyle(width=1, color="#666688", opacity=0.4)
 shape_hex = ShapeStyle(color="teal", opacity=0.5)
 
 for cell in scene.grid:
@@ -148,23 +148,20 @@ for cell in scene.grid:
 
 | Class | For Methods | Key Fields |
 |---|---|---|
-| `DotStyle` | `add_dot()` | `color`, `opacity`, `color_brightness` |
-| `LineStyle` | `add_line()`, `add_diagonal()`, `add_curve()`, `add_path()` | `width`, `color`, `cap`, `start_cap`, `end_cap`, `color_brightness` |
-| `FillStyle` | `add_fill()` | `color`, `opacity`, `color_brightness` |
+| `FillStyle` | `add_dot()`, `add_fill()` | `color`, `opacity`, `color_brightness` |
+| `PathStyle` | `add_line()`, `add_diagonal()`, `add_curve()`, `add_path()`, `Connection` | `width`, `color`, `cap`, `start_cap`, `end_cap`, `color_brightness` |
 | `BorderStyle` | `add_border()` | `width`, `color`, `opacity`, `color_brightness` |
 | `ShapeStyle` | `add_ellipse()`, `add_polygon()`, `add_rect()` | `color` (→ fill), `stroke`, `stroke_width`, `fill_brightness`, `stroke_brightness` |
 | `TextStyle` | `add_text()` | `color`, `font_family`, `bold`, `italic`, `color_brightness` |
-| `ConnectionStyle` | `Connection` | `width`, `color`, `cap`, `color_brightness` |
 
-### Builder Methods
-
-Styles are immutable. Use `.with_*()` to create modified copies:
+Styles are dataclasses. Use `dataclasses.replace()` to create modified copies:
 
 ```python
-base = LineStyle(width=2, color="coral")
-thick = base.with_width(4)                    # New style, width=4
-arrow = base.with_end_cap("arrow")            # New style, with arrow cap
-dim = base.with_color_brightness(0.5)         # Half-bright coral
+from dataclasses import replace
+
+base = PathStyle(width=2, color="coral")
+thick = replace(base, width=4)                # New style, width=4
+arrow = replace(base, end_cap="arrow")        # New style, with arrow cap
 ```
 
 ---
@@ -254,7 +251,7 @@ my_palette = Palette(
 )
 ```
 
-Utilities: `colors.with_background("#000")`, `colors.inverted()`, `colors.all_colors()`.
+Modify palettes with `dataclasses.replace()`: `replace(colors, background="#000")`.
 
 ---
 

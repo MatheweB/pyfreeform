@@ -7,14 +7,14 @@ Connections are live links between connectable objects — entities and surfaces
 Create two entities and connect them:
 
 ```python
-from pyfreeform import Scene, Dot, ConnectionStyle
+from pyfreeform import Scene, Dot, PathStyle
 
 scene = Scene(300, 100, background="#1a1a2e")
 dot1 = Dot(50, 50, radius=10, color="#ff6b6b")
 dot2 = Dot(250, 50, radius=10, color="#4ecdc4")
 scene.place(dot1, dot2)
 
-dot1.connect(dot2, style=ConnectionStyle(width=2, color="#666688"))
+dot1.connect(dot2, style=PathStyle(width=2, color="#666688"))
 ```
 
 !!! note "Auto-collection"
@@ -231,10 +231,10 @@ Control line endings with cap styles. Use `cap` for both ends, or `start_cap`/`e
 
 ```python
 # Arrow on the end only
-arrow_style = ConnectionStyle(width=2, color="coral", end_cap="arrow")
+arrow_style = PathStyle(width=2, color="coral", end_cap="arrow")
 
 # Arrows on both ends
-bidirectional = ConnectionStyle(width=2, color="coral", start_cap="arrow", end_cap="arrow")
+bidirectional = PathStyle(width=2, color="coral", start_cap="arrow", end_cap="arrow")
 ```
 
 <figure markdown>
@@ -350,7 +350,7 @@ for i, d1 in enumerate(dots):
                           d1.position.y - d2.position.y)
         if dist < 130:
             opacity = 0.5 * (1 - dist / 130)
-            conn = d1.connect(d2, style=ConnectionStyle(
+            conn = d1.connect(d2, style=PathStyle(
                 width=0.4 + (1 - dist / 130) * 1.2,
                 color="#a78bfa", opacity=opacity,
             ))
@@ -391,7 +391,7 @@ for i, d1 in enumerate(dots):
             curv = 0.3 * math.sin(angle * 3 + i * 0.5)  # (1)!
             opacity = 0.5 * (1 - dist / 130)
             d1.connect(d2, curvature=curv,
-                       style=ConnectionStyle(
+                       style=PathStyle(
                            width=0.4 + (1 - dist / 130) * 1.2,
                            color="#a78bfa", opacity=opacity))
 ```
@@ -428,7 +428,7 @@ for level, pts in enumerate(positions):
         level_nodes.append(d)
     nodes.append(level_nodes)
 
-style = ConnectionStyle(width=2, color="#666688", opacity=0.6)
+style = PathStyle(width=2, color="#666688", opacity=0.6)
 
 # Root → children
 for child in nodes[1]:

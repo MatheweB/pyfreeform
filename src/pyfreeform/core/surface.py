@@ -17,10 +17,8 @@ if TYPE_CHECKING:
     from ..config.caps import CapName
     from ..config.styles import (
         BorderStyle,
-        ConnectionStyle,
-        DotStyle,
         FillStyle,
-        LineStyle,
+        PathStyle,
         ShapeStyle,
         TextStyle,
     )
@@ -235,7 +233,7 @@ class Surface:
         end_cap: CapName | None = None,
         opacity: float = 1.0,
         color_brightness: float | None = None,
-        style: ConnectionStyle | None = None,
+        style: PathStyle | None = None,
         segments: int = 32,
     ) -> Connection:
         """
@@ -256,7 +254,7 @@ class Surface:
             end_cap: Override cap for end end (e.g. "arrow").
             opacity: Opacity (0.0 transparent to 1.0 opaque).
             color_brightness: Brightness multiplier 0.0 (black) to 1.0 (unchanged).
-            style: ConnectionStyle object (overrides individual params).
+            style: PathStyle object (overrides individual params).
             segments: Number of Bezier segments for path rendering.
 
         Returns:
@@ -360,6 +358,88 @@ class Surface:
         return Coord(ref_x + rc.rx * ref_w, ref_y + rc.ry * ref_h), rc
 
     # =========================================================================
+    # STYLE UNPACKING HELPERS
+    # =========================================================================
+
+    def _unpack_fill_style(
+        self,
+        style: FillStyle | None,
+        color: ColorLike,
+        z_index: int,
+        opacity: float,
+        color_brightness: float | None,
+    ) -> tuple[ColorLike, int, float]:
+        """Unpack FillStyle and apply brightness."""
+        if style:
+            color = style.color
+            z_index = style.z_index
+            opacity = style.opacity
+            if style.color_brightness is not None:
+                color_brightness = style.color_brightness
+        if color_brightness is not None:
+            color = apply_brightness(color, color_brightness)
+        return color, z_index, opacity
+
+    def _unpack_path_style(
+        self,
+        style: PathStyle | None,
+        width: float,
+        color: ColorLike,
+        z_index: int,
+        cap: CapName,
+        start_cap: CapName | None,
+        end_cap: CapName | None,
+        opacity: float,
+        color_brightness: float | None,
+    ) -> tuple[float, ColorLike, int, CapName, CapName | None, CapName | None, float]:
+        """Unpack PathStyle and apply brightness."""
+        if style:
+            width = style.width
+            color = style.color
+            z_index = style.z_index
+            cap = style.cap
+            start_cap = style.start_cap
+            end_cap = style.end_cap
+            opacity = style.opacity
+            if style.color_brightness is not None:
+                color_brightness = style.color_brightness
+        if color_brightness is not None:
+            color = apply_brightness(color, color_brightness)
+        return width, color, z_index, cap, start_cap, end_cap, opacity
+
+    def _unpack_shape_style(
+        self,
+        style: ShapeStyle | None,
+        fill: ColorLike | None,
+        stroke: ColorLike | None,
+        stroke_width: float,
+        z_index: int,
+        opacity: float,
+        fill_opacity: float | None,
+        stroke_opacity: float | None,
+        fill_brightness: float | None,
+        stroke_brightness: float | None,
+    ) -> tuple[ColorLike | None, ColorLike | None, float, int, float, float | None, float | None]:
+        """Unpack ShapeStyle and apply brightness."""
+        if style:
+            fill = style.color
+            stroke = style.stroke
+            stroke_width = style.stroke_width
+            z_index = style.z_index
+            opacity = style.opacity
+            fill_opacity = style.fill_opacity
+            stroke_opacity = style.stroke_opacity
+            if style.fill_brightness is not None:
+                fill_brightness = style.fill_brightness
+            if style.stroke_brightness is not None:
+                stroke_brightness = style.stroke_brightness
+        if fill_brightness is not None and fill is not None:
+            fill = apply_brightness(fill, fill_brightness)
+        if stroke_brightness is not None and stroke is not None:
+            stroke = apply_brightness(stroke, stroke_brightness)
+        return fill, stroke, stroke_width, z_index, opacity, fill_opacity, stroke_opacity
+
+    # =========================================================================
     # BUILDER METHODS
     # =========================================================================
 
@@ -375,7 +455,7 @@ class Surface:
         z_index: int = 0,
         opacity: float = 1.0,
         color_brightness: float | None = None,
-        style: DotStyle | None = None,
+        style: FillStyle | None = None,
     ) -> Dot:
         """
         Add a dot to this surface.
@@ -391,7 +471,7 @@ class Surface:
             z_index: Layer order (higher = on top).
             opacity: Opacity (0.0 transparent to 1.0 opaque).
             color_brightness: Brightness multiplier 0.0 (black) to 1.0 (unchanged).
-            style: DotStyle object (overrides individual params).
+            style: FillStyle object (overrides individual params).
 
         Returns:
             The created Dot entity.
@@ -407,15 +487,9 @@ class Surface:
         """
         from ..entities.dot import Dot
 
-        if style:
-            color = style.color
-            z_index = style.z_index
-            opacity = style.opacity
-            if style.color_brightness is not None:
-                color_brightness = style.color_brightness
-
-        if color_brightness is not None:
-            color = apply_brightness(color, color_brightness)
+        color, z_index, opacity = self._unpack_fill_style(
+            style, color, z_index, opacity, color_brightness,
+        )
 
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
         ref_min = min(ref_w, ref_h)
@@ -465,7 +539,7 @@ class Surface:
         end_cap: CapName | None = None,
         opacity: float = 1.0,
         color_brightness: float | None = None,
-        style: LineStyle | None = None,
+        style: PathStyle | None = None,
     ) -> Line:
         """
         Add a line to this surface.
@@ -487,7 +561,7 @@ class Surface:
             start_cap: Override cap for start end only
             end_cap: Override cap for end end only
             color_brightness: Brightness multiplier 0.0 (black) to 1.0 (unchanged).
-            style: LineStyle object (overrides individual params)
+            style: PathStyle object (overrides individual params)
 
         Returns:
             The created Line entity.
@@ -503,19 +577,9 @@ class Surface:
         """
         from ..entities.line import Line
 
-        if style:
-            width = style.width
-            color = style.color
-            z_index = style.z_index
-            cap = style.cap
-            start_cap = style.start_cap
-            end_cap = style.end_cap
-            opacity = style.opacity
-            if style.color_brightness is not None:
-                color_brightness = style.color_brightness
-
-        if color_brightness is not None:
-            color = apply_brightness(color, color_brightness)
+        width, color, z_index, cap, start_cap, end_cap, opacity = self._unpack_path_style(
+            style, width, color, z_index, cap, start_cap, end_cap, opacity, color_brightness,
+        )
 
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
         if isinstance(start, str):
@@ -581,7 +645,7 @@ class Surface:
         end_cap: CapName | None = None,
         opacity: float = 1.0,
         color_brightness: float | None = None,
-        style: LineStyle | None = None,
+        style: PathStyle | None = None,
     ) -> Line:
         """
         Add a diagonal line across this surface.
@@ -601,7 +665,7 @@ class Surface:
             start_cap: Override cap for start end only
             end_cap: Override cap for end end only
             color_brightness: Brightness multiplier 0.0 (black) to 1.0 (unchanged).
-            style: LineStyle object
+            style: PathStyle object
 
         Returns:
             The created Line entity.
@@ -649,7 +713,7 @@ class Surface:
         end_cap: CapName | None = None,
         opacity: float = 1.0,
         color_brightness: float | None = None,
-        style: LineStyle | None = None,
+        style: PathStyle | None = None,
     ) -> Curve:
         """
         Add a smooth curve between two points.
@@ -676,7 +740,7 @@ class Surface:
             start_cap: Override cap for start end only
             end_cap: Override cap for end end only
             color_brightness: Brightness multiplier 0.0 (black) to 1.0 (unchanged).
-            style: LineStyle object (overrides width/color/z_index/cap)
+            style: PathStyle object (overrides width/color/z_index/cap)
 
         Returns:
             The created Curve entity.
@@ -690,19 +754,9 @@ class Surface:
         """
         from ..entities.curve import Curve
 
-        if style:
-            width = style.width
-            color = style.color
-            z_index = style.z_index
-            cap = style.cap
-            start_cap = style.start_cap
-            end_cap = style.end_cap
-            opacity = style.opacity
-            if style.color_brightness is not None:
-                color_brightness = style.color_brightness
-
-        if color_brightness is not None:
-            color = apply_brightness(color, color_brightness)
+        width, color, z_index, cap, start_cap, end_cap, opacity = self._unpack_path_style(
+            style, width, color, z_index, cap, start_cap, end_cap, opacity, color_brightness,
+        )
 
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
         if isinstance(start, str):
@@ -771,7 +825,7 @@ class Surface:
         opacity: float = 1.0,
         fill_opacity: float | None = None,
         stroke_opacity: float | None = None,
-        style: LineStyle | None = None,
+        style: PathStyle | None = None,
     ) -> Path:
         """
         Add a smooth path rendered from any Pathable.
@@ -800,7 +854,7 @@ class Surface:
             opacity: Overall opacity.
             fill_opacity: Override fill opacity.
             stroke_opacity: Override stroke opacity.
-            style: LineStyle object (overrides width/color/z_index/cap).
+            style: PathStyle object (overrides width/color/z_index/cap).
 
         Returns:
             The created Path entity.
@@ -816,14 +870,9 @@ class Surface:
         """
         from ..entities.path import Path
 
-        if style:
-            width = style.width
-            color = style.color
-            z_index = style.z_index
-            cap = style.cap
-            start_cap = style.start_cap
-            end_cap = style.end_cap
-            opacity = style.opacity
+        width, color, z_index, cap, start_cap, end_cap, opacity = self._unpack_path_style(
+            style, width, color, z_index, cap, start_cap, end_cap, opacity, None,
+        )
 
         path = Path(
             pathable,
@@ -903,23 +952,12 @@ class Surface:
         """
         from ..entities.ellipse import Ellipse
 
-        if style:
-            fill = style.color
-            stroke = style.stroke
-            stroke_width = style.stroke_width
-            z_index = style.z_index
-            opacity = style.opacity
-            fill_opacity = style.fill_opacity
-            stroke_opacity = style.stroke_opacity
-            if style.fill_brightness is not None:
-                fill_brightness = style.fill_brightness
-            if style.stroke_brightness is not None:
-                stroke_brightness = style.stroke_brightness
-
-        if fill_brightness is not None and fill is not None:
-            fill = apply_brightness(fill, fill_brightness)
-        if stroke_brightness is not None and stroke is not None:
-            stroke = apply_brightness(stroke, stroke_brightness)
+        fill, stroke, stroke_width, z_index, opacity, fill_opacity, stroke_opacity = (
+            self._unpack_shape_style(
+                style, fill, stroke, stroke_width, z_index, opacity,
+                fill_opacity, stroke_opacity, fill_brightness, stroke_brightness,
+            )
+        )
 
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
 
@@ -1019,23 +1057,12 @@ class Surface:
         """
         from ..entities.polygon import Polygon
 
-        if style:
-            fill = style.color
-            stroke = style.stroke
-            stroke_width = style.stroke_width
-            z_index = style.z_index
-            opacity = style.opacity
-            fill_opacity = style.fill_opacity
-            stroke_opacity = style.stroke_opacity
-            if style.fill_brightness is not None:
-                fill_brightness = style.fill_brightness
-            if style.stroke_brightness is not None:
-                stroke_brightness = style.stroke_brightness
-
-        if fill_brightness is not None and fill is not None:
-            fill = apply_brightness(fill, fill_brightness)
-        if stroke_brightness is not None and stroke is not None:
-            stroke = apply_brightness(stroke, stroke_brightness)
+        fill, stroke, stroke_width, z_index, opacity, fill_opacity, stroke_opacity = (
+            self._unpack_shape_style(
+                style, fill, stroke, stroke_width, z_index, opacity,
+                fill_opacity, stroke_opacity, fill_brightness, stroke_brightness,
+            )
+        )
 
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
         absolute_vertices = [Coord(ref_x + v[0] * ref_w, ref_y + v[1] * ref_h) for v in vertices]
@@ -1255,8 +1282,8 @@ class Surface:
         if is_textpath and (along is not None):
             if not isinstance(along, FullPathable):
                 raise TypeError(
-                    f"Text warping requires a FullPathable (with to_svg_path_d()), "
-                    f"but {type(along).__name__} does not implement it."
+                    f"Text warping requires to_svg_path_d() and arc_length(), "
+                    f"but {type(along).__name__} only provides point_at()."
                 )
             _textpath_counter = getattr(self, "_textpath_counter", None)
             if _textpath_counter is None:
@@ -1343,23 +1370,12 @@ class Surface:
         """
         from ..entities.rect import Rect
 
-        if style:
-            fill = style.color
-            stroke = style.stroke
-            stroke_width = style.stroke_width
-            z_index = style.z_index
-            opacity = style.opacity
-            fill_opacity = style.fill_opacity
-            stroke_opacity = style.stroke_opacity
-            if style.fill_brightness is not None:
-                fill_brightness = style.fill_brightness
-            if style.stroke_brightness is not None:
-                stroke_brightness = style.stroke_brightness
-
-        if fill_brightness is not None and fill is not None:
-            fill = apply_brightness(fill, fill_brightness)
-        if stroke_brightness is not None and stroke is not None:
-            stroke = apply_brightness(stroke, stroke_brightness)
+        fill, stroke, stroke_width, z_index, opacity, fill_opacity, stroke_opacity = (
+            self._unpack_shape_style(
+                style, fill, stroke, stroke_width, z_index, opacity,
+                fill_opacity, stroke_opacity, fill_brightness, stroke_brightness,
+            )
+        )
 
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
 
@@ -1437,15 +1453,9 @@ class Surface:
         """
         from ..entities.rect import Rect
 
-        if style:
-            color = style.color
-            opacity = style.opacity
-            z_index = style.z_index
-            if style.color_brightness is not None:
-                color_brightness = style.color_brightness
-
-        if color_brightness is not None:
-            color = apply_brightness(color, color_brightness)
+        color, z_index, opacity = self._unpack_fill_style(
+            style, color, z_index, opacity, color_brightness,
+        )
 
         rect = Rect(
             self._x,

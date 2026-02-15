@@ -364,7 +364,7 @@ class TestIsRelative:
         assert dot.is_relative
 
     def test_resolve_to_absolute_clears_relative_state(self):
-        """Calling _resolve_to_absolute() removes relative state."""
+        """Calling resolve_to_absolute() removes relative state."""
         scene, cell = _scene_with_cell(100)
         dot = cell.add_dot(at=(0.5, 0.5), color="red")
         assert dot.is_relative
@@ -417,7 +417,7 @@ class TestOrbitPreservesRelative:
 
 
 # =========================================================================
-# Polygon _move_by preserves relative vertices
+# Polygon move_by preserves relative vertices
 # =========================================================================
 
 

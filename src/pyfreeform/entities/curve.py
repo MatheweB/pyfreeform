@@ -4,17 +4,14 @@ from __future__ import annotations
 
 import math
 
-from ..color import Color, apply_brightness
-from ..core.bezier import curvature_control_point, quadratic_to_cubic
+from ..core.bezier import curvature_control_point, quadratic_to_cubic, sample_arc_length
 from ..core.coord import Coord, CoordLike
-from ..core.relcoord import RelCoord
-from ..config.caps import CapName, collect_markers, svg_cap_and_marker_attrs
-from ..core.entity import Entity
-from ..core.bezier import sample_arc_length
+from ..config.caps import CapName, svg_cap_and_marker_attrs
 from ..core.svg_utils import opacity_attr, stroke_attrs
+from .endpoint_entity import EndpointEntity
 
 
-class Curve(Entity):
+class Curve(EndpointEntity):
     """
     A quadratic Bezier curve between two points.
 
@@ -92,37 +89,15 @@ class Curve(Entity):
             opacity: Opacity (0.0 transparent to 1.0 opaque).
             color_brightness: Brightness multiplier 0.0 (black) to 1.0 (unchanged).
         """
-        super().__init__(x1, y1, z_index)
+        super().__init__(
+            x1, y1, z_index,
+            width=width, color=color, cap=cap,
+            start_cap=start_cap, end_cap=end_cap,
+            opacity=opacity, color_brightness=color_brightness,
+        )
         self._end = Coord(x2, y2)
-        self._relative_end: RelCoord | None = None
         self._curvature = float(curvature)
-        self.width = float(width)
-        if color_brightness is not None:
-            color = apply_brightness(color, color_brightness)
-        self._color = Color(color)
-        self.cap = cap
-        self.start_cap = start_cap
-        self.end_cap = end_cap
-        self.opacity = float(opacity)
         self._control: Coord | None = None  # Calculated lazily
-
-    @property
-    def relative_start(self) -> RelCoord | None:
-        """Relative start position (fraction of reference frame), or None."""
-        return self._relative_at
-
-    @relative_start.setter
-    def relative_start(self, value: RelCoord | None) -> None:
-        self._relative_at = value
-
-    @property
-    def relative_end(self) -> RelCoord | None:
-        """Relative end position (fraction of reference frame), or None."""
-        return self._relative_end
-
-    @relative_end.setter
-    def relative_end(self, value: RelCoord | None) -> None:
-        self._relative_end = value
 
     @classmethod
     def from_points(
@@ -159,11 +134,6 @@ class Curve(Entity):
         )
 
     @property
-    def start(self) -> Coord:
-        """The starting point."""
-        return self.position
-
-    @property
     def end(self) -> Coord:
         """The ending point (resolved from relative fraction if set)."""
         if self._relative_end is not None:
@@ -178,9 +148,6 @@ class Curve(Entity):
         self._end = value
         self._relative_end = None
         self._control = None  # Invalidate cached control point
-
-    def _has_relative_properties(self) -> bool:
-        return super()._has_relative_properties() or self._relative_end is not None
 
     def _resolve_to_absolute(self) -> None:
         """Resolve relative start/end positions to absolute coordinates."""
@@ -222,20 +189,6 @@ class Curve(Entity):
     def _calculate_control(self) -> Coord:
         """Calculate control point from curvature."""
         return curvature_control_point(self.start, self.end, self._curvature)
-
-    @property
-    def color(self) -> str:
-        """The stroke color as a string."""
-        return self._color.to_hex()
-
-    @color.setter
-    def color(self, value: str | tuple[int, int, int]) -> None:
-        self._color = Color(value)
-
-    @property
-    def rotation_center(self) -> Coord:
-        """Natural pivot for rotation/scale: chord midpoint."""
-        return self.start.midpoint(self.end)
 
     @property
     def anchor_names(self) -> list[str]:
@@ -427,15 +380,8 @@ class Curve(Entity):
         Returns:
             self, for method chaining.
         """
+        self.adjust_relative_end(dx, dy)
         if self._relative_end is not None:
-            # Adjust end fractions in tandem with start
-            ref = self._reference or self._cell
-            if ref is not None:
-                _, _, ref_w, ref_h = ref.ref_frame()
-                drx = dx / ref_w if ref_w > 0 else 0
-                dry = dy / ref_h if ref_h > 0 else 0
-                erx, ery = self._relative_end
-                self._relative_end = RelCoord(erx + drx, ery + dry)
             self._control = None
             super()._move_by(dx, dy)
             return self
@@ -443,20 +389,6 @@ class Curve(Entity):
         self._end = Coord(self._end.x + dx, self._end.y + dy)
         self._control = None
         return self
-
-    @property
-    def effective_start_cap(self) -> str:
-        """Resolved cap for the start end."""
-        return self.start_cap if self.start_cap is not None else self.cap
-
-    @property
-    def effective_end_cap(self) -> str:
-        """Resolved cap for the end end."""
-        return self.end_cap if self.end_cap is not None else self.cap
-
-    def get_required_markers(self) -> list[tuple[str, str]]:
-        """Collect SVG marker definitions needed by this curve's caps."""
-        return collect_markers(self.cap, self.start_cap, self.end_cap, self.width, self.color)
 
     def to_svg(self) -> str:
         """Render to SVG path element (quadratic Bezier)."""

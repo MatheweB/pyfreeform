@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 from typing import Any
 
 from ..color import Color, ColorLike
@@ -10,14 +10,15 @@ from .caps import CapName
 
 
 @dataclass
-class DotStyle:
+class FillStyle:
     """
-    Configuration for dot appearance.
+    Configuration for simple color fills (dots, backgrounds).
 
-    Use with cell.add_dot():
+    Use with cell.add_dot() or cell.add_fill():
 
-        style = DotStyle(color="coral")
+        style = FillStyle(color="coral")
         cell.add_dot(radius=0.05, style=style)
+        cell.add_fill(style=style)
 
     Attributes:
         color: Fill color as hex, name, or RGB tuple (default: "black")
@@ -34,24 +35,8 @@ class DotStyle:
         if isinstance(self.color, tuple):
             self.color = Color(self.color).to_hex()
 
-    def with_color(self, color: ColorLike) -> DotStyle:
-        """Return new style with different color."""
-        return replace(self, color=color)
-
-    def with_z_index(self, z_index: int) -> DotStyle:
-        """Return new style with different z_index."""
-        return replace(self, z_index=z_index)
-
-    def with_opacity(self, opacity: float) -> DotStyle:
-        """Return new style with different opacity."""
-        return replace(self, opacity=opacity)
-
-    def with_color_brightness(self, color_brightness: float | None) -> DotStyle:
-        """Return new style with different color brightness."""
-        return replace(self, color_brightness=color_brightness)
-
     def to_kwargs(self) -> dict[str, Any]:
-        """Convert to keyword arguments for add_dot()."""
+        """Convert to keyword arguments for add_dot() / add_fill()."""
         d: dict[str, Any] = {"color": self.color, "z_index": self.z_index, "opacity": self.opacity}
         if self.color_brightness is not None:
             d["color_brightness"] = self.color_brightness
@@ -59,18 +44,21 @@ class DotStyle:
 
 
 @dataclass
-class LineStyle:
+class PathStyle:
     """
-    Configuration for line appearance.
+    Configuration for lines, curves, connections, and paths.
 
-    Use with Line entities, connections, or cell.add_line():
+    Use with cell.add_line(), cell.add_curve(), entity.connect(), etc.:
 
-        style = LineStyle(width=2, color="navy")
+        style = PathStyle(width=2, color="navy")
         cell.add_diagonal(style=style)
 
         # Arrow cap on one end
-        style = LineStyle(width=2, end_cap="arrow")
+        style = PathStyle(width=2, end_cap="arrow")
         cell.add_line(start="left", end="right", style=style)
+
+        # Connections
+        dot1.connect(dot2, style=PathStyle(width=2, color="red", end_cap="arrow"))
 
     Attributes:
         width: Stroke width in pixels (default: 1)
@@ -95,36 +83,8 @@ class LineStyle:
         if isinstance(self.color, tuple):
             self.color = Color(self.color).to_hex()
 
-    def with_width(self, width: float) -> LineStyle:
-        """Return new style with different width."""
-        return replace(self, width=width)
-
-    def with_color(self, color: ColorLike) -> LineStyle:
-        """Return new style with different color."""
-        return replace(self, color=color)
-
-    def with_z_index(self, z_index: int) -> LineStyle:
-        """Return new style with different z_index."""
-        return replace(self, z_index=z_index)
-
-    def with_start_cap(self, start_cap: CapName | None) -> LineStyle:
-        """Return new style with different start cap."""
-        return replace(self, start_cap=start_cap)
-
-    def with_end_cap(self, end_cap: CapName | None) -> LineStyle:
-        """Return new style with different end cap."""
-        return replace(self, end_cap=end_cap)
-
-    def with_opacity(self, opacity: float) -> LineStyle:
-        """Return new style with different opacity."""
-        return replace(self, opacity=opacity)
-
-    def with_color_brightness(self, color_brightness: float | None) -> LineStyle:
-        """Return new style with different color brightness."""
-        return replace(self, color_brightness=color_brightness)
-
     def to_kwargs(self) -> dict[str, Any]:
-        """Convert to keyword arguments for add_line() / add_curve()."""
+        """Convert to keyword arguments for add_line() / add_curve() / Connection()."""
         d: dict[str, Any] = {
             "width": self.width,
             "color": self.color,
@@ -136,51 +96,6 @@ class LineStyle:
             d["start_cap"] = self.start_cap
         if self.end_cap is not None:
             d["end_cap"] = self.end_cap
-        if self.color_brightness is not None:
-            d["color_brightness"] = self.color_brightness
-        return d
-
-
-@dataclass
-class FillStyle:
-    """
-    Configuration for filled shapes (rectangles, backgrounds).
-
-    Use with Rect entities or cell.add_fill():
-
-        style = FillStyle(color="blue", opacity=0.5)
-        cell.add_fill(style=style)
-
-    Attributes:
-        color: Fill color (default: "black")
-        opacity: Transparency 0.0-1.0 (default: 1.0, fully opaque)
-        z_index: Layer order (default: 0)
-    """
-
-    color: ColorLike = "black"
-    opacity: float = 1.0
-    z_index: int = 0
-    color_brightness: float | None = None
-
-    def __post_init__(self) -> None:
-        if isinstance(self.color, tuple):
-            self.color = Color(self.color).to_hex()
-
-    def with_color(self, color: ColorLike) -> FillStyle:
-        """Return new style with different color."""
-        return replace(self, color=color)
-
-    def with_opacity(self, opacity: float) -> FillStyle:
-        """Return new style with different opacity."""
-        return replace(self, opacity=opacity)
-
-    def with_color_brightness(self, color_brightness: float | None) -> FillStyle:
-        """Return new style with different color brightness."""
-        return replace(self, color_brightness=color_brightness)
-
-    def to_kwargs(self) -> dict[str, Any]:
-        """Convert to keyword arguments for add_fill()."""
-        d: dict[str, Any] = {"color": self.color, "opacity": self.opacity, "z_index": self.z_index}
         if self.color_brightness is not None:
             d["color_brightness"] = self.color_brightness
         return d
@@ -212,22 +127,6 @@ class BorderStyle:
     def __post_init__(self) -> None:
         if isinstance(self.color, tuple):
             self.color = Color(self.color).to_hex()
-
-    def with_width(self, width: float) -> BorderStyle:
-        """Return new style with different width."""
-        return replace(self, width=width)
-
-    def with_color(self, color: ColorLike) -> BorderStyle:
-        """Return new style with different color."""
-        return replace(self, color=color)
-
-    def with_opacity(self, opacity: float) -> BorderStyle:
-        """Return new style with different opacity."""
-        return replace(self, opacity=opacity)
-
-    def with_color_brightness(self, color_brightness: float | None) -> BorderStyle:
-        """Return new style with different color brightness."""
-        return replace(self, color_brightness=color_brightness)
 
     def to_kwargs(self) -> dict[str, Any]:
         """Convert to keyword arguments for add_border()."""
@@ -280,42 +179,6 @@ class ShapeStyle:
             self.color = Color(self.color).to_hex()
         if isinstance(self.stroke, tuple):
             self.stroke = Color(self.stroke).to_hex()
-
-    def with_color(self, color: ColorLike) -> ShapeStyle:
-        """Return new style with different color."""
-        return replace(self, color=color)
-
-    def with_stroke(self, stroke: ColorLike | None) -> ShapeStyle:
-        """Return new style with different stroke."""
-        return replace(self, stroke=stroke)
-
-    def with_stroke_width(self, stroke_width: float) -> ShapeStyle:
-        """Return new style with different stroke width."""
-        return replace(self, stroke_width=stroke_width)
-
-    def with_z_index(self, z_index: int) -> ShapeStyle:
-        """Return new style with different z_index."""
-        return replace(self, z_index=z_index)
-
-    def with_opacity(self, opacity: float) -> ShapeStyle:
-        """Return new style with different opacity (affects both fill and stroke)."""
-        return replace(self, opacity=opacity)
-
-    def with_fill_opacity(self, fill_opacity: float | None) -> ShapeStyle:
-        """Return new style with different fill opacity override."""
-        return replace(self, fill_opacity=fill_opacity)
-
-    def with_stroke_opacity(self, stroke_opacity: float | None) -> ShapeStyle:
-        """Return new style with different stroke opacity override."""
-        return replace(self, stroke_opacity=stroke_opacity)
-
-    def with_fill_brightness(self, fill_brightness: float | None) -> ShapeStyle:
-        """Return new style with different fill brightness."""
-        return replace(self, fill_brightness=fill_brightness)
-
-    def with_stroke_brightness(self, stroke_brightness: float | None) -> ShapeStyle:
-        """Return new style with different stroke brightness."""
-        return replace(self, stroke_brightness=stroke_brightness)
 
     def to_kwargs(self) -> dict[str, Any]:
         """Convert to keyword arguments for add_ellipse() / add_polygon() / add_rect()."""
@@ -374,34 +237,6 @@ class TextStyle:
         if isinstance(self.color, tuple):
             self.color = Color(self.color).to_hex()
 
-    def with_color(self, color: ColorLike) -> TextStyle:
-        """Return new style with different color."""
-        return replace(self, color=color)
-
-    def with_font_family(self, font_family: str) -> TextStyle:
-        """Return new style with different font family."""
-        return replace(self, font_family=font_family)
-
-    def with_bold(self, bold: bool = True) -> TextStyle:
-        """Return new style with bold enabled/disabled."""
-        return replace(self, bold=bold)
-
-    def with_italic(self, italic: bool = True) -> TextStyle:
-        """Return new style with italic enabled/disabled."""
-        return replace(self, italic=italic)
-
-    def with_z_index(self, z_index: int) -> TextStyle:
-        """Return new style with different z_index."""
-        return replace(self, z_index=z_index)
-
-    def with_opacity(self, opacity: float) -> TextStyle:
-        """Return new style with different opacity."""
-        return replace(self, opacity=opacity)
-
-    def with_color_brightness(self, color_brightness: float | None) -> TextStyle:
-        """Return new style with different color brightness."""
-        return replace(self, color_brightness=color_brightness)
-
     def to_kwargs(self) -> dict[str, Any]:
         """Convert to keyword arguments for add_text()."""
         d: dict[str, Any] = {
@@ -420,89 +255,5 @@ class TextStyle:
         return d
 
 
-@dataclass
-class ConnectionStyle:
-    """
-    Configuration for connections between entities.
-
-    Use with entity.connect() or Connection():
-
-        style = ConnectionStyle(width=2, color="red")
-        dot1.connect(dot2, style=style)
-
-        # Arrow on the end
-        style = ConnectionStyle(width=2, color="red", end_cap="arrow")
-
-    Attributes:
-        width: Line width in pixels (default: 1)
-        color: Line color (default: "black")
-        z_index: Layer order (default: 0)
-        cap: Cap style for both ends (default: "round")
-        start_cap: Override cap for start end (default: None, uses cap)
-        end_cap: Override cap for end end (default: None, uses cap)
-        opacity: Opacity 0.0-1.0 (default: 1.0, fully opaque)
-    """
-
-    width: float = 1
-    color: ColorLike = "black"
-    z_index: int = 0
-    cap: CapName = "round"
-    start_cap: CapName | None = None
-    end_cap: CapName | None = None
-    opacity: float = 1.0
-    color_brightness: float | None = None
-
-    def __post_init__(self) -> None:
-        if isinstance(self.color, tuple):
-            self.color = Color(self.color).to_hex()
-
-    def with_width(self, width: float) -> ConnectionStyle:
-        """Return new style with different width."""
-        return replace(self, width=width)
-
-    def with_color(self, color: ColorLike) -> ConnectionStyle:
-        """Return new style with different color."""
-        return replace(self, color=color)
-
-    def with_z_index(self, z_index: int) -> ConnectionStyle:
-        """Return new style with different z_index."""
-        return replace(self, z_index=z_index)
-
-    def with_start_cap(self, start_cap: CapName | None) -> ConnectionStyle:
-        """Return new style with different start cap."""
-        return replace(self, start_cap=start_cap)
-
-    def with_end_cap(self, end_cap: CapName | None) -> ConnectionStyle:
-        """Return new style with different end cap."""
-        return replace(self, end_cap=end_cap)
-
-    def with_opacity(self, opacity: float) -> ConnectionStyle:
-        """Return new style with different opacity."""
-        return replace(self, opacity=opacity)
-
-    def with_color_brightness(self, color_brightness: float | None) -> ConnectionStyle:
-        """Return new style with different color brightness."""
-        return replace(self, color_brightness=color_brightness)
-
-    def to_dict(self) -> dict[str, Any]:
-        """Convert to dict representation."""
-        d: dict[str, Any] = {
-            "width": self.width, "color": self.color, "z_index": self.z_index, "cap": self.cap,
-        }
-        if self.start_cap is not None:
-            d["start_cap"] = self.start_cap
-        if self.end_cap is not None:
-            d["end_cap"] = self.end_cap
-        if self.opacity < 1.0:
-            d["opacity"] = self.opacity
-        if self.color_brightness is not None:
-            d["color_brightness"] = self.color_brightness
-        return d
-
-    def to_kwargs(self) -> dict[str, Any]:
-        """Convert to keyword arguments for Connection()."""
-        return self.to_dict()
-
-
 # Type alias for any style
-AnyStyle = DotStyle | LineStyle | FillStyle | BorderStyle | ShapeStyle | TextStyle | ConnectionStyle
+AnyStyle = FillStyle | PathStyle | BorderStyle | ShapeStyle | TextStyle

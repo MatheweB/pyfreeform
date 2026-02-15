@@ -1,6 +1,6 @@
 """Generate SVGs for Recipe: Connected Networks."""
 
-from pyfreeform import Scene, Palette, ConnectionStyle
+from pyfreeform import Scene, Palette, PathStyle
 
 from wiki._generator import save, sample_image
 
@@ -23,7 +23,7 @@ def generate():
             )
             dots[(cell.row, cell.col)] = dot
 
-    conn_style = ConnectionStyle(width=0.5, color=colors.line, opacity=0.3)
+    conn_style = PathStyle(width=0.5, color=colors.line, opacity=0.3)
     for (r, c), dot in dots.items():
         for dr, dc in [(0, 1), (1, 0)]:
             key = (r + dr, c + dc)
@@ -40,7 +40,7 @@ def generate():
             dot = cell.add_dot(radius=0.15, color=colors.primary, opacity=0.8)
             dots[(cell.row, cell.col)] = dot
 
-    conn_style = ConnectionStyle(width=0.8, color=colors.line, opacity=0.3)
+    conn_style = PathStyle(width=0.8, color=colors.line, opacity=0.3)
     keys = list(dots.keys())
     for i, key1 in enumerate(keys):
         cell1 = scene.grid[key1[0]][key1[1]]
@@ -49,7 +49,7 @@ def generate():
             dist = cell1.distance_to(cell2)
             if dist < 80:
                 opacity = 0.6 * (1 - dist / 80)
-                style = ConnectionStyle(
+                style = PathStyle(
                     width=0.5 + (1 - dist / 80) * 1.5,
                     color=colors.secondary,
                     opacity=opacity,
@@ -66,7 +66,7 @@ def generate():
             dot = cell.add_dot(radius=0.15, color=colors.accent, opacity=0.8)
             dots[(cell.row, cell.col)] = dot
 
-    arrow_style = ConnectionStyle(
+    arrow_style = PathStyle(
         width=1.5,
         color=colors.primary,
         opacity=0.5,
@@ -101,7 +101,7 @@ def generate():
             )
             dots[(cell.row, cell.col)] = dot
 
-    conn_style = ConnectionStyle(width=0.5, color="#ffffff", opacity=0.15)
+    conn_style = PathStyle(width=0.5, color="#ffffff", opacity=0.15)
     for (r, c), dot in dots.items():
         for dr, dc in [(0, 1), (1, 0), (1, 1)]:
             key = (r + dr, c + dc)

@@ -12,7 +12,7 @@ from pyfreeform import (
     Ellipse,
     Path,
     Text,
-    ConnectionStyle,
+    PathStyle,
     Coord,
 )
 
@@ -30,7 +30,7 @@ def generate():
     d2 = Dot(250, 50, radius=10, color=colors.secondary)
     scene.place(d1)
     scene.place(d2)
-    conn = d1.connect(d2, style=ConnectionStyle(width=2, color=colors.line))
+    conn = d1.connect(d2, style=PathStyle(width=2, color=colors.line))
     # Labels
     scene.place(Text(50, 85, "dot1", font_size=10, color="#aaaacc"))
     scene.place(Text(250, 85, "dot2", font_size=10, color="#aaaacc"))
@@ -45,7 +45,7 @@ def generate():
     move_amounts = [0.0, 0.33, 0.66, 1.0]
     labels = ["Original", "t = 0.33", "t = 0.66", "t = 1.0"]
     sq_half = 50  # half-size of square
-    conn_style = ConnectionStyle(width=2, color=colors.secondary, opacity=0.8)
+    conn_style = PathStyle(width=2, color=colors.secondary, opacity=0.8)
 
     for frame_idx, (t, label) in enumerate(zip(move_amounts, labels, strict=False)):
         ox = 20 + frame_idx * (frame_w + gap)
@@ -76,7 +76,7 @@ def generate():
 
         # Ghost outline for original square position (faint)
         if t > 0:
-            ghost_style = ConnectionStyle(width=1, color=colors.grid, opacity=0.3)
+            ghost_style = PathStyle(width=1, color=colors.grid, opacity=0.3)
             orig_tr = Dot(cx + sq_half, cy - sq_half, radius=0, color=colors.background, opacity=0)
             scene.place(orig_tr)
             dots[0].connect(orig_tr, style=ghost_style)
@@ -115,7 +115,7 @@ def generate():
         "left": (-55, 0),
     }
 
-    anchor_style = ConnectionStyle(width=1.5, color=colors.secondary, opacity=0.6)
+    anchor_style = PathStyle(width=1.5, color=colors.secondary, opacity=0.6)
 
     for name, (dx, dy) in anchor_info.items():
         anchor_pt = rect.anchor(name)
@@ -174,8 +174,8 @@ def generate():
     for entity in [dot, rect, poly, ell]:
         scene.place(entity)
 
-    link_style = ConnectionStyle(width=1.5, color=colors.line, opacity=0.7)
-    arrow_style = ConnectionStyle(width=1.5, color=colors.line, opacity=0.7, end_cap="arrow")
+    link_style = PathStyle(width=1.5, color=colors.line, opacity=0.7)
+    arrow_style = PathStyle(width=1.5, color=colors.line, opacity=0.7, end_cap="arrow")
 
     # Dot → Rect.left
     conn1 = dot.connect(rect, end_anchor="left", style=link_style)
@@ -208,7 +208,7 @@ def generate():
         for _d in [d1, d2]:
             scene.place(_d)
 
-        style = ConnectionStyle(
+        style = PathStyle(
             width=3,
             color=colors.secondary,
             opacity=0.8,
@@ -238,7 +238,7 @@ def generate():
         scene.place(d)
         tri_dots.append(d)
 
-    edge_style = ConnectionStyle(width=2, color=colors.line, opacity=0.5)
+    edge_style = PathStyle(width=2, color=colors.line, opacity=0.5)
     edges = []
     for i in range(3):
         conn = tri_dots[i].connect(tri_dots[(i + 1) % 3], style=edge_style)
@@ -282,7 +282,7 @@ def generate():
             if dist < 130:
                 opacity = 0.5 * (1 - dist / 130)
                 width = 0.4 + (1 - dist / 130) * 1.2
-                style = ConnectionStyle(
+                style = PathStyle(
                     width=width,
                     color="#a78bfa",
                     opacity=opacity,
@@ -317,7 +317,7 @@ def generate():
         d2 = Dot(ox + 150, 75, radius=8, color=colors.secondary)
         for _d in [d1, d2]:
             scene.place(_d)
-        d1.connect(d2, **kwargs, style=ConnectionStyle(width=2.5, color=colors.accent))
+        d1.connect(d2, **kwargs, style=PathStyle(width=2.5, color=colors.accent))
         scene.place(Text(ox + 85, 135, label, font_size=11, color="#aaaacc"))
         scene.place(Text(ox + 85, 25, code, font_size=9, color="#888899"))
 
@@ -377,7 +377,7 @@ def generate():
                 # Vary curvature by angle for organic feel
                 angle = math.atan2(p2.y - p1.y, p2.x - p1.x)
                 curvature = 0.3 * math.sin(angle * 3 + i * 0.5)
-                style = ConnectionStyle(width=width, color="#a78bfa", opacity=opacity)
+                style = PathStyle(width=width, color="#a78bfa", opacity=opacity)
                 conn = d1.connect(d2, curvature=curvature,style=style)
 
                 if dist > 90:
@@ -412,7 +412,7 @@ def generate():
             level_dots.append(d)
         node_dots.append(level_dots)
 
-    arc_style = ConnectionStyle(width=2, color=colors.line, opacity=0.6)
+    arc_style = PathStyle(width=2, color=colors.line, opacity=0.6)
 
     # Root → children
     for child in node_dots[1]:

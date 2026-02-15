@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pyfreeform"
-version = "0.4.0"
+version = "0.5.0"
 description = "A minimalist, art-focused Python drawing library with object-oriented design"
 readme = "README.md"
 license = "GPL-3.0-only"
@@ -79,6 +79,7 @@ ignore = [
     "W291",   # trailing whitespace (cosmetic)
     "RUF002", # ambiguous unicode in docstrings (intentional)
     "RUF003", # ambiguous unicode in comments (intentional)
+    "E741",   # ambiguous variable names (l, O, I) -- context is clear
 ]
 
 [tool.ruff.lint.per-file-ignores]

@@ -17,7 +17,7 @@ from .svg_utils import svg_num
 
 if TYPE_CHECKING:
     from ..config.caps import CapName
-    from ..config.styles import ConnectionStyle
+    from ..config.styles import PathStyle
     from ..entities.path import Path
     from .pathable import Pathable
     from .surface import Surface
@@ -400,7 +400,7 @@ class Entity(ABC):
         end_cap: CapName | None = None,
         opacity: float = 1.0,
         color_brightness: float | None = None,
-        style: ConnectionStyle | None = None,
+        style: PathStyle | None = None,
         segments: int = 32,
     ) -> Connection:
         """
@@ -423,7 +423,7 @@ class Entity(ABC):
             end_cap: Override cap for end end (e.g. "arrow").
             opacity: Opacity (0.0 transparent to 1.0 opaque).
             color_brightness: Brightness multiplier 0.0 (black) to 1.0 (unchanged).
-            style: ConnectionStyle object (overrides individual params).
+            style: PathStyle object (overrides individual params).
             segments: Number of Bézier segments for path rendering.
 
         Returns:

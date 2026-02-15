@@ -4,7 +4,7 @@ from pyfreeform import (
     Scene,
     Palette,
     Text,
-    ConnectionStyle,
+    PathStyle,
 )
 from wiki._generator import save
 
@@ -25,9 +25,9 @@ def generate():
     g = scene.grid
 
     # ── Styles ──────────────────────────────────────────────
-    ARROW = ConnectionStyle(width=1.5, color=colors.line, opacity=0.7, end_cap="arrow")
-    FAINT = ConnectionStyle(width=1, color=colors.line, opacity=0.35, end_cap="arrow")
-    INHERIT = ConnectionStyle(width=0.8, color=colors.secondary, opacity=0.15)
+    ARROW = PathStyle(width=1.5, color=colors.line, opacity=0.7, end_cap="arrow")
+    FAINT = PathStyle(width=1, color=colors.line, opacity=0.35, end_cap="arrow")
+    INHERIT = PathStyle(width=0.8, color=colors.secondary, opacity=0.15)
     LABEL = "#aaaacc"
     DIM = "#888899"
 

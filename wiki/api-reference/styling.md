@@ -50,31 +50,29 @@ cell.add_ellipse(fill="gold", fill_brightness=cell.brightness, stroke_brightness
 
 ### Standalone Functions
 
-::: pyfreeform.apply_brightness
+::: pyfreeform.color.apply_brightness
 
-::: pyfreeform.gray
+::: pyfreeform.color.gray
 
 ---
 
 ## Style Classes
 
-All 7 style classes are dataclasses with `.with_*()` builder methods for immutable updates:
+All 5 style classes are dataclasses. Use `dataclasses.replace()` for immutable updates:
 
 ```python
-base_style = LineStyle(width=2, color="coral")
-thick_style = base_style.with_width(4)
-arrow_style = base_style.with_end_cap("arrow")
+from dataclasses import replace
+
+base_style = PathStyle(width=2, color="coral")
+thick_style = replace(base_style, width=4)
+arrow_style = replace(base_style, end_cap="arrow")
 ```
 
-::: pyfreeform.DotStyle
-    options:
-      heading_level: 3
-
-::: pyfreeform.LineStyle
-    options:
-      heading_level: 3
-
 ::: pyfreeform.FillStyle
+    options:
+      heading_level: 3
+
+::: pyfreeform.PathStyle
     options:
       heading_level: 3
 
@@ -87,10 +85,6 @@ arrow_style = base_style.with_end_cap("arrow")
       heading_level: 3
 
 ::: pyfreeform.TextStyle
-    options:
-      heading_level: 3
-
-::: pyfreeform.ConnectionStyle
     options:
       heading_level: 3
 

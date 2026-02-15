@@ -2,21 +2,19 @@
 PyFreeform - A minimalist, art-focused Python drawing library.
 """
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 
 # Core
 # Utilities
-from .color import Color, ColorLike, apply_brightness, average_color, color_mix, gray, hsl
+from .color import Color, ColorLike
 
 # Configuration
 from .config.caps import CapName, cap_shape, register_cap
 from .config.palette import Palette
 from .config.styles import (
     BorderStyle,
-    ConnectionStyle,
-    DotStyle,
     FillStyle,
-    LineStyle,
+    PathStyle,
     ShapeStyle,
     TextStyle,
 )
@@ -25,7 +23,7 @@ from .core.coord import Coord, CoordLike
 from .core.positions import AnchorSpec
 from .core.relcoord import RelCoord, RelCoordLike
 from .core.entity import Entity
-from .core.pathable import FullPathable, Pathable
+from .core.pathable import Pathable
 
 # Core (Surface protocol)
 from .core.surface import Surface
@@ -122,24 +120,21 @@ __all__ = [
     "ColorLike",
     "Connectable",
     "Connection",
-    "ConnectionStyle",
     "Coord",
     "CoordLike",
     "Curve",
     "Dot",
-    "DotStyle",
     "Ellipse",
     "Entity",
     "EntityGroup",
     "FillStyle",
-    "FullPathable",
     "Grid",
     "Image",
     "Layer",
     "Line",
-    "LineStyle",
     "Palette",
     "Path",
+    "PathStyle",
     "Pathable",
     "Point",
     "Polygon",
@@ -154,12 +149,7 @@ __all__ = [
     "__version__",
     "cap_shape",
     "display",
-    "apply_brightness",
-    "average_color",
-    "color_mix",
     "get_angle_at",
-    "gray",
-    "hsl",
     "map_range",
     "register_cap",
 ]

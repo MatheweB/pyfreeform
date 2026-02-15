@@ -3,10 +3,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from collections.abc import Iterator
 
 
 @dataclass(frozen=True)
@@ -185,46 +181,3 @@ class Palette:
             grid="#e8e4e1",
         )
 
-    # --- Utility Methods ---
-
-    def with_background(self, color: str) -> Palette:
-        """Return a new palette with a different background."""
-        return Palette(
-            background=color,
-            primary=self.primary,
-            secondary=self.secondary,
-            accent=self.accent,
-            line=self.line,
-            grid=self.grid,
-        )
-
-    def inverted(self) -> Palette:
-        """Return palette with background and primary swapped."""
-        return Palette(
-            background=self.primary,
-            primary=self.background,
-            secondary=self.secondary,
-            accent=self.accent,
-            line=self.line,
-            grid=self.grid,
-        )
-
-    def all_colors(self) -> list[str]:
-        """Return all colors as a list."""
-        return [
-            self.background,
-            self.primary,
-            self.secondary,
-            self.accent,
-            self.line,
-            self.grid,
-        ]
-
-    def __iter__(self) -> Iterator[tuple[str, str]]:
-        """Iterate over (name, color) pairs."""
-        yield ("background", self.background)
-        yield ("primary", self.primary)
-        yield ("secondary", self.secondary)
-        yield ("accent", self.accent)
-        yield ("line", self.line)
-        yield ("grid", self.grid)

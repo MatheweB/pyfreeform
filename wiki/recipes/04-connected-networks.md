@@ -35,7 +35,7 @@ for i, key1 in enumerate(keys):
         dist = cell1.distance_to(cell2)
         if dist < 80:
             opacity = 0.6 * (1 - dist / 80)
-            dots[key1].connect(dots[key2], style=ConnectionStyle(
+            dots[key1].connect(dots[key2], style=PathStyle(
                 width=0.5 + (1 - dist / 80) * 1.5, color=colors.secondary, opacity=opacity,
             ))
 ```
@@ -50,7 +50,7 @@ for i, key1 in enumerate(keys):
 Use `end_cap="arrow"` for directional connections:
 
 ```python
-arrow_style = ConnectionStyle(width=1.5, color=colors.primary, opacity=0.5, end_cap="arrow")
+arrow_style = PathStyle(width=1.5, color=colors.primary, opacity=0.5, end_cap="arrow")
 dot1.connect(dot2, style=arrow_style)
 ```
 

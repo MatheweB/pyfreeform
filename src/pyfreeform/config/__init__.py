@@ -4,10 +4,8 @@ from .caps import CapName, cap_shape, register_cap
 from .palette import Palette
 from .styles import (
     BorderStyle,
-    ConnectionStyle,
-    DotStyle,
     FillStyle,
-    LineStyle,
+    PathStyle,
     ShapeStyle,
     TextStyle,
 )
@@ -15,11 +13,9 @@ from .styles import (
 __all__ = [
     "BorderStyle",
     "CapName",
-    "ConnectionStyle",
-    "DotStyle",
     "FillStyle",
-    "LineStyle",
     "Palette",
+    "PathStyle",
     "ShapeStyle",
     "TextStyle",
     "cap_shape",

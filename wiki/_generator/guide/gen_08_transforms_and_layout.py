@@ -11,7 +11,7 @@ from pyfreeform import (
     Line,
     Rect,
     Curve,
-    ConnectionStyle,
+    PathStyle,
     map_range,
 )
 
@@ -138,7 +138,7 @@ def generate():
             dot = cell.add_dot(radius=0.15, color=colors_ocean.primary, opacity=0.8)
             dots[(cell.row, cell.col)] = dot
 
-    conn_style = ConnectionStyle(width=1, color=colors_ocean.line, opacity=0.4)
+    conn_style = PathStyle(width=1, color=colors_ocean.line, opacity=0.4)
     for (r, c), dot in dots.items():
         # Connect to right neighbor
         if (r, c + 2) in dots:
@@ -156,7 +156,7 @@ def generate():
             dot = cell.add_dot(radius=0.12, color=colors.accent, opacity=0.8)
             dots_arr[(cell.row, cell.col)] = dot
 
-    arrow_style = ConnectionStyle(
+    arrow_style = PathStyle(
         width=1.5,
         color=colors.primary,
         opacity=0.6,

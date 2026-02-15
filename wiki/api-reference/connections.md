@@ -33,7 +33,7 @@ Connections link entities and surfaces together. The Pathable protocol lets you 
 Or via the entity/surface shorthand:
 
 ```python
-connection = entity1.connect(entity2, style=ConnectionStyle(...), curvature=0.3)
+connection = entity1.connect(entity2, style=PathStyle(...), curvature=0.3)
 ```
 
 ### Geometry Options

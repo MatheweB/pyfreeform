@@ -4,8 +4,8 @@ from pyfreeform import (
     Scene,
     Palette,
     Polygon,
-    DotStyle,
-    LineStyle,
+    FillStyle,
+    PathStyle,
     ShapeStyle,
 )
 
@@ -148,9 +148,9 @@ def generate():
     scene = Scene.with_grid(cols=12, rows=8, cell_size=22, background=colors.background)
 
     # Define reusable styles
-    dot_small = DotStyle(color=colors.primary, opacity=0.6)
-    dot_large = DotStyle(color=colors.accent, opacity=0.9)
-    line_thin = LineStyle(width=1, color=colors.line, opacity=0.4)
+    dot_small = FillStyle(color=colors.primary, opacity=0.6)
+    dot_large = FillStyle(color=colors.accent, opacity=0.9)
+    line_thin = PathStyle(width=1, color=colors.line, opacity=0.4)
     shape_hex = ShapeStyle(color=colors.secondary, opacity=0.5)
 
     for cell in scene.grid:

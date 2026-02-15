@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any, Union
 
 from ..color import Color, ColorLike, apply_brightness
 from ..config.caps import CapName, collect_markers, svg_cap_and_marker_attrs
-from ..config.styles import ConnectionStyle
+from ..config.styles import PathStyle
 from .bezier import curvature_control_point, eval_cubic, quadratic_to_cubic
 from .coord import Coord
 from .positions import AnchorSpec
@@ -72,7 +72,7 @@ class Connection:
         end_cap: CapName | None = None,
         opacity: float = 1.0,
         color_brightness: float | None = None,
-        style: ConnectionStyle | None = None,
+        style: PathStyle | None = None,
         segments: int = 32,
     ) -> None:
         """
@@ -96,7 +96,7 @@ class Connection:
             end_cap: Override cap for end end (e.g. "arrow").
             opacity: Opacity (0.0 transparent to 1.0 opaque).
             color_brightness: Brightness multiplier 0.0 (black) to 1.0 (unchanged).
-            style: ConnectionStyle object (overrides individual params).
+            style: PathStyle object (overrides individual params).
             segments: Number of Bézier segments for path rendering.
         """
         if curvature is not None and path is not None:

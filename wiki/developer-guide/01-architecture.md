@@ -46,9 +46,9 @@ pyfreeform/
     zigzag.py       # Zigzag (triangle wave between two points)
 
   config/         # Configuration and extensibility
-    styles.py       # Style dataclasses (DotStyle, LineStyle, etc.)
+    styles.py       # Style dataclasses (5 classes)
     caps.py         # Cap registry engine (register, resolve, render)
-    cap_shapes.py   # Built-in cap shapes (arrow, arrow_in, diamond) -- add new caps here
+    cap_shapes.py   # Built-in cap shapes (arrow, arrow_in, diamond)
     palette.py      # Color palette utilities
 
   image/          # Image loading and processing

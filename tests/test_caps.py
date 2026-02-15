@@ -14,7 +14,7 @@ from pyfreeform.config.caps import (
     make_marker_id,
     register_cap,
 )
-from pyfreeform.config.styles import ConnectionStyle, LineStyle
+from pyfreeform.config.styles import PathStyle
 from pyfreeform.entities.curve import Curve
 from pyfreeform.entities.line import Line
 from pyfreeform import Scene
@@ -155,34 +155,36 @@ def test_curve_no_arrow_default():
 
 
 def test_line_style_with_caps():
-    style = LineStyle(width=2, color="red", end_cap="arrow")
+    style = PathStyle(width=2, color="red", end_cap="arrow")
     assert style.end_cap == "arrow"
     assert style.start_cap is None
 
 
-def test_line_style_builder():
-    style = LineStyle(width=2).with_end_cap("arrow")
+def test_line_style_direct_construction():
+    style = PathStyle(width=2, end_cap="arrow")
     assert style.end_cap == "arrow"
     assert style.width == 2
 
 
-def test_line_style_builder_preserves_fields():
-    style = LineStyle(width=3, color="blue", cap="butt", end_cap="arrow")
-    new_style = style.with_color("red")
+def test_line_style_dataclass_replace():
+    from dataclasses import replace
+
+    style = PathStyle(width=3, color="blue", cap="butt", end_cap="arrow")
+    new_style = replace(style, color="red")
     assert new_style.end_cap == "arrow"
     assert new_style.cap == "butt"
     assert new_style.width == 3
 
 
 def test_connection_style_with_caps():
-    style = ConnectionStyle(width=2, color="red", end_cap="arrow")
-    d = style.to_dict()
+    style = PathStyle(width=2, color="red", end_cap="arrow")
+    d = style.to_kwargs()
     assert d["end_cap"] == "arrow"
     assert "start_cap" not in d  # None values omitted
 
 
-def test_connection_style_builder():
-    style = ConnectionStyle(width=2).with_end_cap("arrow")
+def test_connection_style_direct_construction():
+    style = PathStyle(width=2, end_cap="arrow")
     assert style.end_cap == "arrow"
 
 
@@ -237,7 +239,7 @@ def test_cell_add_line_with_arrow():
 def test_cell_add_line_with_style_arrow():
     scene = Scene.with_grid(cols=2, rows=2, cell_size=20)
     cell = scene.grid[0][0]
-    style = LineStyle(width=2, end_cap="arrow")
+    style = PathStyle(width=2, end_cap="arrow")
     line = cell.add_line(start="left", end="right", style=style)
     assert line.effective_end_cap == "arrow"
 
