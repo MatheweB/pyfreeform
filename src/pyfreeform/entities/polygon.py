@@ -48,7 +48,7 @@ class Polygon(Entity):
         # Entity-reference vertices (reactive)
         a, b, c = Point(0, 0), Point(100, 0), Point(50, 80)
         tri = Polygon([a, b, c], fill="coral")
-        b.move_to_cell(cell, at=(0.8, 0.3))  # triangle deforms automatically
+        b.move_to_surface(cell, at=(0.8, 0.3))  # triangle deforms automatically
 
         # Mixed static and entity-reference
         tri = Polygon([(0, 0), dot, (rect, "top_right")], fill="teal")
@@ -156,7 +156,7 @@ class Polygon(Entity):
     def vertices(self) -> list[Coord]:
         """The polygon vertices (resolved from specs at access time)."""
         if self._relative_vertices is not None:
-            ref = self._reference or self._cell
+            ref = self._reference or self._surface
             if ref is not None:
                 ref_x, ref_y, ref_w, ref_h = ref.ref_frame()
                 return [
@@ -235,7 +235,7 @@ class Polygon(Entity):
             self, for method chaining.
         """
         if self._relative_vertices is not None:
-            ref = self._reference or self._cell
+            ref = self._reference or self._surface
             if ref is not None:
                 _, _, ref_w, ref_h = ref.ref_frame()
                 drx = dx / ref_w if ref_w > 0 else 0

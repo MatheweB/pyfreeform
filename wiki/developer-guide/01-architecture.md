@@ -92,7 +92,7 @@ class Cell(Surface):
 ```
 
 !!! note "Surface vs Entity"
-    `Surface` and `Entity` are independent hierarchies. A Surface **contains** entities (composition). An Entity **references** its containing surface via `entity.cell`. Both are **connectable** — they share `anchor()`, `connect()`, `connections`, and `data`. The `EntityGroup` is the one entity that also contains other entities, but it does so through SVG `<g>` transforms, not through the Surface protocol.
+    `Surface` and `Entity` are independent hierarchies. A Surface **contains** entities (composition). An Entity **references** its containing surface via `entity.surface`. Both are **connectable** — they share `anchor()`, `connect()`, `connections`, and `data`. The `EntityGroup` is the one entity that also contains other entities, but it does so through SVG `<g>` transforms, not through the Surface protocol.
 
 ## Entity Class Hierarchy
 
@@ -118,16 +118,16 @@ Every entity has:
 
 - **Position** (`_position: Coord`) -- the entity's reference point
 - **Z-index** (`_z_index: int`) -- layer ordering for rendering
-- **Cell reference** (`_cell: Surface | None`) -- back-reference to container
+- **Surface reference** (`_surface: Surface | None`) -- back-reference to container
 - **Connections** (`_connections: dict[Connection, None]`) -- connections where this entity is an endpoint (insertion-ordered)
 - **Data** (`_data: dict[str, Any]`) -- custom data dictionary for user metadata
-- **Movement** -- private `_move_to()` / `_move_by()` for pixel movement; public API is `.position`, `.at`, and `move_to_cell()`
+- **Movement** -- private `_move_to()` / `_move_by()` for pixel movement; public API is `.position`, `.at`, and `move_to_surface()`
 - **Binding** -- `.binding` property accepts a `Binding` dataclass (from `core/binding.py`) for relative positioning configuration
 - **Relative tracking** -- `.is_relative` is `True` when any property is stored as a fraction (position, size, geometry). Relative entities react to container changes; pixel entities are static. Each property is independently relative or absolute.
 - **Transforms** -- `rotate(angle, origin)` and `scale(factor, origin)` are **non-destructive**: they accumulate `_rotation` and `_scale_factor` without modifying geometry or clearing relative state. With `origin`, the entity orbits/scales via `_move_by()`, which preserves relative bindings. SVG rendering applies transforms via `_build_svg_transform()`.
 - **Transform properties** -- `.rotation` (degrees), `.scale_factor` (multiplier), `.rotation_center` (pivot point — default: position; overridden per entity type)
 - **World-space helpers** -- `_to_world_space(point)` applies scale then rotation around `rotation_center`. Used by `anchor()` and `bounds()`.
-- **Fitting** -- `fit_within()` scales to fit a target; `fit_to_cell()` delegates to `fit_within()` using the containing cell's bounds
+- **Fitting** -- `fit_within()` scales to fit a target; `fit_to_surface()` delegates to `fit_within()` using the containing surface's bounds
 - **Connectivity** -- `connect()`, `place_beside()`
 
 ### Abstract methods every entity must implement
@@ -298,13 +298,13 @@ Polygon vertices can be static `Coord` values or live entity references (`Entity
 
 Surface builder methods accept named positions (`"center"`, `"top_left"`) or relative tuples `(rx, ry)` where `(0, 0)` is top-left and `(1, 1)` is bottom-right. This keeps cell-level code resolution-independent.
 
-Internally, relative positions are stored as `RelCoord(rx, ry)` — a `NamedTuple` with `rx` and `ry` fields (see `core/relcoord.py`). The `.at` property on every entity returns and accepts `RelCoord` values. The `.binding` property accepts a `Binding` dataclass for full positioning configuration (relative position, path-following, reference entity). Users reposition entities through `.position`, `.at`, or `move_to_cell()` — low-level pixel movement (`_move_to`, `_move_by`) is private.
+Internally, relative positions are stored as `RelCoord(rx, ry)` — a `NamedTuple` with `rx` and `ry` fields (see `core/relcoord.py`). The `.at` property on every entity returns and accepts `RelCoord` values. The `.binding` property accepts a `Binding` dataclass for full positioning configuration (relative position, path-following, reference entity). Users reposition entities through `.position`, `.at`, or `move_to_surface()` — low-level pixel movement (`_move_to`, `_move_by`) is private.
 
-### Entity.cell back-reference
+### Entity.surface back-reference
 
-Every entity knows which surface it lives in via `entity.cell`. This enables `fit_to_cell()` to work without passing the cell explicitly:
+Every entity knows which surface it lives in via `entity.surface`. This enables `fit_to_surface()` to work without passing the surface explicitly:
 
 ```python
 dot = cell.add_dot(radius=0.15)
-dot.fit_to_cell(0.85)  # Knows its cell, scales to fit
+dot.fit_to_surface(0.85)  # Knows its surface, scales to fit
 ```

@@ -93,10 +93,10 @@ def generate():
         nx, ny = cell.normalized_position
         flower = make_flower(colors_pastel.primary, colors_pastel.accent)
         cell.add(flower)
-        flower.fit_to_cell(0.85)
+        flower.fit_to_surface(0.85)
     save(scene, "guide/shapes-entity-group.svg")
 
-    # --- 5. fit_to_cell demo ---
+    # --- 5. fit_to_surface demo ---
     colors_sunset = Palette.sunset()
     scene = Scene.with_grid(cols=5, rows=1, cell_size=60, background=colors_sunset.background)
     fractions = [0.3, 0.5, 0.7, 0.9, 1.0]
@@ -107,7 +107,7 @@ def generate():
         group.add(Line(-15, -15, 15, 15, width=2, color=colors_sunset.accent))
         group.add(Line(-15, 15, 15, -15, width=2, color=colors_sunset.accent))
         cell.add(group)
-        group.fit_to_cell(frac)
+        group.fit_to_surface(frac)
         cell.add_text(
             f"{frac:.0%}",
             at="bottom",
@@ -118,7 +118,7 @@ def generate():
         cell.add_border(color=colors_sunset.grid, width=0.5, opacity=0.3)
     save(scene, "guide/shapes-fit-to-cell.svg")
 
-    # --- 6. fit_to_cell with rotation ---
+    # --- 6. fit_to_surface with rotation ---
     scene = Scene.with_grid(cols=6, rows=6, cell_size=40, background=colors.background)
     for cell in scene.grid:
         nx, ny = cell.normalized_position
@@ -128,7 +128,7 @@ def generate():
         group.add(Line(-10, 0, 10, 0, width=2, color=colors.accent))
         group.add(Line(0, -10, 0, 10, width=2, color=colors.accent))
         cell.add(group)
-        group.fit_to_cell(0.75)
+        group.fit_to_surface(0.75)
         group.rotate(rotation)
     save(scene, "guide/shapes-fit-rotated.svg")
 

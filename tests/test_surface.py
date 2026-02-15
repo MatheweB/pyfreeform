@@ -260,28 +260,28 @@ def test_grid_clear_clears_groups():
 
 
 # =========================================================================
-# fit_to_cell works with CellGroup and Scene
+# fit_to_surface works with CellGroup and Scene
 # =========================================================================
 
 
-def test_fit_to_cell_on_cell_group():
-    """fit_to_cell should work for entities on a CellGroup."""
+def test_fit_to_surface_on_cell_group():
+    """fit_to_surface should work for entities on a CellGroup."""
     scene = Scene.with_grid(cols=4, rows=4, cell_size=10)
     group = scene.grid.merge((0, 0), (1, 1))
     # 20x20 group, add a huge dot
     dot = group.add_dot(radius=5.0, color="red")
-    dot.fit_to_cell(1.0)
+    dot.fit_to_surface(1.0)
     # Should be scaled to fit 20x20 → world-space radius 10
     wr = dot.radius * dot.scale_factor
     assert wr <= 10.0 + 0.1
     assert wr >= 9.9
 
 
-def test_fit_to_cell_on_scene():
-    """fit_to_cell should work for entities added directly to Scene."""
+def test_fit_to_surface_on_scene():
+    """fit_to_surface should work for entities added directly to Scene."""
     scene = Scene(100, 100)
     dot = scene.add_dot(radius=2.0, color="red")
-    dot.fit_to_cell(1.0)
+    dot.fit_to_surface(1.0)
     # Should be scaled to fit 100x100 → world-space radius 50
     wr = dot.radius * dot.scale_factor
     assert wr <= 50.0 + 0.1
@@ -289,7 +289,7 @@ def test_fit_to_cell_on_scene():
 
 
 # =========================================================================
-# Text fit=True and fit_to_cell
+# Text fit=True and fit_to_surface
 # =========================================================================
 
 
@@ -313,32 +313,32 @@ def test_add_text_fit_keeps_short_string():
     assert text_fit.font_size == text_no_fit.font_size
 
 
-def test_text_fit_to_cell_scales_up():
-    """fit_to_cell should scale text up to fill the cell."""
+def test_text_fit_to_surface_scales_up():
+    """fit_to_surface should scale text up to fill the cell."""
     scene = Scene.with_grid(cols=1, rows=1, cell_size=200)
     cell = scene.grid[0][0]
     text = cell.add_text("A", font_size=0.1)  # 20px, small for 200px cell
-    text.fit_to_cell(1.0)
+    text.fit_to_surface(1.0)
     # Should be much larger now
     assert text.font_size > 20.0
 
 
-def test_text_fit_to_cell_scales_down():
-    """fit_to_cell should scale text down for long content."""
+def test_text_fit_to_surface_scales_down():
+    """fit_to_surface should scale text down for long content."""
     scene = Scene.with_grid(cols=1, rows=1, cell_size=50)
     cell = scene.grid[0][0]
     text = cell.add_text("ABCDEFGHIJKLMNOP", font_size=0.8)  # 40px, too wide
-    text.fit_to_cell(1.0)
+    text.fit_to_surface(1.0)
     # Should be smaller to fit
     assert text.font_size < 40.0
 
 
-def test_text_fit_to_cell_no_cell_raises():
-    """fit_to_cell should raise if text has no cell."""
+def test_text_fit_to_surface_no_cell_raises():
+    """fit_to_surface should raise if text has no surface."""
 
     text = Text(0, 0, "Hello", font_size=16)
     try:
-        text.fit_to_cell(1.0)
+        text.fit_to_surface(1.0)
         raise AssertionError("Should have raised ValueError")
     except ValueError:
         pass

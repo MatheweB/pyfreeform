@@ -117,6 +117,7 @@ nav:
     - Text & Typography: guide/07-text-and-typography.md
     - Transforms & Layout: guide/08-transforms-and-layout.md
     - Connections & Anchors: guide/09-connections-and-anchors.md
+    - Layout & Alignment: guide/10-layout-alignment.md
   - Recipes:
     - recipes/index.md
     - Image-to-Art Portraits: recipes/01-image-to-art.md

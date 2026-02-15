@@ -17,7 +17,7 @@ All entities support non-destructive transforms — rotation and scale are store
         - scale_factor
         - rotation_center
         - fit_within
-        - fit_to_cell
+        - fit_to_surface
 
 !!! note "Model-space vs world-space"
     - **Model-space** properties (`.radius`, `.width`, `.end`, `.vertices`) are **unchanged** by transforms
@@ -37,5 +37,5 @@ Each entity type defines its own natural `rotation_center`:
 | Path | Bezier midpoint at t=0.5 |
 | EntityGroup | Accumulates in `<g>` transform (children unchanged) |
 
-!!! tip "Text fit_to_cell"
-    For **Text** entities, `fit_to_cell(fraction)` adjusts font size (up or down) to fill the cell. Compare with `add_text(fit=True)` which only *shrinks*.
+!!! tip "Text fit_to_surface"
+    For **Text** entities, `fit_to_surface(fraction)` adjusts font size (up or down) to fill the surface. Compare with `add_text(fit=True)` which only *shrinks*.

@@ -313,7 +313,7 @@ class Scene(Surface):
         """
         if entity in self._entities:
             self._entities.remove(entity)
-            entity.cell = None
+            entity.surface = None
             return True
         # Check grids
         for grid in self._grids:

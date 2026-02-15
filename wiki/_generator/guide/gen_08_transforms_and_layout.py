@@ -43,12 +43,12 @@ def generate():
         group.add(Dot(0, 0, radius=15, color=colors.primary))
         group.add(Line(-10, -10, 10, 10, width=2, color=colors.accent))
         cell.add(group)
-        group.fit_to_cell(s)
+        group.fit_to_surface(s)
         cell.add_text(f"{s:.1f}", at="bottom", font_size=0.25, color="#aaaacc", baseline="auto")
         cell.add_border(color=colors.grid, width=0.3, opacity=0.3)
     save(scene, "guide/transforms-scale.svg")
 
-    # --- 3. fit_to_cell with at= positions ---
+    # --- 3. fit_to_surface with at= positions ---
     scene = Scene.with_grid(cols=3, rows=1, cell_size=80, background=colors.background)
     positions = [(0.15, 0.15), (0.5, 0.5), (0.85, 0.85)]
     for i, cell in enumerate(scene.grid):
@@ -57,7 +57,7 @@ def generate():
         group.add(Dot(0, 0, radius=18, color=colors.primary, opacity=0.7))
         group.add(Line(-12, 0, 12, 0, width=2, color=colors.accent))
         cell.add(group)
-        group.fit_to_cell(0.5, at=at_pos)
+        group.fit_to_surface(0.5, at=at_pos)
         cell.add_border(color=colors.grid, width=0.5, opacity=0.3)
     save(scene, "guide/transforms-fit-at.svg")
 
@@ -122,7 +122,7 @@ def generate():
             cell = scene.grid[row_idx][col]
             group = factory()
             cell.add(group)
-            group.fit_to_cell(1.0, **modes[col])
+            group.fit_to_surface(1.0, **modes[col])
             cell.add_border(color=colors.grid, width=0.5, opacity=0.3)
 
     scene.trim(top=scene.grid.cell_height * 0.75)

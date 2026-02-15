@@ -99,7 +99,7 @@ Use it across cells:
 for cell in scene.grid:
     flower = make_flower(colors.primary, colors.accent)
     cell.add(flower)
-    flower.fit_to_cell(0.85)
+    flower.fit_to_surface(0.85)
 ```
 
 <figure markdown>
@@ -187,30 +187,30 @@ tri = Polygon([tip, (rect, "top_left"), (rect, "top_right")], fill="coral", opac
 
 ---
 
-## fit_to_cell
+## fit_to_surface
 
-Auto-scale any entity or group to fit within its cell:
+Auto-scale any entity or group to fit within its surface:
 
 ```python
 group = make_flower(...)
 cell.add(group)
-group.fit_to_cell(0.7)  # (1)!
+group.fit_to_surface(0.7)  # (1)!
 ```
 
-1. `0.7` means fill 70% of the cell's area.
+1. `0.7` means fill 70% of the surface's area.
 
 <figure markdown>
-![fit_to_cell at different scales](../_images/guide/shapes-fit-to-cell.svg){ width="360" }
-<figcaption>The same group at 30%, 50%, 70%, 90%, and 100% of cell size.</figcaption>
+![fit_to_surface at different scales](../_images/guide/shapes-fit-to-cell.svg){ width="360" }
+<figcaption>The same group at 30%, 50%, 70%, 90%, and 100% of surface size.</figcaption>
 </figure>
 
 ### With Rotation
 
-`fit_to_cell` works correctly with rotated groups:
+`fit_to_surface` works correctly with rotated groups:
 
 <figure markdown>
-![fit_to_cell with rotation](../_images/guide/shapes-fit-rotated.svg){ width="280" }
-<figcaption>Groups scaled to 75% and rotated by position — fitting accounts for rotation.</figcaption>
+![fit_to_surface with rotation](../_images/guide/shapes-fit-rotated.svg){ width="280" }
+<figcaption>Groups scaled to 75% and rotated by position -- fitting accounts for rotation.</figcaption>
 </figure>
 
 ---

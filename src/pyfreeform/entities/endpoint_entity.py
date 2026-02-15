@@ -117,7 +117,7 @@ class EndpointEntity(Entity):
         position in tandem with the start when the entity is in relative mode.
         """
         if self._relative_end is not None:
-            ref = self._reference or self._cell
+            ref = self._reference or self._surface
             if ref is not None:
                 _, _, ref_w, ref_h = ref.ref_frame()
                 drx = dx / ref_w if ref_w > 0 else 0

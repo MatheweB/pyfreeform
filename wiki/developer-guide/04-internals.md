@@ -28,7 +28,7 @@ Returns the entity's resolved position based on the highest-priority binding:
 Converts relative fractions (0.0-1.0) to absolute pixel coordinates using the entity's reference frame:
 
 - If `_reference` is set (from `within=`), uses that entity's or surface's bounds
-- Otherwise, uses the containing cell's bounds (`_cell`)
+- Otherwise, uses the containing surface's bounds (`_surface`)
 - Returns `None` if no reference frame is available
 
 ### `_resolve_to_absolute()`
@@ -67,7 +67,7 @@ The public API for positioning is:
 
 - `.at = (rx, ry)` for relative positioning
 - `.position = Coord(x, y)` for pixel positioning
-- `move_to_cell(cell, at=)` for moving between cells
+- `move_to_surface(surface, at=)` for moving between surfaces
 
 `_move_to` and `_move_by` are used internally by transforms (`_orbit_around`, `_scale_around`) and fitting algorithms (`fit_within`). Because `_move_by` preserves relative state, orbiting or fitting an entity does not destroy its container-reactive behavior.
 
@@ -129,7 +129,7 @@ For entities, `ref_frame()` returns the bounding box. For surfaces, it returns `
 Called by every builder method and by `add()`/`place()`. Performs:
 
 1. Appends entity to `_entities` list
-2. Sets `entity.cell = self` (back-reference)
+2. Sets `entity.surface = self` (back-reference)
 
 ### `add_connection(connection)` / `remove_connection(connection)`
 
@@ -174,7 +174,7 @@ Key internal attributes on every entity:
 | Attribute | Type | Description |
 |---|---|---|
 | `_position` | `Coord` | Absolute pixel position (fallback when no relative binding) |
-| `_cell` | `Surface \| None` | Containing surface back-reference |
+| `_surface` | `Surface \| None` | Containing surface back-reference |
 | `_relative_at` | `RelCoord \| None` | Relative position within reference frame |
 | `_reference` | `Surface \| Entity \| None` | Reference frame override (from `within=`) |
 | `_along_path` | `Pathable \| None` | Path to follow (from `along=`) |

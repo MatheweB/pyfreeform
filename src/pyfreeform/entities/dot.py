@@ -32,7 +32,7 @@ class Dot(Entity):
         ```python
         dot = Dot(100, 100)
         dot = Dot(100, 100, radius=10, color="coral")
-        dot.move_to_cell(cell, at=(0.5, 0.5))
+        dot.move_to_surface(cell, at=(0.5, 0.5))
         ```
     """
 

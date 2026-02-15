@@ -19,7 +19,7 @@ Comprehensive lookup reference for PyFreeform's public API. Organized to follow 
 | [Drawing](drawing.md) | Putting things on the canvas -- the 12 builder methods, positioning, `along`/`t`/`align` |
 | [Entities](entities.md) | What you draw -- Dot, Line, Curve, Ellipse, Polygon, Rect, Text, Path, EntityGroup, Point |
 | [Connections & Paths](connections.md) | Linking things together -- Connection class, Pathable protocol, built-in path shapes |
-| [Transforms](transforms.md) | Rotating, scaling, fitting -- `rotate()`, `scale()`, `fit_to_cell()`, `fit_within()` |
+| [Transforms](transforms.md) | Rotating, scaling, fitting -- `rotate()`, `scale()`, `fit_to_surface()`, `fit_within()` |
 | [Styling & Caps](styling.md) | Making it beautiful -- colors, opacity, style classes, palettes, cap system |
 | [Types & Utilities](types.md) | Building blocks -- Coord, RelCoord, AnchorSpec, Image, utility functions |
 

@@ -21,11 +21,11 @@ cell.add_polygon(
 
 ---
 
-## Scaling with fit_to_cell
+## Scaling with fit_to_surface
 
-`entity.fit_to_cell(scale)` auto-sizes any entity to fit within its cell. `scale` is the fraction of cell area to fill (0.0 to 1.0). Works with both `EntityGroup` and `Text` entities.
+`entity.fit_to_surface(scale)` auto-sizes any entity to fit within its surface. `scale` is the fraction of surface area to fill (0.0 to 1.0). Works with both `EntityGroup` and `Text` entities.
 
-By default, `fit_to_cell` uses `bounds(visual=True)` so that stroke width is accounted for — stroked entities won't spill beyond cell edges after fitting. Pass `visual=False` for pure geometric fitting that ignores stroke width:
+By default, `fit_to_surface` uses `bounds(visual=True)` so that stroke width is accounted for — stroked entities won't spill beyond surface edges after fitting. Pass `visual=False` for pure geometric fitting that ignores stroke width:
 
 <figure markdown>
 ![Scale comparison](../_images/guide/transforms-scale.svg){ width="360" }
@@ -34,38 +34,38 @@ By default, `fit_to_cell` uses `bounds(visual=True)` so that stroke width is acc
 
 ### Position-Aware Fitting
 
-Pass `at=(rx, ry)` to fit at a specific position within the cell:
+Pass `at=(rx, ry)` to fit at a specific position within the surface:
 
 ```python
-group.fit_to_cell(0.5, at=(0.15, 0.15))   # Near top-left, constrained by edges
-group.fit_to_cell(0.5, at=(0.5, 0.5))     # Centered
-group.fit_to_cell(0.5, at=(0.85, 0.85))   # Near bottom-right
+group.fit_to_surface(0.5, at=(0.15, 0.15))   # Near top-left, constrained by edges
+group.fit_to_surface(0.5, at=(0.5, 0.5))     # Centered
+group.fit_to_surface(0.5, at=(0.85, 0.85))   # Near bottom-right
 ```
 
 <figure markdown>
-![fit_to_cell with positions](../_images/guide/transforms-fit-at.svg){ width="320" }
-<figcaption>Same size, different positions — the entity respects cell boundaries.</figcaption>
+![fit_to_surface with positions](../_images/guide/transforms-fit-at.svg){ width="320" }
+<figcaption>Same size, different positions — the entity respects surface boundaries.</figcaption>
 </figure>
 
 ### Rotational Fitting
 
-When a shape doesn't match the cell's aspect ratio, two fitting modes help fill the space:
+When a shape doesn't match the surface's aspect ratio, two fitting modes help fill the space:
 
 - **`rotate=True`** — Finds the rotation angle that **maximizes fill**. Uses a closed-form O(1) solution (3 candidate angles: 0°, 90°, and the optimal balanced angle).
-- **`match_aspect=True`** — Rotates so the bounding box **matches the cell's proportions**. Useful when you want the shape to echo the cell's shape rather than simply be as large as possible.
+- **`match_aspect=True`** — Rotates so the bounding box **matches the surface's proportions**. Useful when you want the shape to echo the surface's shape rather than simply be as large as possible.
 
 ```python
 group = EntityGroup()
 group.add(Rect.at_center((0, 0), 70, 14, fill="coral"))
 cell.add(group)
-group.fit_to_cell(0.85, rotate=True)        # maximize fill
+group.fit_to_surface(0.85, rotate=True)        # maximize fill
 # OR
-group.fit_to_cell(0.85, match_aspect=True)  # match cell proportions
+group.fit_to_surface(0.85, match_aspect=True)  # match surface proportions
 ```
 
 <figure markdown>
 ![Fitting modes comparison](../_images/guide/transforms-fitting-modes.svg){ width="400" }
-<figcaption>Default fit vs rotate vs match_aspect — for a wide rect bar (middle row) and the pyfreeform logo (bottom row).</figcaption>
+<figcaption>Default fit vs rotate vs match_aspect -- for a wide rect bar (middle row) and the pyfreeform logo (bottom row).</figcaption>
 </figure>
 
 Both modes work on any entity type — EntityGroup, Rect, Polygon, Ellipse, Line, Curve, and Text. Dot is symmetric so rotation is a no-op.

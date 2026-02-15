@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 from ..core.coord import Coord
 from .cell import Cell
@@ -679,7 +679,7 @@ class Grid:
             if predicate(cell):
                 yield cell
 
-    def diagonal(self, direction: str = "down", offset: int = 0) -> Iterator[Cell]:
+    def diagonal(self, direction: Literal["down", "up"] = "down", offset: int = 0) -> Iterator[Cell]:
         """
         Iterate over cells on a diagonal.
 

@@ -1,6 +1,5 @@
 """Tests for AnchorSpec — unified anchoring with strings, RelCoord, and tuples."""
 
-import math
 import sys
 from pathlib import Path
 
@@ -9,8 +8,6 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from pyfreeform import (
-    AnchorSpec,
-    Connection,
     Coord,
     Dot,
     Ellipse,

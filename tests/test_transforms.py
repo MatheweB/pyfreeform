@@ -338,7 +338,7 @@ class TestSVGTransform:
         line.rotate(30)
         line.scale(1.5)
         svg = line.to_svg()
-        assert "rotate(30.0)" in svg
+        assert "rotate(30)" in svg
         assert "scale(1.5)" in svg
 
     def test_polygon_transform(self):
@@ -359,40 +359,40 @@ class TestSVGTransform:
 
 
 # =========================================================================
-# fit_to_cell compatibility
+# fit_to_surface compatibility
 # =========================================================================
 
 
-class TestFitToCell:
-    """fit_to_cell works correctly with non-destructive scale."""
+class TestFitToSurface:
+    """fit_to_surface works correctly with non-destructive scale."""
 
-    def test_fit_to_cell_dot(self):
+    def test_fit_to_surface_dot(self):
         scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
         cell = scene.grid[0][0]
         dot = cell.add_dot(radius=5.0, color="red")
-        dot.fit_to_cell(0.8)
+        dot.fit_to_surface(0.8)
         # World-space bounds should fit within 80% of cell
         min_x, min_y, max_x, max_y = dot.bounds()
         assert max_x - min_x <= 80.1
         assert max_y - min_y <= 80.1
 
-    def test_fit_to_cell_idempotent(self):
-        """Calling fit_to_cell twice should give same result."""
+    def test_fit_to_surface_idempotent(self):
+        """Calling fit_to_surface twice should give same result."""
         scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
         cell = scene.grid[0][0]
         dot = cell.add_dot(radius=5.0, color="red")
-        dot.fit_to_cell(0.8)
+        dot.fit_to_surface(0.8)
         b1 = dot.bounds()
-        dot.fit_to_cell(0.8)
+        dot.fit_to_surface(0.8)
         b2 = dot.bounds()
         assert b1[0] == pytest.approx(b2[0], abs=0.1)
         assert b1[2] == pytest.approx(b2[2], abs=0.1)
 
-    def test_fit_to_cell_rect(self):
+    def test_fit_to_surface_rect(self):
         scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
         cell = scene.grid[0][0]
         rect = cell.add_rect(width=0.9, height=0.5, fill="red")
-        rect.fit_to_cell(0.8)
+        rect.fit_to_surface(0.8)
         min_x, min_y, max_x, max_y = rect.bounds()
         assert max_x - min_x <= 80.1
         assert max_y - min_y <= 80.1

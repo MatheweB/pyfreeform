@@ -115,16 +115,16 @@ cell.add_text("A much longer label", font_size=0.25, color="white", fit=True)  #
 !!! tip "When to use fit=True"
     Any time you display variable-length text (labels, filenames, data values) where overflow would look wrong. Single-character art and path text don't need it.
 
-### fit_to_cell() for Text
+### fit_to_surface() for Text
 
-If you want text to **fill** a cell (scaling up *or* down), use `fit_to_cell()` after creation:
+If you want text to **fill** a surface (scaling up *or* down), use `fit_to_surface()` after creation:
 
 ```python
 t = cell.add_text("TITLE", at="center", font_size=0.25, color="white", bold=True)
-t.fit_to_cell(0.8)  # scale to 80% of cell — may grow or shrink
+t.fit_to_surface(0.8)  # scale to 80% of surface — may grow or shrink
 ```
 
-This is the Text equivalent of `EntityGroup.fit_to_cell()`.
+This is the Text equivalent of `EntityGroup.fit_to_surface()`.
 
 ---
 

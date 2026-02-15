@@ -7,7 +7,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from pyfreeform import Connectable, Connection, Coord, Dot, Scene, Surface
+from pyfreeform import Connectable, Connection, Coord, Dot, Scene
 
 
 # =========================================================================
@@ -266,7 +266,7 @@ class TestBackwardCompat:
         scene = Scene.with_grid(cols=3, rows=1, cell_size=20)
         d1 = scene.grid[0][0].add_dot(color="black")
         d2 = scene.grid[0][2].add_dot(color="black")
-        conn = d1.connect(d2)
+        d1.connect(d2)
 
         svg = scene.to_svg()
         assert "line" in svg or "path" in svg

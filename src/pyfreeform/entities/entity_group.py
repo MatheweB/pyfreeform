@@ -19,7 +19,7 @@ class EntityGroup(Entity):
     Works with all placement methods:
     - ``scene.add(group)`` — add to scene at group's position
     - ``cell.add(group)`` — center in cell
-    - ``group.fit_to_cell()`` — auto-scale to fit cell bounds
+    - ``group.fit_to_surface()`` — auto-scale to fit surface bounds
 
     For reuse, wrap creation in a factory function — each call returns
     a new independent instance.
@@ -247,7 +247,7 @@ class EntityGroup(Entity):
 
         Accumulates an internal scale factor used by the SVG transform.
         If origin is provided, also adjusts the group's position so that
-        the origin point remains fixed (used by fit_to_cell).
+        the origin point remains fixed (used by fit_to_surface).
 
         Args:
             factor: Scale factor (0.5 = half size, 2.0 = double).

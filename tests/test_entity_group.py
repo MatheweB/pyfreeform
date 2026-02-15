@@ -129,8 +129,8 @@ def test_group_rotate_bounds_45():
     assert rotated_h > unrotated_h  # taller than original height
 
 
-def test_group_fit_to_cell_after_rotate():
-    """fit_to_cell should work correctly on a rotated group."""
+def test_group_fit_to_surface_after_rotate():
+    """fit_to_surface should work correctly on a rotated group."""
     scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
     cell = scene.grid[0][0]
 
@@ -140,7 +140,7 @@ def test_group_fit_to_cell_after_rotate():
 
     cell.add(group)
     group.rotate(45)
-    group.fit_to_cell(0.8)
+    group.fit_to_surface(0.8)
 
     # Bounds should fit within cell
     min_x, min_y, max_x, max_y = group.bounds()
@@ -160,7 +160,7 @@ def test_group_rotate_then_fit_then_rotate():
 
     cell.add(group)
     group.rotate(30)
-    group.fit_to_cell(0.8)
+    group.fit_to_surface(0.8)
     group.rotate(15)
 
     assert group.rotation == 45
@@ -212,7 +212,7 @@ def test_group_opacity_settable():
 # =========================================================================
 
 
-def test_fit_to_cell_rotate_default_false():
+def test_fit_to_surface_rotate_default_false():
     """rotate=False (default) should not change rotation."""
     scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
     cell = scene.grid[0][0]
@@ -220,12 +220,12 @@ def test_fit_to_cell_rotate_default_false():
     group = EntityGroup()
     group.add(Line(-50, 0, 50, 0, width=5, color="red"))
     cell.add(group)
-    group.fit_to_cell(0.8)
+    group.fit_to_surface(0.8)
 
     assert group.rotation == 0.0
 
 
-def test_fit_to_cell_rotate_wide_in_tall():
+def test_fit_to_surface_rotate_wide_in_tall():
     """A wide group in a tall cell should rotate for better fill."""
     scene = Scene.with_grid(cols=1, rows=1, cell_width=50, cell_height=200)
     cell = scene.grid[0][0]
@@ -239,7 +239,7 @@ def test_fit_to_cell_rotate_wide_in_tall():
     unrotated_w = 200  # line length
     unrotated_factor = min(50 / unrotated_w, 200 / 10)
 
-    group.fit_to_cell(1.0, rotate=True)
+    group.fit_to_surface(1.0, rotate=True)
 
     # Should have rotated significantly (>45°) to better use the tall cell.
     # The optimal angle is ~78° (balanced angle), NOT 90°, because the
@@ -257,7 +257,7 @@ def test_fit_to_cell_rotate_wide_in_tall():
     assert group.scale_factor > unrotated_factor
 
 
-def test_fit_to_cell_rotate_square_noop():
+def test_fit_to_surface_rotate_square_noop():
     """Square bbox in square cell — rotation shouldn't change much."""
     scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
     cell = scene.grid[0][0]
@@ -267,13 +267,13 @@ def test_fit_to_cell_rotate_square_noop():
     group.add(Dot(0, 0, radius=40, color="red"))
     cell.add(group)
 
-    group.fit_to_cell(0.9, rotate=True)
+    group.fit_to_surface(0.9, rotate=True)
 
     # Should pick 0° (or equivalent) since bbox is already square
     assert group.rotation % 90 == pytest.approx(0, abs=1.0)
 
 
-def test_fit_to_cell_rotate_with_at():
+def test_fit_to_surface_rotate_with_at():
     """rotate=True should work with at= position-aware mode."""
     scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
     cell = scene.grid[0][0]
@@ -282,7 +282,7 @@ def test_fit_to_cell_rotate_with_at():
     group.add(Line(-50, -5, 50, 5, width=10, color="red"))
     cell.add(group)
 
-    group.fit_to_cell(0.5, at=(0.5, 0.5), rotate=True)
+    group.fit_to_surface(0.5, at=(0.5, 0.5), rotate=True)
 
     # Bounds should stay within cell
     min_x, min_y, max_x, max_y = group.bounds()
@@ -319,7 +319,7 @@ def test_fit_within_rotate():
     assert max_y <= r_max_y + 1.0
 
 
-def test_fit_to_cell_rotate_works_on_polygon():
+def test_fit_to_surface_rotate_works_on_polygon():
     """rotate=True should work on Polygon (bakes into vertices)."""
     from pyfreeform.entities.polygon import Polygon
 
@@ -331,7 +331,7 @@ def test_fit_to_cell_rotate_works_on_polygon():
         Polygon.diamond(size=0.8),
         fill="blue",
     )
-    poly.fit_to_cell(0.9, rotate=True)
+    poly.fit_to_surface(0.9, rotate=True)
 
     # Bounds should fit within cell
     min_x, min_y, max_x, max_y = poly.bounds()
@@ -341,27 +341,27 @@ def test_fit_to_cell_rotate_works_on_polygon():
     assert max_y <= cell.y + cell.height + 1.0
 
 
-def test_fit_to_cell_rotate_works_on_rect():
+def test_fit_to_surface_rotate_works_on_rect():
     """rotate=True should work on Rect (sets self.rotation)."""
 
     scene = Scene.with_grid(cols=1, rows=1, cell_width=50, cell_height=200)
     cell = scene.grid[0][0]
 
     rect = cell.add_rect(width=0.9, height=0.1, fill="blue")
-    rect.fit_to_cell(0.9, rotate=True)
+    rect.fit_to_surface(0.9, rotate=True)
 
     # Wide rect in tall cell should have rotated
     assert rect.rotation != 0.0
 
 
-def test_fit_to_cell_rotate_dot_noop():
+def test_fit_to_surface_rotate_dot_noop():
     """rotate=True on Dot should work (no-op, circle is symmetric)."""
     scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
     cell = scene.grid[0][0]
 
     dot = cell.add_dot(radius=0.3, color="red")
     # Should not raise — Dot is symmetric, rotation is a no-op
-    dot.fit_to_cell(0.8, rotate=True)
+    dot.fit_to_surface(0.8, rotate=True)
 
 
 def test_fit_within_rotate_works_on_non_group():
@@ -384,7 +384,7 @@ def test_fit_within_rotate_works_on_non_group():
 # =========================================================================
 
 
-def test_fit_to_cell_match_aspect_square_cell():
+def test_fit_to_surface_match_aspect_square_cell():
     """match_aspect=True in square cell with wide entity."""
     scene = Scene.with_grid(cols=1, rows=1, cell_size=200)
     cell = scene.grid[0][0]
@@ -394,7 +394,7 @@ def test_fit_to_cell_match_aspect_square_cell():
     group.add(Line(-100, 0, 100, 0, width=10, color="red"))
     cell.add(group)
 
-    group.fit_to_cell(0.9, match_aspect=True)
+    group.fit_to_surface(0.9, match_aspect=True)
 
     # After matching aspect to square cell, bounds should be roughly square
     min_x, min_y, max_x, max_y = group.bounds()
@@ -405,7 +405,7 @@ def test_fit_to_cell_match_aspect_square_cell():
         assert 0.5 < ratio < 2.0  # roughly square-ish
 
 
-def test_fit_to_cell_match_aspect_tall_cell():
+def test_fit_to_surface_match_aspect_tall_cell():
     """match_aspect=True in tall cell with wide entity."""
     scene = Scene.with_grid(cols=1, rows=1, cell_width=100, cell_height=300)
     cell = scene.grid[0][0]
@@ -415,7 +415,7 @@ def test_fit_to_cell_match_aspect_tall_cell():
     group.add(Line(-80, 0, 80, 0, width=8, color="red"))
     cell.add(group)
 
-    group.fit_to_cell(0.9, match_aspect=True)
+    group.fit_to_surface(0.9, match_aspect=True)
 
     # Bounds should fit within cell
     min_x, min_y, max_x, max_y = group.bounds()
@@ -423,7 +423,7 @@ def test_fit_to_cell_match_aspect_tall_cell():
     assert max_x <= cell.x + cell.width + 1.0
 
 
-def test_fit_to_cell_rotate_and_match_aspect_exclusive():
+def test_fit_to_surface_rotate_and_match_aspect_exclusive():
     """rotate=True and match_aspect=True together should raise ValueError."""
     scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
     cell = scene.grid[0][0]
@@ -433,7 +433,7 @@ def test_fit_to_cell_rotate_and_match_aspect_exclusive():
     cell.add(group)
 
     with pytest.raises(ValueError, match="mutually exclusive"):
-        group.fit_to_cell(0.9, rotate=True, match_aspect=True)
+        group.fit_to_surface(0.9, rotate=True, match_aspect=True)
 
 
 def test_fit_within_match_aspect():

@@ -27,7 +27,7 @@ class Point(Entity):
         b = Point(100, 0)
         c = Point(50, 80)
         tri = Polygon([a, b, c], fill="coral")
-        b.move_to_cell(cell, at=(0.8, 0.3))  # triangle vertex moves
+        b.move_to_surface(cell, at=(0.8, 0.3))  # triangle vertex moves
         ```
     """
 

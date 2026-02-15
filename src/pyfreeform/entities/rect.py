@@ -7,6 +7,7 @@ import math
 from ..color import Color, apply_brightness
 from ..core.coord import Coord, CoordLike
 from ..core.entity import Entity
+from ..core.positions import NAMED_POSITIONS
 from ..core.relcoord import RelCoord
 from ..core.svg_utils import fill_stroke_attrs, shape_opacity_attrs, svg_num
 
@@ -259,8 +260,6 @@ class Rect(Entity):
 
     def _named_anchor(self, name: str) -> Coord:
         """Get anchor point by name (transform-aware)."""
-        from ..core.positions import NAMED_POSITIONS
-
         if name not in NAMED_POSITIONS:
             raise ValueError(f"Rect has no anchor '{name}'. Available: {self.anchor_names}")
         return self._anchor_from_relcoord(NAMED_POSITIONS[name])

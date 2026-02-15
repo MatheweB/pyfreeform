@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from ..core.coord import Coord
-from ..core.bezier import sample_arc_length
+from ..core.bezier import fit_cubic_beziers, sample_arc_length
 
 
 class PathShape:
@@ -33,8 +33,6 @@ class PathShape:
 
     def to_svg_path_d(self, segments: int = 64) -> str:
         """SVG path ``d`` attribute using smooth cubic Bezier curves."""
-        from ..core.bezier import fit_cubic_beziers
-
         beziers = fit_cubic_beziers(self, segments, closed=self.is_closed)
         if not beziers:
             return ""

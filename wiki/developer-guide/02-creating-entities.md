@@ -1,6 +1,6 @@
 # Creating Custom Entities
 
-This guide walks through creating a custom entity by implementing the `Entity` abstract class. By the end, you will have built a fully functional `CrossHair` entity that integrates with the rendering pipeline, supports transforms, and works with `fit_to_cell()`.
+This guide walks through creating a custom entity by implementing the `Entity` abstract class. By the end, you will have built a fully functional `CrossHair` entity that integrates with the rendering pipeline, supports transforms, and works with `fit_to_surface()`.
 
 ## The Entity Contract
 
@@ -22,7 +22,7 @@ Every entity in PyFreeform extends the `Entity` ABC from `pyfreeform.core.entity
 | `inner_bounds()` | Non-rectangular shapes -- return the largest axis-aligned rectangle fully inside the entity. Default: same as `bounds()`. Used by `fit_within()`. |
 | `rotated_bounds(angle, *, visual)` | If your entity has a tighter AABB under rotation than the default (which rotates 4 `bounds()` corners). Override with analytical formulas for curves, ellipses, or any entity with known extrema. Used by `EntityGroup.bounds()` for tight composite bounds. |
 | `rotation_center` (property) | If the natural rotation/scale pivot isn't `self.position`. Override to return a `Coord` (e.g., Rect returns its center, Polygon returns its centroid). |
-| `_move_by(dx, dy)` | If your entity stores absolute coordinates for sub-parts (e.g., Line stores `_end_offset`, Path stores Bezier segments). This is a private method -- users reposition entities via the `.at` property or `move_to_cell()`. |
+| `_move_by(dx, dy)` | If your entity stores absolute coordinates for sub-parts (e.g., Line stores `_end_offset`, Path stores Bezier segments). This is a private method -- users reposition entities via the `.at` property or `move_to_surface()`. |
 | `get_required_markers()` | If your entity needs SVG `<marker>` definitions in `<defs>`. Return `list[tuple[str, str]]` of `(marker_id, marker_svg)`. |
 | `get_required_paths()` | If your entity needs SVG `<path>` definitions in `<defs>` (used by textPath). Return `list[tuple[str, str]]` of `(path_id, path_svg)`. |
 
@@ -81,7 +81,7 @@ class CrossHair(Entity):
         self._color = Color(value)
 ```
 
-1. Always call `super().__init__(x, y, z_index)`. This sets up `_position`, `_cell`, `_connections`, `_data`, and `_z_index`.
+1. Always call `super().__init__(x, y, z_index)`. This sets up `_position`, `_surface`, `_connections`, `_data`, and `_z_index`.
 
 !!! warning "Always call `super().__init__`"
     The base `Entity.__init__` initializes critical internal state: position, cell reference, connections WeakSet, and data dict. Forgetting this call will cause `AttributeError` at runtime.
@@ -122,9 +122,9 @@ def _named_anchor(self, name: str) -> Coord:
 
 ### Step 3: Implement bounds()
 
-Return the axis-aligned bounding box as `(min_x, min_y, max_x, max_y)`. This is used by `fit_to_cell()`, `fit_within()`, and `place_beside()`.
+Return the axis-aligned bounding box as `(min_x, min_y, max_x, max_y)`. This is used by `fit_to_surface()`, `fit_within()`, and `place_beside()`.
 
-The `visual` keyword argument controls whether stroke width is included. When `visual=False` (the default), return pure geometric bounds. When `visual=True`, expand by `stroke_width / 2` so that `fit_to_cell` can account for the visual extent of stroked entities.
+The `visual` keyword argument controls whether stroke width is included. When `visual=False` (the default), return pure geometric bounds. When `visual=True`, expand by `stroke_width / 2` so that `fit_to_surface` can account for the visual extent of stroked entities.
 
 Bounds must be in **world space** -- multiply geometry dimensions by `self._scale_factor` to account for accumulated scale transforms:
 
@@ -318,7 +318,7 @@ scene = Scene.with_grid(cols=10, rows=10, cell_size=30)
 for cell in scene.grid:
     ch = CrossHair(size=20, color="coral", width=1.5)
     cell.add(ch)                 # Centers in cell
-    ch.fit_to_cell(0.8)          # Scales to 80% of cell
+    ch.fit_to_surface(0.8)       # Scales to 80% of surface
 
 scene.save("crosshairs.svg")
 ```
@@ -366,7 +366,7 @@ Before considering your entity complete, verify:
 - [ ] `rotation_center` overridden if the natural pivot isn't `self.position`
 - [ ] Opacity attributes are only emitted when not equal to 1.0
 - [ ] `__repr__` is implemented for debugging
-- [ ] Works with `cell.add()` and `fit_to_cell()`
+- [ ] Works with `cell.add()` and `fit_to_surface()`
 
 !!! tip "Shape entities with fill/stroke opacity"
     If your entity has both `fill` and `stroke` with independent opacity (like Rect, Ellipse, Polygon), use the shared `shape_opacity_attrs(opacity, fill_opacity, stroke_opacity)` helper from `pyfreeform.core.svg_utils` in your `to_svg()`. It returns the correct `fill-opacity`/`stroke-opacity` SVG attribute string, emitting nothing when opacity is 1.0.

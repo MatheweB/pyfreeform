@@ -51,6 +51,9 @@ from .grid.grid import Grid
 from .image.image import Image
 from .image.layer import Layer
 
+# Layout
+from .layout import align, between, distribute, stack
+
 # Scene
 from .scene.scene import Scene
 
@@ -147,9 +150,13 @@ __all__ = [
     "Text",
     "TextStyle",
     "__version__",
+    "align",
+    "between",
     "cap_shape",
     "display",
+    "distribute",
     "get_angle_at",
     "map_range",
     "register_cap",
+    "stack",
 ]

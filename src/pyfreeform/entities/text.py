@@ -301,7 +301,7 @@ class Text(Entity):
             self.y + y_offset + text_height,
         )
 
-    def fit_to_cell(
+    def fit_to_surface(
         self,
         scale: float = 1.0,
         recenter: bool = True,
@@ -312,29 +312,29 @@ class Text(Entity):
         match_aspect: bool = False,
     ) -> Text:
         """
-        Scale font size so text fills its cell at *scale*.
+        Scale font size so text fills its surface at *scale*.
 
         Unlike ``fit=True`` on ``add_text()`` (which only shrinks),
         this method scales the font **up or down** to fill the
         available space.
 
         Args:
-            scale:  How much of the cell to fill (0.0-1.0).
-                    1.0 = fill entire cell, 0.8 = use 80%.
-            recenter: If True, center text in cell after scaling.
-            at: Optional cell-relative position (rx, ry).
+            scale:  How much of the surface to fill (0.0-1.0).
+                    1.0 = fill entire surface, 0.8 = use 80%.
+            recenter: If True, center text in surface after scaling.
+            at: Optional surface-relative position (rx, ry).
             visual: Unused for text (kept for signature compatibility).
             rotate: If True, rotate to maximize fill before scaling.
-            match_aspect: If True, rotate to match cell aspect ratio.
+            match_aspect: If True, rotate to match surface aspect ratio.
 
         Returns:
             self, for method chaining.
 
         Raises:
-            ValueError: If entity has no cell.
+            ValueError: If entity has no surface.
         """
-        if self._cell is None:
-            raise ValueError("Cannot fit to cell: text has no cell")
+        if self._surface is None:
+            raise ValueError("Cannot fit to surface: text has no surface")
 
         if rotate and match_aspect:
             raise ValueError("rotate and match_aspect are mutually exclusive")
@@ -343,10 +343,10 @@ class Text(Entity):
         if rotate or match_aspect:
             b = self.bounds(visual=True)
             w, h = b[2] - b[0], b[3] - b[1]
-            cell = self._cell
+            surf = self._surface
             if w > 1e-9 and h > 1e-9:
-                avail_w = cell.width * scale
-                avail_h = cell.height * scale
+                avail_w = surf.width * scale
+                avail_h = surf.height * scale
                 angle = (
                     Entity._compute_optimal_angle(w, h, avail_w, avail_h)
                     if rotate
@@ -354,8 +354,8 @@ class Text(Entity):
                 )
                 self.rotate(angle)
 
-        cell = self._cell
-        cell_w, cell_h = cell.width * scale, cell.height * scale
+        surf = self._surface
+        surf_w, surf_h = surf.width * scale, surf.height * scale
 
         # Compute the font size that fits both dimensions
         width_at_1px = _measure_text_width(
@@ -365,13 +365,13 @@ class Text(Entity):
             self.font_weight,
             self.font_style,
         )
-        max_from_height = cell_h
-        max_from_width = cell_w / width_at_1px if width_at_1px > 0 else max_from_height
+        max_from_height = surf_h
+        max_from_width = surf_w / width_at_1px if width_at_1px > 0 else max_from_height
         new_font_size = min(max_from_width, max_from_height)
 
         self._pixel_font_size = new_font_size
-        if cell_h > 0:
-            self._relative_font_size = new_font_size / cell_h * scale
+        if surf_h > 0:
+            self._relative_font_size = new_font_size / surf_h * scale
         return self
 
     @property

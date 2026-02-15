@@ -20,15 +20,15 @@ All entities inherit from `Entity` and share common capabilities. Each entity ty
         - scale_factor
         - rotation_center
         - z_index
-        - cell
+        - surface
         - connections
         - data
         - bounds
         - offset_from
-        - move_to_cell
+        - move_to_surface
         - rotate
         - scale
-        - fit_to_cell
+        - fit_to_surface
         - fit_within
         - connect
         - anchor
@@ -238,7 +238,7 @@ Entity-reference vertices are resolved at render time. When the referenced entit
         - relative_font_size
         - has_textpath
         - set_textpath
-        - fit_to_cell
+        - fit_to_surface
         - anchor_names
 
 !!! warning "font_size: pixels in constructor, fraction in builder"
@@ -282,7 +282,7 @@ Uses Hermite-to-cubic-Bezier fitting with C1 continuity — no sharp corners bet
         - rotation
         - scale_factor
         - opacity
-        - fit_to_cell
+        - fit_to_surface
         - bounds
 
 SVG output: `<g transform="translate(x,y) rotate(r) scale(s)" opacity="o">` — children are never mutated.

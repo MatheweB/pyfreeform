@@ -41,7 +41,7 @@ def make_crosshair(color1, color2):
 for cell in scene.grid:
     group = make_crosshair(colors.primary, colors.secondary)
     cell.add(group)
-    group.fit_to_cell(0.8)
+    group.fit_to_surface(0.8)
     group.rotate(nx * 45)
 ```
 

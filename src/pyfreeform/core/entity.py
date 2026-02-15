@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 from abc import ABC, abstractmethod
 from collections.abc import Collection
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Literal
 
 from ..color import ColorLike
 from .binding import Binding
@@ -34,7 +34,7 @@ class Entity(ABC):
 
     Attributes:
         position: Current position (center point for most entities)
-        cell: The cell containing this entity (if placed in a grid)
+        surface: The surface containing this entity (Cell, Scene, or CellGroup)
         connections: Connections involving this entity
 
     Subclasses must implement:
@@ -53,7 +53,7 @@ class Entity(ABC):
             z_index: Layer ordering (higher = on top). Default 0.
         """
         self._position = Coord(x, y)
-        self._cell: Surface | None = None
+        self._surface: Surface | None = None
         self._connections: dict[Connection, None] = {}
         self._data: dict[str, Any] = {}
         self._z_index = z_index
@@ -122,7 +122,7 @@ class Entity(ABC):
 
         Returns None if no reference frame is available.
         """
-        ref = self._reference or self._cell
+        ref = self._reference or self._surface
         if ref is None:
             return None
         if self._resolving:
@@ -143,7 +143,7 @@ class Entity(ABC):
 
         Returns None if no reference frame is available.
         """
-        ref = self._reference or self._cell
+        ref = self._reference or self._surface
         if ref is None:
             return None
         _, _, ref_w, ref_h = ref.ref_frame()
@@ -235,14 +235,14 @@ class Entity(ABC):
             self._along_path = None
 
     @property
-    def cell(self) -> Surface | None:
+    def surface(self) -> Surface | None:
         """The surface (Cell, Scene, or CellGroup) containing this entity, if any."""
-        return self._cell
+        return self._surface
 
-    @cell.setter
-    def cell(self, value: Surface | None) -> None:
+    @surface.setter
+    def surface(self, value: Surface | None) -> None:
         """Set the containing surface."""
-        self._cell = value
+        self._surface = value
 
     @property
     def connections(self) -> Collection[Connection]:
@@ -343,7 +343,7 @@ class Entity(ABC):
             self._relative_at = None
             return self
         if self._relative_at is not None:
-            ref = self._reference or self._cell
+            ref = self._reference or self._surface
             if ref is not None:
                 # Convert pixel offset to fraction offset
                 _, _, ref_w, ref_h = ref.ref_frame()
@@ -355,13 +355,13 @@ class Entity(ABC):
         self._position = Coord(self._position.x + dx, self._position.y + dy)
         return self
 
-    def move_to_cell(self, cell: Surface, at: RelCoordLike = "center") -> Entity:
+    def move_to_surface(self, surface: Surface, at: RelCoordLike = "center") -> Entity:
         """
-        Move entity to a position within a cell (stores relative coords).
+        Move entity to a position within a surface (stores relative coords).
 
         Args:
-            cell: The target cell/surface.
-            at: RelCoordLike within cell - either a RelCoord / (rx, ry) tuple
+            surface: The target surface (Cell, Scene, or CellGroup).
+            at: RelCoordLike within surface - either a RelCoord / (rx, ry) tuple
                 where (0,0) is top-left and (1,1) is bottom-right,
                 or a named position like "center", "top_left", etc.
 
@@ -369,12 +369,12 @@ class Entity(ABC):
             self, for method chaining.
         """
 
-        self._cell = cell
+        self._surface = surface
         if isinstance(at, str) and at in NAMED_POSITIONS:
             at = NAMED_POSITIONS[at]
         else:
             raise TypeError(
-                f'Cannot use "{at}" for move_to_cell. String must be in NAMED_POSITIONS (e.g. "center")'
+                f'Cannot use "{at}" for move_to_surface. String must be in NAMED_POSITIONS (e.g. "center")'
             )
         at = RelCoord.coerce(at)
         self._relative_at = at
@@ -605,39 +605,52 @@ class Entity(ABC):
         """
         return self.anchor(anchor_spec) + Coord(dx, dy)
 
-    def place_beside(self, other: Entity, side: str = "right", gap: float = 0) -> Entity:
+    def place_beside(self, other: Entity, side: Literal["right", "left", "above", "below"] = "right", gap: float = 0) -> Entity:
         """
-        Position this entity beside another using bounding boxes.
+        Position this entity beside another within the same surface.
+
+        Both entities must be in the same surface (cell, merged region,
+        or scene).  The ``gap`` is a fraction of the surface dimension
+        (e.g. ``gap=0.05`` is 5% of the surface width/height).
 
         Args:
-            other: Reference entity to position relative to.
+            other: Reference entity (must share the same surface).
             side: "right", "left", "above", or "below".
-            gap: Pixels between bounding boxes.
+            gap: Gap as a fraction of the surface dimension.
 
         Returns:
             self, for method chaining.
+
+        Raises:
+            ValueError: If entities are not in the same surface.
         """
-        o_min_x, o_min_y, o_max_x, o_max_y = other.bounds()
-        s_min_x, s_min_y, s_max_x, s_max_y = self.bounds()
-        s_w = s_max_x - s_min_x
-        s_h = s_max_y - s_min_y
-        s_cx = (s_min_x + s_max_x) / 2
-        s_cy = (s_min_y + s_max_y) / 2
-        o_cx = (o_min_x + o_max_x) / 2
-        o_cy = (o_min_y + o_max_y) / 2
+        if self._surface is None or other._surface is None:
+            raise ValueError("Both entities must be in a surface for place_beside")
+        if self._surface is not other._surface:
+            raise ValueError(
+                "Entities must be in the same surface. "
+                "Use grid.merge() to create a larger shared surface."
+            )
+        ob = other.relative_bounds()
+        sb = self.relative_bounds()
+        s_rw = sb[2] - sb[0]
+        s_rh = sb[3] - sb[1]
+        o_cx = (ob[0] + ob[2]) / 2
+        o_cy = (ob[1] + ob[3]) / 2
 
         if side == "right":
-            tx, ty = o_max_x + gap + s_w / 2, o_cy
+            new_rx, new_ry = ob[2] + gap + s_rw / 2, o_cy
         elif side == "left":
-            tx, ty = o_min_x - gap - s_w / 2, o_cy
+            new_rx, new_ry = ob[0] - gap - s_rw / 2, o_cy
         elif side == "above":
-            tx, ty = o_cx, o_min_y - gap - s_h / 2
+            new_rx, new_ry = o_cx, ob[1] - gap - s_rh / 2
         elif side == "below":
-            tx, ty = o_cx, o_max_y + gap + s_h / 2
+            new_rx, new_ry = o_cx, ob[3] + gap + s_rh / 2
         else:
             raise ValueError(f"Invalid side '{side}'. Use 'right', 'left', 'above', 'below'.")
 
-        self._move_by(tx - s_cx, ty - s_cy)
+        self.binding = None
+        self.at = RelCoord(new_rx, new_ry)
         return self
 
     # --- Abstract methods for subclasses ---
@@ -686,6 +699,45 @@ class Entity(ABC):
             min_x + rc.rx * (max_x - min_x),
             min_y + rc.ry * (max_y - min_y),
         )
+
+    def relative_anchor(self, spec: AnchorSpec = "center") -> RelCoord:
+        """Anchor position as a fraction of the containing surface.
+
+        Like ``anchor()`` but returns a ``RelCoord`` instead of pixels,
+        expressing the position as fractions (0.0–1.0) of the surface.
+
+        Args:
+            spec: Anchor name (e.g. "center", "top_left") or RelCoord.
+
+        Returns:
+            RelCoord within the containing surface.
+
+        Raises:
+            ValueError: If the entity is not in a surface.
+        """
+        if self._surface is None:
+            raise ValueError("Entity must be in a surface for relative_anchor")
+        return self._surface.absolute_to_relative(self.anchor(spec))
+
+    def relative_bounds(self) -> tuple[float, float, float, float]:
+        """Bounds as fractions of the containing surface.
+
+        Returns the bounding box expressed as ``(min_rx, min_ry, max_rx,
+        max_ry)`` where each value is a fraction (0.0–1.0) of the
+        surface's width or height.
+
+        Returns:
+            Tuple of (min_rx, min_ry, max_rx, max_ry).
+
+        Raises:
+            ValueError: If the entity is not in a surface.
+        """
+        if self._surface is None:
+            raise ValueError("Entity must be in a surface for relative_bounds")
+        min_x, min_y, max_x, max_y = self.bounds()
+        tl = self._surface.absolute_to_relative(Coord(min_x, min_y))
+        br = self._surface.absolute_to_relative(Coord(max_x, max_y))
+        return (tl.rx, tl.ry, br.rx, br.ry)
 
     @abstractmethod
     def to_svg(self) -> str:
@@ -986,7 +1038,7 @@ class Entity(ABC):
 
         return self
 
-    def fit_to_cell(
+    def fit_to_surface(
         self,
         scale: float = 1.0,
         recenter: bool = True,
@@ -997,47 +1049,47 @@ class Entity(ABC):
         match_aspect: bool = False,
     ) -> Entity:
         """
-        Automatically scale and position entity to fit within its cell bounds.
+        Automatically scale and position entity to fit within its surface bounds.
 
         Convenience wrapper around :meth:`fit_within` that uses the
-        containing cell as the target region.
+        containing surface as the target region.
 
         Args:
             scale:  Fraction of available space to fill (0.0-1.0).
-                    1.0 = fill entire cell, 0.85 = use 85%.
-            recenter:   If True, center entity in cell after scaling.
+                    1.0 = fill entire surface, 0.85 = use 85%.
+            recenter:   If True, center entity in surface after scaling.
                         Ignored when ``at`` is provided.
-            at: RelCoordLike within the cell as (rx, ry) fractions. Constrains
+            at: RelCoordLike within the surface as (rx, ry) fractions. Constrains
                 fitting to the space available at that point so the entity
-                doesn't overflow. (0.5, 0.5) uses the full cell (default).
+                doesn't overflow. (0.5, 0.5) uses the full surface (default).
             visual: If True (default), include stroke width in bounds
                     measurement so stroked shapes don't overflow.
-            rotate: If True, auto-rotate to maximize cell coverage.
-            match_aspect:   If True, rotate to match the cell's aspect ratio.
+            rotate: If True, auto-rotate to maximize surface coverage.
+            match_aspect:   If True, rotate to match the surface's aspect ratio.
                             Mutually exclusive with ``rotate``.
 
         Returns:
             self, for method chaining
 
         Raises:
-            ValueError: If entity has no cell, scale is out of range,
+            ValueError: If entity has no surface, scale is out of range,
                         or both ``rotate`` and ``match_aspect`` are True.
-            TypeError:  If ``at`` is a string (named anchors sit on cell
+            TypeError:  If ``at`` is a string (named anchors sit on surface
                         edges where available space is 0).
 
         Example:
             ```python
             ellipse = cell.add_ellipse(rx=2.0, ry=1.2, rotation=45)
-            ellipse.fit_to_cell(0.85)  # Auto-constrain to 85% of cell
+            ellipse.fit_to_surface(0.85)  # Auto-constrain to 85% of cell
             dot = cell.add_dot(radius=0.8)
-            dot.fit_to_cell(1.0, at=(0.25, 0.25))  # Fit in top-left quadrant
+            dot.fit_to_surface(1.0, at=(0.25, 0.25))  # Fit in top-left quadrant
             ```
         """
-        if self._cell is None:
-            raise ValueError("Cannot fit to cell: entity has no cell")
-        cell = self._cell
+        if self._surface is None:
+            raise ValueError("Cannot fit to surface: entity has no surface")
+        surf = self._surface
         return self.fit_within(
-            (cell.x, cell.y, cell.x + cell.width, cell.y + cell.height),
+            (surf.x, surf.y, surf.x + surf.width, surf.y + surf.height),
             scale,
             recenter,
             at=at,

@@ -402,7 +402,6 @@ class TestOrbitPreservesRelative:
     def test_orbit_preserves_relative_dot(self):
         scene, cell = _scene_with_cell(100)
         dot = cell.add_dot(at=(0.5, 0.5), color="red")
-        original_at = dot.at
         dot.rotate(90, origin=(50, 50))
         # Relative state preserved — at is shifted, not destroyed
         assert dot.is_relative

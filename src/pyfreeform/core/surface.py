@@ -196,9 +196,23 @@ class Surface:
                 )
             rc = NAMED_POSITIONS[spec]
         else:
-            from .relcoord import RelCoord
             rc = RelCoord.coerce(spec)
         return Coord(self._x + rc.rx * self._width, self._y + rc.ry * self._height)
+
+    def relative_anchor(self, spec: AnchorSpec = "center") -> RelCoord:
+        """Anchor position as relative coordinates (fractions 0.0–1.0).
+
+        For surfaces, relative anchors are the named positions directly
+        (e.g. "center" → ``RelCoord(0.5, 0.5)``), since the surface
+        IS the reference frame.
+
+        Args:
+            spec: Anchor name, RelCoord, or (rx, ry) tuple.
+
+        Returns:
+            RelCoord of the anchor within this surface.
+        """
+        return RelCoord.coerce(spec)
 
     # =========================================================================
     # CONNECTIONS
@@ -289,7 +303,7 @@ class Surface:
 
     def _register_entity(self, entity: Entity) -> None:
         """Register an entity with this surface. Override for custom behavior."""
-        entity.cell = self
+        entity.surface = self
         self._entities.append(entity)
 
     def _resolve_along(
@@ -1630,12 +1644,12 @@ class Surface:
         """Remove an entity from this surface."""
         if entity in self._entities:
             self._entities.remove(entity)
-            entity.cell = None
+            entity.surface = None
             return True
         return False
 
     def clear(self) -> None:
         """Remove all entities from this surface."""
         for entity in self._entities:
-            entity.cell = None
+            entity.surface = None
         self._entities.clear()

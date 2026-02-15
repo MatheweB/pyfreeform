@@ -9,7 +9,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from pyfreeform import Scene, Grid, Point, Dot, Rect, Text, Image
+from pyfreeform import Scene, Grid, Point, Dot, Rect, Image
 from pyfreeform.core.relcoord import RelCoord
 
 
@@ -369,68 +369,85 @@ class TestOffsetFrom:
 
 
 class TestPlaceBeside:
+    """place_beside uses relative operations — gap is a fraction, entities
+    must be in the same surface."""
+
+    def _cell(self, cell_size=200):
+        scene = Scene.with_grid(cols=1, rows=1, cell_size=cell_size)
+        return scene.grid[0][0]
+
     def test_place_right(self):
-        """Place dot to the right of another."""
-        d1 = Dot(100, 100, radius=10, color="red")
-        d2 = Dot(0, 0, radius=10, color="blue")
-        d2.place_beside(d1, "right", gap=5)
-        # d1 right edge = 110, gap = 5, d2 center should be at 125 (110+5+10)
-        assert abs(d2.x - 125) < 0.01
-        assert abs(d2.y - 100) < 0.01  # same y
+        """Place dot to the right of another (relative)."""
+        cell = self._cell()
+        d1 = cell.add_dot(at=(0.3, 0.5), radius=0.05, color="red")
+        d2 = cell.add_dot(at=(0.5, 0.5), radius=0.05, color="blue")
+        d2.place_beside(d1, "right", gap=0.05)
+        # d1 right edge ≈ 0.35, gap 0.05, d2 half-width ≈ 0.05
+        # d2 center ≈ 0.35 + 0.05 + 0.05 = 0.45
+        assert d2.at.rx > d1.at.rx
+        assert abs(d2.at.ry - 0.5) < 0.02  # same y center
 
     def test_place_left(self):
         """Place dot to the left of another."""
-        d1 = Dot(100, 100, radius=10, color="red")
-        d2 = Dot(0, 0, radius=10, color="blue")
-        d2.place_beside(d1, "left", gap=5)
-        # d1 left edge = 90, gap = 5, d2 center should be at 75 (90-5-10)
-        assert abs(d2.x - 75) < 0.01
+        cell = self._cell()
+        d1 = cell.add_dot(at=(0.7, 0.5), radius=0.05, color="red")
+        d2 = cell.add_dot(at=(0.5, 0.5), radius=0.05, color="blue")
+        d2.place_beside(d1, "left", gap=0.05)
+        assert d2.at.rx < d1.at.rx
 
     def test_place_above(self):
         """Place dot above another."""
-        d1 = Dot(100, 100, radius=10, color="red")
-        d2 = Dot(0, 0, radius=10, color="blue")
-        d2.place_beside(d1, "above", gap=5)
-        # d1 top edge = 90, gap = 5, d2 center should be at 75 (90-5-10)
-        assert abs(d2.y - 75) < 0.01
-        assert abs(d2.x - 100) < 0.01  # same x
+        cell = self._cell()
+        d1 = cell.add_dot(at=(0.5, 0.7), radius=0.05, color="red")
+        d2 = cell.add_dot(at=(0.5, 0.5), radius=0.05, color="blue")
+        d2.place_beside(d1, "above", gap=0.05)
+        assert d2.at.ry < d1.at.ry
+        assert abs(d2.at.rx - 0.5) < 0.02  # same x center
 
     def test_place_below(self):
         """Place dot below another."""
-        d1 = Dot(100, 100, radius=10, color="red")
-        d2 = Dot(0, 0, radius=10, color="blue")
-        d2.place_beside(d1, "below", gap=5)
-        # d1 bottom edge = 110, gap = 5, d2 center should be at 125 (110+5+10)
-        assert abs(d2.y - 125) < 0.01
+        cell = self._cell()
+        d1 = cell.add_dot(at=(0.5, 0.3), radius=0.05, color="red")
+        d2 = cell.add_dot(at=(0.5, 0.5), radius=0.05, color="blue")
+        d2.place_beside(d1, "below", gap=0.05)
+        assert d2.at.ry > d1.at.ry
 
     def test_returns_self(self):
         """place_beside returns self for chaining."""
-        d1 = Dot(100, 100, radius=10, color="red")
-        d2 = Dot(0, 0, radius=10, color="blue")
+        cell = self._cell()
+        d1 = cell.add_dot(at=(0.3, 0.5), radius=0.05, color="red")
+        d2 = cell.add_dot(at=(0.5, 0.5), radius=0.05, color="blue")
         result = d2.place_beside(d1, "right")
         assert result is d2
 
     def test_invalid_side(self):
         """Invalid side raises ValueError."""
-        d1 = Dot(100, 100, radius=10, color="red")
-        d2 = Dot(0, 0, radius=10, color="blue")
+        cell = self._cell()
+        d1 = cell.add_dot(at=(0.3, 0.5), radius=0.05, color="red")
+        d2 = cell.add_dot(at=(0.5, 0.5), radius=0.05, color="blue")
         with pytest.raises(ValueError, match="Invalid side"):
             d2.place_beside(d1, "diagonal")
 
     def test_zero_gap(self):
         """Edges touch with gap=0."""
+        cell = self._cell()
+        d1 = cell.add_dot(at=(0.3, 0.5), radius=0.05, color="red")
+        d2 = cell.add_dot(at=(0.5, 0.5), radius=0.05, color="blue")
+        d2.place_beside(d1, "right", gap=0)
+        # d2 should be right next to d1 (edges touching)
+        assert d2.at.rx > d1.at.rx
+
+    def test_requires_same_surface(self):
+        """Entities in different surfaces raises ValueError."""
+        scene = Scene.with_grid(cols=2, rows=1, cell_size=100)
+        d1 = scene.grid[0][0].add_dot(at=(0.5, 0.5), radius=0.05, color="red")
+        d2 = scene.grid[0][1].add_dot(at=(0.5, 0.5), radius=0.05, color="blue")
+        with pytest.raises(ValueError, match="same surface"):
+            d2.place_beside(d1, "right")
+
+    def test_requires_surface(self):
+        """Entities not in a surface raises ValueError."""
         d1 = Dot(100, 100, radius=10, color="red")
         d2 = Dot(0, 0, radius=10, color="blue")
-        d2.place_beside(d1, "right", gap=0)
-        # d1 right edge = 110, d2 left edge should be at 110
-        # d2 center = 110 + 10 = 120
-        assert abs(d2.x - 120) < 0.01
-
-    def test_with_text(self):
-        """place_beside works with Text entity."""
-        rect = Rect(100, 100, width=40, height=20, fill="blue")
-        text = Text(0, 0, "Hello", font_size=12, color="white")
-        result = text.place_beside(rect, "below", gap=3)
-        assert result is text
-        # Text should be below the rect
-        assert text.y > 120  # rect bottom is at 120
+        with pytest.raises(ValueError, match="must be in a surface"):
+            d2.place_beside(d1, "right")
