@@ -111,3 +111,28 @@ for cell in scene.grid:
 ![Shape art](../_images/recipes/image-shape-art.svg){ width="420" }
 <figcaption>Squares for shadows, hexagons for midtones, stars for highlights.</figcaption>
 </figure>
+
+## Monochrome Portrait
+
+One base color modulated entirely by `color_brightness` — no manual RGB math:
+
+```python
+scene = Scene.from_image("MonaLisa.jpg", grid_size=40, cell_size=10)
+scene.background = "#1a1a2e"
+
+for cell in scene.grid:
+    cell.add_dot(
+        radius=0.15 + cell.brightness * 0.30,
+        color="coral",
+        color_brightness=cell.brightness,
+        opacity=0.5 + cell.brightness * 0.5,
+    )
+```
+
+<figure markdown>
+![Monochrome portrait](../_images/recipes/image-monochrome.svg){ width="420" }
+<figcaption>A single color — coral — dimmed by brightness. Dark areas go nearly black, bright areas glow.</figcaption>
+</figure>
+
+!!! tip "Works with any color"
+    Swap `"coral"` for `"gold"`, `"cyan"`, `"mediumpurple"` — the brightness modifier handles the rest.

@@ -93,3 +93,19 @@ def generate():
             verts = Polygon.star(points=6, size=size, inner_ratio=0.5)
         cell.add_polygon(verts, fill=cell.color, opacity=0.6 + b * 0.4)
     save(scene, "recipes/image-shape-art.svg")
+
+    # --- 7. Monochrome portrait (color_brightness hero) ---
+    scene = Scene.from_image(
+        sample_image("MonaLisa.jpg"),
+        grid_size=40,
+        cell_size=10,
+    )
+    scene.background = "#1a1a2e"
+    for cell in scene.grid:
+        cell.add_dot(
+            radius=0.15 + cell.brightness * 0.30,
+            color="coral",
+            color_brightness=cell.brightness,
+            opacity=0.5 + cell.brightness * 0.5,
+        )
+    save(scene, "recipes/image-monochrome.svg")
