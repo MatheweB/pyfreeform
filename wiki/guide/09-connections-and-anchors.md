@@ -284,12 +284,12 @@ Connections aren't limited to entities — any **surface** (Cell, CellGroup, Sce
 scene = Scene.with_grid(cols=5, rows=1, cell_size=40)
 
 # Cell-to-cell connection — no phantom dots needed
-cell_a = scene.grid[0, 0]
-cell_b = scene.grid[0, 4]
+cell_a = scene.grid[0][0]
+cell_b = scene.grid[0][4]
 cell_a.connect(cell_b, color="coral", width=2)
 
 # Entity-to-cell connection
-dot = scene.grid[0, 2].add_dot(color="teal")
+dot = scene.grid[0][2].add_dot(color="teal")
 dot.connect(cell_b, end_anchor="left", color="navy")
 
 # Cell-to-entity connection

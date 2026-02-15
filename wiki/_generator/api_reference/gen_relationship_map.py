@@ -160,7 +160,7 @@ def generate():
     ]
     sub_rects = []
     for i, name in enumerate(names):
-        cell = g[4, i]
+        cell = g[4][i]
         r = cell.add_rect(
             fill=colors.secondary,
             stroke=colors.secondary,
@@ -176,14 +176,14 @@ def generate():
 
     # Pathable indicator dots below Line(2), Curve(3), Ellipse(4), Path(8)
     for idx in [2, 3, 4, 8]:
-        g[4, idx].add_dot(
+        g[4][idx].add_dot(
             at=(0.5, 0.82),
             radius=0.05,
             color=colors.accent,
             opacity=0.7,
         )
     # Small annotation
-    g[4, 3].add_text("Pathable", at=(0.5, 0.95), font_size=0.10, color=DIM, fit=True)
+    g[4][3].add_text("Pathable", at=(0.5, 0.95), font_size=0.10, color=DIM, fit=True)
 
     # Connection — right side of the same row
     conn_area = g.merge((4, 10), (4, 11))

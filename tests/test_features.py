@@ -109,6 +109,42 @@ class TestRectCells:
 
 
 # =========================================================================
+# Grid Row Indexing (grid[int] and grid[row][col])
+# =========================================================================
+
+
+class TestGridRowIndexing:
+    def test_grid_int_returns_row_list(self):
+        """grid[int] returns a list of cells for that row."""
+        scene = Scene.with_grid(cols=5, rows=3, cell_size=10)
+        row0 = scene.grid[0]
+        assert isinstance(row0, list)
+        assert len(row0) == 5
+        assert all(c.row == 0 for c in row0)
+
+    def test_grid_row_col_returns_cell(self):
+        """grid[row][col] returns a single Cell."""
+        scene = Scene.with_grid(cols=5, rows=3, cell_size=10)
+        cell = scene.grid[1][2]
+        assert cell.row == 1
+        assert cell.col == 2
+
+    def test_grid_int_out_of_bounds(self):
+        """grid[bad_row] raises IndexError."""
+        scene = Scene.with_grid(cols=5, rows=3, cell_size=10)
+        with pytest.raises(IndexError):
+            scene.grid[5]
+
+    def test_grid_iteration_unchanged(self):
+        """Iterating over the grid still yields all cells row by row."""
+        scene = Scene.with_grid(cols=3, rows=2, cell_size=10)
+        cells = list(scene.grid)
+        assert len(cells) == 6
+        assert cells[0].row == 0 and cells[0].col == 0
+        assert cells[5].row == 1 and cells[5].col == 2
+
+
+# =========================================================================
 # Feature 2: Fit Grid to Image Mode
 # =========================================================================
 
@@ -155,7 +191,7 @@ class TestFitGridToImage:
         """Cell data loads correctly in fit-grid-to-image mode."""
         img = _make_image(100, 100, r=255, g=128, b=64)
         scene = Scene.from_image(img, grid_size=None, cell_size=10)
-        cell = scene.grid[0, 0]
+        cell = scene.grid[0][0]
         # Should have loaded color data (not the default gray)
         assert cell.color != "#808080"
         assert cell.color.startswith("#")
@@ -170,42 +206,42 @@ class TestCellDistanceTo:
     def test_same_cell(self):
         """Distance to self is 0."""
         scene = Scene.with_grid(cols=10, rows=10, cell_size=10)
-        cell = scene.grid[0, 0]
+        cell = scene.grid[0][0]
         assert cell.distance_to(cell) == 0.0
 
     def test_adjacent_cells(self):
         """Adjacent cells have distance = cell_size."""
         scene = Scene.with_grid(cols=10, rows=10, cell_size=10)
-        c1 = scene.grid[0, 0]
-        c2 = scene.grid[0, 1]
+        c1 = scene.grid[0][0]
+        c2 = scene.grid[0][1]
         assert abs(c1.distance_to(c2) - 10.0) < 0.01
 
     def test_diagonal_cells(self):
         """Diagonal distance for 3,4 grid offset = 5 * cell_size."""
         scene = Scene.with_grid(cols=10, rows=10, cell_size=10)
-        c1 = scene.grid[0, 0]
-        c2 = scene.grid[3, 4]
+        c1 = scene.grid[0][0]
+        c2 = scene.grid[3][4]
         expected = math.sqrt(30**2 + 40**2)  # pixels
         assert abs(c1.distance_to(c2) - expected) < 0.01
 
     def test_distance_to_point(self):
         """Distance to a Point."""
         scene = Scene.with_grid(cols=10, rows=10, cell_size=10)
-        cell = scene.grid[0, 0]  # center at (5, 5)
+        cell = scene.grid[0][0]  # center at (5, 5)
         point = Point(5, 5)
         assert cell.distance_to(point) == 0.0
 
     def test_distance_to_tuple(self):
         """Distance to a tuple."""
         scene = Scene.with_grid(cols=10, rows=10, cell_size=10)
-        cell = scene.grid[0, 0]
+        cell = scene.grid[0][0]
         center = cell.center
         assert cell.distance_to((center.x, center.y)) == 0.0
 
     def test_distance_to_anchor_point(self):
         """Distance to an entity anchor (Point)."""
         scene = Scene.with_grid(cols=10, rows=10, cell_size=10)
-        cell = scene.grid[5, 5]
+        cell = scene.grid[5][5]
         dot = Dot(x=cell.center.x, y=cell.center.y, radius=5, color="red")
         # entity.anchor("center") returns a Point
         anchor_point = dot.anchor("center")
@@ -214,7 +250,7 @@ class TestCellDistanceTo:
     def test_distance_to_invalid_type(self):
         """TypeError for unsupported types."""
         scene = Scene.with_grid(cols=5, rows=5, cell_size=10)
-        cell = scene.grid[0, 0]
+        cell = scene.grid[0][0]
         with pytest.raises(TypeError):
             cell.distance_to("invalid")  # type: ignore
 
@@ -223,25 +259,25 @@ class TestNormalizedPosition:
     def test_corners(self):
         """Corners are (0,0) and (1,1)."""
         scene = Scene.with_grid(cols=10, rows=10, cell_size=10)
-        assert scene.grid[0, 0].normalized_position == RelCoord(0.0, 0.0)
-        assert scene.grid[9, 9].normalized_position == RelCoord(1.0, 1.0)
+        assert scene.grid[0][0].normalized_position == RelCoord(0.0, 0.0)
+        assert scene.grid[9][9].normalized_position == RelCoord(1.0, 1.0)
 
     def test_center(self):
         """Center of 11x11 grid = (0.5, 0.5)."""
         scene = Scene.with_grid(cols=11, rows=11, cell_size=10)
-        nx, ny = scene.grid[5, 5].normalized_position
+        nx, ny = scene.grid[5][5].normalized_position
         assert abs(nx - 0.5) < 0.01
         assert abs(ny - 0.5) < 0.01
 
     def test_single_cell(self):
         """Single cell grid = (0.0, 0.0)."""
         scene = Scene.with_grid(cols=1, rows=1, cell_size=10)
-        assert scene.grid[0, 0].normalized_position == RelCoord(0.0, 0.0)
+        assert scene.grid[0][0].normalized_position == RelCoord(0.0, 0.0)
 
     def test_top_right(self):
         """Top-right corner."""
         scene = Scene.with_grid(cols=10, rows=10, cell_size=10)
-        nx, ny = scene.grid[0, 9].normalized_position
+        nx, ny = scene.grid[0][9].normalized_position
         assert abs(nx - 1.0) < 0.01
         assert abs(ny - 0.0) < 0.01
 
@@ -268,23 +304,23 @@ class TestSubCellSampling:
         img = _make_quadrant_image(100)
         grid = Grid.from_image(img, cols=2, rows=2, cell_size=10)
         # Top-left cell → red quadrant
-        r, g, b = grid[0, 0].sample_image(0.5, 0.5)
+        r, g, b = grid[0][0].sample_image(0.5, 0.5)
         assert r > 200 and g < 50 and b < 50
         # Top-right cell → green quadrant
-        r, g, b = grid[0, 1].sample_image(0.5, 0.5)
+        r, g, b = grid[0][1].sample_image(0.5, 0.5)
         assert g > 200 and r < 50 and b < 50
         # Bottom-left cell → blue quadrant
-        r, g, b = grid[1, 0].sample_image(0.5, 0.5)
+        r, g, b = grid[1][0].sample_image(0.5, 0.5)
         assert b > 200 and r < 50 and g < 50
         # Bottom-right cell → white quadrant
-        r, g, b = grid[1, 1].sample_image(0.5, 0.5)
+        r, g, b = grid[1][1].sample_image(0.5, 0.5)
         assert r > 200 and g > 200 and b > 200
 
     def test_sample_brightness_range(self):
         """sample_brightness returns 0.0-1.0."""
         img = _make_image(100, 100, r=255, g=255, b=255)
         grid = Grid.from_image(img, cols=5, cell_size=10)
-        br = grid[0, 0].sample_brightness()
+        br = grid[0][0].sample_brightness()
         assert 0.0 <= br <= 1.0
         assert br > 0.9  # White should be close to 1.0
 
@@ -292,7 +328,7 @@ class TestSubCellSampling:
         """sample_hex returns valid hex string."""
         img = _make_image(100, 100, r=255, g=0, b=128)
         grid = Grid.from_image(img, cols=5, cell_size=10)
-        hex_color = grid[0, 0].sample_hex()
+        hex_color = grid[0][0].sample_hex()
         assert hex_color.startswith("#")
         assert len(hex_color) == 7
 
@@ -300,7 +336,7 @@ class TestSubCellSampling:
         """ValueError for grids not created from image."""
         scene = Scene.with_grid(cols=5, rows=5, cell_size=10)
         with pytest.raises(ValueError, match="not created from an image"):
-            scene.grid[0, 0].sample_image()
+            scene.grid[0][0].sample_image()
 
 
 # =========================================================================

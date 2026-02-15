@@ -29,7 +29,7 @@ def generate():
 
     colors = Palette.neon()
     scene = Scene.with_grid(cols=1, rows=1, cell_size=360, background=colors.background)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
     cx, cy = cell.center
     # Multiple overlapping waves
     for i in range(8):

@@ -112,21 +112,21 @@ class TestSurfaceRelCoordAnchors:
     def test_cell_tuple_anchor(self):
         """Cell accepts (rx, ry) tuple as anchor."""
         scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
-        cell = scene.grid[0, 0]
+        cell = scene.grid[0][0]
         result = cell.anchor((0.5, 0.5))
         assert result == cell.center
 
     def test_cell_relcoord_anchor(self):
         """Cell accepts RelCoord as anchor."""
         scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
-        cell = scene.grid[0, 0]
+        cell = scene.grid[0][0]
         result = cell.anchor(RelCoord(0.0, 0.0))
         assert result == cell.top_left
 
     def test_cell_arbitrary_anchor(self):
         """Arbitrary fraction on cell resolves proportionally."""
         scene = Scene.with_grid(cols=1, rows=1, cell_size=200)
-        cell = scene.grid[0, 0]
+        cell = scene.grid[0][0]
         x, y, w, h = cell.bounds
         result = cell.anchor((0.25, 0.75))
         assert result.x == pytest.approx(x + 0.25 * w, abs=1e-6)
@@ -175,8 +175,8 @@ class TestConnectionAnchorSpec:
     def test_surface_connect_tuple_anchors(self):
         """Surface.connect() accepts tuple anchors."""
         scene = Scene.with_grid(cols=2, rows=1, cell_size=100)
-        cell_a = scene.grid[0, 0]
-        cell_b = scene.grid[0, 1]
+        cell_a = scene.grid[0][0]
+        cell_b = scene.grid[0][1]
         conn = cell_a.connect(cell_b, start_anchor=(1.0, 0.5), end_anchor=(0.0, 0.5))
         # start_anchor=(1.0, 0.5) = right edge center of cell_a
         # end_anchor=(0.0, 0.5) = left edge center of cell_b
@@ -234,7 +234,7 @@ class TestErrorCases:
     def test_invalid_surface_anchor(self):
         """Invalid string on surface raises ValueError."""
         scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
-        cell = scene.grid[0, 0]
+        cell = scene.grid[0][0]
         with pytest.raises(ValueError, match="Unknown anchor"):
             cell.anchor("nonexistent")
 

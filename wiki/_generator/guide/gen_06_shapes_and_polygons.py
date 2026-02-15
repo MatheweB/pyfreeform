@@ -35,11 +35,11 @@ def generate():
     ]
     scene = Scene.with_grid(cols=8, rows=2, cell_size=50, background=colors.background)
     for i, (_name, verts) in enumerate(shapes):
-        cell = scene.grid[0, i]
+        cell = scene.grid[0][i]
         cell.add_polygon(verts, fill=colors.primary, opacity=0.8)
         cell.add_border(color=colors.grid, width=0.3, opacity=0.3)
     for i, (name, _) in enumerate(shapes):
-        cell = scene.grid[1, i]
+        cell = scene.grid[1][i]
         cell.add_text(name, at="center", font_size=0.20, color="#aaaacc", fit=True)
     save(scene, "guide/shapes-gallery.svg")
 

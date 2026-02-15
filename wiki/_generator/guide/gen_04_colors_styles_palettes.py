@@ -86,7 +86,7 @@ def generate():
     # --- 2. Opacity layering demo ---
     colors = Palette.midnight()
     scene = Scene.with_grid(cols=1, rows=1, cell_size=220, background=colors.background)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
     # Stack semi-transparent circles
     offsets = [(-30, -20), (30, -20), (0, 25)]
     palette_colors = [colors.primary, colors.secondary, colors.accent]

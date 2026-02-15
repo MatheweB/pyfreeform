@@ -83,8 +83,8 @@ def generate():
     for cell in scene.grid.column(6):
         cell.add_fill(color=colors.accent, opacity=0.4)
     # Intersection gets both — brighter
-    scene.grid[3, 6].add_fill(color="#ffffff", opacity=0.3)
-    scene.grid[3, 6].add_dot(radius=0.25, color=colors.accent)
+    scene.grid[3][6].add_fill(color="#ffffff", opacity=0.3)
+    scene.grid[3][6].add_dot(radius=0.25, color=colors.accent)
     save(scene, "guide/scenes-row-column.svg")
 
     # --- 8. Region selection ---

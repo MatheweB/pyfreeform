@@ -137,8 +137,8 @@ for cell in scene.grid:
 `cell.distance_to()` measures pixel distance to any cell, point, or coordinate:
 
 ```python
-center = scene.grid[10, 10]
-max_d = center.distance_to(scene.grid[0, 0])
+center = scene.grid[10][10]
+max_d = center.distance_to(scene.grid[0][0])
 
 for cell in scene.grid:
     d = cell.distance_to(center)

@@ -108,7 +108,7 @@ def generate():
 
     # Row 0: column headers
     for col, label in enumerate(["default", "rotate", "match_aspect"]):
-        cell = scene.grid[0, col]
+        cell = scene.grid[0][col]
         t = cell.add_text(
             label, at=(0.5, 0.9), font_size=0.12, color="#aaaacc", fit=True, baseline="auto"
         )
@@ -119,7 +119,7 @@ def generate():
     shapes = [(make_wide_bar, "Rect"), (make_logo, "Logo")]
     for row_idx, (factory, _) in enumerate(shapes, start=1):
         for col in range(3):
-            cell = scene.grid[row_idx, col]
+            cell = scene.grid[row_idx][col]
             group = factory()
             cell.add(group)
             group.fit_to_cell(1.0, **modes[col])
@@ -171,7 +171,7 @@ def generate():
 
     # --- 6. z_index layering showcase ---
     scene = Scene.with_grid(cols=1, rows=1, cell_size=200, background=colors.background)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
     # Layer 0: grid of faint lines
     for i in range(1, 10):
         t = i / 10

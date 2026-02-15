@@ -81,6 +81,19 @@ for cell in scene.grid:
 
 ---
 
+## Accessing Cells
+
+The grid behaves like a list of lists — index by row, then column:
+
+```python
+cell = scene.grid[2][5]       # Cell at row 2, column 5
+row  = scene.grid[2]          # Entire row 2 as a list of cells
+for cell in scene.grid:       # All cells, row by row
+    ...
+```
+
+---
+
 ## Grid Selections
 
 The grid offers powerful selection methods for targeting specific cells.

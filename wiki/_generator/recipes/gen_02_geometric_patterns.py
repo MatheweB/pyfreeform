@@ -61,8 +61,8 @@ def generate():
     # --- 4. Concentric rings ---
     colors = Palette.neon()
     scene = Scene.with_grid(cols=20, rows=20, cell_size=16, background=colors.background)
-    center = scene.grid[10, 10]
-    max_d = center.distance_to(scene.grid[0, 0])
+    center = scene.grid[10][10]
+    max_d = center.distance_to(scene.grid[0][0])
     for cell in scene.grid:
         d = cell.distance_to(center)
         t = d / max_d

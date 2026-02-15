@@ -235,13 +235,21 @@ class Scene(Surface):
     @property
     def grid(self) -> Grid:
         """
-        The primary grid (created by from_image or with_grid).
+        The primary grid (created by ``from_image`` or ``with_grid``).
+
+        Index by row then column, iterate for all cells:
+
+        - ``scene.grid[row][col]`` — single cell
+        - ``scene.grid[row]`` — list of cells in that row
+        - ``for cell in scene.grid:`` — all cells, row by row
 
         Raises:
             ValueError: If scene was created without a grid.
 
         Example:
             ```python
+            scene.grid[0][0].add_fill(color="coral")
+
             for cell in scene.grid:
                 cell.add_dot(color=cell.color)
             ```

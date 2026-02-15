@@ -30,7 +30,7 @@ def generate():
     # --- 2. Text along curves ---
     colors = Palette.midnight()
     scene = Scene.with_grid(cols=1, rows=1, cell_size=340, background=colors.background)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
     phrases = [
         ("Create beautiful art with code", 0.4),
         ("PyFreeform makes it elegant", -0.3),

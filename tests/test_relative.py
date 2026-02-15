@@ -28,7 +28,7 @@ from pyfreeform.core.binding import Binding
 def _scene_with_cell(cell_size=100):
     """Create a 1x1 scene with a single cell."""
     scene = Scene.with_grid(cols=1, rows=1, cell_size=cell_size)
-    return scene, scene.grid[0, 0]
+    return scene, scene.grid[0][0]
 
 
 # =========================================================================

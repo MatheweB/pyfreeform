@@ -18,7 +18,7 @@ from pyfreeform import Connectable, Connection, Coord, Dot, Scene, Surface
 class TestSurfaceAnchors:
     def test_anchor_names(self):
         scene = Scene.with_grid(cols=3, rows=3, cell_size=10)
-        cell = scene.grid[0, 0]
+        cell = scene.grid[0][0]
         names = cell.anchor_names
         assert "center" in names
         assert "top_left" in names
@@ -27,45 +27,45 @@ class TestSurfaceAnchors:
 
     def test_anchor_center(self):
         scene = Scene.with_grid(cols=3, rows=3, cell_size=10)
-        cell = scene.grid[0, 0]
+        cell = scene.grid[0][0]
         center = cell.anchor("center")
         assert center == cell.center
 
     def test_anchor_top_left(self):
         scene = Scene.with_grid(cols=3, rows=3, cell_size=10)
-        cell = scene.grid[0, 0]
+        cell = scene.grid[0][0]
         tl = cell.anchor("top_left")
         assert tl == cell.top_left
 
     def test_anchor_bottom_right(self):
         scene = Scene.with_grid(cols=3, rows=3, cell_size=10)
-        cell = scene.grid[0, 0]
+        cell = scene.grid[0][0]
         br = cell.anchor("bottom_right")
         assert br == cell.bottom_right
 
     def test_anchor_top(self):
         scene = Scene.with_grid(cols=3, rows=3, cell_size=10)
-        cell = scene.grid[1, 1]
+        cell = scene.grid[1][1]
         top = cell.anchor("top")
         assert top.x == cell.center.x
         assert top.y == cell.top_left.y
 
     def test_anchor_right(self):
         scene = Scene.with_grid(cols=3, rows=3, cell_size=10)
-        cell = scene.grid[1, 1]
+        cell = scene.grid[1][1]
         right = cell.anchor("right")
         assert right.x == cell.top_right.x
         assert right.y == cell.center.y
 
     def test_anchor_invalid_raises(self):
         scene = Scene.with_grid(cols=3, rows=3, cell_size=10)
-        cell = scene.grid[0, 0]
+        cell = scene.grid[0][0]
         with pytest.raises(ValueError, match="Unknown anchor"):
             cell.anchor("nonexistent")
 
     def test_anchor_default_is_center(self):
         scene = Scene.with_grid(cols=3, rows=3, cell_size=10)
-        cell = scene.grid[0, 0]
+        cell = scene.grid[0][0]
         assert cell.anchor() == cell.anchor("center")
 
     def test_scene_anchors(self):
@@ -83,8 +83,8 @@ class TestSurfaceAnchors:
 class TestCellToCell:
     def test_cell_connect_cell(self):
         scene = Scene.with_grid(cols=3, rows=1, cell_size=20)
-        cell_a = scene.grid[0, 0]
-        cell_b = scene.grid[0, 2]
+        cell_a = scene.grid[0][0]
+        cell_b = scene.grid[0][2]
         conn = cell_a.connect(cell_b)
 
         assert isinstance(conn, Connection)
@@ -93,8 +93,8 @@ class TestCellToCell:
 
     def test_both_cells_track_connection(self):
         scene = Scene.with_grid(cols=3, rows=1, cell_size=20)
-        cell_a = scene.grid[0, 0]
-        cell_b = scene.grid[0, 2]
+        cell_a = scene.grid[0][0]
+        cell_b = scene.grid[0][2]
         conn = cell_a.connect(cell_b)
 
         assert conn in cell_a.connections
@@ -102,8 +102,8 @@ class TestCellToCell:
 
     def test_cell_connection_renders(self):
         scene = Scene.with_grid(cols=3, rows=1, cell_size=20)
-        cell_a = scene.grid[0, 0]
-        cell_b = scene.grid[0, 2]
+        cell_a = scene.grid[0][0]
+        cell_b = scene.grid[0][2]
         cell_a.connect(cell_b, color="red")
 
         svg = scene.to_svg()
@@ -111,8 +111,8 @@ class TestCellToCell:
 
     def test_cell_connect_with_anchors(self):
         scene = Scene.with_grid(cols=3, rows=1, cell_size=20)
-        cell_a = scene.grid[0, 0]
-        cell_b = scene.grid[0, 2]
+        cell_a = scene.grid[0][0]
+        cell_b = scene.grid[0][2]
         conn = cell_a.connect(cell_b, start_anchor="right", end_anchor="left")
 
         assert conn.start_point == cell_a.anchor("right")
@@ -127,9 +127,9 @@ class TestCellToCell:
 class TestEntityToCell:
     def test_entity_connect_cell(self):
         scene = Scene.with_grid(cols=3, rows=1, cell_size=20)
-        cell = scene.grid[0, 0]
+        cell = scene.grid[0][0]
         dot = cell.add_dot(color="black")
-        cell_b = scene.grid[0, 2]
+        cell_b = scene.grid[0][2]
 
         conn = dot.connect(cell_b)
         assert conn.start is dot
@@ -137,8 +137,8 @@ class TestEntityToCell:
 
     def test_cell_connect_entity(self):
         scene = Scene.with_grid(cols=3, rows=1, cell_size=20)
-        cell = scene.grid[0, 0]
-        dot = scene.grid[0, 2].add_dot(color="black")
+        cell = scene.grid[0][0]
+        dot = scene.grid[0][2].add_dot(color="black")
 
         conn = cell.connect(dot)
         assert conn.start is cell
@@ -146,8 +146,8 @@ class TestEntityToCell:
 
     def test_mixed_connection_renders(self):
         scene = Scene.with_grid(cols=3, rows=1, cell_size=20)
-        cell = scene.grid[0, 0]
-        dot = scene.grid[0, 2].add_dot(color="black")
+        cell = scene.grid[0][0]
+        dot = scene.grid[0][2].add_dot(color="black")
         cell.connect(dot, color="blue")
 
         svg = scene.to_svg()
@@ -171,8 +171,8 @@ class TestCrossGrid:
 
     def test_cross_grid_cell_connection(self):
         scene, grid1, grid2 = self._two_grid_scene()
-        cell_a = grid1[0, 0]
-        cell_b = grid2[0, 0]
+        cell_a = grid1[0][0]
+        cell_b = grid2[0][0]
         conn = cell_a.connect(cell_b)
 
         # Scene should auto-collect it
@@ -180,7 +180,7 @@ class TestCrossGrid:
 
     def test_cross_grid_renders(self):
         scene, grid1, grid2 = self._two_grid_scene()
-        grid1[0, 0].connect(grid2[0, 0], color="green")
+        grid1[0][0].connect(grid2[0][0], color="green")
         svg = scene.to_svg()
         assert "green" in svg
 
@@ -215,24 +215,24 @@ class TestConnectionData:
 class TestSceneAutoCollect:
     def test_entity_connections_auto_collected(self):
         scene = Scene.with_grid(cols=3, rows=1, cell_size=20)
-        d1 = scene.grid[0, 0].add_dot(color="black")
-        d2 = scene.grid[0, 2].add_dot(color="black")
+        d1 = scene.grid[0][0].add_dot(color="black")
+        d2 = scene.grid[0][2].add_dot(color="black")
         conn = d1.connect(d2)
 
         assert conn in scene.connections
 
     def test_cell_connections_auto_collected(self):
         scene = Scene.with_grid(cols=3, rows=1, cell_size=20)
-        cell_a = scene.grid[0, 0]
-        cell_b = scene.grid[0, 2]
+        cell_a = scene.grid[0][0]
+        cell_b = scene.grid[0][2]
         conn = cell_a.connect(cell_b)
 
         assert conn in scene.connections
 
     def test_no_duplicate_connections(self):
         scene = Scene.with_grid(cols=3, rows=1, cell_size=20)
-        cell_a = scene.grid[0, 0]
-        cell_b = scene.grid[0, 2]
+        cell_a = scene.grid[0][0]
+        cell_b = scene.grid[0][2]
         conn = cell_a.connect(cell_b)
 
         conns = scene.connections
@@ -264,8 +264,8 @@ class TestBackwardCompat:
 
     def test_entity_entity_in_scene(self):
         scene = Scene.with_grid(cols=3, rows=1, cell_size=20)
-        d1 = scene.grid[0, 0].add_dot(color="black")
-        d2 = scene.grid[0, 2].add_dot(color="black")
+        d1 = scene.grid[0][0].add_dot(color="black")
+        d2 = scene.grid[0][2].add_dot(color="black")
         conn = d1.connect(d2)
 
         svg = scene.to_svg()
@@ -280,8 +280,8 @@ class TestBackwardCompat:
 class TestDisconnect:
     def test_disconnect_removes_from_both_endpoints(self):
         scene = Scene.with_grid(cols=3, rows=1, cell_size=20)
-        cell_a = scene.grid[0, 0]
-        cell_b = scene.grid[0, 2]
+        cell_a = scene.grid[0][0]
+        cell_b = scene.grid[0][2]
         conn = cell_a.connect(cell_b)
 
         assert conn in cell_a.connections
@@ -294,8 +294,8 @@ class TestDisconnect:
 
     def test_disconnect_entity_cell(self):
         scene = Scene.with_grid(cols=3, rows=1, cell_size=20)
-        dot = scene.grid[0, 0].add_dot(color="black")
-        cell = scene.grid[0, 2]
+        dot = scene.grid[0][0].add_dot(color="black")
+        cell = scene.grid[0][2]
         conn = dot.connect(cell)
 
         conn.disconnect()

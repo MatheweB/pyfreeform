@@ -78,7 +78,7 @@ def generate():
 
     # --- 4. Text along curve ---
     scene = Scene.with_grid(cols=1, rows=1, cell_size=300, background=colors.background)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
     curve = cell.add_curve(
         start=(0.05, 0.7),
         end=(0.95, 0.3),
@@ -97,7 +97,7 @@ def generate():
 
     # --- 5. Text along ellipse ---
     scene = Scene.with_grid(cols=1, rows=1, cell_size=260, background=colors.background)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
     ellipse = cell.add_ellipse(
         at="center",
         rx=0.38,

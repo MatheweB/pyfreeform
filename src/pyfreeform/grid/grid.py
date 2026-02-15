@@ -32,13 +32,10 @@ class Grid:
     Example:
         ```python
         grid = Grid(cols=20, rows=20, cell_size=10)
-        cell = grid[5, 10]  # Access by [row, col]
-        cell.add(Dot(color="red"))
-
-        # Load image data into cells
-        grid.load_layer("brightness", image["brightness"])
-        for cell in grid:
-            brightness = cell.data["brightness"]
+        cell = grid[5][10]     # Access cell at row 5, col 10
+        row = grid[5]          # Get entire row as list of cells
+        for cell in grid:      # Iterate all cells (row by row)
+            ...
         ```
     """
 
@@ -223,25 +220,24 @@ class Grid:
 
     # --- Cell access ---
 
-    def __getitem__(self, key: tuple[int, int]) -> Cell:
+    def __getitem__(self, key: int) -> list[Cell]:
         """
-        Access cell by (row, col) index.
+        Access a row of cells by index.
+
+        Use ``grid[row][col]`` to access a single cell, or
+        ``grid[row]`` to get the entire row as a list.
 
         Args:
-            key: Tuple of (row, col).
-
-        Returns:
-            The Cell at that position.
+            key: Row index (0-based).
 
         Raises:
-            IndexError: If row or col is out of bounds.
+            IndexError: If row is out of bounds.
         """
-        row, col = key
-        if not (0 <= row < self._rows and 0 <= col < self._cols):
+        if not (0 <= key < self._rows):
             raise IndexError(
-                f"Cell ({row}, {col}) out of bounds for grid of size {self._rows}x{self._cols}"
+                f"Row {key} out of bounds for grid with {self._rows} rows"
             )
-        return self._cells[row][col]
+        return self._cells[key]
 
     def __iter__(self) -> Iterator[Cell]:
         """Iterate over all cells (row by row, left to right)."""
@@ -276,7 +272,7 @@ class Grid:
         Safely access a cell by (row, col) index.
 
         Like ``dict.get()``, returns None instead of raising on
-        out-of-bounds indices. Use ``grid[row, col]`` when you want
+        out-of-bounds indices. Use ``grid[row][col]`` when you want
         IndexError on invalid indices.
 
         Args:

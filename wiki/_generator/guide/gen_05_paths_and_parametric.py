@@ -82,7 +82,7 @@ def generate():
 
     # --- 4. Multiple t-values visualized on one path ---
     scene = Scene.with_grid(cols=1, rows=1, cell_size=280, background=colors.background)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
     curve = cell.add_curve(
         start=(0.1, 0.8),
         end=(0.9, 0.2),
@@ -164,7 +164,7 @@ def generate():
 
     # --- 7. TextPath: text along a curve ---
     scene = Scene.with_grid(cols=1, rows=1, cell_size=280, background=colors.background)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
     curve = cell.add_curve(
         start=(0.05, 0.7),
         end=(0.95, 0.3),
@@ -206,7 +206,7 @@ def generate():
 
     # --- 9. align=True: entity rotated to follow path ---
     scene = Scene.with_grid(cols=1, rows=1, cell_size=280, background=colors.background)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
     curve = cell.add_curve(
         start=(0.1, 0.8),
         end=(0.9, 0.2),

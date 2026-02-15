@@ -229,14 +229,14 @@ def test_scene_multiple_markers_different_colors():
 
 def test_cell_add_line_with_arrow():
     scene = Scene.with_grid(cols=2, rows=2, cell_size=20)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
     line = cell.add_line(start="left", end="right", end_cap="arrow")
     assert line.effective_end_cap == "arrow"
 
 
 def test_cell_add_line_with_style_arrow():
     scene = Scene.with_grid(cols=2, rows=2, cell_size=20)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
     style = LineStyle(width=2, end_cap="arrow")
     line = cell.add_line(start="left", end="right", style=style)
     assert line.effective_end_cap == "arrow"
@@ -244,14 +244,14 @@ def test_cell_add_line_with_style_arrow():
 
 def test_cell_add_diagonal_with_arrow():
     scene = Scene.with_grid(cols=2, rows=2, cell_size=20)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
     line = cell.add_diagonal(end_cap="arrow")
     assert line.effective_end_cap == "arrow"
 
 
 def test_cell_add_curve_with_arrow():
     scene = Scene.with_grid(cols=2, rows=2, cell_size=20)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
     curve = cell.add_curve(curvature=0.5, end_cap="arrow")
     assert curve.effective_end_cap == "arrow"
 

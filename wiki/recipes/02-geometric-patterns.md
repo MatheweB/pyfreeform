@@ -60,7 +60,7 @@ cell.add_polygon(Polygon.diamond(size=size), fill=fill, rotation=wave * 45)
 Use `distance_to()` to create radial patterns:
 
 ```python
-center = scene.grid[10, 10]
+center = scene.grid[10][10]
 for cell in scene.grid:
     d = cell.distance_to(center)
     ring = int((d / max_d) * 8) % 2

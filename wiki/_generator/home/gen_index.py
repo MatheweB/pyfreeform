@@ -57,8 +57,8 @@ def generate():
     # --- Snippet 3: Stars sized by distance from center ---
     colors = Palette.sunset()
     scene = Scene.with_grid(cols=15, rows=15, cell_size=24, background=colors.background)
-    center_cell = scene.grid[scene.grid.num_rows // 2, scene.grid.num_columns // 2]
-    max_dist = center_cell.distance_to(scene.grid[0, 0])
+    center_cell = scene.grid[scene.grid.num_rows // 2][scene.grid.num_columns // 2]
+    max_dist = center_cell.distance_to(scene.grid[0][0])
     for cell in scene.grid:
         d = cell.distance_to(center_cell)
         t = 1 - (d / max_dist)  # 1 at center, 0 at corners

@@ -17,7 +17,7 @@ from pyfreeform import Scene, CellGroup, Surface, Text
 
 def test_cell_is_surface():
     scene = Scene.with_grid(cols=3, rows=3, cell_size=10)
-    assert isinstance(scene.grid[0, 0], Surface)
+    assert isinstance(scene.grid[0][0], Surface)
 
 
 def test_scene_is_surface():
@@ -161,8 +161,8 @@ def test_cell_group_averaged_brightness():
     """CellGroup.brightness should average constituent cells."""
     scene = Scene.with_grid(cols=2, rows=1, cell_size=10)
     # Set brightness on cells manually
-    scene.grid[0, 0].data["brightness"] = 0.2
-    scene.grid[0, 1].data["brightness"] = 0.8
+    scene.grid[0][0].data["brightness"] = 0.2
+    scene.grid[0][1].data["brightness"] = 0.8
     group = scene.grid.merge((0, 0), (0, 1))
     assert abs(group.brightness - 0.5) < 0.01
 
@@ -170,8 +170,8 @@ def test_cell_group_averaged_brightness():
 def test_cell_group_averaged_color():
     """CellGroup.color should average constituent cells' RGB."""
     scene = Scene.with_grid(cols=2, rows=1, cell_size=10)
-    scene.grid[0, 0].data["color"] = "#ff0000"  # Red
-    scene.grid[0, 1].data["color"] = "#0000ff"  # Blue
+    scene.grid[0][0].data["color"] = "#ff0000"  # Red
+    scene.grid[0][1].data["color"] = "#0000ff"  # Blue
     group = scene.grid.merge((0, 0), (0, 1))
     # Average of (255,0,0) and (0,0,255) → (128, 0, 128) → #800080
     r, g, b = group.rgb
@@ -296,7 +296,7 @@ def test_fit_to_cell_on_scene():
 def test_add_text_fit_shrinks_long_string():
     """fit=True should shrink font when text would overflow cell width."""
     scene = Scene.with_grid(cols=1, rows=1, cell_size=50)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
     # Without fit: font_size=0.5 → 25px tall, but "ABCDEFGHIJ" is wide
     text_no_fit = cell.add_text("ABCDEFGHIJ", font_size=0.5, fit=False)
     text_fit = cell.add_text("ABCDEFGHIJ", font_size=0.5, fit=True)
@@ -306,7 +306,7 @@ def test_add_text_fit_shrinks_long_string():
 def test_add_text_fit_keeps_short_string():
     """fit=True should not upsize a short string that already fits."""
     scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
     # "A" at font_size=0.2 → 20px, easily fits in 100px cell
     text_no_fit = cell.add_text("A", font_size=0.2, fit=False)
     text_fit = cell.add_text("A", font_size=0.2, fit=True)
@@ -316,7 +316,7 @@ def test_add_text_fit_keeps_short_string():
 def test_text_fit_to_cell_scales_up():
     """fit_to_cell should scale text up to fill the cell."""
     scene = Scene.with_grid(cols=1, rows=1, cell_size=200)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
     text = cell.add_text("A", font_size=0.1)  # 20px, small for 200px cell
     text.fit_to_cell(1.0)
     # Should be much larger now
@@ -326,7 +326,7 @@ def test_text_fit_to_cell_scales_up():
 def test_text_fit_to_cell_scales_down():
     """fit_to_cell should scale text down for long content."""
     scene = Scene.with_grid(cols=1, rows=1, cell_size=50)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
     text = cell.add_text("ABCDEFGHIJKLMNOP", font_size=0.8)  # 40px, too wide
     text.fit_to_cell(1.0)
     # Should be smaller to fit

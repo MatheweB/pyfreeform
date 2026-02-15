@@ -132,7 +132,7 @@ def test_group_rotate_bounds_45():
 def test_group_fit_to_cell_after_rotate():
     """fit_to_cell should work correctly on a rotated group."""
     scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
 
     group = EntityGroup()
     group.add(Dot(0, 0, radius=50, color="red"))
@@ -153,7 +153,7 @@ def test_group_fit_to_cell_after_rotate():
 def test_group_rotate_then_fit_then_rotate():
     """Multiple rotations interleaved with fit should accumulate correctly."""
     scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
 
     group = EntityGroup()
     group.add(Dot(0, 0, radius=30, color="red"))
@@ -215,7 +215,7 @@ def test_group_opacity_settable():
 def test_fit_to_cell_rotate_default_false():
     """rotate=False (default) should not change rotation."""
     scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
 
     group = EntityGroup()
     group.add(Line(-50, 0, 50, 0, width=5, color="red"))
@@ -228,7 +228,7 @@ def test_fit_to_cell_rotate_default_false():
 def test_fit_to_cell_rotate_wide_in_tall():
     """A wide group in a tall cell should rotate for better fill."""
     scene = Scene.with_grid(cols=1, rows=1, cell_width=50, cell_height=200)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
 
     # Wide group: 200px wide, 10px tall
     group = EntityGroup()
@@ -260,7 +260,7 @@ def test_fit_to_cell_rotate_wide_in_tall():
 def test_fit_to_cell_rotate_square_noop():
     """Square bbox in square cell — rotation shouldn't change much."""
     scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
 
     # Square group: equal width and height
     group = EntityGroup()
@@ -276,7 +276,7 @@ def test_fit_to_cell_rotate_square_noop():
 def test_fit_to_cell_rotate_with_at():
     """rotate=True should work with at= position-aware mode."""
     scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
 
     group = EntityGroup()
     group.add(Line(-50, -5, 50, 5, width=10, color="red"))
@@ -297,7 +297,7 @@ def test_fit_within_rotate():
     from pyfreeform.entities.rect import Rect
 
     scene = Scene.with_grid(cols=1, rows=1, cell_size=200)
-    _cell = scene.grid[0, 0]
+    _cell = scene.grid[0][0]
 
     # Tall target rect
     rect = Rect(20, 20, 40, 160, fill="blue")
@@ -324,7 +324,7 @@ def test_fit_to_cell_rotate_works_on_polygon():
     from pyfreeform.entities.polygon import Polygon
 
     scene = Scene.with_grid(cols=1, rows=1, cell_width=50, cell_height=200)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
 
     # Wide diamond
     poly = cell.add_polygon(
@@ -345,7 +345,7 @@ def test_fit_to_cell_rotate_works_on_rect():
     """rotate=True should work on Rect (sets self.rotation)."""
 
     scene = Scene.with_grid(cols=1, rows=1, cell_width=50, cell_height=200)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
 
     rect = cell.add_rect(width=0.9, height=0.1, fill="blue")
     rect.fit_to_cell(0.9, rotate=True)
@@ -357,7 +357,7 @@ def test_fit_to_cell_rotate_works_on_rect():
 def test_fit_to_cell_rotate_dot_noop():
     """rotate=True on Dot should work (no-op, circle is symmetric)."""
     scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
 
     dot = cell.add_dot(radius=0.3, color="red")
     # Should not raise — Dot is symmetric, rotation is a no-op
@@ -369,7 +369,7 @@ def test_fit_within_rotate_works_on_non_group():
     from pyfreeform.entities.rect import Rect
 
     scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
 
     dot = cell.add_dot(radius=0.3, color="red")
     target = Rect(0, 0, 50, 50, fill="blue")
@@ -387,7 +387,7 @@ def test_fit_within_rotate_works_on_non_group():
 def test_fit_to_cell_match_aspect_square_cell():
     """match_aspect=True in square cell with wide entity."""
     scene = Scene.with_grid(cols=1, rows=1, cell_size=200)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
 
     # Wide group (200 x 10)
     group = EntityGroup()
@@ -408,7 +408,7 @@ def test_fit_to_cell_match_aspect_square_cell():
 def test_fit_to_cell_match_aspect_tall_cell():
     """match_aspect=True in tall cell with wide entity."""
     scene = Scene.with_grid(cols=1, rows=1, cell_width=100, cell_height=300)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
 
     # Wide group
     group = EntityGroup()
@@ -426,7 +426,7 @@ def test_fit_to_cell_match_aspect_tall_cell():
 def test_fit_to_cell_rotate_and_match_aspect_exclusive():
     """rotate=True and match_aspect=True together should raise ValueError."""
     scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
 
     group = EntityGroup()
     group.add(Dot(0, 0, radius=10, color="red"))
@@ -441,7 +441,7 @@ def test_fit_within_match_aspect():
     from pyfreeform.entities.rect import Rect
 
     scene = Scene.with_grid(cols=1, rows=1, cell_size=200)
-    _cell = scene.grid[0, 0]
+    _cell = scene.grid[0][0]
 
     # Square target
     target = Rect(20, 20, 100, 100, fill="blue")

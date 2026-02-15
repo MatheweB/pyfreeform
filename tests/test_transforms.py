@@ -368,7 +368,7 @@ class TestFitToCell:
 
     def test_fit_to_cell_dot(self):
         scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
-        cell = scene.grid[0, 0]
+        cell = scene.grid[0][0]
         dot = cell.add_dot(radius=5.0, color="red")
         dot.fit_to_cell(0.8)
         # World-space bounds should fit within 80% of cell
@@ -379,7 +379,7 @@ class TestFitToCell:
     def test_fit_to_cell_idempotent(self):
         """Calling fit_to_cell twice should give same result."""
         scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
-        cell = scene.grid[0, 0]
+        cell = scene.grid[0][0]
         dot = cell.add_dot(radius=5.0, color="red")
         dot.fit_to_cell(0.8)
         b1 = dot.bounds()
@@ -390,7 +390,7 @@ class TestFitToCell:
 
     def test_fit_to_cell_rect(self):
         scene = Scene.with_grid(cols=1, rows=1, cell_size=100)
-        cell = scene.grid[0, 0]
+        cell = scene.grid[0][0]
         rect = cell.add_rect(width=0.9, height=0.5, fill="red")
         rect.fit_to_cell(0.8)
         min_x, min_y, max_x, max_y = rect.bounds()

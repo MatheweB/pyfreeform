@@ -16,25 +16,25 @@ def generate():
         cell.add_border(color=colors.grid, width=0.5)
 
     # Highlight a few cells with different entities to show variety
-    scene.grid[1, 1].add_dot(radius=0.3, color=colors.primary)
-    scene.grid[1, 2].add_dot(radius=0.2, color=colors.secondary)
-    scene.grid[2, 1].add_line(start="bottom_left", end="top_right", width=2, color=colors.accent).fit_to_cell()
-    scene.grid[2, 2].add_fill(color=colors.primary, opacity=0.3)
-    scene.grid[2, 2].add_dot(radius=0.15, color=colors.accent)
-    scene.grid[3, 3].add_polygon(Polygon.hexagon(size=0.7), fill=colors.secondary, opacity=0.7)
-    scene.grid[3, 4].add_curve(
+    scene.grid[1][1].add_dot(radius=0.3, color=colors.primary)
+    scene.grid[1][2].add_dot(radius=0.2, color=colors.secondary)
+    scene.grid[2][1].add_line(start="bottom_left", end="top_right", width=2, color=colors.accent).fit_to_cell()
+    scene.grid[2][2].add_fill(color=colors.primary, opacity=0.3)
+    scene.grid[2][2].add_dot(radius=0.15, color=colors.accent)
+    scene.grid[3][3].add_polygon(Polygon.hexagon(size=0.7), fill=colors.secondary, opacity=0.7)
+    scene.grid[3][4].add_curve(
         start="bottom_left",
         end="top_right",
         curvature=0.5,
         width=2,
         color=colors.primary,
     ).fit_to_cell()
-    scene.grid[4, 2].add_polygon(Polygon.star(points=5, size=0.65), fill=colors.accent, opacity=0.8)
+    scene.grid[4][2].add_polygon(Polygon.star(points=5, size=0.65), fill=colors.accent, opacity=0.8)
     save(scene, "getting-started/how-mental-model.svg")
 
     # --- 2. Named positions within a cell ---
     scene = Scene.with_grid(cols=1, rows=1, cell_size=160, background=colors.background)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
     cell.add_border(color=colors.grid, width=1)
     # (position, dot_color, radius, baseline, text_anchor)
     positions = [
@@ -83,7 +83,7 @@ def generate():
 
     # --- 4. z_index layering demo ---
     scene = Scene.with_grid(cols=1, rows=1, cell_size=180, background=colors.background)
-    cell = scene.grid[0, 0]
+    cell = scene.grid[0][0]
     # Background fill
     cell.add_fill(color="#2a2a4e", z_index=0)
     # Large circle behind

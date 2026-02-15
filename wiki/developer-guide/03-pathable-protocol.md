@@ -176,7 +176,7 @@ This is already a fully functional pathable. You can use it immediately:
 
 ```python
 scene = Scene.with_grid(cols=20, rows=20, cell_size=15)
-liss = Lissajous(center=scene.grid[10, 10].center, a=3, b=2, size=80)
+liss = Lissajous(center=scene.grid[10][10].center, a=3, b=2, size=80)
 
 for cell in scene.grid:
     cell.add_dot(along=liss, t=cell.brightness, color="coral", radius=0.15)

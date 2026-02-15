@@ -212,56 +212,56 @@ class Cell(Surface):
     def above(self) -> Cell | None:
         """Cell above this one (north), or None if at edge."""
         if self._row > 0:
-            return self._grid[self._row - 1, self._col]
+            return self._grid[self._row - 1][self._col]
         return None
 
     @property
     def below(self) -> Cell | None:
         """Cell below this one (south), or None if at edge."""
         if self._row < self._grid.num_rows - 1:
-            return self._grid[self._row + 1, self._col]
+            return self._grid[self._row + 1][self._col]
         return None
 
     @property
     def left(self) -> Cell | None:
         """Cell to the left (west), or None if at edge."""
         if self._col > 0:
-            return self._grid[self._row, self._col - 1]
+            return self._grid[self._row][self._col - 1]
         return None
 
     @property
     def right(self) -> Cell | None:
         """Cell to the right (east), or None if at edge."""
         if self._col < self._grid.num_columns - 1:
-            return self._grid[self._row, self._col + 1]
+            return self._grid[self._row][self._col + 1]
         return None
 
     @property
     def above_left(self) -> Cell | None:
         """Cell diagonally above-left (northwest), or None if at edge."""
         if self._row > 0 and self._col > 0:
-            return self._grid[self._row - 1, self._col - 1]
+            return self._grid[self._row - 1][self._col - 1]
         return None
 
     @property
     def above_right(self) -> Cell | None:
         """Cell diagonally above-right (northeast), or None if at edge."""
         if self._row > 0 and self._col < self._grid.num_columns - 1:
-            return self._grid[self._row - 1, self._col + 1]
+            return self._grid[self._row - 1][self._col + 1]
         return None
 
     @property
     def below_left(self) -> Cell | None:
         """Cell diagonally below-left (southwest), or None if at edge."""
         if self._row < self._grid.num_rows - 1 and self._col > 0:
-            return self._grid[self._row + 1, self._col - 1]
+            return self._grid[self._row + 1][self._col - 1]
         return None
 
     @property
     def below_right(self) -> Cell | None:
         """Cell diagonally below-right (southeast), or None if at edge."""
         if self._row < self._grid.num_rows - 1 and self._col < self._grid.num_columns - 1:
-            return self._grid[self._row + 1, self._col + 1]
+            return self._grid[self._row + 1][self._col + 1]
         return None
 
     @property

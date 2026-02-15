@@ -43,9 +43,9 @@ def generate():
     conn_style = ConnectionStyle(width=0.8, color=colors.line, opacity=0.3)
     keys = list(dots.keys())
     for i, key1 in enumerate(keys):
-        cell1 = scene.grid[key1[0], key1[1]]
+        cell1 = scene.grid[key1[0]][key1[1]]
         for key2 in keys[i + 1 :]:
-            cell2 = scene.grid[key2[0], key2[1]]
+            cell2 = scene.grid[key2[0]][key2[1]]
             dist = cell1.distance_to(cell2)
             if dist < 80:
                 opacity = 0.6 * (1 - dist / 80)
