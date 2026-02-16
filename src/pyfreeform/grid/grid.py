@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from typing import TYPE_CHECKING, Literal
 
 from ..core.coord import Coord
@@ -259,9 +260,9 @@ class Grid:
         Returns:
             The Cell at that position, or None if outside grid.
         """
-        # Calculate cell indices
-        col = int((x - self._origin.x) / self._cell_width)
-        row = int((y - self._origin.y) / self._cell_height)
+        # Calculate cell indices (floor, not truncate, for negative offsets)
+        col = math.floor((x - self._origin.x) / self._cell_width)
+        row = math.floor((y - self._origin.y) / self._cell_height)
 
         if 0 <= row < self._rows and 0 <= col < self._cols:
             return self._cells[row][col]

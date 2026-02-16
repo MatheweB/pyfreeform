@@ -77,18 +77,20 @@ Every Surface has a rectangular region (`_x`, `_y`, `_width`, `_height`) and a l
 
 ### Subclass responsibilities
 
-Subclasses must initialize these attributes in `__init__`:
+Subclasses call `super().__init__(x, y, width, height)` which sets up geometry and shared storage:
 
 ```python
 class Cell(Surface):
-    def __init__(self, ...):
-        self._x = ...            # top-left X
-        self._y = ...            # top-left Y
-        self._width = ...        # width in pixels
-        self._height = ...       # height in pixels
-        self._entities = []      # entity storage
-        self._connections = {}    # connection endpoint tracking (ordered dict)
-        self._data = {}          # custom data dictionary
+    def __init__(self, grid, row, col, x, y, width, height):
+        super().__init__(x, y, width, height)
+        # Surface.__init__ provides:
+        #   _x, _y, _width, _height  (geometry)
+        #   _entities = []            (entity storage)
+        #   _connections = {}         (connection endpoint tracking)
+        #   _data = {}                (custom data dictionary)
+        self._grid = grid            # Cell-specific state
+        self._row = row
+        self._col = col
 ```
 
 !!! note "Surface vs Entity"

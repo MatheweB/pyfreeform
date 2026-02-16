@@ -3,9 +3,6 @@
 from pyfreeform import (
     Scene,
     Palette,
-    Rect,
-    Dot,
-    Text,
     RelCoord,
 )
 from pyfreeform.layout import between, align, distribute, stack

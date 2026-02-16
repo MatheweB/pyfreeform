@@ -15,7 +15,7 @@ cell.add_polygon(Polygon.star(points=5, size=0.7), fill="gold")
 
 <figure markdown>
 ![Shape gallery](../_images/guide/shapes-gallery.svg){ width="440" }
-<figcaption>All 8 shape classmethods: triangle, square, diamond, hexagon, star, octagon, squircle, rounded rect.</figcaption>
+<figcaption>All 8 shape classmethods: triangle, square, diamond, hexagon, star, regular_polygon (octagon), squircle, rounded_rect.</figcaption>
 </figure>
 
 ### Available Shapes

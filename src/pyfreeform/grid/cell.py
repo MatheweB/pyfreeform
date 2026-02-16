@@ -73,16 +73,10 @@ class Cell(Surface):
             width: Cell width in pixels.
             height: Cell height in pixels.
         """
+        super().__init__(x, y, width, height)
         self._grid = grid
         self._row = row
         self._col = col
-        self._x = x
-        self._y = y
-        self._width = width
-        self._height = height
-        self._entities: list[Entity] = []
-        self._connections: dict = {}
-        self._data: dict[str, Any] = {}
 
     # =========================================================================
     # TYPED DATA PROPERTIES

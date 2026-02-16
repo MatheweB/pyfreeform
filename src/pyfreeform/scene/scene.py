@@ -66,15 +66,8 @@ class Scene(Surface):
             height: Scene height in pixels.
             background: Background color (None for transparent).
         """
-        self._x = 0.0
-        self._y = 0.0
-        self._width = width
-        self._height = height
+        super().__init__(0.0, 0.0, width, height)
         self._background = Color(background) if background else None
-
-        self._entities: list[Entity] = []
-        self._connections: dict[Connection, None] = {}
-        self._data: dict = {}
         self._grids: list[Grid] = []
         self._primary_grid: Grid | None = None
         self._viewbox: tuple[float, float, float, float] | None = None

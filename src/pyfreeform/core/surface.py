@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any, Literal
 
 from ..color import ColorLike, apply_brightness
 from .binding import Binding
+from .connection import Connection
 from .coord import Coord
 from .relcoord import RelCoord, RelCoordLike
 from .pathable import FullPathable, Pathable
@@ -32,7 +33,6 @@ if TYPE_CHECKING:
     from ..entities.polygon import Polygon
     from ..entities.rect import Rect
     from ..entities.text import Text
-    from .connection import Connection
     from .entity import Entity
 
 
@@ -44,24 +44,17 @@ class Surface:
     position resolution (named positions, relative coordinates),
     and entity management.
 
-    Subclasses must set these attributes in __init__:
-        _x: float       — top-left X coordinate
-        _y: float       — top-left Y coordinate
-        _width: float   — width in pixels
-        _height: float  — height in pixels
-        _entities: list  — entity storage
-
     Implemented by: Cell, Scene, CellGroup
     """
 
-    # Declared for type checkers; set by subclass __init__
-    _x: float
-    _y: float
-    _width: float
-    _height: float
-    _entities: list[Entity]
-    _connections: dict[Connection, None]
-    _data: dict[str, Any]
+    def __init__(self, x: float, y: float, width: float, height: float) -> None:
+        self._x = x
+        self._y = y
+        self._width = width
+        self._height = height
+        self._entities: list[Entity] = []
+        self._connections: dict[Connection, None] = {}
+        self._data: dict[str, Any] = {}
 
     # =========================================================================
     # PROPERTIES
@@ -275,9 +268,7 @@ class Surface:
         Returns:
             The created Connection.
         """
-        from .connection import Connection as Conn  # local import, same pattern as builders
-
-        return Conn(
+        return Connection(
             start=self,
             end=other,
             start_anchor=start_anchor,
@@ -1539,7 +1530,7 @@ class Surface:
 
         Args:
             color: Stroke color
-            width: Stroke width
+            width: Stroke width in pixels
             z_index: Layer order
             opacity: Opacity (0.0 transparent to 1.0 opaque)
             color_brightness: Brightness multiplier 0.0 (black) to 1.0 (unchanged).

@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING
 from ..core.surface import Surface
 
 if TYPE_CHECKING:
-    from ..core.entity import Entity
     from .cell import Cell
     from .grid import Grid
 
@@ -52,16 +51,11 @@ class CellGroup(Surface):
         self._grid = grid
 
         # Compute merged bounding box
-        self._x = min(c.x for c in cells)
-        self._y = min(c.y for c in cells)
+        x = min(c.x for c in cells)
+        y = min(c.y for c in cells)
         max_x = max(c.x + c.width for c in cells)
         max_y = max(c.y + c.height for c in cells)
-        self._width = max_x - self._x
-        self._height = max_y - self._y
-
-        self._entities: list[Entity] = []
-        self._connections: dict = {}
-        self._data: dict = {}
+        super().__init__(x, y, max_x - x, max_y - y)
 
     # =========================================================================
     # AVERAGED DATA PROPERTIES

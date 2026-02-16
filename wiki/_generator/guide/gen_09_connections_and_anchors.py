@@ -178,13 +178,13 @@ def generate():
     arrow_style = PathStyle(width=1.5, color=colors.line, opacity=0.7, end_cap="arrow")
 
     # Dot → Rect.left
-    conn1 = dot.connect(rect, end_anchor="left", style=link_style)
+    dot.connect(rect, end_anchor="left", style=link_style)
     # Rect.right → Polygon.v0
-    conn2 = rect.connect(
+    rect.connect(
         poly, start_anchor="right", end_anchor="v0", style=arrow_style
     )
     # Polygon.v3 → Ellipse.left
-    conn3 = poly.connect(ell, start_anchor="v3", end_anchor="left", style=link_style)
+    poly.connect(ell, start_anchor="v3", end_anchor="left", style=link_style)
     # Labels
     scene.place(Text(60, 140, "Dot", font_size=10, color="#aaaacc"))
     scene.place(Text(190, 145, "Rect", font_size=10, color="#aaaacc"))
