@@ -4,7 +4,7 @@
 
 <h1 align="center">PyFreeform</h1>
 
-<p align="center">Turn images into art with Python.</p>
+<p align="center">Turn images and ideas into art with Python.</p>
 
 <p align="center">
   <img src="wiki/_images/home/hero-mona-lisa.svg" width="480" alt="Mona Lisa rendered as dot art">
