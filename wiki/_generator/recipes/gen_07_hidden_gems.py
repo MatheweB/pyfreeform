@@ -116,11 +116,11 @@ def _generate_dijkstra(cols=28, rows=22, cell_size=16, wall_density=0.25, seed=7
             cell.add_fill(color=hsl(240 - t * 200, 0.8, 0.18 + t * 0.32))
         cell.add_border(color="#181828", width=0.5, opacity=0.4, z_index=1)
 
-    path_style = PathStyle(width=3, color=hsl(50, 0.95, 0.6), opacity=0.95)
+    path_style = PathStyle(width=3, color=hsl(50, 0.95, 0.6), opacity=1.0, z_index=3)
     cur = end
     while cur and cur.data["parent"]:
         pr, pc = cur.data["parent"]
-        g[pr][pc].connect(cur, style=path_style, z_index=3)
+        g[pr][pc].connect(cur, style=path_style)
         cur = g[pr][pc]
 
     start.add_dot(radius=0.3, color=hsl(120, 0.9, 0.5), z_index=4)
