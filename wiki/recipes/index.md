@@ -57,4 +57,12 @@ Complete, self-contained projects. Each recipe builds a finished artwork from st
 
     [Build it](06-advanced-compositions.md)
 
+-   **Hidden Gems**
+
+    ---
+
+    Algorithm-driven mazes, shortest paths, fractals, golden spirals, Voronoi art, and wave physics.
+
+    [Build it](07-hidden-gems.md)
+
 </div>
