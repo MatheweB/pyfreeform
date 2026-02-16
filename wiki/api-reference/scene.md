@@ -26,8 +26,5 @@ Everything starts with a `Scene`. Three constructors cover all use cases: `Scene
         - clear
         - to_svg
         - save
-        - render
         - crop
         - trim
-        - viewbox
-        - set_viewbox

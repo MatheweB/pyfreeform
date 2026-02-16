@@ -84,7 +84,7 @@ class CrossHair(Entity):
 1. Always call `super().__init__(x, y, z_index)`. This sets up `_position`, `_surface`, `_connections`, `_data`, and `_z_index`.
 
 !!! warning "Always call `super().__init__`"
-    The base `Entity.__init__` initializes critical internal state: position, cell reference, connections WeakSet, and data dict. Forgetting this call will cause `AttributeError` at runtime.
+    The base `Entity.__init__` initializes critical internal state: position, surface reference, connections dict, and data dict. Forgetting this call will cause `AttributeError` at runtime.
 
 ### Step 2: Implement anchor_names and _named_anchor()
 
@@ -328,11 +328,12 @@ Connections work too:
 ```python
 ch1 = CrossHair(100, 100, size=15, color="navy")
 ch2 = CrossHair(200, 150, size=15, color="navy")
-scene.place(ch1, ch2)
+scene.place(ch1)
+scene.place(ch2)
 
 # Connect right anchor of ch1 to left anchor of ch2
 ch1.connect(ch2, start_anchor="right", end_anchor="left",
-            style={"color": "gray", "width": 1})
+            color="gray", width=1)
 ```
 
 ## Adding SVG Definitions

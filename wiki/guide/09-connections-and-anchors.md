@@ -12,7 +12,8 @@ from pyfreeform import Scene, Dot, PathStyle
 scene = Scene(300, 100, background="#1a1a2e")
 dot1 = Dot(50, 50, radius=10, color="#ff6b6b")
 dot2 = Dot(250, 50, radius=10, color="#4ecdc4")
-scene.place(dot1, dot2)
+scene.place(dot1)
+scene.place(dot2)
 
 dot1.connect(dot2, style=PathStyle(width=2, color="#666688"))
 ```
@@ -157,7 +158,8 @@ Use `start_anchor` and `end_anchor` to control where the connection attaches:
 ```python
 rect = Rect.at_center(Coord(200, 150), width=140, height=90, fill="navy")
 label = Dot(350, 50, radius=5, color="coral")
-scene.place(rect, label)
+scene.place(rect)
+scene.place(label)
 
 rect.connect(label, start_anchor="top_right", style=style)  # (1)!
 ```
@@ -210,7 +212,10 @@ rect = Rect.at_center(Coord(190, 100), 70, 50, fill="teal")
 poly = Polygon(hex_vertices, fill="gold")
 ell = Ellipse(460, 100, rx=30, ry=20, fill="coral")
 
-scene.place(dot, rect, poly, ell)
+scene.place(dot)
+scene.place(rect)
+scene.place(poly)
+scene.place(ell)
 
 # Chain different entity types with specific anchors
 dot.connect(rect, end_anchor="left", style=style)
@@ -239,7 +244,7 @@ bidirectional = PathStyle(width=2, color="coral", start_cap="arrow", end_cap="ar
 
 <figure markdown>
 ![Cap styles](../_images/guide/connections-cap-styles.svg){ width="340" }
-<figcaption>All six cap styles: round, square, butt, arrow, arrow_in, and diamond.</figcaption></invoke>
+<figcaption>All six cap styles: round, square, butt, arrow, arrow_in, and diamond.</figcaption>
 
 </figure>
 

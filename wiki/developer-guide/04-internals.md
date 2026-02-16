@@ -41,7 +41,7 @@ Subclasses override this to bake entity-specific relative properties (e.g., `_re
 
 ### `_resolve_size(fraction, dimension) -> float | None`
 
-Converts a relative size fraction to pixels. For example, `_resolve_size(0.05, 100)` returns `5.0`.
+Converts a relative size fraction to pixels. The `dimension` argument is a string: `"width"`, `"height"`, or `"min"` (default). For example, `_resolve_size(0.05, "min")` returns 5% of `min(surface_width, surface_height)`.
 
 ---
 
@@ -84,6 +84,7 @@ class Binding:
     reference: Surface | Entity | None = None
     along: Pathable | None = None
     t: float = 0.5
+    along_offset: float | None = None
 ```
 
 ### How builders create bindings
@@ -92,12 +93,13 @@ When a Surface builder method (e.g., `add_dot(at=..., within=..., along=...)`) i
 
 1. Builder resolves the `at` parameter to a `RelCoord` (or uses the default)
 2. Builder creates the entity with pixel constructor
-3. Builder sets `entity.binding = Binding(at=relcoord, reference=within_entity, along=path, t=t)`
+3. Builder sets `entity.binding = Binding(at=relcoord, reference=within_entity, along=path, t=t, along_offset=offset)`
 4. The `binding` setter unpacks the dataclass into the entity's internal attributes:
    - `_relative_at = binding.at`
    - `_reference = binding.reference`
    - `_along_path = binding.along`
    - `_along_t = binding.t`
+   - `_along_offset = binding.along_offset`
 
 ### Why Binding is not exported
 

@@ -31,8 +31,12 @@ All entities inherit from `Entity` and share common capabilities. Each entity ty
         - fit_to_surface
         - fit_within
         - connect
+        - is_relative
         - anchor
         - anchor_names
+        - relative_anchor
+        - relative_bounds
+        - distance_to
         - place_beside
 
 ---
@@ -75,8 +79,12 @@ All entities inherit from `Entity` and share common capabilities. Each entity ty
         - end
         - width
         - color
+        - relative_start
+        - relative_end
         - length
         - set_endpoints
+        - effective_start_cap
+        - effective_end_cap
         - arc_length
         - angle_at
         - point_at
@@ -97,8 +105,12 @@ Cap values: `"round"`, `"square"`, `"butt"`, `"arrow"`, `"arrow_in"`
         - end
         - width
         - color
+        - relative_start
+        - relative_end
         - curvature
         - control
+        - effective_start_cap
+        - effective_end_cap
         - arc_length
         - angle_at
         - point_at

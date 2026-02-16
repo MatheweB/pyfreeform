@@ -26,7 +26,7 @@ All `at` parameters accept named positions or `(rx, ry)` relative coordinates:
 !!! warning "Type checking for `RelCoordLike`"
     The `RelCoordLike` type accepts:
 
-    * A `Coords` object (e.g., `Coords(x=0.5, y=0.5)`)
+    * A `RelCoord` object (e.g., `RelCoord(rx=0.5, ry=0.5)`)
     * A tuple `(rx, ry)`
     * **Exactly** one of the strings in `NAMED_POSITIONS` (like `"center"` or `"top_left"`)
 
@@ -57,7 +57,7 @@ All `at` parameters accept named positions or `(rx, ry)` relative coordinates:
 
 ## Parametric Positioning: `along` / `t` / `align`
 
-All builder methods (except `add_fill`, `add_border`) support parametric positioning:
+All builder methods (except `add_fill`, `add_border`, `add_path`) support parametric positioning:
 
 - **`along`**: Any `Pathable` object (Line, Curve, Ellipse, Path, Connection, or custom)
 - **`t`**: Parameter 0.0 (start) to 1.0 (end) along the path

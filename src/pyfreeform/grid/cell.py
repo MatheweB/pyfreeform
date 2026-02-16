@@ -37,7 +37,7 @@ class Cell(Surface):
         ```python
         cell.add_dot(radius=0.4, color="red")
         cell.add_line(start="top_left", end="bottom_right")
-        cell.add_diagonal(direction="up")  # SW to NE
+        cell.add_diagonal(start="bottom_left", end="top_right")
         cell.add_fill(color="blue")
         cell.add_border(color="gray")
         ```

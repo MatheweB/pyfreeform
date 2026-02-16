@@ -548,7 +548,7 @@ class Grid:
             ```python
             header = grid.merge((0, 0), (1, grid.num_columns - 1))
             header.add_fill(color="#333")
-            header.add_text("Title", font_size=16, color="white")
+            header.add_text("Title", font_size=0.5, color="white")
 
             single = grid.merge((3, 3), (3, 3))  # one cell
             block = grid.merge((0, 0), (2, 2))    # 3x3 block
@@ -582,7 +582,7 @@ class Grid:
             ```python
             top = grid.merge_row(0)
             top.add_fill(color="navy")
-            top.add_text("Header", font_size=14, color="white")
+            top.add_text("Header", font_size=0.5, color="white")
             ```
         """
         return self.merge((index, 0), (index, self._cols - 1))

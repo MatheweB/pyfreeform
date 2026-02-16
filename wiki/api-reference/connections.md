@@ -22,12 +22,18 @@ Connections link entities and surfaces together. The Pathable protocol lets you 
         - visible
         - color
         - z_index
+        - width
+        - opacity
+        - cap
+        - start_cap
+        - end_cap
         - curvature
         - path
         - effective_start_cap
         - effective_end_cap
         - point_at
         - angle_at
+        - to_svg_path_d
         - disconnect
 
 Or via the entity/surface shorthand:
