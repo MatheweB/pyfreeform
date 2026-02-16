@@ -39,3 +39,4 @@ class Binding:
     reference: Surface | Entity | None = None
     along: Pathable | None = None
     t: float = 0.5
+    along_offset: float | None = None

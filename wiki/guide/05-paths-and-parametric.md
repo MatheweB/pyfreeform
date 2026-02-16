@@ -178,6 +178,19 @@ cell.add_polygon(
 
 ---
 
+## Offset
+
+Use `along_offset` to shift an entity perpendicular to the path — useful for labels beside lines:
+
+```python
+conn = rect_a.connect(rect_b, style=arrow_style)
+scene.add_text("label", along=conn, t=0.5, along_offset=-0.02, font_size=0.015, color="#aaa")
+```
+
+Negative values shift above the line, positive values shift below. This is **direction-independent** — the same sign always means the same visual side, regardless of which way the path travels.
+
+---
+
 ## What's Next?
 
 Explore the shape system and learn to compose reusable groups:

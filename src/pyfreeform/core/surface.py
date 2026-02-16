@@ -11,7 +11,7 @@ from .binding import Binding
 from .coord import Coord
 from .relcoord import RelCoord, RelCoordLike
 from .pathable import FullPathable, Pathable
-from .tangent import get_angle_at
+from .tangent import get_angle_at, perpendicular_shift
 from .positions import NAMED_POSITIONS, AnchorSpec
 
 if TYPE_CHECKING:
@@ -312,6 +312,7 @@ class Surface:
         t: float | None,
         align: bool,
         user_rotation: float,
+        along_offset: float | None = None,
     ) -> tuple[Coord, float]:
         """
         Compute position and effective rotation from along/t/align params.
@@ -321,6 +322,8 @@ class Surface:
             t: Parameter on the path (defaults to 0.5).
             align: Whether to rotate to follow path tangent.
             user_rotation: User-supplied rotation offset.
+            along_offset: Perpendicular offset from the path as a fraction
+                of the smaller surface dimension.
 
         Returns:
             (position, effective_rotation) tuple.
@@ -328,8 +331,12 @@ class Surface:
         if t is None:
             t = 0.5
         position = along.point_at(t)
+        tangent_angle = get_angle_at(along, t)
+        if along_offset is not None:
+            # Isotropic scaling (like radius) — consistent shift regardless of path angle.
+            px = along_offset * min(self._width, self._height)
+            position = perpendicular_shift(position, tangent_angle, px)
         if align:
-            tangent_angle = get_angle_at(along, t)
             return position, tangent_angle + user_rotation
         return position, user_rotation
 
@@ -465,6 +472,7 @@ class Surface:
         within: Entity | None = None,
         along: Pathable | None = None,
         t: float | None = None,
+        along_offset: float | None = None,
         radius: float = 0.05,
         color: ColorLike = "black",
         z_index: int = 0,
@@ -480,6 +488,8 @@ class Surface:
             within: Size/position relative to another entity's bounds.
             along: Path to position the dot along.
             t: Parameter on the path (0.0 to 1.0).
+            along_offset: Perpendicular offset from path as fraction of the
+                smaller surface dimension.
             radius: Dot radius as fraction of the smaller surface
                     dimension. 0.05 = 5% of min(width, height).
             color: Fill color.
@@ -510,8 +520,9 @@ class Surface:
         ref_min = min(ref_w, ref_h)
         pixel_radius = radius * ref_min if ref_min > 0 else radius
 
+
         if along is not None:
-            position, _ = self._resolve_along(along, t, False, 0)
+            position, _ = self._resolve_along(along, t, False, 0, along_offset=along_offset)
             dot = Dot(
                 position.x,
                 position.y,
@@ -520,7 +531,7 @@ class Surface:
                 z_index=z_index,
                 opacity=opacity,
             )
-            dot.binding = Binding(along=along, t=t if t is not None else 0.5, reference=within)
+            dot.binding = Binding(along=along, t=t if t is not None else 0.5, along_offset=along_offset, reference=within)
         else:
             position, at_rc = self._resolve_at(at, ref_x, ref_y, ref_w, ref_h)
             dot = Dot(
@@ -545,6 +556,7 @@ class Surface:
         within: Entity | None = None,
         along: Pathable | None = None,
         t: float | None = None,
+        along_offset: float | None = None,
         align: bool = False,
         width: float = 1,
         color: ColorLike = "black",
@@ -568,6 +580,8 @@ class Surface:
             end: Ending position
             along: Path to position the line's midpoint along
             t: Parameter on the path (0.0 to 1.0, default 0.5)
+            along_offset: Perpendicular offset from path as fraction of the
+                smaller surface dimension.
             align: Rotate line to follow path tangent
             width: Stroke width in pixels
             color: Stroke color
@@ -616,9 +630,10 @@ class Surface:
             opacity=opacity,
         )
 
+
         positioned_along = False
         if along is not None:
-            target, rotation = self._resolve_along(along, t, align, 0)
+            target, rotation = self._resolve_along(along, t, align, 0, along_offset=along_offset)
             midpoint = line.anchor("center")
             dx, dy = target.x - midpoint.x, target.y - midpoint.y
             line = Line.from_points(
@@ -651,6 +666,7 @@ class Surface:
         within: Entity | None = None,
         along: Pathable | None = None,
         t: float | None = None,
+        along_offset: float | None = None,
         align: bool = False,
         width: float = 1,
         color: ColorLike = "black",
@@ -672,6 +688,8 @@ class Surface:
             end: Ending corner (default: "top_right")
             along: Path to position the line's midpoint along
             t: Parameter on the path (0.0 to 1.0, default 0.5)
+            along_offset: Perpendicular offset from path as fraction of the
+                smaller surface dimension.
             align: Rotate line to follow path tangent
             width: Stroke width
             color: Stroke color
@@ -698,6 +716,7 @@ class Surface:
             within=within,
             along=along,
             t=t,
+            along_offset=along_offset,
             align=align,
             width=width,
             color=color,
@@ -719,6 +738,7 @@ class Surface:
         within: Entity | None = None,
         along: Pathable | None = None,
         t: float | None = None,
+        along_offset: float | None = None,
         align: bool = False,
         width: float = 1,
         color: ColorLike = "black",
@@ -747,6 +767,8 @@ class Surface:
                         Positive = bows left, Negative = bows right
             along: Path to position the curve's midpoint along
             t: Parameter on the path (0.0 to 1.0, default 0.5)
+            along_offset: Perpendicular offset from path as fraction of the
+                smaller surface dimension.
             align: Rotate curve to follow path tangent
             width: Stroke width in pixels
             color: Stroke color
@@ -794,9 +816,10 @@ class Surface:
             opacity=opacity,
         )
 
+
         positioned_along = False
         if along is not None:
-            target, rotation = self._resolve_along(along, t, align, 0)
+            target, rotation = self._resolve_along(along, t, align, 0, along_offset=along_offset)
             midpoint = curve.point_at(0.5)
             dx, dy = target.x - midpoint.x, target.y - midpoint.y
             curve = Curve.from_points(
@@ -917,6 +940,7 @@ class Surface:
         within: Entity | None = None,
         along: Pathable | None = None,
         t: float | None = None,
+        along_offset: float | None = None,
         align: bool = False,
         rx: float | None = None,
         ry: float | None = None,
@@ -943,6 +967,8 @@ class Surface:
             at: RelCoordLike (center of ellipse)
             along: Path to position the ellipse center along
             t: Parameter on the path (0.0 to 1.0, default 0.5)
+            along_offset: Perpendicular offset from path as fraction of the
+                smaller surface dimension.
             align: Rotate ellipse to follow path tangent
             rx: Horizontal radius as fraction of surface width (default 0.4)
             ry: Vertical radius as fraction of surface height (default 0.4)
@@ -976,9 +1002,10 @@ class Surface:
 
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
 
+
         at_coord: RelCoord | None = None
         if along is not None:
-            position, rotation = self._resolve_along(along, t, align, rotation)
+            position, rotation = self._resolve_along(along, t, align, rotation, along_offset=along_offset)
         else:
             position, at_coord = self._resolve_at(at, ref_x, ref_y, ref_w, ref_h)
 
@@ -1005,7 +1032,7 @@ class Surface:
         )
 
         if along is not None:
-            ellipse.binding = Binding(along=along, t=t if t is not None else 0.5, reference=within)
+            ellipse.binding = Binding(along=along, t=t if t is not None else 0.5, along_offset=along_offset, reference=within)
         else:
             ellipse.binding = Binding(at=at_coord, reference=within)
 
@@ -1021,6 +1048,7 @@ class Surface:
         within: Entity | None = None,
         along: Pathable | None = None,
         t: float | None = None,
+        along_offset: float | None = None,
         align: bool = False,
         fill: ColorLike | None = "black",
         stroke: ColorLike | None = None,
@@ -1049,6 +1077,8 @@ class Surface:
                         Use Polygon.hexagon(), Polygon.star() for common shapes.
             along: Path to position the polygon's centroid along
             t: Parameter on the path (0.0 to 1.0, default 0.5)
+            along_offset: Perpendicular offset from path as fraction of the
+                smaller surface dimension.
             align: Rotate polygon to follow path tangent
             fill: Fill color (None for transparent)
             stroke: Stroke color (None for no stroke)
@@ -1080,6 +1110,7 @@ class Surface:
         )
 
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
+
         absolute_vertices = [Coord(ref_x + v[0] * ref_w, ref_y + v[1] * ref_h) for v in vertices]
 
         polygon = Polygon(
@@ -1095,7 +1126,7 @@ class Surface:
 
         positioned_along = False
         if along is not None:
-            target, effective_rotation = self._resolve_along(along, t, align, rotation)
+            target, effective_rotation = self._resolve_along(along, t, align, rotation, along_offset=along_offset)
             center = polygon.position
             dx, dy = target.x - center.x, target.y - center.y
             shifted_verts = [Coord(v.x + dx, v.y + dy) for v in absolute_vertices]
@@ -1129,6 +1160,7 @@ class Surface:
         within: Entity | None = None,
         along: Pathable | None = None,
         t: float | None = None,
+        along_offset: float | None = None,
         align: bool = False,
         font_size: float | None = None,
         color: ColorLike = "black",
@@ -1162,6 +1194,8 @@ class Surface:
             along: Path to position or warp text along.
             t:  Parameter on the path (0.0 to 1.0). If omitted with
                 ``along``, text warps along the full path.
+            along_offset: Perpendicular offset from path as fraction of the
+                smaller surface dimension.
             align: Rotate text to follow path tangent (only with ``t``).
             font_size: Font size as fraction of surface height (e.g. 0.25
                 = 25% of cell height). When omitted, defaults to 0.25.
@@ -1220,14 +1254,15 @@ class Surface:
         is_textpath = along is not None and t is None
         if text_anchor is None:
             text_anchor = "start" if is_textpath else "middle"
+
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
 
         at_coord: RelCoord | None = None
         if along is not None and t is not None:
-            position, rotation = self._resolve_along(along, t, align, rotation)
+            position, rotation = self._resolve_along(along, t, align, rotation, along_offset=along_offset)
         elif along is not None:
             # TextPath warp mode — position at path midpoint (used as fallback)
-            position, rotation = self._resolve_along(along, 0.5, align, rotation)
+            position, rotation = self._resolve_along(along, 0.5, align, rotation, along_offset=along_offset)
         else:
             position, at_coord = self._resolve_at(at, ref_x, ref_y, ref_w, ref_h)
 
@@ -1286,7 +1321,7 @@ class Surface:
 
         text.relative_font_size = rel_font_size
         if along is not None and t is not None:
-            text.binding = Binding(along=along, t=t, reference=within)
+            text.binding = Binding(along=along, t=t, along_offset=along_offset, reference=within)
         elif at_coord is not None:
             text.binding = Binding(at=at_coord, reference=within)
         elif within is not None:
@@ -1327,6 +1362,7 @@ class Surface:
         within: Entity | None = None,
         along: Pathable | None = None,
         t: float | None = None,
+        along_offset: float | None = None,
         align: bool = False,
         width: float | None = None,
         height: float | None = None,
@@ -1358,6 +1394,8 @@ class Surface:
             at: RelCoordLike of rectangle center.
             along: Path to position the rectangle center along.
             t: Parameter on the path (0.0 to 1.0, default 0.5).
+            along_offset: Perpendicular offset from path as fraction of the
+                smaller surface dimension.
             align: Rotate rectangle to follow path tangent.
             width: Rectangle width as fraction of surface width (default 0.6).
             height: Rectangle height as fraction of surface height (default 0.6).
@@ -1392,10 +1430,11 @@ class Surface:
             )
         )
 
+
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
 
         if along is not None:
-            center_pos, rotation = self._resolve_along(along, t, align, rotation)
+            center_pos, rotation = self._resolve_along(along, t, align, rotation, along_offset=along_offset)
             center_rx, center_ry = 0.5, 0.5
         else:
             center_pos, at_rc = self._resolve_at(at, ref_x, ref_y, ref_w, ref_h)
@@ -1549,6 +1588,7 @@ class Surface:
         within: Entity | None = None,
         along: Pathable | None = None,
         t: float | None = None,
+        along_offset: float | None = None,
         z_index: int = 0,
     ) -> Point:
         """
@@ -1563,6 +1603,8 @@ class Surface:
             within: Size/position relative to another entity's bounds
             along: Path to position the point along
             t: Parameter on the path (0.0 to 1.0, default 0.5)
+            along_offset: Perpendicular offset from path as fraction of the
+                smaller surface dimension.
             z_index: Layer order
 
         Returns:
@@ -1581,12 +1623,13 @@ class Surface:
         """
         from ..entities.point import Point
 
+
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
 
         if along is not None:
-            position, _ = self._resolve_along(along, t, False, 0)
+            position, _ = self._resolve_along(along, t, False, 0, along_offset=along_offset)
             point = Point(position.x, position.y, z_index=z_index)
-            point.binding = Binding(along=along, t=t if t is not None else 0.5, reference=within)
+            point.binding = Binding(along=along, t=t if t is not None else 0.5, along_offset=along_offset, reference=within)
         else:
             position, at_rc = self._resolve_at(at, ref_x, ref_y, ref_w, ref_h)
             point = Point(position.x, position.y, z_index=z_index)

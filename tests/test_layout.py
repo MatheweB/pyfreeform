@@ -240,26 +240,46 @@ class TestAlign:
 
 class TestDistribute:
     def test_even_spacing_x(self):
-        """Distribute 3 dots evenly along x."""
+        """Distribute 3 rects evenly along x — edge-aware."""
         _, cell = _merged_cell(cols=4)
-        d1 = cell.add_dot(at=(0.5, 0.5), color="red")
-        d2 = cell.add_dot(at=(0.5, 0.5), color="blue")
-        d3 = cell.add_dot(at=(0.5, 0.5), color="green")
-        distribute(d1, d2, d3, axis="x")
-        assert abs(d1.at.rx - 0.0) < 0.01
-        assert abs(d2.at.rx - 0.5) < 0.01
-        assert abs(d3.at.rx - 1.0) < 0.01
+        r1 = cell.add_rect(at=(0.5, 0.5), fill="red", width=0.2, height=0.1)
+        r2 = cell.add_rect(at=(0.5, 0.5), fill="blue", width=0.2, height=0.1)
+        r3 = cell.add_rect(at=(0.5, 0.5), fill="green", width=0.2, height=0.1)
+        distribute(r1, r2, r3, axis="x")
+        # 3×0.2 = 0.6 total, 0.4 available, gap = 0.2
+        # edges: [0.0, 0.2], [0.4, 0.6], [0.8, 1.0]
+        rb1, rb2, rb3 = r1.relative_bounds(), r2.relative_bounds(), r3.relative_bounds()
+        assert abs(rb1[0] - 0.0) < 0.01  # first left edge at start
+        assert abs(rb3[2] - 1.0) < 0.01  # last right edge at end
+        # equal gaps: gap between r1 and r2 == gap between r2 and r3
+        gap1 = rb2[0] - rb1[2]
+        gap2 = rb3[0] - rb2[2]
+        assert abs(gap1 - gap2) < 0.01
+        assert abs(gap1 - 0.2) < 0.01
 
     def test_custom_range(self):
-        """Distribute with custom start/end."""
+        """Distribute with custom start/end — edges at bounds."""
         _, cell = _merged_cell(cols=4)
-        d1 = cell.add_dot(at=(0.5, 0.5), color="red")
-        d2 = cell.add_dot(at=(0.5, 0.5), color="blue")
-        d3 = cell.add_dot(at=(0.5, 0.5), color="green")
-        distribute(d1, d2, d3, axis="x", start=0.1, end=0.9)
-        assert abs(d1.at.rx - 0.1) < 0.01
-        assert abs(d2.at.rx - 0.5) < 0.01
-        assert abs(d3.at.rx - 0.9) < 0.01
+        r1 = cell.add_rect(at=(0.5, 0.5), fill="red", width=0.2, height=0.1)
+        r2 = cell.add_rect(at=(0.5, 0.5), fill="blue", width=0.2, height=0.1)
+        r3 = cell.add_rect(at=(0.5, 0.5), fill="green", width=0.2, height=0.1)
+        distribute(r1, r2, r3, axis="x", start=0.1, end=0.9)
+        # range=0.8, total=0.6, available=0.2, gap=0.1
+        # edges: [0.1, 0.3], [0.4, 0.6], [0.7, 0.9]
+        rb1, rb3 = r1.relative_bounds(), r3.relative_bounds()
+        assert abs(rb1[0] - 0.1) < 0.01  # first left edge at start
+        assert abs(rb3[2] - 0.9) < 0.01  # last right edge at end
+
+    def test_edge_positions(self):
+        """First item's leading edge at start, last item's trailing edge at end."""
+        _, cell = _merged_cell(cols=4)
+        r1 = cell.add_rect(at=(0.5, 0.5), fill="red", width=0.2, height=0.1)
+        r2 = cell.add_rect(at=(0.5, 0.5), fill="blue", width=0.2, height=0.1)
+        distribute(r1, r2, axis="x", start=0.1, end=0.9)
+        r1_rb = r1.relative_bounds()
+        r2_rb = r2.relative_bounds()
+        assert abs(r1_rb[0] - 0.1) < 0.01   # left edge at start
+        assert abs(r2_rb[2] - 0.9) < 0.01   # right edge at end
 
     def test_preserves_cross_axis(self):
         """Cross-axis at value is preserved."""
@@ -271,16 +291,19 @@ class TestDistribute:
         assert abs(d2.at.ry - 0.8) < 0.01
 
     def test_y_axis(self):
-        """Distribute along y axis."""
-        _, cell = _scene_with_cell()
-        d1 = cell.add_dot(at=(0.3, 0.5), color="red")
-        d2 = cell.add_dot(at=(0.7, 0.5), color="blue")
-        distribute(d1, d2, axis="y", start=0.2, end=0.8)
-        assert abs(d1.at.ry - 0.2) < 0.01
-        assert abs(d2.at.ry - 0.8) < 0.01
-        # x values preserved
-        assert abs(d1.at.rx - 0.3) < 0.01
-        assert abs(d2.at.rx - 0.7) < 0.01
+        """Distribute along y axis — edge-aware."""
+        _, cell = _merged_cell(cols=1, rows=4)
+        r1 = cell.add_rect(at=(0.5, 0.5), fill="red", width=0.1, height=0.1)
+        r2 = cell.add_rect(at=(0.5, 0.5), fill="blue", width=0.1, height=0.1)
+        distribute(r1, r2, axis="y", start=0.2, end=0.8)
+        # r1 top edge at 0.2, r2 bottom edge at 0.8
+        rb1 = r1.relative_bounds()
+        rb2 = r2.relative_bounds()
+        assert abs(rb1[1] - 0.2) < 0.01   # top edge at start
+        assert abs(rb2[3] - 0.8) < 0.01   # bottom edge at end
+        # x values preserved (use relative_anchor for center check)
+        assert abs(r1.relative_anchor("center").rx - 0.5) < 0.01
+        assert abs(r2.relative_anchor("center").rx - 0.5) < 0.01
 
     def test_invalid_axis_raises(self):
         """Invalid axis raises ValueError."""
@@ -291,15 +314,17 @@ class TestDistribute:
             distribute(d1, d2, axis="z")
 
     def test_preserves_order(self):
-        """Distribute preserves argument order."""
-        _, cell = _scene_with_cell()
-        d1 = cell.add_dot(at=(0.9, 0.5), color="red")
-        d2 = cell.add_dot(at=(0.1, 0.5), color="blue")
-        result = distribute(d1, d2, axis="x")
-        # d1 comes first → gets start position
-        assert abs(d1.at.rx - 0.0) < 0.01
-        assert abs(d2.at.rx - 1.0) < 0.01
-        assert result[0] is d1
+        """Distribute preserves argument order — first arg at start."""
+        _, cell = _merged_cell(cols=4)
+        r1 = cell.add_rect(at=(0.9, 0.5), fill="red", width=0.2, height=0.1)
+        r2 = cell.add_rect(at=(0.1, 0.5), fill="blue", width=0.2, height=0.1)
+        result = distribute(r1, r2, axis="x")
+        # r1 comes first → left edge at 0.0
+        rb1 = r1.relative_bounds()
+        rb2 = r2.relative_bounds()
+        assert abs(rb1[0] - 0.0) < 0.01   # r1 at start
+        assert abs(rb2[2] - 1.0) < 0.01   # r2 at end
+        assert result[0] is r1
 
 
 # ---------------------------------------------------------------------------

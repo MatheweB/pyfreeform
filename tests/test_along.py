@@ -412,3 +412,103 @@ class TestCurveMovement:
         dy = ws_end.y - ws_start.y
         length = math.sqrt(dx * dx + dy * dy)
         assert length == pytest.approx(200.0, abs=1)
+
+
+# =========================================================================
+# 9. along= offset parameter
+# =========================================================================
+
+
+class TestAlongOffset:
+    def test_perpendicular_on_horizontal(self):
+        """along_offset=-0.1 on horizontal line shifts up."""
+        scene = Scene.with_grid(cols=1, rows=1, cell_size=200)
+        cell = scene.grid[0][0]
+        line = cell.add_line(start=(0.0, 0.5), end=(1.0, 0.5))
+        d1 = cell.add_dot(along=line, t=0.5, color="red")
+        d2 = cell.add_dot(along=line, t=0.5, along_offset=-0.1, color="blue")
+        assert d1.position.y == pytest.approx(100, abs=1)
+        assert d2.position.y == pytest.approx(80, abs=1)
+        assert d1.position.x == pytest.approx(d2.position.x, abs=1)
+
+    def test_perpendicular_on_vertical(self):
+        """along_offset=-0.1 on vertical line (downward) shifts right."""
+        scene = Scene.with_grid(cols=1, rows=1, cell_size=200)
+        cell = scene.grid[0][0]
+        line = cell.add_line(start=(0.5, 0.0), end=(0.5, 1.0))
+        d = cell.add_dot(along=line, t=0.5, along_offset=-0.1, color="red")
+        assert d.position.x == pytest.approx(120, abs=1)
+        assert d.position.y == pytest.approx(100, abs=1)
+
+    def test_positive_offset_shifts_below(self):
+        """along_offset=0.1 on horizontal line shifts down."""
+        scene = Scene.with_grid(cols=1, rows=1, cell_size=200)
+        cell = scene.grid[0][0]
+        line = cell.add_line(start=(0.0, 0.5), end=(1.0, 0.5))
+        d = cell.add_dot(along=line, t=0.5, along_offset=0.1, color="red")
+        assert d.position.y == pytest.approx(120, abs=1)
+
+    def test_leftward_same_as_rightward(self):
+        """along_offset=-0.1 shifts above regardless of horizontal direction."""
+        scene = Scene.with_grid(cols=1, rows=1, cell_size=200)
+        cell = scene.grid[0][0]
+        right = cell.add_line(start=(0.0, 0.5), end=(1.0, 0.5))
+        left = cell.add_line(start=(1.0, 0.5), end=(0.0, 0.5))
+        d_right = cell.add_dot(along=right, t=0.5, along_offset=-0.1, color="red")
+        d_left = cell.add_dot(along=left, t=0.5, along_offset=-0.1, color="blue")
+        # Both should shift up by the same amount
+        assert d_right.position.y == pytest.approx(80, abs=1)
+        assert d_left.position.y == pytest.approx(80, abs=1)
+
+    def test_upward_same_as_downward(self):
+        """along_offset=-0.1 shifts right regardless of vertical direction."""
+        scene = Scene.with_grid(cols=1, rows=1, cell_size=200)
+        cell = scene.grid[0][0]
+        down = cell.add_line(start=(0.5, 0.0), end=(0.5, 1.0))
+        up = cell.add_line(start=(0.5, 1.0), end=(0.5, 0.0))
+        d_down = cell.add_dot(along=down, t=0.5, along_offset=-0.1, color="red")
+        d_up = cell.add_dot(along=up, t=0.5, along_offset=-0.1, color="blue")
+        # Both should shift right by the same amount
+        assert d_down.position.x == pytest.approx(120, abs=1)
+        assert d_up.position.x == pytest.approx(120, abs=1)
+
+    def test_down_left_shifts_above(self):
+        """along_offset=-0.1 on down-left diagonal shifts above the line."""
+        scene = Scene.with_grid(cols=1, rows=1, cell_size=200)
+        cell = scene.grid[0][0]
+        line = cell.add_line(start=(1.0, 0.0), end=(0.0, 1.0))
+        d = cell.add_dot(along=line, t=0.5, along_offset=-0.1, color="red")
+        # Tangent ~135° normalized to -45°: perpendicular shifts upper-left
+        assert d.position.x == pytest.approx(85.86, abs=2)
+        assert d.position.y == pytest.approx(85.86, abs=2)
+
+    def test_offset_shifts_text(self):
+        """Text label beside a horizontal connection."""
+        scene = Scene.with_grid(cols=1, rows=1, cell_size=200)
+        cell = scene.grid[0][0]
+        line = cell.add_line(start=(0.0, 0.5), end=(1.0, 0.5))
+        t = cell.add_text("label", along=line, t=0.5, along_offset=-0.1,
+                          font_size=0.1, color="red")
+        assert t.position.y == pytest.approx(80, abs=1)
+
+    def test_offset_none_is_noop(self):
+        """along_offset=None (default) doesn't change positioning."""
+        scene = Scene.with_grid(cols=1, rows=1, cell_size=200)
+        cell = scene.grid[0][0]
+        line = cell.add_line(start=(0.0, 0.5), end=(1.0, 0.5))
+        d1 = cell.add_dot(along=line, t=0.5, color="red")
+        d2 = cell.add_dot(along=line, t=0.5, along_offset=None, color="blue")
+        assert d1.position.x == pytest.approx(d2.position.x, abs=1)
+        assert d1.position.y == pytest.approx(d2.position.y, abs=1)
+
+    def test_diagonal_offset(self):
+        """along_offset=-0.1 on 45° diagonal shifts perpendicular."""
+        scene = Scene.with_grid(cols=1, rows=1, cell_size=200)
+        cell = scene.grid[0][0]
+        line = cell.add_line(start=(0.0, 0.0), end=(1.0, 1.0))
+        d = cell.add_dot(along=line, t=0.5, along_offset=-0.1, color="red")
+        # Tangent is 45°, perpendicular left points upper-right
+        # Midpoint is (100, 100), offset = -0.1 * 200 = -20px perpendicular
+        # Rotated 45°: (0, -20) → (20*sin45, -20*cos45) ≈ (14.14, -14.14)
+        assert d.position.x == pytest.approx(114.14, abs=2)
+        assert d.position.y == pytest.approx(85.86, abs=2)

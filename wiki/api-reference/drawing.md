@@ -62,6 +62,7 @@ All builder methods (except `add_fill`, `add_border`) support parametric positio
 - **`along`**: Any `Pathable` object (Line, Curve, Ellipse, Path, Connection, or custom)
 - **`t`**: Parameter 0.0 (start) to 1.0 (end) along the path
 - **`align`**: If `True`, rotate the entity to follow the path's tangent direction
+- **`along_offset`**: Perpendicular shift from the path. Negative = above the line, positive = below. Direction-independent.
 
 !!! tip "Killer feature"
     This is PyFreeform's most powerful concept -- position any element along any path:

@@ -190,16 +190,16 @@ def distribute(
 ) -> list[Entity]:
     """Distribute entities evenly between two relative positions.
 
-    Sets ``entity.at`` values so that entity centers are evenly spaced
-    between *start* and *end* along the given axis.  The cross-axis
-    position (``at.ry`` for ``axis="x"``, ``at.rx`` for ``axis="y"``)
-    is preserved.
+    Edge-aware: the first entity's leading edge sits at *start* and the
+    last entity's trailing edge sits at *end*, with equal gaps between
+    items.  The cross-axis position (``at.ry`` for ``axis="x"``,
+    ``at.rx`` for ``axis="y"``) is preserved.
 
     Args:
         *entities: Two or more entities, or a single list.
         axis: ``"x"`` (horizontal) or ``"y"`` (vertical).
-        start: Starting fraction (default 0.0).
-        end: Ending fraction (default 1.0).
+        start: Leading edge of the first entity (default 0.0).
+        end: Trailing edge of the last entity (default 1.0).
 
     Returns:
         The entities in argument order.
@@ -217,14 +217,28 @@ def distribute(
         raise ValueError(f"axis must be 'x' or 'y', got '{axis}'")
 
     n = len(items)
+    is_x = axis == "x"
+
+    # Measure each entity's size along the distribution axis
+    sizes = []
+    for e in items:
+        rb = e.relative_bounds()
+        sizes.append(rb[2] - rb[0] if is_x else rb[3] - rb[1])
+
+    total_size = sum(sizes)
+    available = (end - start) - total_size
+    gap = available / (n - 1) if n > 1 else 0
+
+    # Place sequentially: leading edge at pos, center at pos + size/2
+    pos = start
     for i, e in enumerate(items):
-        frac = i / (n - 1) if n > 1 else 0.5
-        target_center = start + frac * (end - start)
+        target_center = pos + sizes[i] / 2
         e_center = e.relative_anchor("center")
-        if axis == "x":
+        if is_x:
             _reposition(e, target_center - e_center.rx, 0)
         else:
             _reposition(e, 0, target_center - e_center.ry)
+        pos += sizes[i] + gap
 
     return items
 

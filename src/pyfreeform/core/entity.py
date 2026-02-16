@@ -14,6 +14,7 @@ from .coord import Coord, CoordLike
 from .relcoord import RelCoord, RelCoordLike
 from .positions import NAMED_POSITIONS, AnchorSpec
 from .svg_utils import svg_num
+from .tangent import get_angle_at, perpendicular_shift
 
 
 if TYPE_CHECKING:
@@ -63,6 +64,7 @@ class Entity(ABC):
         self._reference: Surface | Entity | None = None
         self._along_path: Pathable | None = None
         self._along_t: float = 0.5
+        self._along_offset: float | None = None
         self._resolving: bool = False
 
         # Non-destructive transforms (accumulated, resolved at render time)
@@ -157,7 +159,13 @@ class Entity(ABC):
     def _resolve_position(self) -> Coord:
         """Resolve position from the most specific mode (along > relative > pixel)."""
         if self._along_path is not None:
-            return self._along_path.point_at(self._along_t)
+            pos = self._along_path.point_at(self._along_t)
+            if self._along_offset is not None and self._surface is not None:
+                angle = get_angle_at(self._along_path, self._along_t)
+                # Isotropic scaling (like radius) — consistent shift regardless of path angle.
+                px = self._along_offset * min(self._surface._width, self._surface._height)
+                pos = perpendicular_shift(pos, angle, px)
+            return pos
         if self._relative_at is not None:
             result = self._resolve_relative(*self._relative_at)
             if result is not None:
@@ -196,6 +204,7 @@ class Entity(ABC):
             self._position = self._resolve_position()
             self._relative_at = None
             self._along_path = None
+            self._along_offset = None
 
     @property
     def position(self) -> Coord:
@@ -209,6 +218,7 @@ class Entity(ABC):
         self._position = value
         self._relative_at = None
         self._along_path = None
+        self._along_offset = None
 
     @property
     def x(self) -> float:
@@ -233,6 +243,7 @@ class Entity(ABC):
         self._relative_at = value
         if value is not None:
             self._along_path = None
+            self._along_offset = None
 
     @property
     def surface(self) -> Surface | None:
@@ -273,7 +284,7 @@ class Entity(ABC):
         for absolute mode.
         """
         if self._along_path is not None:
-            return Binding(along=self._along_path, t=self._along_t, reference=self._reference)
+            return Binding(along=self._along_path, t=self._along_t, along_offset=self._along_offset, reference=self._reference)
         if self._relative_at is not None:
             return Binding(at=self._relative_at, reference=self._reference)
         return None
@@ -285,16 +296,19 @@ class Entity(ABC):
             self._relative_at = None
             self._along_path = None
             self._along_t = 0.5
+            self._along_offset = None
             self._reference = None
             return
         if value.along is not None:
             self._along_path = value.along
             self._along_t = value.t
+            self._along_offset = value.along_offset
             self._relative_at = None
         elif value.at is not None:
             self._relative_at = value.at
             self._along_path = None
             self._along_t = 0.5
+            self._along_offset = None
         if value.reference is not None:
             self._reference = value.reference
 
@@ -319,6 +333,7 @@ class Entity(ABC):
             raise ValueError("Must provide both x and y, or a Coord")
         self._relative_at = None
         self._along_path = None
+        self._along_offset = None
         return self
 
     def _move_by(self, dx: float = 0, dy: float = 0) -> Entity:
@@ -340,6 +355,7 @@ class Entity(ABC):
             current = self._resolve_position()
             self._position = Coord(current.x + dx, current.y + dy)
             self._along_path = None
+            self._along_offset = None
             self._relative_at = None
             return self
         if self._relative_at is not None:
@@ -379,6 +395,7 @@ class Entity(ABC):
         at = RelCoord.coerce(at)
         self._relative_at = at
         self._along_path = None
+        self._along_offset = None
         self._reference = None
         return self
 
