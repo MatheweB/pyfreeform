@@ -393,8 +393,11 @@ class Text(Entity):
             path_id: Unique ID for the path definition.
             path_d: SVG path ``d`` attribute string.
             start_offset: Offset along the path where text starts.
-            text_length: If set, emitted as ``textLength`` on the ``<text>``
-                element to distribute spacing across the full path length.
+            text_length: Target pixel length for the text. When set,
+                inter-character spacing expands or contracts so the text
+                spans exactly this many pixels. Glyphs are not stretched.
+                Emitted as ``textLength`` on ``<text>`` (not ``<textPath>``)
+                for consistent behaviour across browsers.
         """
         self._textpath_info = {
             "path_id": path_id,
@@ -439,7 +442,11 @@ class Text(Entity):
         )
 
     def _to_svg_textpath(self, info: dict[str, object]) -> str:
-        """Render to SVG text element with textPath warping."""
+        """Render to SVG ``<text>`` element with ``<textPath>`` warping.
+
+        ``textLength`` and ``lengthAdjust`` are placed on the outer ``<text>``
+        element rather than ``<textPath>`` for consistent cross-browser support.
+        """
         escaped = xml_escape(self.content)
 
         offset = info["start_offset"]

@@ -97,7 +97,7 @@ cell.add_text("Text flows around an ellipse path", along=ellipse, font_size=0.05
 </figure>
 
 !!! tip "How it works"
-    When you pass `along=` without `t`, PyFreeform uses SVG `<textPath>` to warp text. The font size auto-adjusts to fill the path length.
+    When you pass `along=` without `t`, PyFreeform uses SVG `<textPath>` to warp text along the curve. If `font_size` is omitted, it is auto-computed from Pillow font metrics to match the path length (capped at 25% of cell height; falls back to a character-width heuristic if the font is unavailable locally). Pass `font_size=` explicitly to override. Inter-character spacing fills any remaining space.
 
 ---
 

@@ -1194,7 +1194,10 @@ class Surface:
             align: Rotate text to follow path tangent (only with ``t``).
             font_size: Font size as fraction of surface height (e.g. 0.25
                 = 25% of cell height). When omitted, defaults to 0.25.
-                For textPath mode, auto-sizes to fill the path.
+                In textPath mode, auto-sized via Pillow font metrics to
+                match the path length (falls back to a 0.6× heuristic if
+                the font is unavailable locally; capped at 25% of surface
+                height).
             color: Text color.
             font_family: Font family.
             bold: Bold text.
