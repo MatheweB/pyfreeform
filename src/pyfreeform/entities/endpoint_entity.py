@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from abc import abstractmethod
+
 from ..color import Color, apply_brightness
 from ..config.caps import CapName, collect_markers
 from ..core.coord import Coord
@@ -83,6 +85,11 @@ class EndpointEntity(Entity):
     def start(self) -> Coord:
         """The starting point (same as position)."""
         return self.position
+
+    @property
+    @abstractmethod
+    def end(self) -> Coord:
+        """The ending point."""
 
     @property
     def rotation_center(self) -> Coord:

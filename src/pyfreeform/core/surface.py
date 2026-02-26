@@ -176,8 +176,8 @@ class Surface:
         Anchor position on this surface.
 
         Args:
-            spec: Anchor name ("center", "top_left", etc.), RelCoord,
-                  or (rx, ry) tuple for arbitrary positions.
+            spec:   Anchor name ("center", "top_left", etc.), RelCoord,
+                    or (rx, ry) tuple for arbitrary positions.
 
         Returns:
             Absolute pixel position of the anchor.
@@ -205,6 +205,10 @@ class Surface:
         Returns:
             RelCoord of the anchor within this surface.
         """
+        if isinstance(spec, str):
+            if spec not in NAMED_POSITIONS:
+                raise ValueError(f"Unknown anchor '{spec}'. Available: {self.anchor_names}")
+            return NAMED_POSITIONS[spec]
         return RelCoord.coerce(spec)
 
     # =========================================================================
@@ -1265,8 +1269,14 @@ class Surface:
             if is_textpath and (along is not None) and isinstance(along, FullPathable):
                 # Auto-size to fill the spanned portion of the path
                 arc_len = along.arc_length() * span
-                chars = max(len(content), 1)
-                pixel_font_size = arc_len / (chars * 0.6)
+                _fw = "bold" if bold else "normal"
+                _fs = "italic" if italic else "normal"
+                _ref_size = 100.0
+                _ref_width = _measure_text_width(content, _ref_size, font_family, _fw, _fs)
+                if _ref_width > 0:
+                    pixel_font_size = arc_len / _ref_width * _ref_size
+                else:
+                    pixel_font_size = arc_len / max(len(content), 1)
                 pixel_font_size = min(pixel_font_size, ref_h * 0.25)
                 rel_font_size = pixel_font_size / ref_h if ref_h > 0 else 0.25
             else:
@@ -1331,11 +1341,8 @@ class Surface:
                 _textpath_counter = itertools.count()
                 self._textpath_counter = _textpath_counter
             path_id = f"textpath-{next(_textpath_counter)}"
-            # Compute text_length from the spanned portion of the path
-            text_length = None
-            if isinstance(along, FullPathable):
-                text_length = along.arc_length() * span
             svg_start_offset = f"{start_offset * 100:.1f}%"
+            text_length = along.arc_length() * span
             text.set_textpath(
                 path_id,
                 along.to_svg_path_d(),

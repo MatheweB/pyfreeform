@@ -393,8 +393,8 @@ class Text(Entity):
             path_id: Unique ID for the path definition.
             path_d: SVG path ``d`` attribute string.
             start_offset: Offset along the path where text starts.
-            text_length: If set, the SVG ``textLength`` attribute that
-                stretches or compresses text to span this many pixels.
+            text_length: If set, emitted as ``textLength`` on the ``<text>``
+                element to distribute spacing across the full path length.
         """
         self._textpath_info = {
             "path_id": path_id,
@@ -456,9 +456,10 @@ class Text(Entity):
             f'fill="{self.color}" '
             f'text-anchor="{self.text_anchor}" '
             f'dominant-baseline="{self.baseline}"'
+            f"{textlen_attr}"
             f"{opacity_attr(self.opacity)}>"
             f'<textPath href="#{info["path_id"]}"'
-            f"{offset_attr}{textlen_attr}>"
+            f"{offset_attr}>"
             f"{escaped}"
             f"</textPath></text>"
         )

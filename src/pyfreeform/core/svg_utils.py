@@ -46,7 +46,7 @@ def fill_stroke_attrs(
         parts.append(f' fill="{fill}"')
     else:
         parts.append(' fill="none"')
-    if stroke:
+    if stroke and stroke_width is not None:
         parts.append(f' stroke="{stroke}" stroke-width="{svg_num(stroke_width)}"')
     return "".join(parts)
 
