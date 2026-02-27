@@ -405,8 +405,9 @@ class Text(Entity):
             text_length: Target pixel length for the text. When set,
                 inter-character spacing expands or contracts so the text
                 spans exactly this many pixels. Glyphs are not stretched.
-                Emitted as ``textLength`` on ``<text>`` (not ``<textPath>``)
-                for consistent behaviour across browsers.
+                Emitted as ``textLength`` on both ``<text>`` and
+                ``<textPath>`` for cross-browser support (Firefox reads
+                it from ``<text>``, Safari from ``<textPath>``).
         """
         self._textpath_info = {
             "path_id": path_id,
@@ -453,8 +454,9 @@ class Text(Entity):
     def _to_svg_textpath(self, info: dict[str, object]) -> str:
         """Render to SVG ``<text>`` element with ``<textPath>`` warping.
 
-        ``textLength`` and ``lengthAdjust`` are placed on the outer ``<text>``
-        element rather than ``<textPath>`` for consistent cross-browser support.
+        ``textLength`` and ``lengthAdjust`` are placed on **both** the outer
+        ``<text>`` and the inner ``<textPath>`` for cross-browser support:
+        Firefox only reads them on ``<text>``, Safari only on ``<textPath>``.
         """
         escaped = xml_escape(self.content)
 
@@ -475,7 +477,7 @@ class Text(Entity):
             f"{textlen_attr}"
             f"{opacity_attr(self.opacity)}>"
             f'<textPath href="#{info["path_id"]}"'
-            f"{offset_attr}>"
+            f"{offset_attr}{textlen_attr}>"
             f"{escaped}"
             f"</textPath></text>"
         )
