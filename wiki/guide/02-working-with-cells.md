@@ -218,8 +218,11 @@ for cell in scene.grid.where(lambda c: c.brightness >= 0.4):
 
 ---
 
+!!! info "See also"
+    For the full Cell API, see [Grid & Cells](../api-reference/grid-and-cells.md).
+
 ## What's Next?
 
 You've mastered reading cell data. Now learn all the entity types you can place in cells:
 
-[Drawing with Entities &rarr;](03-drawing-with-entities.md){ .md-button }
+[&larr; Scenes & Grids](01-scenes-and-grids.md){ .md-button } [Drawing with Entities &rarr;](03-drawing-with-entities.md){ .md-button }

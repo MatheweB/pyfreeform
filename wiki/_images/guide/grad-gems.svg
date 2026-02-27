@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="80" viewBox="0 0 400 80">
+  <defs>
+    <radialGradient id="grad-cf9328819f10" cx="0.5" cy="0.5" r="0.5" fx="0.35" fy="0.35"><stop offset="0.0" stop-color="white" stop-opacity="0.9" /><stop offset="0.3" stop-color="#e0115f" /><stop offset="1.0" stop-color="#8b0000" /></radialGradient>
+    <radialGradient id="grad-cb3487152c86" cx="0.5" cy="0.5" r="0.5" fx="0.35" fy="0.35"><stop offset="0.0" stop-color="white" stop-opacity="0.9" /><stop offset="0.3" stop-color="#50c878" /><stop offset="1.0" stop-color="#004d00" /></radialGradient>
+    <radialGradient id="grad-e962f9a7c7e9" cx="0.5" cy="0.5" r="0.5" fx="0.35" fy="0.35"><stop offset="0.0" stop-color="white" stop-opacity="0.9" /><stop offset="0.3" stop-color="#0f52ba" /><stop offset="1.0" stop-color="#00008b" /></radialGradient>
+    <radialGradient id="grad-e9b6c2a72fb9" cx="0.5" cy="0.5" r="0.5" fx="0.35" fy="0.35"><stop offset="0.0" stop-color="white" stop-opacity="0.9" /><stop offset="0.3" stop-color="#9966cc" /><stop offset="1.0" stop-color="#4b0082" /></radialGradient>
+    <radialGradient id="grad-30ec2ed5ca4e" cx="0.5" cy="0.5" r="0.5" fx="0.35" fy="0.35"><stop offset="0.0" stop-color="white" stop-opacity="0.9" /><stop offset="0.3" stop-color="#ffc87c" /><stop offset="1.0" stop-color="#cc7722" /></radialGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="#1a1a2e" />
+  <polygon points="65.9808,55 40,70 14.0192,55 14.0192,25 40,10 65.9808,25" fill="url(#grad-cf9328819f10)" stroke="#e0115f" stroke-width="1" stroke-opacity="0.5" />
+  <text x="40" y="75" font-size="9.6" font-family="sans-serif" font-style="normal" font-weight="normal" fill="gray" text-anchor="middle" dominant-baseline="middle">ruby</text>
+  <polygon points="145.981,55 120,70 94.0192,55 94.0192,25 120,10 145.981,25" fill="url(#grad-cb3487152c86)" stroke="#50c878" stroke-width="1" stroke-opacity="0.5" />
+  <text x="120" y="75" font-size="9.6" font-family="sans-serif" font-style="normal" font-weight="normal" fill="gray" text-anchor="middle" dominant-baseline="middle">emerald</text>
+  <polygon points="225.981,55 200,70 174.019,55 174.019,25 200,10 225.981,25" fill="url(#grad-e962f9a7c7e9)" stroke="#0f52ba" stroke-width="1" stroke-opacity="0.5" />
+  <text x="200" y="75" font-size="9.6" font-family="sans-serif" font-style="normal" font-weight="normal" fill="gray" text-anchor="middle" dominant-baseline="middle">sapphire</text>
+  <polygon points="305.981,55 280,70 254.019,55 254.019,25 280,10 305.981,25" fill="url(#grad-e9b6c2a72fb9)" stroke="#9966cc" stroke-width="1" stroke-opacity="0.5" />
+  <text x="280" y="75" font-size="9.6" font-family="sans-serif" font-style="normal" font-weight="normal" fill="gray" text-anchor="middle" dominant-baseline="middle">amethyst</text>
+  <polygon points="385.981,55 360,70 334.019,55 334.019,25 360,10 385.981,25" fill="url(#grad-30ec2ed5ca4e)" stroke="#ffc87c" stroke-width="1" stroke-opacity="0.5" />
+  <text x="360" y="75" font-size="9.6" font-family="sans-serif" font-style="normal" font-weight="normal" fill="gray" text-anchor="middle" dominant-baseline="middle">topaz</text>
+</svg>

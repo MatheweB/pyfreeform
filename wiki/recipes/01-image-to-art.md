@@ -136,3 +136,5 @@ for cell in scene.grid:
 
 !!! tip "Works with any color"
     Swap `"coral"` for `"gold"`, `"cyan"`, `"mediumpurple"` — the brightness modifier handles the rest.
+
+[Geometric Patterns &rarr;](02-geometric-patterns.md){ .md-button }

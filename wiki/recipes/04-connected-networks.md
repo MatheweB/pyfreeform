@@ -67,3 +67,5 @@ Combine image fills with a network visualization:
 ![Network overlay](../_images/recipes/network-overlay.svg){ width="420" }
 <figcaption>Faded image background with a white connection network linking bright areas.</figcaption>
 </figure>
+
+[&larr; Flowing Curves](03-flowing-curves.md){ .md-button } [Typographic Art &rarr;](05-typographic-art.md){ .md-button }

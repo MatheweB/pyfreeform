@@ -21,11 +21,13 @@ Colors, opacity, style classes, palettes, and the cap system for line endpoints.
 
 ## Color Formats
 
-Anywhere a color is accepted (ColorLike), you can use:
+Anywhere a color is accepted (`ColorLike`), you can use:
 
 - **Named colors**: `"red"`, `"coral"`, `"navy"`, etc.
 - **Hex**: `"#ff0000"`, `"#f00"`, `"#FF0000"`
 - **RGB tuple**: `(255, 0, 0)`
+
+All paint parameters also accept gradient objects. See [Gradients](#gradients) below.
 
 ## Opacity System
 
@@ -53,6 +55,41 @@ cell.add_ellipse(fill="gold", fill_brightness=cell.brightness, stroke_brightness
 ::: pyfreeform.color.apply_brightness
 
 ::: pyfreeform.color.gray
+
+---
+
+## Gradients
+
+Use `LinearGradient` or `RadialGradient` anywhere a color is accepted. See the [Gradients guide](../guide/11-gradients.md) for visual examples.
+
+::: pyfreeform.LinearGradient
+    options:
+      heading_level: 3
+
+::: pyfreeform.RadialGradient
+    options:
+      heading_level: 3
+
+::: pyfreeform.Gradient
+    options:
+      heading_level: 3
+      members:
+        - gradient_id
+        - stops
+        - to_svg_ref
+        - to_svg_def
+
+### Color Stops
+
+A gradient is built from **color stops** — each stop says "this color, at this position." The position (`offset`) is a number from 0.0 (start) to 1.0 (end). The gradient smoothly blends between consecutive stops.
+
+For example, `LinearGradient("red", "blue")` creates two stops: red at 0.0 and blue at 1.0. Adding more colors adds more stops, evenly spaced by default. Use tuples to control placement: `("red", 0.7)` puts red at the 70% mark.
+
+You can also set per-stop `opacity` with a third value: `("white", 0.0, 0.5)` means white at the start, 50% transparent.
+
+::: pyfreeform.GradientStop
+    options:
+      heading_level: 4
 
 ---
 

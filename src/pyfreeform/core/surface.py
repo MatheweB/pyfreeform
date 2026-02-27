@@ -6,7 +6,8 @@ import itertools
 from collections.abc import Collection
 from typing import TYPE_CHECKING, Any, Literal
 
-from ..color import ColorLike, apply_brightness
+from ..color import apply_brightness
+from ..gradient import Gradient, PaintLike
 from .binding import Binding
 from .connection import Connection
 from .coord import Coord
@@ -238,7 +239,7 @@ class Surface:
         curvature: float | None = None,
         visible: bool = True,
         width: float = 1,
-        color: ColorLike = "black",
+        color: PaintLike = "black",
         z_index: int = 0,
         cap: CapName = "round",
         start_cap: CapName | None = None,
@@ -381,11 +382,11 @@ class Surface:
     def _unpack_fill_style(
         self,
         style: FillStyle | None,
-        color: ColorLike,
+        color: PaintLike,
         z_index: int,
         opacity: float,
         color_brightness: float | None,
-    ) -> tuple[ColorLike, int, float]:
+    ) -> tuple[PaintLike, int, float]:
         """Unpack FillStyle and apply brightness."""
         if style:
             color = style.color
@@ -393,7 +394,7 @@ class Surface:
             opacity = style.opacity
             if style.color_brightness is not None:
                 color_brightness = style.color_brightness
-        if color_brightness is not None:
+        if color_brightness is not None and not isinstance(color, Gradient):
             color = apply_brightness(color, color_brightness)
         return color, z_index, opacity
 
@@ -401,14 +402,14 @@ class Surface:
         self,
         style: PathStyle | None,
         width: float,
-        color: ColorLike,
+        color: PaintLike,
         z_index: int,
         cap: CapName,
         start_cap: CapName | None,
         end_cap: CapName | None,
         opacity: float,
         color_brightness: float | None,
-    ) -> tuple[float, ColorLike, int, CapName, CapName | None, CapName | None, float]:
+    ) -> tuple[float, PaintLike, int, CapName, CapName | None, CapName | None, float]:
         """Unpack PathStyle and apply brightness."""
         if style:
             width = style.width
@@ -420,15 +421,15 @@ class Surface:
             opacity = style.opacity
             if style.color_brightness is not None:
                 color_brightness = style.color_brightness
-        if color_brightness is not None:
+        if color_brightness is not None and not isinstance(color, Gradient):
             color = apply_brightness(color, color_brightness)
         return width, color, z_index, cap, start_cap, end_cap, opacity
 
     def _unpack_shape_style(
         self,
         style: ShapeStyle | None,
-        fill: ColorLike | None,
-        stroke: ColorLike | None,
+        fill: PaintLike | None,
+        stroke: PaintLike | None,
         stroke_width: float,
         z_index: int,
         opacity: float,
@@ -436,7 +437,7 @@ class Surface:
         stroke_opacity: float | None,
         fill_brightness: float | None,
         stroke_brightness: float | None,
-    ) -> tuple[ColorLike | None, ColorLike | None, float, int, float, float | None, float | None]:
+    ) -> tuple[PaintLike | None, PaintLike | None, float, int, float, float | None, float | None]:
         """Unpack ShapeStyle and apply brightness."""
         if style:
             fill = style.color
@@ -450,9 +451,9 @@ class Surface:
                 fill_brightness = style.fill_brightness
             if style.stroke_brightness is not None:
                 stroke_brightness = style.stroke_brightness
-        if fill_brightness is not None and fill is not None:
+        if fill_brightness is not None and fill is not None and not isinstance(fill, Gradient):
             fill = apply_brightness(fill, fill_brightness)
-        if stroke_brightness is not None and stroke is not None:
+        if stroke_brightness is not None and stroke is not None and not isinstance(stroke, Gradient):
             stroke = apply_brightness(stroke, stroke_brightness)
         return fill, stroke, stroke_width, z_index, opacity, fill_opacity, stroke_opacity
 
@@ -469,7 +470,7 @@ class Surface:
         t: float | None = None,
         along_offset: float | None = None,
         radius: float = 0.05,
-        color: ColorLike = "black",
+        color: PaintLike = "black",
         z_index: int = 0,
         opacity: float = 1.0,
         color_brightness: float | None = None,
@@ -554,7 +555,7 @@ class Surface:
         along_offset: float | None = None,
         align: bool = False,
         width: float = 1,
-        color: ColorLike = "black",
+        color: PaintLike = "black",
         z_index: int = 0,
         cap: CapName = "round",
         start_cap: CapName | None = None,
@@ -664,7 +665,7 @@ class Surface:
         along_offset: float | None = None,
         align: bool = False,
         width: float = 1,
-        color: ColorLike = "black",
+        color: PaintLike = "black",
         z_index: int = 0,
         cap: CapName = "round",
         start_cap: CapName | None = None,
@@ -736,7 +737,7 @@ class Surface:
         along_offset: float | None = None,
         align: bool = False,
         width: float = 1,
-        color: ColorLike = "black",
+        color: PaintLike = "black",
         z_index: int = 0,
         cap: CapName = "round",
         start_cap: CapName | None = None,
@@ -849,8 +850,8 @@ class Surface:
         start_t: float = 0.0,
         end_t: float = 1.0,
         width: float = 1,
-        color: ColorLike = "black",
-        fill: ColorLike | None = None,
+        color: PaintLike = "black",
+        fill: PaintLike | None = None,
         z_index: int = 0,
         cap: CapName = "round",
         start_cap: CapName | None = None,
@@ -940,8 +941,8 @@ class Surface:
         rx: float | None = None,
         ry: float | None = None,
         rotation: float = 0,
-        fill: ColorLike | None = "black",
-        stroke: ColorLike | None = None,
+        fill: PaintLike | None = "black",
+        stroke: PaintLike | None = None,
         stroke_width: float = 1,
         z_index: int = 0,
         opacity: float = 1.0,
@@ -1045,8 +1046,8 @@ class Surface:
         t: float | None = None,
         along_offset: float | None = None,
         align: bool = False,
-        fill: ColorLike | None = "black",
-        stroke: ColorLike | None = None,
+        fill: PaintLike | None = "black",
+        stroke: PaintLike | None = None,
         stroke_width: float = 1,
         z_index: int = 0,
         opacity: float = 1.0,
@@ -1158,7 +1159,7 @@ class Surface:
         along_offset: float | None = None,
         align: bool = False,
         font_size: float | None = None,
-        color: ColorLike = "black",
+        color: PaintLike = "black",
         font_family: str = "sans-serif",
         bold: bool = False,
         italic: bool = False,
@@ -1245,7 +1246,7 @@ class Surface:
             if style.color_brightness is not None:
                 color_brightness = style.color_brightness
 
-        if color_brightness is not None:
+        if color_brightness is not None and not isinstance(color, Gradient):
             color = apply_brightness(color, color_brightness)
 
         # Resolve text_anchor default based on mode
@@ -1368,8 +1369,8 @@ class Surface:
         width: float | None = None,
         height: float | None = None,
         rotation: float = 0,
-        fill: ColorLike | None = "black",
-        stroke: ColorLike | None = None,
+        fill: PaintLike | None = "black",
+        stroke: PaintLike | None = None,
         stroke_width: float = 1,
         opacity: float = 1.0,
         fill_opacity: float | None = None,
@@ -1481,7 +1482,7 @@ class Surface:
     def add_fill(
         self,
         *,
-        color: ColorLike = "black",
+        color: PaintLike = "black",
         opacity: float = 1.0,
         z_index: int = 0,
         color_brightness: float | None = None,
@@ -1528,7 +1529,7 @@ class Surface:
     def add_border(
         self,
         *,
-        color: ColorLike = "#cccccc",
+        color: PaintLike = "#cccccc",
         width: float = 0.5,
         z_index: int = 0,
         opacity: float = 1.0,
@@ -1564,7 +1565,7 @@ class Surface:
             if style.color_brightness is not None:
                 color_brightness = style.color_brightness
 
-        if color_brightness is not None:
+        if color_brightness is not None and not isinstance(color, Gradient):
             color = apply_brightness(color, color_brightness)
 
         half = width / 2

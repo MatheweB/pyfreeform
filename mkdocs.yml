@@ -32,6 +32,7 @@ theme:
     - navigation.instant
     - navigation.tracking
     - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.sections
     - navigation.top
     - navigation.indexes
@@ -118,6 +119,7 @@ nav:
     - Transforms & Layout: guide/08-transforms-and-layout.md
     - Connections & Anchors: guide/09-connections-and-anchors.md
     - Layout & Alignment: guide/10-layout-alignment.md
+    - Gradients: guide/11-gradients.md
   - Recipes:
     - recipes/index.md
     - Image-to-Art Portraits: recipes/01-image-to-art.md

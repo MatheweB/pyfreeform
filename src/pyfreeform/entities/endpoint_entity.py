@@ -9,6 +9,7 @@ from ..config.caps import CapName, collect_markers
 from ..core.coord import Coord
 from ..core.entity import Entity
 from ..core.relcoord import RelCoord
+from ..gradient import Gradient
 
 
 class EndpointEntity(Entity):
@@ -40,9 +41,9 @@ class EndpointEntity(Entity):
         super().__init__(x, y, z_index)
         self._relative_end: RelCoord | None = None
         self.width = float(width)
-        if color_brightness is not None:
+        if color_brightness is not None and not isinstance(color, Gradient):
             color = apply_brightness(color, color_brightness)
-        self._color = Color(color)
+        self._color = color if isinstance(color, Gradient) else Color(color)
         self.cap = cap
         self.start_cap = start_cap
         self.end_cap = end_cap
@@ -72,12 +73,20 @@ class EndpointEntity(Entity):
 
     @property
     def color(self) -> str:
-        """The stroke color as a string."""
+        """The stroke paint as a string (color or gradient ref)."""
+        if isinstance(self._color, Gradient):
+            return self._color.to_svg_ref()
         return self._color.to_hex()
 
     @color.setter
-    def color(self, value: str | tuple[int, int, int]) -> None:
-        self._color = Color(value)
+    def color(self, value: str | tuple[int, int, int] | Gradient) -> None:
+        if isinstance(value, Gradient):
+            self._color = value
+        else:
+            self._color = Color(value)
+
+    def _iter_paints(self):
+        yield self._color
 
     # --- Geometry ---
 

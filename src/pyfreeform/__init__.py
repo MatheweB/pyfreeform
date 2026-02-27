@@ -7,6 +7,7 @@ __version__ = "0.5.1"
 # Core
 # Utilities
 from .color import Color, ColorLike
+from .gradient import Gradient, GradientStop, LinearGradient, PaintLike, RadialGradient
 
 # Configuration
 from .config.caps import CapName, cap_shape, register_cap
@@ -131,16 +132,21 @@ __all__ = [
     "Entity",
     "EntityGroup",
     "FillStyle",
+    "Gradient",
+    "GradientStop",
     "Grid",
     "Image",
     "Layer",
     "Line",
+    "LinearGradient",
     "Palette",
     "Path",
     "PathStyle",
+    "PaintLike",
     "Pathable",
     "Point",
     "Polygon",
+    "RadialGradient",
     "Rect",
     "RelCoord",
     "RelCoordLike",

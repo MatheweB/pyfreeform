@@ -10,6 +10,7 @@ from ..core.coord import Coord, CoordLike
 from ..core.relcoord import RelCoord
 from ..core.entity import Entity
 from ..core.svg_utils import fill_stroke_attrs, shape_opacity_attrs, svg_num
+from ..gradient import Gradient
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -116,12 +117,12 @@ class Polygon(Entity):
         centroid = self._calculate_centroid()
         super().__init__(centroid.x, centroid.y, z_index)
 
-        if fill_brightness is not None and fill is not None:
+        if fill_brightness is not None and fill is not None and not isinstance(fill, Gradient):
             fill = apply_brightness(fill, fill_brightness)
-        if stroke_brightness is not None and stroke is not None:
+        if stroke_brightness is not None and stroke is not None and not isinstance(stroke, Gradient):
             stroke = apply_brightness(stroke, stroke_brightness)
-        self._fill = Color(fill) if fill else None
-        self._stroke = Color(stroke) if stroke else None
+        self._fill = fill if isinstance(fill, Gradient) else (Color(fill) if fill else None)
+        self._stroke = stroke if isinstance(stroke, Gradient) else (Color(stroke) if stroke else None)
         self.stroke_width = float(stroke_width)
         self.opacity = float(opacity)
         self.fill_opacity = fill_opacity
@@ -182,21 +183,41 @@ class Polygon(Entity):
 
     @property
     def fill(self) -> str | None:
-        """Fill color as string, or None."""
-        return self._fill.to_hex() if self._fill else None
+        """The fill paint as a string (color or gradient ref), or None."""
+        if self._fill is None:
+            return None
+        if isinstance(self._fill, Gradient):
+            return self._fill.to_svg_ref()
+        return self._fill.to_hex()
 
     @fill.setter
-    def fill(self, value: str | tuple[int, int, int] | None) -> None:
-        self._fill = Color(value) if value else None
+    def fill(self, value: str | tuple[int, int, int] | Gradient | None) -> None:
+        if isinstance(value, Gradient):
+            self._fill = value
+        else:
+            self._fill = Color(value) if value else None
 
     @property
     def stroke(self) -> str | None:
-        """Stroke color as string, or None."""
-        return self._stroke.to_hex() if self._stroke else None
+        """The stroke paint as a string (color or gradient ref), or None."""
+        if self._stroke is None:
+            return None
+        if isinstance(self._stroke, Gradient):
+            return self._stroke.to_svg_ref()
+        return self._stroke.to_hex()
 
     @stroke.setter
-    def stroke(self, value: str | tuple[int, int, int] | None) -> None:
-        self._stroke = Color(value) if value else None
+    def stroke(self, value: str | tuple[int, int, int] | Gradient | None) -> None:
+        if isinstance(value, Gradient):
+            self._stroke = value
+        else:
+            self._stroke = Color(value) if value else None
+
+    def _iter_paints(self):
+        if self._fill is not None:
+            yield self._fill
+        if self._stroke is not None:
+            yield self._stroke
 
     @property
     def rotation_center(self) -> Coord:

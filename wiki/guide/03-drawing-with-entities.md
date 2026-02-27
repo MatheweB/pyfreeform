@@ -187,8 +187,11 @@ The direct constructor `Point(x, y)` is also available for pixel-based positioni
 
 ---
 
+!!! info "See also"
+    For the full drawing and entity API, see [Drawing](../api-reference/drawing.md) and [Entities](../api-reference/entities.md).
+
 ## What's Next?
 
 Now that you know all the entity types, learn how to color and style them consistently:
 
-[Colors, Styles & Palettes &rarr;](04-colors-styles-palettes.md){ .md-button }
+[&larr; Working with Cells](02-working-with-cells.md){ .md-button } [Colors, Styles & Palettes &rarr;](04-colors-styles-palettes.md){ .md-button }

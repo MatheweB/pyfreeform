@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any, Union
 from ..color import Color, ColorLike, apply_brightness
 from ..config.caps import CapName, collect_markers, svg_cap_and_marker_attrs
 from ..config.styles import PathStyle
+from ..gradient import Gradient
 from .bezier import curvature_control_point, eval_cubic, quadratic_to_cubic
 from .coord import Coord
 from .positions import AnchorSpec
@@ -124,10 +125,10 @@ class Connection:
             if style.color_brightness is not None:
                 color_brightness = style.color_brightness
 
-        if color_brightness is not None:
+        if color_brightness is not None and not isinstance(color, Gradient):
             color = apply_brightness(color, color_brightness)
         self.width = float(width)
-        self._color = Color(color)
+        self._color = color if isinstance(color, Gradient) else Color(color)
         self._z_index = z_index
         self.cap = cap
         self.start_cap = start_cap
@@ -202,12 +203,17 @@ class Connection:
 
     @property
     def color(self) -> str:
-        """Line color."""
+        """Line paint as a string (color or gradient ref)."""
+        if isinstance(self._color, Gradient):
+            return self._color.to_svg_ref()
         return self._color.to_hex()
 
     @color.setter
-    def color(self, value: ColorLike) -> None:
-        self._color = Color(value)
+    def color(self, value: ColorLike | Gradient) -> None:
+        if isinstance(value, Gradient):
+            self._color = value
+        else:
+            self._color = Color(value)
 
     @property
     def z_index(self) -> int:
@@ -250,6 +256,12 @@ class Connection:
     def get_required_markers(self) -> list[tuple[str, str]]:
         """Collect SVG marker definitions needed by this connection's caps."""
         return collect_markers(self.cap, self.start_cap, self.end_cap, self.width, self.color)
+
+    def get_required_gradients(self) -> list[tuple[str, str]]:
+        """Collect SVG gradient definitions needed by this connection."""
+        if isinstance(self._color, Gradient):
+            return [(self._color.gradient_id, self._color.to_svg_def())]
+        return []
 
     # --- Affine transform (source space → world space) ---
 

@@ -93,6 +93,12 @@ dot.connect(rect, end_anchor="left") # In connections
 
 ---
 
+## PaintLike
+
+`PaintLike = ColorLike | Gradient` — the union type for all `fill=`, `color=`, and `stroke=` parameters. Accepts any solid color or gradient object.
+
+---
+
 ::: pyfreeform.Image
     options:
       heading_level: 2

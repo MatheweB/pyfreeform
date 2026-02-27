@@ -11,6 +11,7 @@ from ..core.coord import Coord
 from ..core.entity import Entity
 from ..config.caps import CapName, collect_markers, svg_cap_and_marker_attrs
 from ..core.svg_utils import shape_opacity_attrs, stroke_attrs, svg_num
+from ..gradient import Gradient
 from ..paths import Lissajous, Spiral, Wave, Zigzag
 
 if TYPE_CHECKING:
@@ -130,8 +131,8 @@ class Path(Entity):
         self._end_t = float(end_t)
         self.segments = segments
         self.width = float(width)
-        self._color = Color(color)
-        self._fill = Color(fill) if fill is not None else None
+        self._color = color if isinstance(color, Gradient) else Color(color)
+        self._fill = fill if isinstance(fill, Gradient) else (Color(fill) if fill is not None else None)
         self.cap = cap
         self.start_cap = start_cap
         self.end_cap = end_cap
@@ -149,23 +150,38 @@ class Path(Entity):
 
     @property
     def color(self) -> str:
-        """The stroke color as a hex string."""
+        """The stroke paint as a string (color or gradient ref)."""
+        if isinstance(self._color, Gradient):
+            return self._color.to_svg_ref()
         return self._color.to_hex()
 
     @color.setter
-    def color(self, value: str | tuple[int, int, int]) -> None:
-        self._color = Color(value)
+    def color(self, value: str | tuple[int, int, int] | Gradient) -> None:
+        if isinstance(value, Gradient):
+            self._color = value
+        else:
+            self._color = Color(value)
 
     @property
     def fill(self) -> str | None:
-        """The fill color as a hex string, or None."""
+        """The fill paint as a string (color or gradient ref), or None."""
         if self._fill is None:
             return None
+        if isinstance(self._fill, Gradient):
+            return self._fill.to_svg_ref()
         return self._fill.to_hex()
 
     @fill.setter
-    def fill(self, value: str | tuple[int, int, int] | None) -> None:
-        self._fill = Color(value) if value is not None else None
+    def fill(self, value: str | tuple[int, int, int] | Gradient | None) -> None:
+        if isinstance(value, Gradient):
+            self._fill = value
+        else:
+            self._fill = Color(value) if value is not None else None
+
+    def _iter_paints(self):
+        yield self._color
+        if self._fill is not None:
+            yield self._fill
 
     @property
     def rotation_center(self) -> Coord:

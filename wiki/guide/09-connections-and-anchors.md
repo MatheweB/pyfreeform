@@ -456,12 +456,11 @@ for i, parent in enumerate(nodes[1]):
 
 ---
 
+!!! info "See also"
+    For the full connection API, see [Connections & Paths](../api-reference/connections.md).
+
 ## What's Next?
 
-You've completed the Guide! Put your skills to work with self-contained projects:
+Now that you can connect entities, learn how to position them relative to each other:
 
-[Browse Recipes &rarr;](../recipes/01-image-to-art.md){ .md-button }
-
-Or explore the complete API reference:
-
-[API Reference &rarr;](../api-reference/index.md){ .md-button }
+[&larr; Transforms & Layout](08-transforms-and-layout.md){ .md-button } [Layout & Alignment &rarr;](10-layout-alignment.md){ .md-button }

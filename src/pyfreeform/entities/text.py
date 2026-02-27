@@ -11,6 +11,7 @@ from ..core.relcoord import RelCoordLike
 from ..core.coord import Coord
 from ..core.entity import Entity
 from ..core.svg_utils import opacity_attr, svg_num, xml_escape
+from ..gradient import Gradient
 
 # ---------------------------------------------------------------------------
 # Font measurement via Pillow
@@ -171,9 +172,9 @@ class Text(Entity):
         self.content = content
         self._pixel_font_size = float(font_size)
         self._relative_font_size: float | None = None
-        if color_brightness is not None:
+        if color_brightness is not None and not isinstance(color, Gradient):
             color = apply_brightness(color, color_brightness)
-        self._color = Color(color)
+        self._color = color if isinstance(color, Gradient) else Color(color)
         self.font_family = font_family
 
         if bold and font_weight == self.DEFAULT_FONT_WEIGHT:
@@ -226,12 +227,20 @@ class Text(Entity):
 
     @property
     def color(self) -> str:
-        """The text color as a string."""
+        """The text paint as a string (color or gradient ref)."""
+        if isinstance(self._color, Gradient):
+            return self._color.to_svg_ref()
         return self._color.to_hex()
 
     @color.setter
-    def color(self, value: str | tuple[int, int, int]) -> None:
-        self._color = Color(value)
+    def color(self, value: str | tuple[int, int, int] | Gradient) -> None:
+        if isinstance(value, Gradient):
+            self._color = value
+        else:
+            self._color = Color(value)
+
+    def _iter_paints(self):
+        yield self._color
 
     @property
     def bold(self) -> bool:

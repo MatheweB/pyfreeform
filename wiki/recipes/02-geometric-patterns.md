@@ -83,3 +83,5 @@ Star point count and inner ratio driven by grid position:
 ![Star grid](../_images/recipes/geo-star-grid.svg){ width="320" }
 <figcaption>Stars evolve from 4-pointed with narrow arms (top-left) to 8-pointed with wide arms (bottom-right).</figcaption>
 </figure>
+
+[&larr; Image to Art](01-image-to-art.md){ .md-button } [Flowing Curves &rarr;](03-flowing-curves.md){ .md-button }

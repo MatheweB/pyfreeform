@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="100" viewBox="0 0 400 100">
+  <defs>
+    <linearGradient id="grad-16d37c3607ee" x1="0.5" y1="0.0" x2="0.5" y2="1.0"><stop offset="0.0" stop-color="orangered" /><stop offset="1.0" stop-color="gold" /></linearGradient>
+    <radialGradient id="grad-6912c14767f2" cx="0.5" cy="0.5" r="0.5"><stop offset="0.0" stop-color="lightskyblue" /><stop offset="1.0" stop-color="navy" /></radialGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="#1a1a2e" />
+  <rect x="15" y="15" width="70" height="70" fill="url(#grad-16d37c3607ee)" />
+  <text x="50" y="92.5" font-size="12" font-family="sans-serif" font-style="normal" font-weight="normal" fill="white" text-anchor="middle" dominant-baseline="middle">rect</text>
+  <ellipse cx="150" cy="50" rx="35" ry="35" fill="url(#grad-6912c14767f2)" />
+  <text x="150" y="92.5" font-size="12" font-family="sans-serif" font-style="normal" font-weight="normal" fill="white" text-anchor="middle" dominant-baseline="middle">ellipse</text>
+  <polygon points="280.311,67.5 250,85 219.689,67.5 219.689,32.5 250,15 280.311,32.5" fill="url(#grad-16d37c3607ee)" />
+  <text x="250" y="92.5" font-size="12" font-family="sans-serif" font-style="normal" font-weight="normal" fill="white" text-anchor="middle" dominant-baseline="middle">polygon</text>
+  <circle cx="350" cy="50" r="35" fill="url(#grad-6912c14767f2)" />
+  <text x="350" y="92.5" font-size="12" font-family="sans-serif" font-style="normal" font-weight="normal" fill="white" text-anchor="middle" dominant-baseline="middle">dot</text>
+</svg>

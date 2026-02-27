@@ -191,8 +191,11 @@ Negative values shift above the line, positive values shift below. This is **dir
 
 ---
 
+!!! info "See also"
+    For the full path and connection API, see [Connections & Paths](../api-reference/connections.md).
+
 ## What's Next?
 
 Explore the shape system and learn to compose reusable groups:
 
-[Shapes & Polygons &rarr;](06-shapes-and-polygons.md){ .md-button }
+[&larr; Colors, Styles & Palettes](04-colors-styles-palettes.md){ .md-button } [Shapes & Polygons &rarr;](06-shapes-and-polygons.md){ .md-button }

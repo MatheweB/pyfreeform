@@ -149,8 +149,11 @@ PyFreeform has two positioning vocabularies. Use the right one for the job:
 
 ---
 
+!!! info "See also"
+    For the full drawing and layout API, see [Drawing](../api-reference/drawing.md).
+
 ## What's Next?
 
-Learn how connections link entities with live references and explore the anchor system:
+Add smooth color transitions to any entity with linear and radial gradients:
 
-[Connections & Anchors &rarr;](09-connections-and-anchors.md){ .md-button }
+[&larr; Connections & Anchors](09-connections-and-anchors.md){ .md-button } [Gradients &rarr;](11-gradients.md){ .md-button }

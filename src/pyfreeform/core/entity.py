@@ -8,6 +8,7 @@ from collections.abc import Collection
 from typing import TYPE_CHECKING, Any, Literal
 
 from ..color import ColorLike
+from ..gradient import Gradient
 from .binding import Binding
 from .connection import Connection
 from .coord import Coord, CoordLike
@@ -794,6 +795,27 @@ class Entity(ABC):
             List of (path_id, path_svg) tuples. Empty by default.
         """
         return []
+
+    def _iter_paints(self):
+        """Yield all paint objects (``Color`` or ``Gradient``) on this entity.
+
+        Override in subclasses that store fill, stroke, or color values.
+        Used by :meth:`get_required_gradients` to collect defs.
+        """
+        return
+        yield  # pragma: no cover — makes this a generator
+
+    def get_required_gradients(self) -> list[tuple[str, str]]:
+        """Collect SVG gradient definitions needed by this entity.
+
+        Returns:
+            List of (gradient_id, gradient_svg) tuples. Empty by default.
+        """
+        return [
+            (p.gradient_id, p.to_svg_def())
+            for p in self._iter_paints()
+            if isinstance(p, Gradient)
+        ]
 
     def inner_bounds(self) -> tuple[float, float, float, float]:
         """

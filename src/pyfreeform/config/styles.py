@@ -5,7 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from ..color import Color, ColorLike
+from ..color import Color
+from ..gradient import Gradient, PaintLike
 from .caps import CapName
 
 
@@ -26,7 +27,7 @@ class FillStyle:
         opacity: Opacity 0.0-1.0 (default: 1.0, fully opaque)
     """
 
-    color: ColorLike = "black"
+    color: PaintLike = "black"
     z_index: int = 0
     opacity: float = 1.0
     color_brightness: float | None = None
@@ -71,7 +72,7 @@ class PathStyle:
     """
 
     width: float = 1
-    color: ColorLike = "black"
+    color: PaintLike = "black"
     z_index: int = 0
     cap: CapName = "round"
     start_cap: CapName | None = None
@@ -119,7 +120,7 @@ class BorderStyle:
     """
 
     width: float = 0.5
-    color: ColorLike = "#cccccc"
+    color: PaintLike = "#cccccc"
     z_index: int = 0
     opacity: float = 1.0
     color_brightness: float | None = None
@@ -164,8 +165,8 @@ class ShapeStyle:
         stroke_opacity: Override opacity for stroke only (default: None, uses opacity)
     """
 
-    color: ColorLike = "black"
-    stroke: ColorLike | None = None
+    color: PaintLike = "black"
+    stroke: PaintLike | None = None
     stroke_width: float = 1
     z_index: int = 0
     opacity: float = 1.0
@@ -222,7 +223,7 @@ class TextStyle:
         opacity: Opacity 0.0-1.0 (default: 1.0, fully opaque)
     """
 
-    color: ColorLike = "black"
+    color: PaintLike = "black"
     font_family: str = "sans-serif"
     bold: bool = False
     italic: bool = False

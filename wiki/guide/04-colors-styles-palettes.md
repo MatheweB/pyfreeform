@@ -255,8 +255,11 @@ Modify palettes with `dataclasses.replace()`: `replace(colors, background="#000"
 
 ---
 
+!!! info "See also"
+    For the full styling API, see [Styling & Caps](../api-reference/styling.md).
+
 ## What's Next?
 
 Learn the "killer feature" — positioning entities along any path:
 
-[Paths & Parametric Positioning &rarr;](05-paths-and-parametric.md){ .md-button }
+[&larr; Drawing with Entities](03-drawing-with-entities.md){ .md-button } [Paths & Parametric Positioning &rarr;](05-paths-and-parametric.md){ .md-button }

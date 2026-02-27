@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200" viewBox="0 0 400 200">
+  <defs>
+    <radialGradient id="grad-0543b413c1f4" cx="0.5" cy="0.5" r="0.5"><stop offset="0.0" stop-color="#ff006e" /><stop offset="1.0" stop-color="transparent" /></radialGradient>
+    <radialGradient id="grad-7ed3e25d222e" cx="0.5" cy="0.5" r="0.5"><stop offset="0.0" stop-color="#00f5d4" /><stop offset="1.0" stop-color="transparent" /></radialGradient>
+    <radialGradient id="grad-ecaa111e2ddc" cx="0.5" cy="0.5" r="0.5"><stop offset="0.0" stop-color="#fee440" /><stop offset="1.0" stop-color="transparent" /></radialGradient>
+    <radialGradient id="grad-d3d40f7a4750" cx="0.5" cy="0.5" r="0.5"><stop offset="0.0" stop-color="#8338ec" /><stop offset="1.0" stop-color="transparent" /></radialGradient>
+    <radialGradient id="grad-39debba06e09" cx="0.5" cy="0.5" r="0.5"><stop offset="0.0" stop-color="#3a86ff" /><stop offset="1.0" stop-color="transparent" /></radialGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="#0a0a1a" />
+  <ellipse cx="60" cy="100" rx="32" ry="32" fill="url(#grad-0543b413c1f4)" />
+  <circle cx="60" cy="100" r="4" fill="#ff006e" />
+  <ellipse cx="130" cy="100" rx="32" ry="32" fill="url(#grad-7ed3e25d222e)" />
+  <circle cx="130" cy="100" r="4" fill="#00f5d4" />
+  <ellipse cx="200" cy="100" rx="32" ry="32" fill="url(#grad-ecaa111e2ddc)" />
+  <circle cx="200" cy="100" r="4" fill="#fee440" />
+  <ellipse cx="270" cy="100" rx="32" ry="32" fill="url(#grad-d3d40f7a4750)" />
+  <circle cx="270" cy="100" r="4" fill="#8338ec" />
+  <ellipse cx="340" cy="100" rx="32" ry="32" fill="url(#grad-39debba06e09)" />
+  <circle cx="340" cy="100" r="4" fill="#3a86ff" />
+</svg>

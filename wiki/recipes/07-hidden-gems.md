@@ -337,3 +337,5 @@ for cell in g:
 
 !!! tip "The physics"
     The **double-slit experiment** is the cornerstone of quantum mechanics. Each slit acts as a Huygens point source; behind the barrier the two wavefronts interfere, creating bright fringes (constructive) and dark bands (destructive). Sizing dots by |&psi;|&sup2; shows the **probability distribution** — exactly the pattern observed when single particles build up one at a time.
+
+[&larr; Advanced Compositions](06-advanced-compositions.md){ .md-button }

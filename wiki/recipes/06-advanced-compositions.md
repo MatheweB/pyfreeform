@@ -88,3 +88,5 @@ Combine every technique into a single composition:
 
 !!! tip "Layering strategy"
     Work from background to foreground. Low z_index for ambient elements, high z_index for focal points. Opacity is your best friend for letting layers breathe.
+
+[&larr; Typographic Art](05-typographic-art.md){ .md-button } [Hidden Gems &rarr;](07-hidden-gems.md){ .md-button }

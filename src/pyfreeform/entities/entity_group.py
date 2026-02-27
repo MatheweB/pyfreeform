@@ -297,6 +297,13 @@ class EntityGroup(Entity):
             result.extend(child.get_required_paths())
         return result
 
+    def get_required_gradients(self) -> list[tuple[str, str]]:
+        """Collect SVG gradient definitions from all children."""
+        result: list[tuple[str, str]] = []
+        for child in self._children:
+            result.extend(child.get_required_gradients())
+        return result
+
     def __repr__(self) -> str:
         n = len(self._children)
         extras = []

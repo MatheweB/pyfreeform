@@ -150,8 +150,11 @@ title.add_text("FRANK", at="center", font_size=0.55, color="#ffffff", bold=True)
 
 ---
 
+!!! info "See also"
+    For the full entity API, see [Entities](../api-reference/entities.md).
+
 ## What's Next?
 
 Master transforms, fitting, connections, and layout:
 
-[Transforms & Layout &rarr;](08-transforms-and-layout.md){ .md-button }
+[&larr; Shapes & Polygons](06-shapes-and-polygons.md){ .md-button } [Transforms & Layout &rarr;](08-transforms-and-layout.md){ .md-button }

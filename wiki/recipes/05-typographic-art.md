@@ -71,3 +71,5 @@ title.add_text("MONA LISA", at="center", font_size=0.50, color="#ffffff", bold=T
 ![Combined text overlay](../_images/recipes/typo-combined.svg){ width="420" }
 <figcaption>Dot art portrait with semi-transparent title and subtitle bars.</figcaption>
 </figure>
+
+[&larr; Connected Networks](04-connected-networks.md){ .md-button } [Advanced Compositions &rarr;](06-advanced-compositions.md){ .md-button }

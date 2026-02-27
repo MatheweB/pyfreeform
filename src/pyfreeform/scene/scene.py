@@ -399,6 +399,22 @@ class Scene(Surface):
             for pid, svg in entity.get_required_paths()
         }
 
+    def _collect_gradients(
+        self, entities: list[Entity], connections: list[Connection]
+    ) -> dict[str, str]:
+        """Collect unique SVG gradient definitions from all entities and connections."""
+        gradients = {
+            gid: svg
+            for entity in entities
+            for gid, svg in entity.get_required_gradients()
+        }
+        gradients |= {
+            gid: svg
+            for connection in connections
+            for gid, svg in connection.get_required_gradients()
+        }
+        return gradients
+
     def to_svg(self) -> str:
         """
         Render the scene to an SVG string.
@@ -435,11 +451,13 @@ class Scene(Surface):
             svg_open,
         ]
 
-        # Definitions (markers for arrow caps, paths for textPath)
+        # Definitions (gradients, markers for arrow caps, paths for textPath)
         markers = self._collect_markers(all_entities, all_connections)
         path_defs = self._collect_path_defs(all_entities)
-        if markers or path_defs:
+        gradients = self._collect_gradients(all_entities, all_connections)
+        if markers or path_defs or gradients:
             lines.append("  <defs>")
+            lines.extend(f"    {svg}" for svg in gradients.values())
             lines.extend(f"    {svg}" for svg in markers.values())
             lines.extend(f"    {svg}" for svg in path_defs.values())
             lines.append("  </defs>")

@@ -215,8 +215,11 @@ group.fit_to_surface(0.7)  # (1)!
 
 ---
 
+!!! info "See also"
+    For the full entity API, see [Entities](../api-reference/entities.md).
+
 ## What's Next?
 
 Learn text placement, typography, and text-along-path effects:
 
-[Text & Typography &rarr;](07-text-and-typography.md){ .md-button }
+[&larr; Paths & Parametric](05-paths-and-parametric.md){ .md-button } [Text & Typography &rarr;](07-text-and-typography.md){ .md-button }

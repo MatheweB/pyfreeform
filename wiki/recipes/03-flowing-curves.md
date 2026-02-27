@@ -87,3 +87,5 @@ Layer perpendicular lines with position-driven weight:
 ![Cross-hatching](../_images/recipes/flow-crosshatch.svg){ width="360" }
 <figcaption>Two sets of diagonal lines with weight shifting across the grid.</figcaption>
 </figure>
+
+[&larr; Geometric Patterns](02-geometric-patterns.md){ .md-button } [Connected Networks &rarr;](04-connected-networks.md){ .md-button }

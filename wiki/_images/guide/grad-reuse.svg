@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="60" viewBox="0 0 360 60">
+  <defs>
+    <linearGradient id="grad-82b2ee4a5f18" x1="0.5" y1="0.0" x2="0.5" y2="1.0"><stop offset="0.0" stop-color="yellow" /><stop offset="0.5" stop-color="orangered" /><stop offset="1.0" stop-color="darkred" /></linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="#1a1a2e" />
+  <polygon points="30,9 48.1865,40.5 11.8135,40.5" fill="url(#grad-82b2ee4a5f18)" />
+  <polygon points="90,9 111,30 90,51 69,30" fill="url(#grad-82b2ee4a5f18)" />
+  <polygon points="150,9 169.972,23.5106 162.343,46.9894 137.657,46.9894 130.028,23.5106" fill="url(#grad-82b2ee4a5f18)" />
+  <polygon points="210,9 228.187,19.5 228.187,40.5 210,51 191.813,40.5 191.813,19.5" fill="url(#grad-82b2ee4a5f18)" />
+  <polygon points="270,9 286.418,16.9067 290.473,34.6729 279.112,48.9203 260.888,48.9203 249.527,34.6729 253.582,16.9067" fill="url(#grad-82b2ee4a5f18)" />
+  <polygon points="330,9 344.849,15.1508 351,30 344.849,44.8492 330,51 315.151,44.8492 309,30 315.151,15.1508" fill="url(#grad-82b2ee4a5f18)" />
+</svg>

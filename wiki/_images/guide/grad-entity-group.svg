@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="100" viewBox="0 0 300 100">
+  <defs>
+    <radialGradient id="grad-c6f8d48b0b01" cx="0.5" cy="0.5" r="0.5"><stop offset="0.0" stop-color="lightyellow" /><stop offset="0.5" stop-color="gold" /><stop offset="1.0" stop-color="darkgoldenrod" /></radialGradient>
+    <radialGradient id="grad-f428de21e847" cx="0.5" cy="0.5" r="0.5"><stop offset="0.0" stop-color="white" /><stop offset="0.5" stop-color="silver" /><stop offset="1.0" stop-color="gray" /></radialGradient>
+    <radialGradient id="grad-356eba75a732" cx="0.5" cy="0.5" r="0.5"><stop offset="0.0" stop-color="peachpuff" /><stop offset="0.5" stop-color="#cd7f32" /><stop offset="1.0" stop-color="#8b4513" /></radialGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="#1a1a2e" />
+  <g transform="translate(50, 50)">
+  <circle cx="18" cy="0" r="4" fill="gold" />
+  <circle cx="15.5885" cy="9" r="4" fill="gold" />
+  <circle cx="9" cy="15.5885" r="4" fill="gold" />
+  <circle cx="0" cy="18" r="4" fill="gold" />
+  <circle cx="-9" cy="15.5885" r="4" fill="gold" />
+  <circle cx="-15.5885" cy="9" r="4" fill="gold" />
+  <circle cx="-18" cy="0" r="4" fill="gold" />
+  <circle cx="-15.5885" cy="-9" r="4" fill="gold" />
+  <circle cx="-9" cy="-15.5885" r="4" fill="gold" />
+  <circle cx="-0" cy="-18" r="4" fill="gold" />
+  <circle cx="9" cy="-15.5885" r="4" fill="gold" />
+  <circle cx="15.5885" cy="-9" r="4" fill="gold" />
+  <circle cx="0" cy="0" r="12" fill="url(#grad-c6f8d48b0b01)" />
+</g>
+  <text x="50" y="86" font-size="12" font-family="sans-serif" font-style="normal" font-weight="normal" fill="white" text-anchor="middle" dominant-baseline="middle">gold</text>
+  <g transform="translate(150, 50)">
+  <circle cx="18" cy="0" r="4" fill="silver" />
+  <circle cx="15.5885" cy="9" r="4" fill="silver" />
+  <circle cx="9" cy="15.5885" r="4" fill="silver" />
+  <circle cx="0" cy="18" r="4" fill="silver" />
+  <circle cx="-9" cy="15.5885" r="4" fill="silver" />
+  <circle cx="-15.5885" cy="9" r="4" fill="silver" />
+  <circle cx="-18" cy="0" r="4" fill="silver" />
+  <circle cx="-15.5885" cy="-9" r="4" fill="silver" />
+  <circle cx="-9" cy="-15.5885" r="4" fill="silver" />
+  <circle cx="-0" cy="-18" r="4" fill="silver" />
+  <circle cx="9" cy="-15.5885" r="4" fill="silver" />
+  <circle cx="15.5885" cy="-9" r="4" fill="silver" />
+  <circle cx="0" cy="0" r="12" fill="url(#grad-f428de21e847)" />
+</g>
+  <text x="150" y="86" font-size="12" font-family="sans-serif" font-style="normal" font-weight="normal" fill="white" text-anchor="middle" dominant-baseline="middle">silver</text>
+  <g transform="translate(250, 50)">
+  <circle cx="18" cy="0" r="4" fill="#cd7f32" />
+  <circle cx="15.5885" cy="9" r="4" fill="#cd7f32" />
+  <circle cx="9" cy="15.5885" r="4" fill="#cd7f32" />
+  <circle cx="0" cy="18" r="4" fill="#cd7f32" />
+  <circle cx="-9" cy="15.5885" r="4" fill="#cd7f32" />
+  <circle cx="-15.5885" cy="9" r="4" fill="#cd7f32" />
+  <circle cx="-18" cy="0" r="4" fill="#cd7f32" />
+  <circle cx="-15.5885" cy="-9" r="4" fill="#cd7f32" />
+  <circle cx="-9" cy="-15.5885" r="4" fill="#cd7f32" />
+  <circle cx="-0" cy="-18" r="4" fill="#cd7f32" />
+  <circle cx="9" cy="-15.5885" r="4" fill="#cd7f32" />
+  <circle cx="15.5885" cy="-9" r="4" fill="#cd7f32" />
+  <circle cx="0" cy="0" r="12" fill="url(#grad-356eba75a732)" />
+</g>
+  <text x="250" y="86" font-size="12" font-family="sans-serif" font-style="normal" font-weight="normal" fill="white" text-anchor="middle" dominant-baseline="middle">bronze</text>
+</svg>

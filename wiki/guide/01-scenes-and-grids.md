@@ -190,6 +190,9 @@ A CellGroup has all the same `add_*` methods as a Cell — it's a full Surface.
 
 ---
 
+!!! info "See also"
+    For the full Scene and Grid API, see [Scene](../api-reference/scene.md) and [Grid & Cells](../api-reference/grid-and-cells.md).
+
 ## What's Next?
 
 Now that you can create and navigate grids, learn how to read and use each cell's data:

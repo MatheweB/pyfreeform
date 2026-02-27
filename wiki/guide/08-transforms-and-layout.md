@@ -76,14 +76,12 @@ Both modes work on any entity type — EntityGroup, Rect, Polygon, Ellipse, Line
 
 ## Connections
 
-Link entities with **Connection** objects that auto-update when entities move. Connections are covered in depth on their own page:
+Link entities with **Connection** objects that auto-update when entities move. Connections are covered in depth in [Connections & Anchors](09-connections-and-anchors.md).
 
 <figure markdown>
 ![Connected network](../_images/guide/transforms-connections.svg){ width="300" }
 <figcaption>Dots connected in a grid network — connections link alternate cells.</figcaption>
 </figure>
-
-[Connections & Anchors &rarr;](09-connections-and-anchors.md){ .md-button }
 
 ---
 
@@ -130,8 +128,11 @@ Swap the output range to reverse the direction — `map_range(nx, 0, 1, 9, 2)` m
 
 ---
 
+!!! info "See also"
+    For the full transforms API, see [Transforms](../api-reference/transforms.md).
+
 ## What's Next?
 
 Learn how connections link entities with live references and explore the anchor system:
 
-[Connections & Anchors &rarr;](09-connections-and-anchors.md){ .md-button }
+[&larr; Text & Typography](07-text-and-typography.md){ .md-button } [Connections & Anchors &rarr;](09-connections-and-anchors.md){ .md-button }
