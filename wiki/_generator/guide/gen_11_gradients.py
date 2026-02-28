@@ -35,8 +35,8 @@ def generate():
         a = angles[i]
         shape = cell.add_rect(
             fill=LinearGradient("coral", "dodgerblue", angle=a),
-            width=0.8,
-            height=0.8,
+            width=0.75,
+            height=0.65,
         )
         cell.add_text(f"{a}\u00b0", at=_label_pos(shape, cell), font_size=0.15, color="white")
     save(scene, "guide/grad-angles.svg")
