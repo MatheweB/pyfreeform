@@ -96,6 +96,15 @@ conn.draw(duration=2.0, easing="ease-in-out")
 <figcaption>A curved connection drawing itself between two dots.</figcaption>
 </figure>
 
+!!! tip "Delayed draw + opacity"
+    When using `.draw()` with a `delay`, the stroke is hidden via `stroke-dashoffset` — but round line caps can still produce tiny visible dots at endpoints. For a clean entrance, pair it with `opacity=0` and a fade:
+
+    ```python
+    conn = d1.connect(d2, color="skyblue", width=2, opacity=0.0)
+    conn.fade(to=1.0, duration=0.15, delay=2.0, hold=True)
+    conn.draw(duration=1.0, delay=2.0)
+    ```
+
 ---
 
 ## Easing
