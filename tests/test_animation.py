@@ -5,6 +5,8 @@ from __future__ import annotations
 import pytest
 
 from pyfreeform import Dot, Easing, Ellipse, Line, Polygon, Rect, Scene, Path, Text, Connection, stagger
+from pyfreeform.core.coord import Coord
+from pyfreeform.entities.point import Point
 from pyfreeform.animation.models import (
     DrawAnimation,
     Easing,
@@ -813,3 +815,162 @@ class TestConnectionPropertySMIL:
         conn.animate("color", keyframes={0: "red", 1.0: "blue"}, duration=1.0)
         svg = SMILRenderer().render_connection(conn)
         assert 'attributeName="stroke"' in svg
+
+
+# ======================================================================
+# Reactive animation tests
+# ======================================================================
+
+
+class TestReactivePolygonAnimation:
+    """Reactive polygon animations when vertices are animated entities."""
+
+    def test_animated_vertex_emits_points_animate(self):
+        """Polygon vertex entity with .move() produces <animate attributeName="points">."""
+        scene = Scene(200, 200)
+        a = Point(0, 0)
+        b = Point(0, 0)
+        c = Point(0, 0)
+        scene.add(a, at=(0.1, 0.1))
+        scene.add(b, at=(0.9, 0.1))
+        scene.add(c, at=(0.5, 0.9))
+        b.move(to=(0.5, 0.5), duration=2.0)
+        poly = Polygon([a, b, c], fill="red")
+        scene.place(poly)
+        svg = SMILRenderer().render_entity(poly)
+        assert '<animate attributeName="points"' in svg
+        assert 'dur="2' in svg
+
+    def test_static_vertices_no_reactive(self):
+        """Polygon with only static coords emits no reactive animation."""
+        poly = Polygon([(0, 0), (100, 0), (50, 80)], fill="blue")
+        svg = SMILRenderer().render_entity(poly)
+        assert '<animate attributeName="points"' not in svg
+
+    def test_mixed_static_and_animated(self):
+        """Mixed static + animated vertices both appear in points values."""
+        scene = Scene(200, 200)
+        a = Point(0, 0)
+        scene.add(a, at=(0.1, 0.1))
+        a.move(to=(0.9, 0.9), duration=1.0)
+        poly = Polygon([a, Coord(100, 100), Coord(0, 100)], fill="green")
+        scene.place(poly)
+        svg = SMILRenderer().render_entity(poly)
+        assert '<animate attributeName="points"' in svg
+        # Static coords should appear in the values (constant across keyframes)
+        assert "100,100" in svg
+
+    def test_incompatible_vertex_anims_no_reactive(self):
+        """Vertices with different durations produce no reactive animation."""
+        scene = Scene(200, 200)
+        a = Point(0, 0)
+        b = Point(0, 0)
+        c = Point(0, 0)
+        scene.add(a, at=(0.1, 0.1))
+        scene.add(b, at=(0.9, 0.1))
+        scene.add(c, at=(0.5, 0.9))
+        a.move(to=(0.5, 0.5), duration=1.0)
+        b.move(to=(0.5, 0.5), duration=2.0)  # Different duration
+        poly = Polygon([a, b, c], fill="red")
+        scene.place(poly)
+        svg = SMILRenderer().render_entity(poly)
+        assert '<animate attributeName="points"' not in svg
+
+    def test_own_animations_coexist(self):
+        """Polygon's own opacity animation + reactive vertex animation both appear."""
+        scene = Scene(200, 200)
+        a = Point(0, 0)
+        scene.add(a, at=(0.1, 0.1))
+        a.move(to=(0.5, 0.5), duration=1.0)
+        poly = Polygon([a, Coord(100, 100), Coord(0, 100)], fill="green")
+        poly.fade(to=0.0, duration=1.0)
+        scene.place(poly)
+        svg = SMILRenderer().render_entity(poly)
+        assert '<animate attributeName="points"' in svg
+        assert '<animate attributeName="opacity"' in svg
+
+    def test_bounce_and_repeat(self):
+        """Reactive vertex animation with bounce mirrors the values."""
+        scene = Scene(200, 200)
+        a = Point(0, 0)
+        b = Point(0, 0)
+        c = Point(0, 0)
+        scene.add(a, at=(0.0, 0.0))
+        scene.add(b, at=(1.0, 0.0))
+        scene.add(c, at=(0.5, 1.0))
+        a.move(to=(0.5, 0.5), duration=2.0, bounce=True, repeat=True)
+        b.move(to=(0.5, 0.5), duration=2.0, bounce=True, repeat=True)
+        c.move(to=(0.5, 0.5), duration=2.0, bounce=True, repeat=True)
+        poly = Polygon([a, b, c], fill="red")
+        scene.place(poly)
+        svg = SMILRenderer().render_entity(poly)
+        assert '<animate attributeName="points"' in svg
+        assert 'repeatCount="indefinite"' in svg
+
+
+class TestReactiveConnectionAnimation:
+    """Reactive connection animations when endpoints are animated entities."""
+
+    def test_straight_animated_start(self):
+        """Straight connection with animated start emits x1/y1 animates."""
+        scene = Scene(200, 200)
+        d1 = Dot(0, 0, radius=5, color="red")
+        d2 = Dot(0, 0, radius=5, color="blue")
+        scene.add(d1, at=(0.1, 0.5))
+        scene.add(d2, at=(0.9, 0.5))
+        d1.move(to=(0.5, 0.5), duration=2.0)
+        conn = Connection(d1, d2)
+        svg = SMILRenderer().render_connection(conn)
+        assert '<animate attributeName="x1"' in svg
+        assert '<animate attributeName="y1"' in svg
+        assert '<animate attributeName="x2"' not in svg
+
+    def test_straight_both_animated(self):
+        """Both endpoints animated emits x1/y1/x2/y2 animate elements."""
+        scene = Scene(200, 200)
+        d1 = Dot(0, 0, radius=5, color="red")
+        d2 = Dot(0, 0, radius=5, color="blue")
+        scene.add(d1, at=(0.1, 0.5))
+        scene.add(d2, at=(0.9, 0.5))
+        d1.move(to=(0.5, 0.5), duration=2.0)
+        d2.move(to=(0.5, 0.8), duration=2.0)
+        conn = Connection(d1, d2)
+        svg = SMILRenderer().render_connection(conn)
+        assert '<animate attributeName="x1"' in svg
+        assert '<animate attributeName="y1"' in svg
+        assert '<animate attributeName="x2"' in svg
+        assert '<animate attributeName="y2"' in svg
+
+    def test_curve_animated_endpoint(self):
+        """Curved connection with animated endpoint emits d attribute animate."""
+        scene = Scene(200, 200)
+        d1 = Dot(0, 0, radius=5, color="red")
+        d2 = Dot(0, 0, radius=5, color="blue")
+        scene.add(d1, at=(0.1, 0.5))
+        scene.add(d2, at=(0.9, 0.5))
+        d1.move(to=(0.5, 0.5), duration=2.0)
+        conn = Connection(d1, d2, curvature=0.3)
+        svg = SMILRenderer().render_connection(conn)
+        assert '<animate attributeName="d"' in svg
+
+    def test_static_endpoints_no_reactive(self):
+        """Connection with static endpoints emits no reactive animations."""
+        d1 = Dot(10, 20, radius=5, color="red")
+        d2 = Dot(80, 80, radius=5, color="blue")
+        conn = Connection(d1, d2)
+        svg = SMILRenderer().render_connection(conn)
+        assert '<animate attributeName="x1"' not in svg
+
+    def test_own_anims_coexist_with_reactive(self):
+        """Connection's own fade + reactive endpoint animation coexist."""
+        scene = Scene(200, 200)
+        d1 = Dot(0, 0, radius=5, color="red")
+        d2 = Dot(0, 0, radius=5, color="blue")
+        scene.add(d1, at=(0.1, 0.5))
+        scene.add(d2, at=(0.9, 0.5))
+        d1.move(to=(0.5, 0.5), duration=2.0)
+        conn = Connection(d1, d2)
+        conn.fade(to=0.0, duration=2.0)
+        svg = SMILRenderer().render_connection(conn)
+        assert '<animate attributeName="x1"' in svg
+        assert '<animate attributeName="opacity"' in svg

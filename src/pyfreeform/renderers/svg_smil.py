@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from typing import TYPE_CHECKING, Any
 
 from ..animation.models import (
@@ -10,6 +11,7 @@ from ..animation.models import (
     MotionAnimation,
     PropertyAnimation,
 )
+from ..core.coord import Coord
 from ..core.svg_utils import opacity_attr, svg_num, fill_stroke_attrs, shape_opacity_attrs, stroke_attrs, xml_escape
 from ..config.caps import svg_cap_and_marker_attrs
 from .svg import SVGRenderer, _build_svg_transform
@@ -481,6 +483,141 @@ def _smil_easing(anim: PropertyAnimation | MotionAnimation | DrawAnimation) -> s
 
 
 # ======================================================================
+# Reactive animation helpers
+# ======================================================================
+
+
+def _extract_position_anims(
+    entity: Entity,
+) -> tuple[PropertyAnimation, PropertyAnimation] | None:
+    """Extract the first (at_rx, at_ry) animation pair from an entity.
+
+    Returns ``None`` if the entity has no position (move) animations.
+    """
+    rx_anim: PropertyAnimation | None = None
+    ry_anim: PropertyAnimation | None = None
+    for anim in entity._animations:
+        if isinstance(anim, PropertyAnimation):
+            if anim.prop == "at_rx" and rx_anim is None:
+                rx_anim = anim
+            elif anim.prop == "at_ry" and ry_anim is None:
+                ry_anim = anim
+        if rx_anim is not None and ry_anim is not None:
+            return (rx_anim, ry_anim)
+    return None
+
+
+def _resolve_abs_at_keyframe(
+    entity: Entity, rx: float, ry: float,
+) -> tuple[float, float]:
+    """Convert relative (rx, ry) to absolute pixels using entity's surface."""
+    surface = entity._surface
+    if surface is None:
+        return (rx, ry)
+    return (
+        surface._x + rx * surface._width,
+        surface._y + ry * surface._height,
+    )
+
+
+def _check_anim_compatibility(
+    anims: list[PropertyAnimation],
+) -> PropertyAnimation | None:
+    """Verify all animations share compatible timing; return template or None."""
+    if not anims:
+        return None
+    template = anims[0]
+    for a in anims[1:]:
+        if (
+            a.duration != template.duration
+            or a.delay != template.delay
+            or a.easing != template.easing
+            or a.bounce != template.bounce
+            or a.repeat != template.repeat
+            or len(a.keyframes) != len(template.keyframes)
+        ):
+            return None
+    return template
+
+
+def _connection_path_d_at(conn: Connection, start: Coord, end: Coord) -> str:
+    """Compute connection SVG path ``d`` for arbitrary start/end points."""
+    if conn._shape_kind == "line":
+        return (
+            f"M {svg_num(start.x)} {svg_num(start.y)}"
+            f" L {svg_num(end.x)} {svg_num(end.y)}"
+        )
+
+    ss, se = conn._source_start, conn._source_end
+    if ss is None or se is None:
+        return (
+            f"M {svg_num(start.x)} {svg_num(start.y)}"
+            f" L {svg_num(end.x)} {svg_num(end.y)}"
+        )
+
+    src_dx, src_dy = se.x - ss.x, se.y - ss.y
+    src_len = math.hypot(src_dx, src_dy)
+    if src_len < 1e-9:
+        return f"M {svg_num(start.x)} {svg_num(start.y)} L {svg_num(start.x)} {svg_num(start.y)}"
+
+    tgt_dx, tgt_dy = end.x - start.x, end.y - start.y
+    tgt_len = math.hypot(tgt_dx, tgt_dy)
+    scale = tgt_len / src_len
+
+    src_angle = math.atan2(src_dy, src_dx)
+    tgt_angle = math.atan2(tgt_dy, tgt_dx)
+    rot = tgt_angle - src_angle
+    cos_r, sin_r = math.cos(rot), math.sin(rot)
+
+    def transform(p: Coord) -> Coord:
+        dx = p.x - ss.x
+        dy = p.y - ss.y
+        rx = scale * (cos_r * dx - sin_r * dy)
+        ry = scale * (sin_r * dx + cos_r * dy)
+        return Coord(start.x + rx, start.y + ry)
+
+    first = transform(conn._shape_beziers[0][0])
+    parts = [f"M {svg_num(first.x)} {svg_num(first.y)}"]
+    for _, cp1, cp2, p3 in conn._shape_beziers:
+        tcp1, tcp2, tp3 = transform(cp1), transform(cp2), transform(p3)
+        parts.append(
+            f" C {svg_num(tcp1.x)} {svg_num(tcp1.y)}"
+            f" {svg_num(tcp2.x)} {svg_num(tcp2.y)}"
+            f" {svg_num(tp3.x)} {svg_num(tp3.y)}"
+        )
+    return "".join(parts)
+
+
+def _build_reactive_animate(
+    svg_attr: str,
+    val_list: list[str],
+    template: PropertyAnimation,
+) -> str:
+    """Build a single ``<animate>`` element from pre-computed values and a template."""
+    dur = template.duration
+    base = template.keyframes[0].time if template.keyframes else 0
+    kt_list = [(kf.time - base) / dur if dur > 0 else 0 for kf in template.keyframes]
+
+    if template.bounce:
+        val_list, kt_list = _apply_bounce(val_list, kt_list)
+
+    n_segments = max(1, len(val_list) - 1)
+
+    parts = [f'<animate attributeName="{svg_attr}"']
+    parts.append(f' values="{";".join(val_list)}"')
+    parts.append(f' keyTimes="{";".join(svg_num(t) for t in kt_list)}"')
+    parts.append(f' dur="{dur}s"')
+    if template.delay > 0:
+        parts.append(f' begin="{template.delay}s"')
+    parts.append(_smil_easing_n(template.easing, n_segments))
+    if template.hold:
+        parts.append(' fill="freeze"')
+    parts.append(_smil_repeat(template.repeat))
+    parts.append(" />")
+    return "".join(parts)
+
+
+# ======================================================================
 # SMILRenderer
 # ======================================================================
 
@@ -552,15 +689,23 @@ class SMILRenderer(SVGRenderer):
     # ------------------------------------------------------------------
 
     def _wrap_element(
-        self, tag: str, attrs: str, entity: Entity, content: str = ""
+        self, tag: str, attrs: str, entity: Entity, content: str = "",
+        extra_anims: list[str] | None = None,
     ) -> str:
         """Wrap an SVG element with SMIL animation children.
 
         If the entity has no animations, returns the element as-is
         (self-closing or with content). If animations are present,
         injects ``<animate>`` children.
+
+        Args:
+            extra_anims: Additional SMIL strings (e.g. from reactive
+                vertex/endpoint animations) to include alongside the
+                entity's own animations.
         """
         anims = self._render_animations(entity)
+        if extra_anims:
+            anims.extend(extra_anims)
         if not anims and not content:
             return f"<{tag}{attrs} />"
         if not anims:
@@ -647,8 +792,65 @@ class SMILRenderer(SVGRenderer):
         )
         return self._wrap_element("path", attrs, curve)
 
+    def _reactive_polygon_anims(self, polygon: Polygon) -> list[str]:
+        """Synthesize ``<animate attributeName="points">`` from animated vertex entities."""
+        from ..core.entity import Entity as _Entity
+
+        # Classify each vertex: (anim_pair | None, spec)
+        vertex_info: list[tuple[tuple[PropertyAnimation, PropertyAnimation] | None, Any]] = []
+        all_rx_anims: list[PropertyAnimation] = []
+
+        for spec in polygon._vertex_specs:
+            entity: _Entity | None = None
+            if isinstance(spec, _Entity):
+                entity = spec
+            elif isinstance(spec, tuple) and isinstance(spec[0], _Entity):
+                entity = spec[0]
+
+            if entity is not None:
+                pair = _extract_position_anims(entity)
+                vertex_info.append((pair, spec))
+                if pair is not None:
+                    all_rx_anims.append(pair[0])
+            else:
+                vertex_info.append((None, spec))
+
+        if not all_rx_anims:
+            return []
+
+        template = _check_anim_compatibility(all_rx_anims)
+        if template is None:
+            return []
+
+        n_keyframes = len(template.keyframes)
+
+        # Build a points string for each keyframe
+        val_list: list[str] = []
+        for k in range(n_keyframes):
+            pts: list[str] = []
+            for pair, spec in vertex_info:
+                if isinstance(spec, Coord):
+                    pts.append(f"{svg_num(spec.x)},{svg_num(spec.y)}")
+                elif pair is not None:
+                    entity = spec if isinstance(spec, _Entity) else spec[0]
+                    ax, ay = _resolve_abs_at_keyframe(
+                        entity, pair[0].keyframes[k].value, pair[1].keyframes[k].value,
+                    )
+                    pts.append(f"{svg_num(ax)},{svg_num(ay)}")
+                else:
+                    # Entity ref with no move animation — constant position
+                    if isinstance(spec, _Entity):
+                        pos = spec.position
+                    else:
+                        pos = spec[0].anchor(spec[1])
+                    pts.append(f"{svg_num(pos.x)},{svg_num(pos.y)}")
+            val_list.append(" ".join(pts))
+
+        return [_build_reactive_animate("points", val_list, template)]
+
     def render_polygon(self, polygon: Polygon) -> str:
-        if not polygon._animations:
+        reactive = self._reactive_polygon_anims(polygon)
+        if not polygon._animations and not reactive:
             return super().render_polygon(polygon)
         points_str = " ".join(
             f"{svg_num(v.x)},{svg_num(v.y)}" for v in polygon.vertices
@@ -659,7 +861,7 @@ class SMILRenderer(SVGRenderer):
             f"{self._shape_opacity_for_smil(polygon.opacity, polygon.fill_opacity, polygon.stroke_opacity, polygon)}"
             f"{_build_svg_transform(polygon)}"
         )
-        return self._wrap_element("polygon", attrs, polygon)
+        return self._wrap_element("polygon", attrs, polygon, extra_anims=reactive)
 
     def render_text(self, text: Text) -> str:
         if not text._animations:
@@ -783,8 +985,98 @@ class SMILRenderer(SVGRenderer):
         parts.append("</g>")
         return "\n".join(parts)
 
+    def _reactive_connection_anims(self, conn: Connection) -> list[str]:
+        """Synthesize SMIL elements from animated connection endpoints."""
+        from ..core.entity import Entity as _Entity
+
+        start_pair = _extract_position_anims(conn._start) if isinstance(conn._start, _Entity) else None
+        end_pair = _extract_position_anims(conn._end) if isinstance(conn._end, _Entity) else None
+
+        if start_pair is None and end_pair is None:
+            return []
+
+        rx_anims: list[PropertyAnimation] = []
+        if start_pair:
+            rx_anims.append(start_pair[0])
+        if end_pair:
+            rx_anims.append(end_pair[0])
+
+        template = _check_anim_compatibility(rx_anims)
+        if template is None:
+            return []
+
+        n_kf = len(template.keyframes)
+
+        if conn._shape_kind == "line":
+            return self._reactive_line_anims(conn, start_pair, end_pair, template, n_kf)
+        return self._reactive_path_anims(conn, start_pair, end_pair, template, n_kf)
+
+    def _reactive_line_anims(
+        self, conn: Connection,
+        start_pair: tuple[PropertyAnimation, PropertyAnimation] | None,
+        end_pair: tuple[PropertyAnimation, PropertyAnimation] | None,
+        template: PropertyAnimation, n_kf: int,
+    ) -> list[str]:
+        """Synthesize x1/y1/x2/y2 animations for a straight-line connection."""
+        result: list[str] = []
+
+        if start_pair:
+            x1_vals, y1_vals = [], []
+            for k in range(n_kf):
+                ax, ay = _resolve_abs_at_keyframe(
+                    conn._start, start_pair[0].keyframes[k].value, start_pair[1].keyframes[k].value,
+                )
+                x1_vals.append(svg_num(ax))
+                y1_vals.append(svg_num(ay))
+            result.append(_build_reactive_animate("x1", x1_vals, template))
+            result.append(_build_reactive_animate("y1", y1_vals, template))
+
+        if end_pair:
+            x2_vals, y2_vals = [], []
+            for k in range(n_kf):
+                ax, ay = _resolve_abs_at_keyframe(
+                    conn._end, end_pair[0].keyframes[k].value, end_pair[1].keyframes[k].value,
+                )
+                x2_vals.append(svg_num(ax))
+                y2_vals.append(svg_num(ay))
+            result.append(_build_reactive_animate("x2", x2_vals, template))
+            result.append(_build_reactive_animate("y2", y2_vals, template))
+
+        return result
+
+    def _reactive_path_anims(
+        self, conn: Connection,
+        start_pair: tuple[PropertyAnimation, PropertyAnimation] | None,
+        end_pair: tuple[PropertyAnimation, PropertyAnimation] | None,
+        template: PropertyAnimation, n_kf: int,
+    ) -> list[str]:
+        """Synthesize ``d`` animation for a curved/path connection."""
+        d_vals: list[str] = []
+        for k in range(n_kf):
+            if start_pair:
+                sx, sy = _resolve_abs_at_keyframe(
+                    conn._start, start_pair[0].keyframes[k].value, start_pair[1].keyframes[k].value,
+                )
+                start_k = Coord(sx, sy)
+            else:
+                start_k = conn.start_point
+
+            if end_pair:
+                ex, ey = _resolve_abs_at_keyframe(
+                    conn._end, end_pair[0].keyframes[k].value, end_pair[1].keyframes[k].value,
+                )
+                end_k = Coord(ex, ey)
+            else:
+                end_k = conn.end_point
+
+            d_vals.append(_connection_path_d_at(conn, start_k, end_k))
+
+        return [_build_reactive_animate("d", d_vals, template)]
+
     def render_connection(self, conn: Connection) -> str:
-        if not getattr(conn, "_animations", []):
+        reactive = self._reactive_connection_anims(conn)
+
+        if not getattr(conn, "_animations", []) and not reactive:
             return super().render_connection(conn)
 
         if not conn._visible:
@@ -802,6 +1094,7 @@ class SMILRenderer(SVGRenderer):
                 anims.append(_render_draw_smil(anim, conn))
 
         anims = [a for a in anims if a]
+        anims.extend(reactive)
 
         if conn._shape_kind == "line":
             p1 = conn.start_point
