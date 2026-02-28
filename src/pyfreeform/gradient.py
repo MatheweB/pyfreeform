@@ -56,11 +56,11 @@ def _parse_stops(raw: tuple[_StopInput, ...]) -> tuple[GradientStop, ...]:
 
     parsed: list[tuple[str, float | None, float]] = []
     for item in raw:
-        if isinstance(item, (str, tuple)) and not isinstance(item, tuple):
+        if isinstance(item, str):
             # Plain color string
             parsed.append((Color(item).to_hex(), None, 1.0))
         elif isinstance(item, tuple):
-            if len(item) == 3 and isinstance(item[0], int):
+            if len(item) == 3 and isinstance(item[0], int) and not isinstance(item[0], bool):
                 # RGB tuple like (255, 0, 0) — treat as color
                 parsed.append((Color(item).to_hex(), None, 1.0))  # type: ignore[arg-type]
             elif len(item) == 2:
@@ -72,8 +72,7 @@ def _parse_stops(raw: tuple[_StopInput, ...]) -> tuple[GradientStop, ...]:
             else:
                 raise ValueError(f"Invalid stop format: {item!r}")
         else:
-            # Bare color string
-            parsed.append((Color(item).to_hex(), None, 1.0))  # type: ignore[arg-type]
+            raise ValueError(f"Invalid stop format: {item!r}")
 
     # Auto-distribute offsets for entries that have None
     n = len(parsed)

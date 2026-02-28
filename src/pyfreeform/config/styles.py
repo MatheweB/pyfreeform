@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from ..color import Color
-from ..gradient import Gradient, PaintLike
+from ..gradient import PaintLike
 from .caps import CapName
 
 

@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any, Union
 from ..color import Color, ColorLike, apply_brightness
 from ..config.caps import CapName, collect_markers, svg_cap_and_marker_attrs
 from ..config.styles import PathStyle
-from ..gradient import Gradient
+from ..gradient import Gradient, PaintLike
 from .bezier import curvature_control_point, eval_cubic, quadratic_to_cubic
 from .coord import Coord
 from .positions import AnchorSpec
@@ -66,7 +66,7 @@ class Connection:
         curvature: float | None = None,
         visible: bool = True,
         width: float = 1,
-        color: ColorLike = "black",
+        color: PaintLike = "black",
         z_index: int = 0,
         cap: CapName = "round",
         start_cap: CapName | None = None,

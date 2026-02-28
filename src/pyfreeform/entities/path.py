@@ -571,7 +571,7 @@ class Path(Entity):
             parts_d.append(" Z")
         d_attr = "".join(parts_d)
 
-        fill_attr = self._fill.to_hex() if self._closed and self._fill is not None else "none"
+        fill_attr = self.fill if self._closed and self._fill is not None else "none"
 
         return (
             f'<path d="{d_attr}" fill="{fill_attr}"'

@@ -1,12 +1,12 @@
 """Generate SVGs for Guide: Gradients."""
 
 import math
+import random
 
 from pyfreeform import (
     Dot,
     EntityGroup,
     LinearGradient,
-    Palette,
     Polygon,
     RadialGradient,
     Scene,
@@ -167,7 +167,6 @@ def generate():
     save(scene, "guide/grad-sunset.svg")
 
     # --- 10. Fun example: glowing orbs ---
-    colors = Palette.neon()
     scene = Scene(400, 200, background="#0a0a1a")
     orb_colors = ["#ff006e", "#00f5d4", "#fee440", "#8338ec", "#3a86ff"]
     for i, c in enumerate(orb_colors):
@@ -241,7 +240,6 @@ def generate():
     # --- 14a. Stop opacity: simple fade ---
     scene = Scene(360, 120, background="#1a1a2e")
     # Scatter colorful dots behind
-    import random
     rng = random.Random(99)
     dot_colors = ["#ff6b6b", "#ffd93d", "#6bcb77", "#4d96ff", "#ff6eb4"]
     for _ in range(50):
@@ -260,7 +258,6 @@ def generate():
     # --- 14b. Stop opacity: peek-through gradient ---
     scene = Scene(400, 120, background="#1a1a2e")
     # Scatter colorful dots behind
-    import random
     rng = random.Random(42)
     dot_colors = ["#ff6b6b", "#ffd93d", "#6bcb77", "#4d96ff", "#ff6eb4"]
     for _ in range(60):

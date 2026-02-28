@@ -18,4 +18,5 @@ The learning path. Each page introduces new concepts through visual examples, bu
 | [Text & Typography](07-text-and-typography.md) | Text placement, fonts, text along paths |
 | [Transforms & Layout](08-transforms-and-layout.md) | Rotation, scaling, fitting, z-index layering |
 | [Connections & Anchors](09-connections-and-anchors.md) | Live connections, anchor system, connections as paths |
+| [Layout & Alignment](10-layout-alignment.md) | Relative positioning, align, distribute, stack, between |
 | [Gradients](11-gradients.md) | Linear & radial gradients, custom offsets, creative effects |
