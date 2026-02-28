@@ -74,6 +74,7 @@ class Entity(ABC):
 
         # Animations (renderer-agnostic data)
         self._animations: list = []
+        self._chain_delay: float = 0.0
 
     @property
     def z_index(self) -> int:
@@ -796,6 +797,44 @@ class Entity(ABC):
         """Current animations on this entity (copy)."""
         return list(self._animations)
 
+    def _consume_chain_delay(self, delay: float) -> float:
+        """Add any accumulated chain delay to the explicit delay, then reset."""
+        result = delay + self._chain_delay
+        self._chain_delay = 0.0
+        return result
+
+    def then(self, gap: float = 0) -> Entity:
+        """Chain: start the next animation after all current ones finish.
+
+        Computes when all current animations end, and offsets the next
+        animation call by that amount (plus an optional gap).
+
+        Args:
+            gap: Optional pause in seconds between the end of current
+                animations and the start of the next one.
+
+        Returns:
+            Self, for method chaining.
+
+        Example::
+
+            dot.fade(to=0.0, duration=1.0).then().spin(360, duration=1.0)
+            dot.fade(to=0.0, duration=1.0).then(0.5).spin(360, duration=1.0)
+        """
+        if not self._animations:
+            return self
+
+        def _effective_end(anim: object) -> float:
+            dur = anim.duration  # type: ignore[union-attr]
+            d = anim.delay  # type: ignore[union-attr]
+            rep = getattr(anim, "repeat", False)
+            if isinstance(rep, int) and rep > 1:
+                return d + dur * rep
+            return d + dur
+
+        self._chain_delay = max(_effective_end(a) for a in self._animations) + gap
+        return self
+
     def fade(
         self,
         to: float,
@@ -822,14 +861,16 @@ class Entity(ABC):
             Self, for method chaining.
         """
         from ..animation.builders import build_fade
+        delay = self._consume_chain_delay(delay)
         self._animations.append(build_fade(self, to, duration=duration,
             delay=delay, easing=easing, repeat=repeat, bounce=bounce, hold=hold))
         return self
 
     def move(
         self,
-        to: tuple | object,
+        to: tuple | object | None = None,
         *,
+        by: tuple | object | None = None,
         duration: float = 1.0,
         delay: float = 0.0,
         easing: str | tuple | object = "ease-in-out",
@@ -839,8 +880,16 @@ class Entity(ABC):
     ) -> Entity:
         """Animate position using relative coordinates.
 
+        Two modes:
+
+        - **Absolute**: ``entity.move(to=(0.8, 0.5))`` — move to position.
+        - **Relative**: ``entity.move(by=(0.1, 0))`` — move by offset.
+
         Args:
             to: Target position as RelCoord or (rx, ry) tuple.
+                Mutually exclusive with *by*.
+            by: Movement offset as RelCoord or (drx, dry) tuple.
+                Mutually exclusive with *to*.
             duration: Duration in seconds.
             delay: Seconds before animation starts.
             easing: Speed curve (default "ease-in-out" for natural motion).
@@ -850,9 +899,13 @@ class Entity(ABC):
 
         Returns:
             Self, for method chaining.
+
+        Raises:
+            ValueError: If both *to* and *by* are given, or neither.
         """
         from ..animation.builders import build_move
-        self._animations.extend(build_move(self, to, duration=duration,
+        delay = self._consume_chain_delay(delay)
+        self._animations.extend(build_move(self, to, by=by, duration=duration,
             delay=delay, easing=easing, repeat=repeat, bounce=bounce, hold=hold))
         return self
 
@@ -882,7 +935,47 @@ class Entity(ABC):
             Self, for method chaining.
         """
         from ..animation.builders import build_spin
+        delay = self._consume_chain_delay(delay)
         self._animations.append(build_spin(self, angle, duration=duration,
+            delay=delay, easing=easing, repeat=repeat, bounce=bounce, hold=hold))
+        return self
+
+    def zoom(
+        self,
+        to: float,
+        *,
+        duration: float = 1.0,
+        delay: float = 0.0,
+        easing: str | tuple | object = "ease-in-out",
+        repeat: bool | int = False,
+        bounce: bool = False,
+        hold: bool = True,
+    ) -> Entity:
+        """Animate scale factor.
+
+        Like ``.scale()`` sets scale immediately, ``.zoom()`` animates it
+        over time (same relationship as ``.rotate()`` vs ``.spin()``).
+
+        Args:
+            to: Target scale factor (1.0 = original, 2.0 = double, 0.5 = half).
+            duration: Duration in seconds.
+            delay: Seconds before animation starts.
+            easing: Speed curve (default "ease-in-out").
+            repeat: False=once, True=forever, int=N times.
+            bounce: Alternate direction each cycle.
+            hold: Hold final value after completion.
+
+        Returns:
+            Self, for method chaining.
+
+        Example::
+
+            dot.zoom(to=2.0, duration=1.0)
+            dot.zoom(to=1.5, bounce=True, repeat=True)  # pulse
+        """
+        from ..animation.builders import build_scale
+        delay = self._consume_chain_delay(delay)
+        self._animations.append(build_scale(self, to, duration=duration,
             delay=delay, easing=easing, repeat=repeat, bounce=bounce, hold=hold))
         return self
 
@@ -915,6 +1008,7 @@ class Entity(ABC):
             Self, for method chaining.
         """
         from ..animation.builders import build_follow
+        delay = self._consume_chain_delay(delay)
         self._animations.append(build_follow(path, duration=duration,
             delay=delay, easing=easing, repeat=repeat, bounce=bounce,
             hold=hold, rotate=rotate))
@@ -958,6 +1052,7 @@ class Entity(ABC):
             ValueError: If neither ``to`` nor ``keyframes`` is provided.
         """
         from ..animation.builders import build_animate
+        delay = self._consume_chain_delay(delay)
         self._animations.append(build_animate(self, prop, to=to,
             keyframes=keyframes, duration=duration, delay=delay, easing=easing,
             repeat=repeat, bounce=bounce, hold=hold))
@@ -970,6 +1065,7 @@ class Entity(ABC):
             Self, for method chaining.
         """
         self._animations.clear()
+        self._chain_delay = 0.0
         return self
 
     # =========================================================================

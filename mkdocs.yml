@@ -130,6 +130,7 @@ nav:
     - Typographic Art: recipes/05-typographic-art.md
     - Advanced Compositions: recipes/06-advanced-compositions.md
     - Hidden Gems: recipes/07-hidden-gems.md
+    - Animated Art: recipes/08-animated-art.md
   - API Reference:
     - api-reference/index.md
     - Scene: api-reference/scene.md

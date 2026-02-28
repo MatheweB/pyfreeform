@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import math
 
-from pyfreeform import Connection, Dot, Rect, Scene, Path as PPath, Easing
+from pyfreeform import Connection, Dot, Rect, Scene, Path as PPath, Easing, stagger
 from pyfreeform.entities.text import Text
 from pyfreeform.entities.line import Line
 from pyfreeform.paths import Wave, Zigzag
@@ -88,7 +88,34 @@ def generate():
     scene.place(Text(120, 140, '.animate("r", to=35, bounce=True)', font_size=10, color="gray"))
     save(scene, "guide/anim-animate.svg")
 
-    # --- 8. Showcase: everything together ---
+    # --- 8. Zoom: pulsing dot ---
+    scene = Scene(240, 160, background="#1a1a2e")
+    dot = Dot(120, 70, radius=15, color="tomato")
+    scene.place(dot)
+    dot.zoom(to=2.5, duration=2.0, easing="ease-in-out", bounce=True, repeat=True)
+    scene.place(Text(120, 140, ".zoom(to=2.5, bounce=True)", font_size=11, color="gray"))
+    save(scene, "guide/anim-zoom.svg")
+
+    # --- 9. Then: sequential fade → spin ---
+    scene = Scene(300, 160, background="#1a1a2e")
+    r_then = Rect.at_center((150, 70), 55, 55, fill="gold", stroke="white", stroke_width=1)
+    scene.place(r_then)
+    r_then.fade(to=0.3, duration=1.5, easing="ease-in-out").then().spin(360, duration=2.0, repeat=True)
+    scene.place(Text(150, 140, ".fade(...).then().spin(...)", font_size=10, color="gray"))
+    save(scene, "guide/anim-then.svg")
+
+    # --- 10. Stagger: row of dots fading ---
+    scene = Scene(360, 140, background="#1a1a2e")
+    dots = []
+    for i in range(6):
+        d = Dot(50 + i * 50, 55, radius=15, color="coral")
+        scene.place(d)
+        dots.append(d)
+    stagger(*dots, offset=0.3, each=lambda d: d.fade(to=0.0, duration=1.5, easing="ease-in-out"))
+    scene.place(Text(180, 120, "stagger(*dots, offset=0.3, ...)", font_size=10, color="gray"))
+    save(scene, "guide/anim-stagger.svg")
+
+    # --- 11. Showcase: everything together ---
     scene = Scene(460, 300, background="#1a1a2e")
 
     # Self-drawing connection across the top

@@ -43,6 +43,24 @@ rect.spin(360, duration=2.5, repeat=True, easing="linear")
 
 The first argument is the total rotation angle in degrees. Use `repeat=True` for continuous spinning.
 
+## Zoom
+
+Animate an entity's scale with `.zoom()`:
+
+```python
+dot = Dot(100, 60, radius=15, color="tomato")
+scene.place(dot)
+
+dot.zoom(to=2.5, duration=2.0, easing="ease-in-out", bounce=True, repeat=True)
+```
+
+<figure markdown>
+![Zoom animation](../_images/guide/anim-zoom.svg){ width="240" }
+<figcaption>A dot pulsing between normal size and 2.5&times; — `bounce=True` reverses each cycle.</figcaption>
+</figure>
+
+`.zoom(to=)` animates the scale factor over time. This is the animated counterpart to `.scale()` — just as `.spin()` is to `.rotate()`.
+
 ## Draw
 
 Paths and connections can draw themselves with `.draw()` — the stroke reveals progressively like a pen tracing the shape:
@@ -151,12 +169,75 @@ This applies both a fade and a spin to the same entity — they play simultaneou
 <figcaption>A rect that fades to 30% opacity while spinning forever.</figcaption>
 </figure>
 
-Use `delay=` to stagger animations sequentially:
+## Sequential Chaining
+
+Use `.then()` to start an animation *after* the previous ones finish — no manual delay math:
 
 ```python
-dot.fade(to=0.0, duration=1.0)
-dot.spin(360, duration=1.0, delay=1.0)  # starts after fade finishes
+dot.fade(to=0.0, duration=1.0).then().spin(360, duration=1.0)
 ```
+
+The spin starts at exactly 1.0 seconds, when the fade ends.
+
+<figure markdown>
+![Then chaining](../_images/guide/anim-then.svg){ width="300" }
+<figcaption>A dot that fades out, then spins — playing one after the other.</figcaption>
+</figure>
+
+Add a gap between animations:
+
+```python
+dot.fade(to=0.0, duration=1.0).then(0.5).spin(360, duration=1.0)
+# spin starts at 1.5s (1.0 fade + 0.5 gap)
+```
+
+Chain as many times as you like:
+
+```python
+dot.fade(to=0.5, duration=1.0).then().spin(360, duration=2.0).then().fade(to=1.0, duration=0.5)
+```
+
+`.then()` also works on connections:
+
+```python
+conn.draw(duration=1.5).then().fade(to=0.0, duration=0.5)
+```
+
+## Stagger
+
+Animate a group of entities with offset timing using `stagger()`:
+
+```python
+from pyfreeform import stagger
+
+dots = [Dot(40 + i * 50, 50, radius=12, color="coral") for i in range(5)]
+for d in dots:
+    scene.place(d)
+
+stagger(*dots, offset=0.2, each=lambda d: d.fade(to=0.0, duration=1.0))
+```
+
+<figure markdown>
+![Stagger animation](../_images/guide/anim-stagger.svg){ width="360" }
+<figcaption>Five dots fading out one by one — each starts 0.2 seconds after the last.</figcaption>
+</figure>
+
+The `each` callback applies animation(s) to each entity, and `stagger` offsets the timing by `offset` seconds per entity. You can apply multiple animations at once:
+
+```python
+stagger(*dots, offset=0.15, each=lambda d: d.fade(to=0.0).spin(360))
+```
+
+## Move
+
+Animate position with `.move()`. Use `to=` for an absolute target, or `by=` for a relative offset:
+
+```python
+dot.move(to=(0.8, 0.5), duration=1.0)     # move to position
+dot.move(by=(0.1, 0), duration=1.0)        # shift right by 10%
+```
+
+Positions are relative coordinates — `(0.0, 0.0)` is the top-left and `(1.0, 1.0)` is the bottom-right of the containing surface.
 
 ---
 

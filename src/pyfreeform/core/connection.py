@@ -164,6 +164,7 @@ class Connection:
 
         # Animation data (renderer-agnostic)
         self._animations: list = []
+        self._chain_delay: float = 0.0
 
         # Register with both entities
         start.add_connection(self)
@@ -427,6 +428,35 @@ class Connection:
         """All animations attached to this connection."""
         return list(self._animations)
 
+    def _consume_chain_delay(self, delay: float) -> float:
+        """Add any accumulated chain delay to the explicit delay, then reset."""
+        result = delay + self._chain_delay
+        self._chain_delay = 0.0
+        return result
+
+    def then(self, gap: float = 0) -> Connection:
+        """Chain: start the next animation after all current ones finish.
+
+        Args:
+            gap: Optional pause in seconds after current animations end.
+
+        Returns:
+            Self, for method chaining.
+        """
+        if not self._animations:
+            return self
+
+        def _effective_end(anim: object) -> float:
+            dur = anim.duration  # type: ignore[union-attr]
+            d = anim.delay  # type: ignore[union-attr]
+            rep = getattr(anim, "repeat", False)
+            if isinstance(rep, int) and rep > 1:
+                return d + dur * rep
+            return d + dur
+
+        self._chain_delay = max(_effective_end(a) for a in self._animations) + gap
+        return self
+
     def fade(
         self,
         to: float,
@@ -440,6 +470,7 @@ class Connection:
     ) -> Connection:
         """Animate opacity."""
         from ..animation.builders import build_fade
+        delay = self._consume_chain_delay(delay)
         self._animations.append(build_fade(
             self, to, duration=duration, delay=delay, easing=easing,
             repeat=repeat, bounce=bounce, hold=hold,
@@ -459,6 +490,7 @@ class Connection:
     ) -> Connection:
         """Animate the connection drawing itself."""
         from ..animation.builders import build_draw
+        delay = self._consume_chain_delay(delay)
         self._animations.append(build_draw(
             duration=duration, delay=delay, easing=easing,
             repeat=repeat, bounce=bounce, hold=hold, reverse=reverse,
@@ -480,6 +512,7 @@ class Connection:
     ) -> Connection:
         """Animate any property."""
         from ..animation.builders import build_animate
+        delay = self._consume_chain_delay(delay)
         self._animations.append(build_animate(
             self, prop, to=to, keyframes=keyframes,
             duration=duration, delay=delay, easing=easing,
@@ -490,6 +523,7 @@ class Connection:
     def clear_animations(self) -> Connection:
         """Remove all animations."""
         self._animations.clear()
+        self._chain_delay = 0.0
         return self
 
     def to_svg(self) -> str:

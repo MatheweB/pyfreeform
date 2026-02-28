@@ -26,12 +26,22 @@ All entities inherit these methods from the base `Entity` class. Each returns `s
       heading_level: 3
       show_root_full_path: false
 
+::: pyfreeform.core.entity.Entity.zoom
+    options:
+      heading_level: 3
+      show_root_full_path: false
+
 ::: pyfreeform.core.entity.Entity.follow
     options:
       heading_level: 3
       show_root_full_path: false
 
 ::: pyfreeform.core.entity.Entity.animate
+    options:
+      heading_level: 3
+      show_root_full_path: false
+
+::: pyfreeform.core.entity.Entity.then
     options:
       heading_level: 3
       show_root_full_path: false
@@ -78,7 +88,21 @@ Connections support a subset of animation methods:
       heading_level: 3
       show_root_full_path: false
 
+::: pyfreeform.core.connection.Connection.then
+    options:
+      heading_level: 3
+      show_root_full_path: false
+
 ::: pyfreeform.core.connection.Connection.clear_animations
+    options:
+      heading_level: 3
+      show_root_full_path: false
+
+---
+
+## Utility Functions
+
+::: pyfreeform.animation.builders.stagger
     options:
       heading_level: 3
       show_root_full_path: false

@@ -584,6 +584,7 @@ class Path(Entity):
         """
         from ..animation.builders import build_draw
 
+        delay = self._consume_chain_delay(delay)
         self._animations.append(build_draw(
             duration=duration, delay=delay, easing=easing,
             repeat=repeat, bounce=bounce, hold=hold, reverse=reverse,

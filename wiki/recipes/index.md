@@ -65,4 +65,12 @@ Complete, self-contained projects. Each recipe builds a finished artwork from st
 
     [Build it](07-hidden-gems.md)
 
+-   **Animated Art**
+
+    ---
+
+    Animated fractals, Lissajous harmonographs, spiral galaxies, breathing mandalas, and orbital dances.
+
+    [Build it](08-animated-art.md)
+
 </div>

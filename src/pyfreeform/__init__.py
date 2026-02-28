@@ -56,6 +56,7 @@ from .image.layer import Layer
 from .layout import align, between, distribute, stack
 
 # Animation
+from .animation.builders import stagger
 from .animation.models import Easing
 
 # Renderers
@@ -175,4 +176,5 @@ __all__ = [
     "map_range",
     "register_cap",
     "stack",
+    "stagger",
 ]

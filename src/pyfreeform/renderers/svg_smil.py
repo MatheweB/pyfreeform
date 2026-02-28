@@ -37,6 +37,8 @@ if TYPE_CHECKING:
 _PROP_TO_SVG: dict[tuple[str | None, str], str] = {
     # Universal
     (None, "opacity"): "opacity",
+    (None, "fill_opacity"): "fill-opacity",
+    (None, "stroke_opacity"): "stroke-opacity",
     # Dot
     ("Dot", "r"): "r",
     ("Dot", "radius"): "r",
@@ -51,8 +53,6 @@ _PROP_TO_SVG: dict[tuple[str | None, str], str] = {
     ("Rect", "x"): "x",
     ("Rect", "y"): "y",
     ("Rect", "stroke_width"): "stroke-width",
-    ("Rect", "fill_opacity"): "fill-opacity",
-    ("Rect", "stroke_opacity"): "stroke-opacity",
     # Ellipse
     ("Ellipse", "rx"): "rx",
     ("Ellipse", "ry"): "ry",
@@ -110,13 +110,39 @@ def _smil_repeat(repeat: bool | int) -> str:
     return ""
 
 
-def _smil_direction(bounce: bool) -> str:
-    """Convert bounce to SMIL direction."""
-    # SVG SMIL doesn't have a direct "direction" attribute like CSS.
-    # Bounce is handled differently — we reverse keyframe values for
-    # alternate cycles. For simplicity, we approximate bounce by
-    # duplicating keyframes in reverse when bounce is True.
-    return ""
+def _apply_bounce(
+    values: list[str], key_times: list[float],
+) -> tuple[list[str], list[float]]:
+    """Mirror values and key-times for bounce (forward then backward).
+
+    Forward half maps to [0, 0.5], backward half to [0.5, 1].
+    The peak value is shared (not duplicated) between halves.
+    """
+    n = len(values)
+    if n < 2:
+        return values, key_times
+
+    # Forward half: compress into [0, 0.5]
+    forward_kt = [t * 0.5 for t in key_times]
+
+    # Backward half: reverse values (skip last) and remap times
+    backward_vals = values[-2::-1]
+    backward_kt = [
+        0.5 + (1.0 - key_times[i]) * 0.5
+        for i in range(n - 2, -1, -1)
+    ]
+
+    return values + backward_vals, forward_kt + backward_kt
+
+
+def _smil_easing_n(easing: Any, n_segments: int) -> str:
+    """Build calcMode + keySplines for *n_segments* segments."""
+    from ..animation.models import Easing
+
+    if easing == Easing.LINEAR:
+        return ""
+    spline = f"{easing.x1} {easing.y1} {easing.x2} {easing.y2}"
+    return f' calcMode="spline" keySplines="{";".join([spline] * n_segments)}"'
 
 
 def _render_property_smil(anim: PropertyAnimation, entity: Entity) -> str:
@@ -138,18 +164,25 @@ def _render_property_smil(anim: PropertyAnimation, entity: Entity) -> str:
         # Try using the prop name directly as SVG attribute
         svg_attr = anim.prop
 
-    values = _format_values(anim)
-    key_times = _format_key_times(anim)
+    val_list = [_format_value(kf.value) for kf in anim.keyframes]
+    dur = anim.duration
+    base = anim.keyframes[0].time if anim.keyframes else 0
+    kt_list = [(kf.time - base) / dur if dur > 0 else 0 for kf in anim.keyframes]
+
+    if anim.bounce:
+        val_list, kt_list = _apply_bounce(val_list, kt_list)
+
+    n_segments = max(1, len(val_list) - 1)
 
     parts = [f'<animate attributeName="{svg_attr}"']
-    parts.append(f' values="{values}"')
-    parts.append(f' keyTimes="{key_times}"')
+    parts.append(f' values="{";".join(val_list)}"')
+    parts.append(f' keyTimes="{";".join(svg_num(t) for t in kt_list)}"')
     parts.append(f' dur="{anim.duration}s"')
 
     if anim.delay > 0:
         parts.append(f' begin="{anim.delay}s"')
 
-    parts.append(_smil_easing(anim))
+    parts.append(_smil_easing_n(anim.easing, n_segments))
 
     if anim.hold:
         parts.append(' fill="freeze"')
@@ -165,20 +198,27 @@ def _render_rotation_smil(anim: PropertyAnimation, entity: Entity) -> str:
     center = entity.rotation_center
     cx, cy = svg_num(center.x), svg_num(center.y)
 
-    values = ";".join(
-        f"{svg_num(kf.value)} {cx} {cy}" for kf in anim.keyframes
-    )
+    val_list = [f"{svg_num(kf.value)} {cx} {cy}" for kf in anim.keyframes]
+    dur = anim.duration
+    base = anim.keyframes[0].time if anim.keyframes else 0
+    kt_list = [(kf.time - base) / dur if dur > 0 else 0 for kf in anim.keyframes]
+
+    if anim.bounce:
+        val_list, kt_list = _apply_bounce(val_list, kt_list)
+
+    n_segments = max(1, len(val_list) - 1)
 
     parts = [
         '<animateTransform attributeName="transform" type="rotate"',
-        f' values="{values}"',
+        f' values="{";".join(val_list)}"',
+        f' keyTimes="{";".join(svg_num(t) for t in kt_list)}"',
         f' dur="{anim.duration}s"',
     ]
 
     if anim.delay > 0:
         parts.append(f' begin="{anim.delay}s"')
 
-    parts.append(_smil_easing(anim))
+    parts.append(_smil_easing_n(anim.easing, n_segments))
 
     if anim.hold:
         parts.append(' fill="freeze"')
@@ -190,18 +230,27 @@ def _render_rotation_smil(anim: PropertyAnimation, entity: Entity) -> str:
 
 def _render_scale_smil(anim: PropertyAnimation, entity: Entity) -> str:
     """Render scale as ``<animateTransform type="scale">``."""
-    values = ";".join(svg_num(kf.value) for kf in anim.keyframes)
+    val_list = [svg_num(kf.value) for kf in anim.keyframes]
+    dur = anim.duration
+    base = anim.keyframes[0].time if anim.keyframes else 0
+    kt_list = [(kf.time - base) / dur if dur > 0 else 0 for kf in anim.keyframes]
+
+    if anim.bounce:
+        val_list, kt_list = _apply_bounce(val_list, kt_list)
+
+    n_segments = max(1, len(val_list) - 1)
 
     parts = [
         '<animateTransform attributeName="transform" type="scale"',
-        f' values="{values}"',
+        f' values="{";".join(val_list)}"',
+        f' keyTimes="{";".join(svg_num(t) for t in kt_list)}"',
         f' dur="{anim.duration}s"',
     ]
 
     if anim.delay > 0:
         parts.append(f' begin="{anim.delay}s"')
 
-    parts.append(_smil_easing(anim))
+    parts.append(_smil_easing_n(anim.easing, n_segments))
 
     if anim.hold:
         parts.append(' fill="freeze"')
@@ -217,38 +266,44 @@ def _render_position_smil(anim: PropertyAnimation, entity: Entity) -> str:
 
     # Map at_rx/at_ry to actual SVG position attributes
     if anim.prop == "at_rx":
-        # Resolve relative → pixel for x-axis
         svg_attr = _resolve_svg_attr(entity_type, "cx") or _resolve_svg_attr(entity_type, "x") or "cx"
         surface = entity._surface
         if surface:
             _, _, sw, _ = surface._x, surface._y, surface._width, surface._height
-            values = ";".join(
+            val_list = [
                 svg_num(surface._x + kf.value * sw) for kf in anim.keyframes
-            )
+            ]
         else:
-            values = ";".join(svg_num(kf.value) for kf in anim.keyframes)
+            val_list = [svg_num(kf.value) for kf in anim.keyframes]
     else:  # at_ry
         svg_attr = _resolve_svg_attr(entity_type, "cy") or _resolve_svg_attr(entity_type, "y") or "cy"
         surface = entity._surface
         if surface:
             _, _, _, sh = surface._x, surface._y, surface._width, surface._height
-            values = ";".join(
+            val_list = [
                 svg_num(surface._y + kf.value * sh) for kf in anim.keyframes
-            )
+            ]
         else:
-            values = ";".join(svg_num(kf.value) for kf in anim.keyframes)
+            val_list = [svg_num(kf.value) for kf in anim.keyframes]
 
-    key_times = _format_key_times(anim)
+    dur = anim.duration
+    base = anim.keyframes[0].time if anim.keyframes else 0
+    kt_list = [(kf.time - base) / dur if dur > 0 else 0 for kf in anim.keyframes]
+
+    if anim.bounce:
+        val_list, kt_list = _apply_bounce(val_list, kt_list)
+
+    n_segments = max(1, len(val_list) - 1)
 
     parts = [f'<animate attributeName="{svg_attr}"']
-    parts.append(f' values="{values}"')
-    parts.append(f' keyTimes="{key_times}"')
+    parts.append(f' values="{";".join(val_list)}"')
+    parts.append(f' keyTimes="{";".join(svg_num(t) for t in kt_list)}"')
     parts.append(f' dur="{anim.duration}s"')
 
     if anim.delay > 0:
         parts.append(f' begin="{anim.delay}s"')
 
-    parts.append(_smil_easing(anim))
+    parts.append(_smil_easing_n(anim.easing, n_segments))
 
     if anim.hold:
         parts.append(' fill="freeze"')
@@ -258,9 +313,55 @@ def _render_position_smil(anim: PropertyAnimation, entity: Entity) -> str:
     return "".join(parts)
 
 
+def _translate_path_d(path_d: str, dx: float, dy: float) -> str:
+    """Translate all coordinates in an SVG path data string by (dx, dy).
+
+    Handles absolute M, C, L, Q, S, T, A commands and Z (no coords).
+    """
+    import re
+
+    tokens = re.split(r"(\s+|,)", path_d)
+    result: list[str] = []
+    coord_idx = 0  # alternates 0=x, 1=y
+    in_command = False
+
+    for tok in tokens:
+        stripped = tok.strip().rstrip(",")
+        if not stripped:
+            result.append(tok)
+            continue
+        if stripped in ("M", "C", "L", "Q", "S", "T", "H", "V", "A", "Z"):
+            result.append(tok)
+            coord_idx = 0
+            in_command = stripped not in ("Z",)
+            continue
+        try:
+            val = float(stripped)
+            if coord_idx % 2 == 0:
+                val += dx
+            else:
+                val += dy
+            coord_idx += 1
+            result.append(svg_num(val))
+        except ValueError:
+            result.append(tok)
+
+    return "".join(result)
+
+
 def _render_motion_smil(anim: MotionAnimation) -> str:
-    """Render a MotionAnimation as ``<animateMotion>``."""
+    """Render a MotionAnimation as ``<animateMotion>``.
+
+    The path is translated so it starts at the origin (0, 0) because
+    ``<animateMotion>`` applies the path as an offset from the element's
+    current position.
+    """
     path_d = anim.path.to_svg_path_d()
+
+    # Translate path so it starts at (0, 0) — animateMotion adds the path
+    # coordinates as an offset from the element's current position.
+    start = anim.path.point_at(0.0)
+    path_d = _translate_path_d(path_d, -start.x, -start.y)
 
     rotate_attr = ""
     if anim.rotate is True:
@@ -273,7 +374,19 @@ def _render_motion_smil(anim: MotionAnimation) -> str:
     if anim.delay > 0:
         parts.append(f' begin="{anim.delay}s"')
 
-    parts.append(_smil_easing(anim))
+    if anim.bounce:
+        # Use keyPoints to traverse forward then backward along the path
+        from ..animation.models import Easing
+
+        parts.append(' keyPoints="0;1;0"')
+        parts.append(' keyTimes="0;0.5;1"')
+        if anim.easing == Easing.LINEAR:
+            parts.append(' calcMode="linear"')
+        else:
+            spline = f"{anim.easing.x1} {anim.easing.y1} {anim.easing.x2} {anim.easing.y2}"
+            parts.append(f' calcMode="spline" keySplines="{spline};{spline}"')
+    else:
+        parts.append(_smil_easing(anim))
 
     if anim.hold:
         parts.append(' fill="freeze"')
@@ -296,14 +409,25 @@ def _render_draw_smil(anim: DrawAnimation, entity: Any) -> str:
     from_val = svg_num(length) if not anim.reverse else "0"
     to_val = "0" if not anim.reverse else svg_num(length)
 
-    parts = ['<animate attributeName="stroke-dashoffset"']
-    parts.append(f' from="{from_val}" to="{to_val}"')
+    if anim.bounce:
+        # Forward then backward: length→0→length (or 0→length→0 if reversed)
+        val_list = [from_val, to_val, from_val]
+        kt_list = [0.0, 0.5, 1.0]
+        n_segments = 2
+        parts = ['<animate attributeName="stroke-dashoffset"']
+        parts.append(f' values="{";".join(val_list)}"')
+        parts.append(f' keyTimes="{";".join(svg_num(t) for t in kt_list)}"')
+    else:
+        n_segments = 1
+        parts = ['<animate attributeName="stroke-dashoffset"']
+        parts.append(f' from="{from_val}" to="{to_val}"')
+
     parts.append(f' dur="{anim.duration}s"')
 
     if anim.delay > 0:
         parts.append(f' begin="{anim.delay}s"')
 
-    parts.append(_smil_easing(anim))
+    parts.append(_smil_easing_n(anim.easing, n_segments))
 
     if anim.hold:
         parts.append(' fill="freeze"')
@@ -381,6 +505,30 @@ class SMILRenderer(SVGRenderer):
                 result.append(_render_draw_smil(anim, entity))
         return [r for r in result if r]
 
+    def _shape_opacity_for_smil(
+        self, opacity: float, fill_opacity: float | None, stroke_opacity: float | None,
+        entity: Entity,
+    ) -> str:
+        """Build opacity attrs for shapes, compatible with SMIL ``opacity`` animations.
+
+        When the entity animates ``opacity``, we must emit the SVG ``opacity``
+        attribute (not ``fill-opacity``/``stroke-opacity``) so the animation
+        target matches the initial attribute.  Explicit ``fill_opacity`` /
+        ``stroke_opacity`` overrides are still emitted independently.
+        """
+        animates_opacity = any(
+            isinstance(a, PropertyAnimation) and a.prop == "opacity"
+            for a in entity._animations
+        )
+        if animates_opacity:
+            parts: list[str] = [opacity_attr(opacity)]
+            if fill_opacity is not None and fill_opacity < 1.0:
+                parts.append(f' fill-opacity="{svg_num(fill_opacity)}"')
+            if stroke_opacity is not None and stroke_opacity < 1.0:
+                parts.append(f' stroke-opacity="{svg_num(stroke_opacity)}"')
+            return "".join(parts)
+        return shape_opacity_attrs(opacity, fill_opacity, stroke_opacity)
+
     def _has_draw_animation(self, entity: Entity) -> DrawAnimation | None:
         """Check if entity has a DrawAnimation."""
         for anim in entity._animations:
@@ -440,7 +588,7 @@ class SMILRenderer(SVGRenderer):
             f' x="{svg_num(rect.x)}" y="{svg_num(rect.y)}"'
             f' width="{svg_num(rect.width)}" height="{svg_num(rect.height)}"'
             f"{fill_stroke_attrs(rect.fill, rect.stroke, rect.stroke_width)}"
-            f"{shape_opacity_attrs(rect.opacity, rect.fill_opacity, rect.stroke_opacity)}"
+            f"{self._shape_opacity_for_smil(rect.opacity, rect.fill_opacity, rect.stroke_opacity, rect)}"
             f"{_build_svg_transform(rect)}"
         )
         return self._wrap_element("rect", attrs, rect)
@@ -453,7 +601,7 @@ class SMILRenderer(SVGRenderer):
             f' cy="{svg_num(ellipse.position.y)}"'
             f' rx="{svg_num(ellipse.rx)}" ry="{svg_num(ellipse.ry)}"'
             f"{fill_stroke_attrs(ellipse.fill, ellipse.stroke, ellipse.stroke_width)}"
-            f"{shape_opacity_attrs(ellipse.opacity, ellipse.fill_opacity, ellipse.stroke_opacity)}"
+            f"{self._shape_opacity_for_smil(ellipse.opacity, ellipse.fill_opacity, ellipse.stroke_opacity, ellipse)}"
             f"{_build_svg_transform(ellipse)}"
         )
         return self._wrap_element("ellipse", attrs, ellipse)
@@ -508,7 +656,7 @@ class SMILRenderer(SVGRenderer):
         attrs = (
             f' points="{points_str}"'
             f"{fill_stroke_attrs(polygon.fill, polygon.stroke, polygon.stroke_width)}"
-            f"{shape_opacity_attrs(polygon.opacity, polygon.fill_opacity, polygon.stroke_opacity)}"
+            f"{self._shape_opacity_for_smil(polygon.opacity, polygon.fill_opacity, polygon.stroke_opacity, polygon)}"
             f"{_build_svg_transform(polygon)}"
         )
         return self._wrap_element("polygon", attrs, polygon)
@@ -518,8 +666,7 @@ class SMILRenderer(SVGRenderer):
             return super().render_text(text)
 
         if text._textpath_info is not None:
-            # TextPath animations are complex — delegate to static for now
-            return super().render_text(text)
+            return self._render_animated_textpath(text, text._textpath_info)
 
         escaped = xml_escape(text.content)
         attrs = (
@@ -535,6 +682,48 @@ class SMILRenderer(SVGRenderer):
             f"{_build_svg_transform(text)}"
         )
         return self._wrap_element("text", attrs, text, content=escaped)
+
+    def _render_animated_textpath(self, text: Text, info: dict) -> str:
+        """Render animated text-on-a-path with SMIL elements."""
+        escaped = xml_escape(text.content)
+
+        offset = info["start_offset"]
+        offset_attr = (
+            f' startOffset="{offset}"' if offset not in ("0%", "0.0%") else ""
+        )
+
+        text_len = info.get("text_length")
+        textlen_attr = (
+            f' textLength="{text_len:.1f}" lengthAdjust="spacing"'
+            if text_len
+            else ""
+        )
+
+        anims = self._render_animations(text)
+        anim_str = "\n".join(f"  {a}" for a in anims) if anims else ""
+
+        textpath_child = (
+            f'<textPath href="#{info["path_id"]}"'
+            f"{offset_attr}{textlen_attr}>"
+            f"{escaped}"
+            f"</textPath>"
+        )
+
+        parts = [
+            f'<text font-size="{svg_num(text.font_size)}" '
+            f'font-family="{text.font_family}" '
+            f'font-style="{text.font_style}" '
+            f'font-weight="{text.font_weight}" '
+            f'fill="{text.color}" '
+            f'text-anchor="{text.text_anchor}" '
+            f'dominant-baseline="{text.baseline}"'
+            f"{textlen_attr}"
+            f"{opacity_attr(text.opacity)}>"
+        ]
+        if anim_str:
+            parts.append(f"\n{anim_str}")
+        parts.append(f"\n{textpath_child}\n</text>")
+        return "".join(parts)
 
     def render_path(self, path: Path) -> str:
         if not path._animations:
@@ -560,7 +749,7 @@ class SMILRenderer(SVGRenderer):
             f' d="{d_attr}" fill="{fill_attr}"'
             f"{stroke_attrs(path.color, path.width, svg_cap, marker_attrs)}"
             f' stroke-linejoin="round"'
-            f"{shape_opacity_attrs(path.opacity, path.fill_opacity, path.stroke_opacity)}"
+            f"{self._shape_opacity_for_smil(path.opacity, path.fill_opacity, path.stroke_opacity, path)}"
             f"{draw_extra}"
             f"{_build_svg_transform(path)}"
         )
@@ -608,22 +797,7 @@ class SMILRenderer(SVGRenderer):
         anims = []
         for anim in conn._animations:
             if isinstance(anim, PropertyAnimation):
-                # For connections, map prop names manually
-                svg_attr = {"opacity": "opacity", "color": "stroke", "width": "stroke-width"}.get(
-                    anim.prop, anim.prop
-                )
-                anim_copy = PropertyAnimation(
-                    prop=svg_attr,
-                    keyframes=anim.keyframes,
-                    easing=anim.easing,
-                    hold=anim.hold,
-                    repeat=anim.repeat,
-                    bounce=anim.bounce,
-                    delay=anim.delay,
-                )
-                anims.append(_render_property_smil.__wrapped__(anim_copy, conn)
-                    if hasattr(_render_property_smil, "__wrapped__")
-                    else _render_connection_prop_smil(anim, conn))
+                anims.append(_render_connection_prop_smil(anim, conn))
             elif isinstance(anim, DrawAnimation):
                 anims.append(_render_draw_smil(anim, conn))
 
@@ -676,18 +850,25 @@ def _render_connection_prop_smil(anim: PropertyAnimation, conn: Any) -> str:
     svg_attr_map = {"opacity": "opacity", "color": "stroke", "width": "stroke-width"}
     svg_attr = svg_attr_map.get(anim.prop, anim.prop)
 
-    values = _format_values(anim)
-    key_times = _format_key_times(anim)
+    val_list = [_format_value(kf.value) for kf in anim.keyframes]
+    dur = anim.duration
+    base = anim.keyframes[0].time if anim.keyframes else 0
+    kt_list = [(kf.time - base) / dur if dur > 0 else 0 for kf in anim.keyframes]
+
+    if anim.bounce:
+        val_list, kt_list = _apply_bounce(val_list, kt_list)
+
+    n_segments = max(1, len(val_list) - 1)
 
     parts = [f'<animate attributeName="{svg_attr}"']
-    parts.append(f' values="{values}"')
-    parts.append(f' keyTimes="{key_times}"')
+    parts.append(f' values="{";".join(val_list)}"')
+    parts.append(f' keyTimes="{";".join(svg_num(t) for t in kt_list)}"')
     parts.append(f' dur="{anim.duration}s"')
 
     if anim.delay > 0:
         parts.append(f' begin="{anim.delay}s"')
 
-    parts.append(_smil_easing(anim))
+    parts.append(_smil_easing_n(anim.easing, n_segments))
 
     if anim.hold:
         parts.append(' fill="freeze"')

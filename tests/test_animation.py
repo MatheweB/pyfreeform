@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from pyfreeform import Dot, Easing, Line, Rect, Scene, Path, Connection
+from pyfreeform import Dot, Easing, Ellipse, Line, Polygon, Rect, Scene, Path, Text, Connection, stagger
 from pyfreeform.animation.models import (
     DrawAnimation,
     Easing,
@@ -18,6 +18,7 @@ from pyfreeform.animation.builders import (
     build_draw,
     build_fade,
     build_move,
+    build_scale,
     build_spin,
 )
 from pyfreeform.renderers import SMILRenderer, SVGRenderer
@@ -367,3 +368,448 @@ class TestSceneRender:
         svg = scene.to_svg()
         assert "<animate" in svg
         assert 'attributeName="opacity"' in svg
+
+
+# ======================================================================
+# .then() — Sequential chaining
+# ======================================================================
+
+
+class TestThen:
+    def test_basic_chaining(self):
+        dot = Dot(0, 0)
+        dot.fade(to=0.0, duration=1.0).then().spin(360, duration=1.0)
+        assert len(dot.animations) == 2
+        fade_anim = dot.animations[0]
+        spin_anim = dot.animations[1]
+        assert fade_anim.delay == 0.0
+        assert spin_anim.delay == pytest.approx(1.0)
+
+    def test_gap_parameter(self):
+        dot = Dot(0, 0)
+        dot.fade(to=0.0, duration=1.0).then(0.5).spin(360, duration=1.0)
+        spin_anim = dot.animations[1]
+        assert spin_anim.delay == pytest.approx(1.5)
+
+    def test_no_animations(self):
+        dot = Dot(0, 0)
+        result = dot.then()
+        assert result is dot
+        # Chain delay should be 0 — next animation starts immediately
+        dot.fade(to=0.0, duration=1.0)
+        assert dot.animations[0].delay == 0.0
+
+    def test_repeat_finite(self):
+        dot = Dot(0, 0)
+        dot.fade(to=0.0, duration=1.0, repeat=3).then().spin(360, duration=1.0)
+        spin_anim = dot.animations[1]
+        # repeat=3 means 3 cycles × 1.0s = 3.0s total
+        assert spin_anim.delay == pytest.approx(3.0)
+
+    def test_repeat_infinite(self):
+        dot = Dot(0, 0)
+        dot.fade(to=0.0, duration=1.0, repeat=True).then().spin(360, duration=1.0)
+        spin_anim = dot.animations[1]
+        # repeat=True: use single cycle duration (pragmatic fallback)
+        assert spin_anim.delay == pytest.approx(1.0)
+
+    def test_multi_then(self):
+        dot = Dot(0, 0)
+        dot.fade(to=0.0, duration=1.0).then().spin(360, duration=2.0).then().fade(to=1.0, duration=0.5)
+        anims = dot.animations
+        assert anims[0].delay == pytest.approx(0.0)   # fade
+        assert anims[1].delay == pytest.approx(1.0)   # spin
+        assert anims[2].delay == pytest.approx(3.0)   # fade back (1.0 + 2.0)
+
+    def test_with_explicit_delay(self):
+        dot = Dot(0, 0)
+        dot.fade(to=0.0, duration=1.0).then().spin(360, duration=1.0, delay=0.5)
+        spin_anim = dot.animations[1]
+        # Chain delay 1.0 + explicit delay 0.5 = 1.5
+        assert spin_anim.delay == pytest.approx(1.5)
+
+    def test_returns_self(self):
+        dot = Dot(0, 0)
+        result = dot.fade(to=0.0).then()
+        assert result is dot
+
+    def test_connection_then(self):
+        d1 = Dot(0, 0)
+        d2 = Dot(100, 100)
+        conn = Connection(d1, d2)
+        conn.draw(duration=1.5).then().fade(to=0.0, duration=0.5)
+        draw_anim = conn.animations[0]
+        fade_anim = conn.animations[1]
+        assert draw_anim.delay == 0.0
+        assert fade_anim.delay == pytest.approx(1.5)
+
+    def test_clear_resets_chain_delay(self):
+        dot = Dot(0, 0)
+        dot.fade(to=0.0, duration=1.0).then()
+        dot.clear_animations()
+        dot.fade(to=0.5, duration=1.0)
+        assert dot.animations[0].delay == 0.0
+
+    def test_chain_delay_consumed_once(self):
+        dot = Dot(0, 0)
+        dot.fade(to=0.0, duration=1.0).then()
+        dot.spin(360, duration=1.0)  # consumes chain delay
+        dot.fade(to=1.0, duration=1.0)  # no chain delay left
+        assert dot.animations[1].delay == pytest.approx(1.0)
+        assert dot.animations[2].delay == pytest.approx(0.0)
+
+
+# ======================================================================
+# stagger()
+# ======================================================================
+
+
+class TestStagger:
+    def test_basic_stagger(self):
+        dots = [Dot(i * 10, 0) for i in range(5)]
+        result = stagger(*dots, offset=0.2, each=lambda d: d.fade(to=0.0, duration=1.0))
+        assert result is not dots  # returns new list
+        assert len(result) == 5
+        for i, dot in enumerate(result):
+            assert len(dot.animations) == 1
+            assert dot.animations[0].delay == pytest.approx(i * 0.2)
+
+    def test_custom_offset(self):
+        dots = [Dot(0, 0), Dot(10, 0), Dot(20, 0)]
+        stagger(*dots, offset=0.5, each=lambda d: d.fade(to=0.0))
+        assert dots[0].animations[0].delay == pytest.approx(0.0)
+        assert dots[1].animations[0].delay == pytest.approx(0.5)
+        assert dots[2].animations[0].delay == pytest.approx(1.0)
+
+    def test_multiple_animations_per_entity(self):
+        dots = [Dot(0, 0), Dot(10, 0)]
+        stagger(*dots, offset=0.3, each=lambda d: d.fade(to=0.0).spin(360))
+        # Both fade and spin should get stagger offset
+        assert dots[0].animations[0].delay == pytest.approx(0.0)
+        assert dots[0].animations[1].delay == pytest.approx(0.0)
+        assert dots[1].animations[0].delay == pytest.approx(0.3)
+        assert dots[1].animations[1].delay == pytest.approx(0.3)
+
+    def test_preserves_explicit_delay(self):
+        dots = [Dot(0, 0), Dot(10, 0)]
+        stagger(*dots, offset=0.2, each=lambda d: d.fade(to=0.0, delay=0.5))
+        # dot[0]: 0.5 + 0*0.2 = 0.5
+        # dot[1]: 0.5 + 1*0.2 = 0.7
+        assert dots[0].animations[0].delay == pytest.approx(0.5)
+        assert dots[1].animations[0].delay == pytest.approx(0.7)
+
+
+# ======================================================================
+# .move(by=)
+# ======================================================================
+
+
+class TestMoveBy:
+    def test_move_by_basic(self):
+        dot = Dot(0, 0)
+        dot.move(by=(0.1, 0.2), duration=1.0)
+        # Should have 2 animations (at_rx, at_ry)
+        assert len(dot.animations) == 2
+
+    def test_move_to_still_works(self):
+        dot = Dot(0, 0)
+        dot.move(to=(0.8, 0.5), duration=1.0)
+        assert len(dot.animations) == 2
+
+    def test_move_positional_to(self):
+        dot = Dot(0, 0)
+        dot.move((0.8, 0.5), duration=1.0)
+        assert len(dot.animations) == 2
+
+    def test_move_to_and_by_error(self):
+        dot = Dot(0, 0)
+        with pytest.raises(ValueError, match="Cannot specify both"):
+            dot.move(to=(0.5, 0.5), by=(0.1, 0))
+
+    def test_move_neither_error(self):
+        dot = Dot(0, 0)
+        with pytest.raises(ValueError, match="Must specify either"):
+            dot.move(duration=1.0)
+
+    def test_move_by_computes_target(self):
+        """move(by=) should compute target as current + delta."""
+        anim = build_move(Dot(0, 0), by=(0.1, -0.1), duration=1.0)
+        # Default at is (0.5, 0.5), so target should be (0.6, 0.4)
+        rx_anim = anim[0]
+        ry_anim = anim[1]
+        assert rx_anim.keyframes[0].value == pytest.approx(0.5)
+        assert rx_anim.keyframes[1].value == pytest.approx(0.6)
+        assert ry_anim.keyframes[0].value == pytest.approx(0.5)
+        assert ry_anim.keyframes[1].value == pytest.approx(0.4)
+
+
+# ======================================================================
+# .zoom()
+# ======================================================================
+
+
+class TestZoom:
+    def test_zoom_returns_self(self):
+        dot = Dot(0, 0)
+        result = dot.zoom(to=2.0, duration=1.0)
+        assert result is dot
+
+    def test_zoom_adds_animation(self):
+        dot = Dot(0, 0)
+        dot.zoom(to=2.0)
+        assert len(dot.animations) == 1
+        assert dot.animations[0].prop == "scale_factor"
+
+    def test_zoom_keyframes(self):
+        dot = Dot(0, 0)
+        dot.zoom(to=2.0, duration=1.5)
+        anim = dot.animations[0]
+        assert anim.keyframes[0].value == pytest.approx(1.0)
+        assert anim.keyframes[1].value == pytest.approx(2.0)
+        assert anim.duration == pytest.approx(1.5)
+
+    def test_zoom_pulse(self):
+        dot = Dot(0, 0)
+        dot.zoom(to=1.5, bounce=True, repeat=True, duration=0.8)
+        anim = dot.animations[0]
+        assert anim.bounce is True
+        assert anim.repeat is True
+        assert anim.duration == pytest.approx(0.8)
+
+    def test_build_scale(self):
+        dot = Dot(0, 0)
+        anim = build_scale(dot, to=3.0, duration=2.0)
+        assert isinstance(anim, PropertyAnimation)
+        assert anim.prop == "scale_factor"
+        assert anim.keyframes[0].value == pytest.approx(1.0)
+        assert anim.keyframes[1].value == pytest.approx(3.0)
+
+    def test_zoom_smil_output(self):
+        dot = Dot(10, 20, radius=5, color="red")
+        dot.zoom(to=2.0, duration=1.0)
+        svg = SMILRenderer().render_entity(dot)
+        assert "animateTransform" in svg
+        assert 'type="scale"' in svg
+
+    def test_zoom_with_then(self):
+        dot = Dot(0, 0)
+        dot.fade(to=0.5, duration=1.0).then().zoom(to=2.0, duration=0.5)
+        zoom_anim = dot.animations[1]
+        assert zoom_anim.delay == pytest.approx(1.0)
+
+
+# ======================================================================
+# Bounce SMIL rendering
+# ======================================================================
+
+
+class TestBounceSMIL:
+    """Test that bounce=True produces correct SMIL output."""
+
+    def test_property_bounce_values_mirrored(self):
+        """bounce=True mirrors values: A;B → A;B;A."""
+        dot = Dot(10, 20, radius=5, color="red")
+        dot.animate("r", to=10, duration=1.0, bounce=True, repeat=True)
+        svg = SMILRenderer().render_entity(dot)
+        assert 'values="5;10;5"' in svg
+
+    def test_property_bounce_keytimes(self):
+        """bounce=True produces keyTimes 0;0.5;1."""
+        dot = Dot(10, 20, radius=5, color="red")
+        dot.animate("r", to=10, duration=1.0, bounce=True, repeat=True)
+        svg = SMILRenderer().render_entity(dot)
+        assert 'keyTimes="0;0.5;1"' in svg
+
+    def test_property_bounce_doubled_splines(self):
+        """bounce=True doubles keySplines for 2 segments."""
+        dot = Dot(10, 20, radius=5, color="red")
+        dot.animate("r", to=10, duration=1.0, bounce=True, repeat=True,
+                     easing="ease-in-out")
+        svg = SMILRenderer().render_entity(dot)
+        # 2 segments (3 values) → 2 keySplines
+        assert 'keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0"' in svg
+
+    def test_property_no_bounce_unchanged(self):
+        """Without bounce, values stay as-is."""
+        dot = Dot(10, 20, radius=5, color="red")
+        dot.animate("r", to=10, duration=1.0, repeat=True)
+        svg = SMILRenderer().render_entity(dot)
+        assert 'values="5;10"' in svg
+        assert 'keyTimes="0;1"' in svg
+
+    def test_motion_bounce_keypoints(self):
+        """bounce=True on follow() adds keyPoints='0;1;0'."""
+        from pyfreeform.paths import Wave
+        dot = Dot(10, 20, radius=5, color="red")
+        wave = Wave(start=(0, 0), end=(100, 0), amplitude=30, frequency=2)
+        dot.follow(wave, duration=2.0, bounce=True, repeat=True)
+        svg = SMILRenderer().render_entity(dot)
+        assert 'keyPoints="0;1;0"' in svg
+        assert 'keyTimes="0;0.5;1"' in svg
+
+    def test_motion_no_bounce_no_keypoints(self):
+        """Without bounce, no keyPoints on animateMotion."""
+        from pyfreeform.paths import Wave
+        dot = Dot(10, 20, radius=5, color="red")
+        wave = Wave(start=(0, 0), end=(100, 0), amplitude=30, frequency=2)
+        dot.follow(wave, duration=2.0, repeat=True)
+        svg = SMILRenderer().render_entity(dot)
+        assert "keyPoints" not in svg
+
+    def test_motion_bounce_eased(self):
+        """bounce + easing produces 2 keySplines on animateMotion."""
+        from pyfreeform.paths import Wave
+        dot = Dot(10, 20, radius=5, color="red")
+        wave = Wave(start=(0, 0), end=(100, 0), amplitude=30, frequency=2)
+        dot.follow(wave, duration=2.0, bounce=True, repeat=True,
+                   easing="ease-in-out")
+        svg = SMILRenderer().render_entity(dot)
+        assert 'keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0"' in svg
+
+    def test_motion_bounce_linear_uses_linear_calcmode(self):
+        """bounce + linear easing uses calcMode='linear'."""
+        from pyfreeform.paths import Wave
+        dot = Dot(10, 20, radius=5, color="red")
+        wave = Wave(start=(0, 0), end=(100, 0), amplitude=30, frequency=2)
+        dot.follow(wave, duration=2.0, bounce=True, repeat=True,
+                   easing="linear")
+        svg = SMILRenderer().render_entity(dot)
+        assert 'calcMode="linear"' in svg
+        assert "keySplines" not in svg
+
+    def test_draw_bounce_values(self):
+        """bounce=True on draw() produces forward-then-reverse dashoffset."""
+        from pyfreeform.paths import Wave
+        wave = Wave(start=(0, 0), end=(100, 0), amplitude=30, frequency=2)
+        path = Path(wave, width=2, color="red")
+        scene = Scene(200, 200)
+        scene.place(path)
+        path.draw(duration=2.0, bounce=True, repeat=True)
+        svg = SMILRenderer().render_entity(path)
+        # Should have 3 values (forward;peak;forward) for dashoffset
+        assert 'values="' in svg
+        assert 'keyTimes="0;0.5;1"' in svg
+
+    def test_rotation_bounce(self):
+        """bounce=True on spin mirrors rotation values."""
+        dot = Dot(10, 20, radius=5, color="red")
+        dot.spin(90, duration=1.0, bounce=True, repeat=True)
+        svg = SMILRenderer().render_entity(dot)
+        assert "animateTransform" in svg
+        # Should have 3 values for rotation (forward;peak;back)
+        assert 'keyTimes="0;0.5;1"' in svg
+
+    def test_scale_bounce(self):
+        """bounce=True on zoom mirrors scale values."""
+        dot = Dot(10, 20, radius=5, color="red")
+        dot.zoom(to=2.0, duration=1.0, bounce=True, repeat=True)
+        svg = SMILRenderer().render_entity(dot)
+        assert "animateTransform" in svg
+        assert 'values="1;2;1"' in svg
+        assert 'keyTimes="0;0.5;1"' in svg
+
+    def test_multi_keyframe_bounce(self):
+        """Bounce with 3+ keyframes mirrors correctly."""
+        dot = Dot(10, 20, radius=5, color="red")
+        dot.animate("r", keyframes={0: 5, 0.5: 10, 1.0: 15},
+                    bounce=True, repeat=True)
+        svg = SMILRenderer().render_entity(dot)
+        # 5;10;15 → 5;10;15;10;5 with 5 keyTimes
+        assert 'values="5;10;15;10;5"' in svg
+        assert 'keyTimes="0;0.25;0.5;0.75;1"' in svg
+
+
+# ======================================================================
+# Fill/Stroke opacity animation (universal mapping)
+# ======================================================================
+
+
+class TestOpacityAnimations:
+    """Verify fill-opacity and stroke-opacity animate on all shape types."""
+
+    def test_fill_opacity_animation_ellipse(self):
+        """fill_opacity animates to fill-opacity on Ellipse."""
+        e = Ellipse(50, 50, rx=20, ry=15, fill="blue")
+        e.animate("fill_opacity", keyframes={0: 1.0, 1.0: 0.0}, duration=2.0)
+        svg = SMILRenderer().render_entity(e)
+        assert 'attributeName="fill-opacity"' in svg
+        assert 'values="1;0"' in svg
+
+    def test_stroke_opacity_animation_polygon(self):
+        """stroke_opacity animates to stroke-opacity on Polygon."""
+        p = Polygon([(0, 0), (20, 0), (10, 20)], fill="red", stroke="black")
+        p.animate("stroke_opacity", keyframes={0: 1.0, 1.0: 0.3}, duration=1.5)
+        svg = SMILRenderer().render_entity(p)
+        assert 'attributeName="stroke-opacity"' in svg
+
+    def test_fill_opacity_animation_rect(self):
+        """fill_opacity still works on Rect after universal mapping."""
+        r = Rect(10, 10, 50, 30, fill="green")
+        r.animate("fill_opacity", keyframes={0: 1.0, 1.0: 0.0}, duration=1.0)
+        svg = SMILRenderer().render_entity(r)
+        assert 'attributeName="fill-opacity"' in svg
+
+
+# ======================================================================
+# TextPath animation
+# ======================================================================
+
+
+class TestTextPathAnimation:
+    """Verify animated text-on-path renders with SMIL elements."""
+
+    def test_textpath_fade(self):
+        """Text on a path with fade() emits <animate> inside <text>."""
+        t = Text(0, 0, "Hello", font_size=16, color="black")
+        t.set_textpath("tp1", "M 10 80 Q 95 10 180 80", start_offset="50%")
+        t.fade(to=0.0, duration=2.0)
+        svg = SMILRenderer().render_entity(t)
+        assert "<textPath" in svg
+        assert 'href="#tp1"' in svg
+        assert 'attributeName="opacity"' in svg
+        assert "<animate" in svg
+
+    def test_textpath_color_animation(self):
+        """Text on a path with color animation emits fill attribute."""
+        t = Text(0, 0, "World", font_size=16, color="red")
+        t.set_textpath("tp2", "M 0 0 L 100 0", start_offset="0%")
+        t.animate("color", keyframes={0: "red", 1.0: "blue"}, duration=1.0)
+        svg = SMILRenderer().render_entity(t)
+        assert "<textPath" in svg
+        assert 'attributeName="fill"' in svg
+
+    def test_textpath_no_animation_uses_static(self):
+        """Text on path without animations still renders statically."""
+        t = Text(0, 0, "Static", font_size=16, color="black")
+        t.set_textpath("tp3", "M 0 0 L 100 0")
+        svg = SMILRenderer().render_entity(t)
+        assert "<textPath" in svg
+        assert "<animate" not in svg
+
+
+# ======================================================================
+# Connection property animation (regression after dead code removal)
+# ======================================================================
+
+
+class TestConnectionPropertySMIL:
+    """Verify connection property animations render correctly."""
+
+    def test_connection_fade_smil(self):
+        """Connection fade renders <animate attributeName='opacity'>."""
+        d1 = Dot(10, 20, radius=5, color="red")
+        d2 = Dot(80, 80, radius=5, color="blue")
+        conn = Connection(d1, d2)
+        conn.fade(to=0.0, duration=1.5)
+        svg = SMILRenderer().render_connection(conn)
+        assert "<animate" in svg
+        assert 'attributeName="opacity"' in svg
+
+    def test_connection_color_animation_smil(self):
+        """Connection color animation maps to stroke attribute."""
+        d1 = Dot(10, 20, radius=5, color="red")
+        d2 = Dot(80, 80, radius=5, color="blue")
+        conn = Connection(d1, d2)
+        conn.animate("color", keyframes={0: "red", 1.0: "blue"}, duration=1.0)
+        svg = SMILRenderer().render_connection(conn)
+        assert 'attributeName="stroke"' in svg
