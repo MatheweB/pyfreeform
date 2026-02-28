@@ -6,7 +6,7 @@ All examples use relative coordinates via Scene.with_grid and cell add_* methods
 
 from __future__ import annotations
 
-from pyfreeform import Connection, Polygon, Scene, Path as PPath, stagger
+from pyfreeform import Polygon, Scene, stagger
 from pyfreeform.paths import Wave, Zigzag
 
 from wiki._generator import save
@@ -54,7 +54,7 @@ def generate():
     cell = scene.grid[0][0]
     easing_names = ["linear", "ease-in", "ease-out", "ease-in-out"]
     colors = ["coral", "gold", "skyblue", "mediumpurple"]
-    for i, (name, color) in enumerate(zip(easing_names, colors)):
+    for i, (name, color) in enumerate(zip(easing_names, colors, strict=True)):
         y = 0.12 + i * 0.2
         cell.add_text(name, at=(0.11, y), font_size=0.055, color="gray")
         cell.add_line(start=(0.26, y), end=(0.95, y), width=1, color="#333")

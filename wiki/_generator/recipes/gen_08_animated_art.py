@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import math
 
-from pyfreeform import Polygon, Scene, Path as PPath, stagger
+from pyfreeform import Polygon, Scene, stagger
 from pyfreeform.color import hsl
 from pyfreeform.paths import Lissajous
 
@@ -163,19 +163,20 @@ def _generate_spiral_galaxy(n_stars=200):
 
         # Inner stars warm, outer stars cool
         hue = (40 - t * 220) % 360
-        radius = 0.005 + 0.01 * (1 - t)
         color = hsl(hue, 0.85, 0.55)
-        dot = cell.add_dot(at=(rx, ry), radius=radius, color=color, opacity=0.0)
+        star_size = 0.015 + 0.025 * (1 - t)  # inner stars larger
+        dot = cell.add_polygon(
+            Polygon.star(size=star_size, center=(rx, ry)),
+            fill=color, opacity=0.0,
+        )
         stars.append(dot)
 
     # Stagger: each star fades in with offset timing
     stagger(
         *stars,
         offset=0.02,
-        each=lambda d: (
-            d.animate("opacity", to=0.9, duration=0.5,
-                      easing="ease-out", hold=True),
-        ),
+        each=lambda d: d.animate("opacity", to=0.9, duration=0.5,
+                                 easing="ease-out", hold=True),
     )
 
     # A few spinning "arms" via subtle rotation on outer stars

@@ -1,644 +1,644 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="440" height="440" viewBox="0 0 440 440">
   <rect width="100%" height="100%" fill="#050510" />
-  <circle cx="209.906" cy="229.247" r="6.578" fill="#eea92b" opacity="0">
+  <polygon points="209.906,220.475 211.968,226.408 218.249,226.536 213.243,230.331 215.062,236.344 209.906,232.756 204.749,236.344 206.568,230.331 201.563,226.536 207.843,226.408" fill="#eea92b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 209.906 229.247;360 209.906 229.247" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="221.693" cy="200.714" r="6.556" fill="#eea62b" opacity="0">
+</polygon>
+  <polygon points="221.693,191.969 223.749,197.884 230.01,198.012 225.02,201.795 226.833,207.789 221.693,204.212 216.553,207.789 218.366,201.795 213.376,198.012 219.637,197.884" fill="#eea62b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.02s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="234.426" cy="238.817" r="6.534" fill="#eea22b" opacity="0">
+</polygon>
+  <polygon points="234.426,230.1 236.476,235.996 242.717,236.123 237.743,239.895 239.551,245.87 234.426,242.304 229.302,245.87 231.11,239.895 226.136,236.123 232.377,235.996" fill="#eea22b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.04s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="193.039" cy="215.231" r="6.512" fill="#ee9e2b" opacity="0">
+</polygon>
+  <polygon points="193.039,206.541 195.083,212.418 201.304,212.545 196.345,216.305 198.147,222.261 193.039,218.707 187.932,222.261 189.734,216.305 184.775,212.545 190.996,212.418" fill="#ee9e2b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.06s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="245.828" cy="203.571" r="6.49" fill="#ee9b2b" opacity="0">
+</polygon>
+  <polygon points="245.828,194.908 247.865,200.768 254.067,200.894 249.124,204.642 250.92,210.579 245.828,207.036 240.737,210.579 242.533,204.642 237.59,200.894 243.792,200.768" fill="#ee9b2b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.08s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="211.294" cy="252.383" r="6.468" fill="#ee972b" opacity="0">
+</polygon>
+  <polygon points="211.294,243.748 213.324,249.588 219.506,249.714 214.579,253.45 216.37,259.368 211.294,255.837 206.218,259.368 208.009,253.45 203.082,249.714 209.264,249.588" fill="#ee972b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.1s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 211.294 252.383;360 211.294 252.383" keyTimes="0;1" dur="12.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="203.307" cy="187.857" r="6.446" fill="#ee942b" opacity="0">
+</polygon>
+  <polygon points="203.307,179.249 205.331,185.071 211.493,185.197 206.582,188.921 208.367,194.82 203.307,191.3 198.248,194.82 200.033,188.921 195.121,185.197 201.283,185.071" fill="#ee942b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.12s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="256.37" cy="233.284" r="6.424" fill="#ee902b" opacity="0">
+</polygon>
+  <polygon points="256.37,224.704 258.387,230.507 264.53,230.632 259.634,234.344 261.413,240.225 256.37,236.716 251.327,240.225 253.106,234.344 248.21,230.632 254.353,230.507" fill="#ee902b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.14s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="182.038" cy="235.669" r="6.402" fill="#ee8d2b" opacity="0">
+</polygon>
+  <polygon points="182.038,227.116 184.049,232.901 190.172,233.026 185.291,236.726 187.065,242.588 182.038,239.09 177.011,242.588 178.784,236.726 173.904,233.026 180.027,232.901" fill="#ee8d2b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.16s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="238.35" cy="180.791" r="6.38" fill="#ee892b" opacity="0">
+</polygon>
+  <polygon points="238.35,172.266 240.354,178.033 246.458,178.157 241.593,181.845 243.361,187.688 238.35,184.201 233.339,187.688 235.107,181.845 230.242,178.157 236.346,178.033" fill="#ee892b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.18s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="233.586" cy="263.323" r="6.358" fill="#ee852b" opacity="0">
+</polygon>
+  <polygon points="233.586,254.825 235.584,260.573 241.668,260.697 236.819,264.373 238.581,270.197 233.586,266.722 228.592,270.197 230.354,264.373 225.505,260.697 231.589,260.573" fill="#ee852b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.2s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 233.586 263.323;360 233.586 263.323" keyTimes="0;1" dur="10.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="178.971" cy="196.22" r="6.336" fill="#ee822b" opacity="0">
+</polygon>
+  <polygon points="178.971,187.75 180.962,193.479 187.026,193.603 182.193,197.267 183.95,203.073 178.971,199.608 173.992,203.073 175.749,197.267 170.916,193.603 176.98,193.479" fill="#ee822b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.22s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="268.208" cy="209.404" r="6.314" fill="#ee7e2b" opacity="0">
+</polygon>
+  <polygon points="268.208,200.962 270.193,206.672 276.237,206.795 271.42,210.448 273.17,216.234 268.208,212.781 263.245,216.234 264.996,210.448 260.179,206.795 266.223,206.672" fill="#ee7e2b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.24s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="190.538" cy="261.901" r="6.292" fill="#ee7b2b" opacity="0">
+</polygon>
+  <polygon points="190.538,253.486 192.517,259.178 198.542,259.301 193.74,262.941 195.485,268.709 190.538,265.267 185.592,268.709 187.337,262.941 182.535,259.301 188.56,259.178" fill="#ee7b2b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.26s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="213.19" cy="167.42" r="6.27" fill="#ee772b" opacity="0">
+</polygon>
+  <polygon points="213.19,159.032 215.162,164.705 221.167,164.828 216.38,168.456 218.12,174.205 213.19,170.775 208.26,174.205 209.999,168.456 205.213,164.828 211.218,164.705" fill="#ee772b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.28s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="261.869" cy="255.292" r="6.248" fill="#ee742b" opacity="0">
+</polygon>
+  <polygon points="261.869,246.932 263.834,252.586 269.819,252.708 265.049,256.325 266.782,262.055 261.869,258.636 256.955,262.055 258.688,256.325 253.918,252.708 259.903,252.586" fill="#ee742b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.3s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 261.869 255.292;360 261.869 255.292" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="163.604" cy="222.328" r="6.226" fill="#ee702b" opacity="0">
+</polygon>
+  <polygon points="163.604,213.996 165.564,219.632 171.529,219.753 166.774,223.358 168.502,229.069 163.604,225.661 158.707,229.069 160.435,223.358 155.68,219.753 161.645,219.632" fill="#ee702b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.32s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="261.172" cy="179.035" r="6.204" fill="#ee6c2b" opacity="0">
+</polygon>
+  <polygon points="261.172,170.73 263.124,176.347 269.07,176.468 264.331,180.061 266.053,185.753 261.172,182.357 256.29,185.753 258.012,180.061 253.273,176.468 259.219,176.347" fill="#ee6c2b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.34s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="217.239" cy="279.608" r="6.182" fill="#ee692b" opacity="0">
+</polygon>
+  <polygon points="217.239,271.33 219.185,276.929 225.111,277.05 220.388,280.631 222.104,286.304 217.239,282.919 212.374,286.304 214.09,280.631 209.367,277.05 215.293,276.929" fill="#ee692b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.36s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="180.779" cy="172.992" r="6.16" fill="#ee652b" opacity="0">
+</polygon>
+  <polygon points="180.779,164.742 182.718,170.322 188.625,170.442 183.917,174.012 185.628,179.666 180.779,176.292 175.929,179.666 177.64,174.012 172.932,170.442 178.839,170.322" fill="#ee652b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.38s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="282.173" cy="228.371" r="6.138" fill="#ee622b" opacity="0">
+</polygon>
+  <polygon points="282.173,220.148 284.106,225.71 289.993,225.83 285.301,229.387 287.006,235.023 282.173,231.66 277.34,235.023 279.045,229.387 274.353,225.83 280.239,225.71" fill="#ee622b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.4s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 282.173 228.371;360 282.173 228.371" keyTimes="0;1" dur="12.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="167.289" cy="256.668" r="6.116" fill="#ee5e2b" opacity="0">
+</polygon>
+  <polygon points="167.289,248.473 169.216,254.016 175.083,254.135 170.407,257.68 172.106,263.297 167.289,259.946 162.473,263.297 164.172,257.68 159.496,254.135 165.363,254.016" fill="#ee5e2b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.42s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="234.416" cy="155.949" r="6.094" fill="#ee5b2b" opacity="0">
+</polygon>
+  <polygon points="234.416,147.782 236.336,153.306 242.183,153.425 237.523,156.959 239.216,162.557 234.416,159.216 229.615,162.557 231.309,156.959 226.648,153.425 232.495,153.306" fill="#ee5b2b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.44s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="253.338" cy="278.192" r="6.072" fill="#ee572b" opacity="0">
+</polygon>
+  <polygon points="253.338,270.052 255.252,275.558 261.079,275.677 256.434,279.198 258.122,284.777 253.338,281.448 248.553,284.777 250.241,279.198 245.596,275.677 251.424,275.558" fill="#ee572b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.46s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="154.792" cy="199.19" r="6.05" fill="#ee532b" opacity="0">
+</polygon>
+  <polygon points="154.792,191.077 156.7,196.564 162.508,196.683 157.878,200.192 159.561,205.753 154.792,202.435 150.024,205.753 151.706,200.192 147.077,196.683 152.885,196.564" fill="#ee532b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.48s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="283.37" cy="190.73" r="6.028" fill="#ee502b" opacity="0">
+</polygon>
+  <polygon points="283.37,182.645 285.271,188.113 291.059,188.231 286.446,191.729 288.122,197.271 283.37,193.964 278.618,197.271 280.294,191.729 275.681,188.231 281.469,188.113" fill="#ee502b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.5s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 283.37 190.73;360 283.37 190.73" keyTimes="0;1" dur="10.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="192.531" cy="285.615" r="6.006" fill="#ee4c2b" opacity="0">
+</polygon>
+  <polygon points="192.531,277.558 194.425,283.008 200.194,283.125 195.596,286.611 197.267,292.134 192.531,288.838 187.795,292.134 189.466,286.611 184.868,283.125 190.637,283.008" fill="#ee4c2b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.52s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="195.491" cy="151.834" r="5.984" fill="#ee492b" opacity="0">
+</polygon>
+  <polygon points="195.491,143.804 197.379,149.235 203.128,149.352 198.546,152.826 200.211,158.33 195.491,155.046 190.771,158.33 192.436,152.826 187.854,149.352 193.603,149.235" fill="#ee492b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.54s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="285.253" cy="254.305" r="5.962" fill="#ee452b" opacity="0">
+</polygon>
+  <polygon points="285.253,246.302 287.134,251.715 292.864,251.832 288.297,255.294 289.956,260.779 285.253,257.506 280.549,260.779 282.208,255.294 277.642,251.832 283.371,251.715" fill="#ee452b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.56s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="147.493" cy="239.103" r="5.94" fill="#ee412b" opacity="0">
+</polygon>
+  <polygon points="147.493,231.128 149.368,236.522 155.078,236.639 150.527,240.089 152.181,245.555 147.493,242.293 142.806,245.555 144.459,240.089 139.909,236.639 145.618,236.522" fill="#ee412b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.58s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="261.231" cy="155.894" r="5.918" fill="#ee3e2b" opacity="0">
+</polygon>
+  <polygon points="261.231,147.947 263.1,153.322 268.79,153.438 264.254,156.877 265.902,162.324 261.231,159.073 256.56,162.324 258.208,156.877 253.673,153.438 259.362,153.322" fill="#ee3e2b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.6s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 261.231 155.894;360 261.231 155.894" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="233.106" cy="296.323" r="5.896" fill="#ee3a2b" opacity="0">
+</polygon>
+  <polygon points="233.106,288.403 234.969,293.76 240.639,293.875 236.119,297.302 237.762,302.73 233.106,299.491 228.451,302.73 230.093,297.302 225.574,293.875 231.244,293.76" fill="#ee3a2b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.62s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="157.831" cy="171.84" r="5.874" fill="#ee372b" opacity="0">
+</polygon>
+  <polygon points="157.831,163.947 159.687,169.286 165.338,169.401 160.834,172.815 162.47,178.225 157.831,174.997 153.192,178.225 154.829,172.815 150.325,169.401 155.976,169.286" fill="#ee372b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.64s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="299.552" cy="213.421" r="5.852" fill="#ee332b" opacity="0">
+</polygon>
+  <polygon points="299.552,205.556 301.401,210.875 307.032,210.99 302.544,214.393 304.175,219.783 299.552,216.567 294.929,219.783 296.56,214.393 292.072,210.99 297.703,210.875" fill="#ee332b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.66s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="164.994" cy="279.443" r="5.83" fill="#ee302b" opacity="0">
+</polygon>
+  <polygon points="164.994,271.606 166.836,276.907 172.448,277.021 167.975,280.412 169.6,285.784 164.994,282.578 160.387,285.784 162.012,280.412 157.54,277.021 163.151,276.907" fill="#ee302b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.68s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="220.413" cy="137.864" r="5.808" fill="#ee2c2b" opacity="0">
+</polygon>
+  <polygon points="220.413,130.054 222.249,135.336 227.841,135.45 223.384,138.829 225.003,144.182 220.413,140.988 215.822,144.182 217.442,138.829 212.985,135.45 218.577,135.336" fill="#ee2c2b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.7000000000000001s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 220.413 137.864;360 220.413 137.864" keyTimes="0;1" dur="12.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="275.939" cy="281.683" r="5.786" fill="#ee2b2d" opacity="0">
+</polygon>
+  <polygon points="275.939,273.901 277.769,279.165 283.34,279.278 278.899,282.645 280.513,287.979 275.939,284.796 271.364,287.979 272.978,282.645 268.537,279.278 274.109,279.165" fill="#ee2b2d" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.72s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="135.973" cy="212.199" r="5.764" fill="#ee2b31" opacity="0">
+</polygon>
+  <polygon points="135.973,204.444 137.796,209.69 143.348,209.803 138.923,213.158 140.531,218.473 135.973,215.301 131.415,218.473 133.023,213.158 128.598,209.803 134.15,209.69" fill="#ee2b31" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.74s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="288.107" cy="168.326" r="5.742" fill="#ee2b34" opacity="0">
+</polygon>
+  <polygon points="288.107,160.599 289.924,165.826 295.457,165.938 291.047,169.281 292.649,174.578 288.107,171.417 283.565,174.578 285.168,169.281 280.758,165.938 286.29,165.826" fill="#ee2b34" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.76s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="204.489" cy="305.18" r="5.72" fill="#ee2b38" opacity="0">
+</polygon>
+  <polygon points="204.489,297.48 206.3,302.688 211.813,302.8 207.419,306.132 209.015,311.409 204.489,308.26 199.964,311.409 201.56,306.132 197.166,302.8 202.679,302.688" fill="#ee2b38" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.78s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="173.326" cy="145.803" r="5.698" fill="#ee2b3b" opacity="0">
+</polygon>
+  <polygon points="173.326,138.131 175.13,143.32 180.623,143.432 176.245,146.752 177.836,152.01 173.326,148.872 168.817,152.01 170.408,146.752 166.029,143.432 171.522,143.32" fill="#ee2b3b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.8s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 173.326 145.803;360 173.326 145.803" keyTimes="0;1" dur="10.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="305.56" cy="243.464" r="5.676" fill="#ee2b3f" opacity="0">
+</polygon>
+  <polygon points="305.56,235.819 307.357,240.99 312.83,241.102 308.468,244.409 310.053,249.649 305.56,246.522 301.066,249.649 302.651,244.409 298.289,241.102 303.762,240.99" fill="#ee2b3f" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.8200000000000001s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="140.127" cy="260.972" r="5.654" fill="#ee2b42" opacity="0">
+</polygon>
+  <polygon points="140.127,253.354 141.918,258.507 147.371,258.618 143.025,261.913 144.604,267.134 140.127,264.019 135.649,267.134 137.229,261.913 132.882,258.618 138.336,258.507" fill="#ee2b42" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.84s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="251.581" cy="134.862" r="5.632" fill="#ee2b46" opacity="0">
+</polygon>
+  <polygon points="251.581,127.272 253.366,132.406 258.8,132.517 254.469,135.8 256.043,141.003 251.581,137.898 247.12,141.003 248.694,135.8 244.363,132.517 249.797,132.406" fill="#ee2b46" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.86s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="254.609" cy="305.061" r="5.61" fill="#ee2b4a" opacity="0">
+</polygon>
+  <polygon points="254.609,297.499 256.387,302.614 261.801,302.724 257.486,305.996 259.054,311.18 254.609,308.086 250.164,311.18 251.732,305.996 247.417,302.724 252.831,302.614" fill="#ee2b4a" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.88s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="136.106" cy="180.221" r="5.588" fill="#ee2b4d" opacity="0">
+</polygon>
+  <polygon points="136.106,172.686 137.877,177.783 143.272,177.893 138.972,181.153 140.534,186.317 136.106,183.235 131.677,186.317 133.239,181.153 128.939,177.893 134.334,177.783" fill="#ee2b4d" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.9s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 136.106 180.221;360 136.106 180.221" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="309.691" cy="192.366" r="5.566" fill="#ee2b51" opacity="0">
+</polygon>
+  <polygon points="309.691,184.859 311.456,189.937 316.831,190.046 312.547,193.294 314.103,198.44 309.691,195.369 305.278,198.44 306.835,193.294 302.551,190.046 307.926,189.937" fill="#ee2b51" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.92s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="172.028" cy="301.818" r="5.544" fill="#ee2b54" opacity="0">
+</polygon>
+  <polygon points="172.028,294.338 173.787,299.397 179.142,299.506 174.874,302.742 176.425,307.869 172.028,304.81 167.632,307.869 169.183,302.742 164.915,299.506 170.27,299.397" fill="#ee2b54" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.9400000000000001s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="199.9" cy="126.305" r="5.522" fill="#ee2b58" opacity="0">
+</polygon>
+  <polygon points="199.9,118.852 201.652,123.893 206.988,124.002 202.735,127.226 204.28,132.334 199.9,129.286 195.519,132.334 197.065,127.226 192.812,124.002 198.148,123.893" fill="#ee2b58" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.96s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="298.904" cy="276.074" r="5.5" fill="#ee2b5b" opacity="0">
+</polygon>
+  <polygon points="298.904,268.649 300.65,273.672 305.966,273.78 301.729,276.992 303.269,282.081 298.904,279.044 294.54,282.081 296.08,276.992 291.843,273.78 297.159,273.672" fill="#ee2b5b" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.98s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="122.985" cy="232.07" r="5.478" fill="#ee2b5f" opacity="0">
+</polygon>
+  <polygon points="122.985,224.673 124.724,229.676 130.02,229.784 125.799,232.985 127.333,238.055 122.985,235.029 118.637,238.055 120.171,232.985 115.949,229.784 121.246,229.676" fill="#ee2b5f" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.0s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 122.985 232.07;360 122.985 232.07" keyTimes="0;1" dur="12.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="284.001" cy="144.841" r="5.456" fill="#ee2b63" opacity="0">
+</polygon>
+  <polygon points="284.001,137.471 285.734,142.456 291.011,142.564 286.805,145.752 288.333,150.804 284.001,147.789 279.669,150.804 281.198,145.752 276.992,142.564 282.269,142.456" fill="#ee2b63" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.02s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="223.61" cy="319.596" r="5.434" fill="#ee2b66" opacity="0">
+</polygon>
+  <polygon points="223.61,312.254 225.337,317.22 230.593,317.327 226.404,320.504 227.926,325.536 223.61,322.533 219.294,325.536 220.817,320.504 216.627,317.327 221.884,317.22" fill="#ee2b66" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.04s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="149.405" cy="148.333" r="5.412" fill="#ee2b6a" opacity="0">
+</polygon>
+  <polygon points="149.405,141.018 151.125,145.965 156.362,146.072 152.188,149.237 153.705,154.25 149.405,151.259 145.106,154.25 146.622,149.237 142.448,146.072 147.685,145.965" fill="#ee2b6a" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.06s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="321.391" cy="225.207" r="5.39" fill="#ee2b6d" opacity="0">
+</polygon>
+  <polygon points="321.391,217.92 323.104,222.849 328.322,222.955 324.163,226.108 325.675,231.103 321.391,228.122 317.108,231.103 318.619,226.108 314.46,222.955 319.678,222.849" fill="#ee2b6d" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.08s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="141.011" cy="285.234" r="5.368" fill="#ee2b71" opacity="0">
+</polygon>
+  <polygon points="141.011,277.974 142.718,282.884 147.916,282.99 143.773,286.131 145.279,291.107 141.011,288.138 136.744,291.107 138.249,286.131 134.107,282.99 139.304,282.884" fill="#ee2b71" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.1s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 141.011 285.234;360 141.011 285.234" keyTimes="0;1" dur="10.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="234.306" cy="117.641" r="5.346" fill="#ee2b75" opacity="0">
+</polygon>
+  <polygon points="234.306,110.408 236.006,115.3 241.184,115.406 237.057,118.535 238.557,123.492 234.306,120.534 230.054,123.492 231.554,118.535 227.427,115.406 232.605,115.3" fill="#ee2b75" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.12s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="279.106" cy="305.884" r="5.324" fill="#ee2b78" opacity="0">
+</polygon>
+  <polygon points="279.106,298.679 280.8,303.552 285.958,303.657 281.847,306.774 283.341,311.713 279.106,308.766 274.871,311.713 276.365,306.774 272.253,303.657 277.412,303.552" fill="#ee2b78" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.1400000000000001s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="117.532" cy="196.396" r="5.302" fill="#ee2b7c" opacity="0">
+</polygon>
+  <polygon points="117.532,189.219 119.219,194.073 124.358,194.178 120.262,197.283 121.751,202.203 117.532,199.267 113.313,202.203 114.801,197.283 110.706,194.178 115.844,194.073" fill="#ee2b7c" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.16s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="312.273" cy="167.752" r="5.28" fill="#ee2b7f" opacity="0">
+</polygon>
+  <polygon points="312.273,160.602 313.955,165.438 319.074,165.542 314.994,168.635 316.476,173.536 312.273,170.612 308.071,173.536 309.553,168.635 305.473,165.542 310.592,165.438" fill="#ee2b7f" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.18s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="186.981" cy="321.693" r="5.258" fill="#ee2b83" opacity="0">
+</polygon>
+  <polygon points="186.981,314.571 188.656,319.388 193.755,319.492 189.691,322.573 191.168,327.455 186.981,324.542 182.795,327.455 184.272,322.573 180.208,319.492 185.307,319.388" fill="#ee2b83" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.2s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 186.981 321.693;360 186.981 321.693" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="175.293" cy="121.917" r="5.236" fill="#ee2b86" opacity="0">
+</polygon>
+  <polygon points="175.293,114.822 176.961,119.621 182.04,119.724 177.992,122.794 179.463,127.657 175.293,124.755 171.122,127.657 172.593,122.794 168.545,119.724 173.624,119.621" fill="#ee2b86" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.22s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="320.017" cy="262.463" r="5.214" fill="#ee2b8a" opacity="0">
+</polygon>
+  <polygon points="320.017,255.395 321.679,260.176 326.739,260.279 322.706,263.337 324.171,268.181 320.017,265.29 315.863,268.181 317.328,263.337 313.295,260.279 318.355,260.176" fill="#ee2b8a" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.24s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="116.757" cy="256.536" r="5.192" fill="#ee2b8e" opacity="0">
+</polygon>
+  <polygon points="116.757,249.496 118.413,254.258 123.453,254.36 119.436,257.406 120.895,262.231 116.757,259.352 112.619,262.231 114.079,257.406 110.062,254.36 115.102,254.258" fill="#ee2b8e" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.26s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="271.849" cy="122.568" r="5.17" fill="#ee2b91" opacity="0">
+</polygon>
+  <polygon points="271.849,115.556 273.498,120.299 278.518,120.401 274.517,123.435 275.971,128.241 271.849,125.373 267.727,128.241 269.181,123.435 265.18,120.401 270.2,120.299" fill="#ee2b91" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.28s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="247.793" cy="327.686" r="5.148" fill="#ee2b95" opacity="0">
+</polygon>
+  <polygon points="247.793,320.701 249.436,325.425 254.436,325.527 250.451,328.549 251.899,333.337 247.793,330.48 243.688,333.337 245.136,328.549 241.15,325.527 246.151,325.425" fill="#ee2b95" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.3s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 247.793 327.686;360 247.793 327.686" keyTimes="0;1" dur="12.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="126.062" cy="158.912" r="5.126" fill="#ee2b98" opacity="0">
+</polygon>
+  <polygon points="126.062,151.954 127.698,156.66 132.679,156.762 128.709,159.772 130.151,164.541 126.062,161.695 121.972,164.541 123.415,159.772 119.445,156.762 124.426,156.66" fill="#ee2b98" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.32s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="331.353" cy="201.454" r="5.104" fill="#ee2b9c" opacity="0">
+</polygon>
+  <polygon points="331.353,194.524 332.983,199.211 337.944,199.312 333.99,202.31 335.427,207.06 331.353,204.226 327.28,207.06 328.717,202.31 324.763,199.312 329.724,199.211" fill="#ee2b9c" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.34s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="149.909" cy="309.544" r="5.082" fill="#ee2b9f" opacity="0">
+</polygon>
+  <polygon points="149.909,302.642 151.532,307.311 156.474,307.411 152.535,310.398 153.966,315.129 149.909,312.305 145.852,315.129 147.283,310.398 143.345,307.411 148.286,307.311" fill="#ee2b9f" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.36s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="211.133" cy="105.808" r="5.06" fill="#ee2ba3" opacity="0">
+</polygon>
+  <polygon points="211.133,98.9334 212.75,103.584 217.672,103.684 213.749,106.658 215.174,111.37 211.133,108.558 207.092,111.37 208.518,106.658 204.595,103.684 209.517,103.584" fill="#ee2ba3" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.3800000000000001s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="304.269" cy="298.769" r="5.038" fill="#ee2ba7" opacity="0">
+</polygon>
+  <polygon points="304.269,291.921 305.879,296.553 310.781,296.653 306.874,299.615 308.293,304.309 304.269,301.508 300.244,304.309 301.664,299.615 297.756,296.653 302.659,296.553" fill="#ee2ba7" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.4000000000000001s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 304.269 298.769;360 304.269 298.769" keyTimes="0;1" dur="10.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="103.846" cy="218.832" r="5.016" fill="#ee2baa" opacity="0">
+</polygon>
+  <polygon points="103.846,212.012 105.449,216.625 110.332,216.725 106.44,219.675 107.855,224.35 103.846,221.56 99.8372,224.35 101.251,219.675 97.3597,216.725 102.242,216.625" fill="#ee2baa" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.42s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="307.036" cy="141.863" r="4.994" fill="#ee2bae" opacity="0">
+</polygon>
+  <polygon points="307.036,135.071 308.633,139.665 313.496,139.764 309.62,142.703 311.028,147.359 307.036,144.58 303.043,147.359 304.452,142.703 300.576,139.764 305.439,139.665" fill="#ee2bae" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.44s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="208.525" cy="337.202" r="4.972" fill="#ee2bb1" opacity="0">
+</polygon>
+  <polygon points="208.525,330.437 210.115,335.013 214.959,335.111 211.098,338.038 212.501,342.675 208.525,339.908 204.548,342.675 205.951,338.038 202.091,335.111 206.934,335.013" fill="#ee2bb1" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.46s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="148.817" cy="125.193" r="4.95" fill="#ee2bb5" opacity="0">
+</polygon>
+  <polygon points="148.817,118.456 150.401,123.013 155.225,123.111 151.38,126.026 152.777,130.644 148.817,127.888 144.857,130.644 146.254,126.026 142.409,123.111 147.233,123.013" fill="#ee2bb5" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.48s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="337.303" cy="241.97" r="4.928" fill="#ee2bb8" opacity="0">
+</polygon>
+  <polygon points="337.303,235.26 338.881,239.798 343.685,239.896 339.856,242.799 341.247,247.398 337.303,244.654 333.359,247.398 334.751,242.799 330.922,239.896 335.726,239.798" fill="#ee2bb8" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.5s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 337.303 241.97;360 337.303 241.97" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="117.999" cy="283.451" r="4.906" fill="#ee2bbc" opacity="0">
+</polygon>
+  <polygon points="117.999,276.768 119.57,281.288 124.354,281.386 120.541,284.277 121.927,288.857 117.999,286.124 114.071,288.857 115.457,284.277 111.644,281.386 116.428,281.288" fill="#ee2bbc" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.52s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="252.562" cy="103.564" r="4.884" fill="#ee2bc0" opacity="0">
+</polygon>
+  <polygon points="252.562,96.9092 254.127,101.411 258.891,101.508 255.094,104.387 256.474,108.948 252.562,106.226 248.65,108.948 250.03,104.387 246.233,101.508 250.997,101.411" fill="#ee2bc0" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.54s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="274.99" cy="328.541" r="4.862" fill="#ee2bc3" opacity="0">
+</polygon>
+  <polygon points="274.99,321.913 276.548,326.396 281.293,326.493 277.511,329.36 278.885,333.903 274.99,331.192 271.094,333.903 272.468,329.36 268.687,326.493 273.431,326.396" fill="#ee2bc3" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.56s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="105.416" cy="176.839" r="4.84" fill="#ee2bc7" opacity="0">
+</polygon>
+  <polygon points="105.416,170.239 106.968,174.704 111.693,174.8 107.927,177.655 109.295,182.179 105.416,179.479 101.536,182.179 102.905,177.655 99.1388,174.8 103.864,174.704" fill="#ee2bc7" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.58s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="334.354" cy="174.141" r="4.818" fill="#ee2bca" opacity="0">
+</polygon>
+  <polygon points="334.354,167.569 335.899,172.014 340.605,172.11 336.854,174.954 338.217,179.459 334.354,176.77 330.49,179.459 331.853,174.954 328.103,172.11 332.808,172.014" fill="#ee2bca" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.6s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 334.354 174.141;360 334.354 174.141" keyTimes="0;1" dur="12.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="166.327" cy="331.743" r="4.796" fill="#ee2bce" opacity="0">
+</polygon>
+  <polygon points="166.327,325.198 167.866,329.625 172.552,329.72 168.817,332.552 170.175,337.038 166.327,334.361 162.48,337.038 163.838,332.552 160.103,329.72 164.789,329.625" fill="#ee2bce" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.62s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="183.877" cy="100.628" r="4.774" fill="#ee2bd2" opacity="0">
+</polygon>
+  <polygon points="183.877,94.1101 185.41,98.5185 190.076,98.6136 186.357,101.433 187.708,105.9 183.877,103.235 180.047,105.9 181.398,101.433 177.679,98.6136 182.345,98.5185" fill="#ee2bd2" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.6400000000000001s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="327.914" cy="284.004" r="4.752" fill="#ee2bd5" opacity="0">
+</polygon>
+  <polygon points="327.914,277.514 329.44,281.903 334.087,281.998 330.383,284.806 331.729,289.254 327.914,286.6 324.1,289.254 325.446,284.806 321.742,281.998 326.389,281.903" fill="#ee2bd5" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.6600000000000001s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="96.4644" cy="245.853" r="4.73" fill="#ee2bd9" opacity="0">
+</polygon>
+  <polygon points="96.4644,239.39 97.9839,243.762 102.611,243.856 98.9229,246.652 100.263,251.081 96.4644,248.438 92.6659,251.081 94.006,246.652 90.3182,243.856 94.945,243.762" fill="#ee2bd9" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.68s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="294.06" cy="116.889" r="4.708" fill="#ee2bdc" opacity="0">
+</polygon>
+  <polygon points="294.06,110.454 295.573,114.806 300.18,114.9 296.508,117.684 297.843,122.095 294.06,119.463 290.278,122.095 291.612,117.684 287.94,114.9 292.547,114.806" fill="#ee2bdc" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.7s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 294.06 116.889;360 294.06 116.889" keyTimes="0;1" dur="10.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="235.128" cy="346.789" r="4.686" fill="#ee2be0" opacity="0">
+</polygon>
+  <polygon points="235.128,340.381 236.634,344.715 241.222,344.809 237.565,347.581 238.894,351.972 235.128,349.352 231.361,351.972 232.69,347.581 229.034,344.809 233.621,344.715" fill="#ee2be0" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.72s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="122.646" cy="136.251" r="4.664" fill="#ee2be3" opacity="0">
+</polygon>
+  <polygon points="122.646,129.871 124.146,134.186 128.714,134.279 125.074,137.04 126.397,141.412 122.646,138.803 118.896,141.412 120.219,137.04 116.579,134.279 121.146,134.186" fill="#ee2be3" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.74s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="349.084" cy="215.97" r="4.642" fill="#ee2be7" opacity="0">
+</polygon>
+  <polygon points="349.084,209.618 350.578,213.915 355.126,214.007 351.501,216.756 352.818,221.11 349.084,218.511 345.351,221.11 346.668,216.756 343.043,214.007 347.591,213.915" fill="#ee2be7" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.76s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="127.021" cy="310.671" r="4.62" fill="#ee2beb" opacity="0">
+</polygon>
+  <polygon points="127.021,304.346 128.508,308.625 133.036,308.717 129.427,311.453 130.738,315.788 127.021,313.201 123.303,315.788 124.615,311.453 121.005,308.717 125.534,308.625" fill="#ee2beb" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.78s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="227.353" cy="89.6169" r="4.598" fill="#ed2bee" opacity="0">
+</polygon>
+  <polygon points="227.353,83.3194 228.834,87.5789 233.343,87.6708 229.749,90.3953 231.055,94.7116 227.353,92.1359 223.652,94.7116 224.958,90.3953 221.364,87.6708 225.873,87.5789" fill="#ed2bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.8s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 227.353 89.6169;360 227.353 89.6169" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="303.103" cy="321.662" r="4.576" fill="#ea2bee" opacity="0">
+</polygon>
+  <polygon points="303.103,315.392 304.577,319.633 309.066,319.724 305.488,322.437 306.788,326.735 303.103,324.17 299.417,326.735 300.718,322.437 297.14,319.724 301.629,319.633" fill="#ea2bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.82s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="89.3466" cy="201.07" r="4.554" fill="#e62bee" opacity="0">
+</polygon>
+  <polygon points="89.3466,194.828 90.8143,199.05 95.2836,199.141 91.7214,201.842 93.0159,206.12 89.3466,203.567 85.6774,206.12 86.9718,201.842 83.4096,199.141 87.8789,199.05" fill="#e62bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.84s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="329.712" cy="145.305" r="4.532" fill="#e32bee" opacity="0">
+</polygon>
+  <polygon points="329.712,139.09 331.173,143.294 335.623,143.385 332.076,146.073 333.365,150.333 329.712,147.791 326.059,150.333 327.348,146.073 323.801,143.385 328.251,143.294" fill="#e32bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.86s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="189.395" cy="349.872" r="4.51" fill="#df2bee" opacity="0">
+</polygon>
+  <polygon points="189.395,343.685 190.85,347.87 195.28,347.96 191.749,350.637 193.032,354.878 189.395,352.347 185.758,354.878 187.041,350.637 183.511,347.96 187.94,347.87" fill="#df2bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.8800000000000001s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="154.498" cy="102.952" r="4.488" fill="#dc2bee" opacity="0">
+</polygon>
+  <polygon points="154.498,96.7915 155.946,100.958 160.357,101.048 156.841,103.713 158.119,107.935 154.498,105.416 150.877,107.935 152.155,103.713 148.639,101.048 153.05,100.958" fill="#dc2bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.9000000000000001s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 154.498 102.952;360 154.498 102.952" keyTimes="0;1" dur="12.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="348.026" cy="262.281" r="4.466" fill="#d82bee" opacity="0">
+</polygon>
+  <polygon points="348.026,256.148 349.468,260.296 353.858,260.386 350.359,263.039 351.63,267.242 348.026,264.734 344.421,267.242 345.693,263.039 342.193,260.386 346.584,260.296" fill="#d82bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.92s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="96.405" cy="275.587" r="4.444" fill="#d42bee" opacity="0">
+</polygon>
+  <polygon points="96.405,269.482 97.8404,273.612 102.211,273.701 98.7275,276.342 99.9934,280.526 96.405,278.029 92.8166,280.526 94.0825,276.342 90.5988,273.701 94.9696,273.612" fill="#d42bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.94s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="273.86" cy="94.8912" r="4.422" fill="#d12bee" opacity="0">
+</polygon>
+  <polygon points="273.86,88.8137 275.289,92.9245 279.64,93.0131 276.172,95.6424 277.432,99.808 273.86,97.3222 270.287,99.808 271.548,95.6424 268.08,93.0131 272.431,92.9245" fill="#d12bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.96s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="265.02" cy="349.281" r="4.4" fill="#cd2bee" opacity="0">
+</polygon>
+  <polygon points="265.02,343.231 266.443,347.323 270.774,347.412 267.322,350.029 268.577,354.176 265.02,351.701 261.464,354.176 262.719,350.029 259.267,347.412 263.598,347.323" fill="#cd2bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.98s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="98.8742" cy="154.759" r="4.378" fill="#ca2bee" opacity="0">
+</polygon>
+  <polygon points="98.8742,148.736 100.29,152.81 104.602,152.898 101.165,155.503 102.414,159.631 98.8742,157.168 95.3343,159.631 96.5831,155.503 93.1465,152.898 97.4582,152.81" fill="#ca2bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.0s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 98.8742 154.759;360 98.8742 154.759" keyTimes="0;1" dur="10.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="354.043" cy="186.122" r="4.356" fill="#c62bee" opacity="0">
+</polygon>
+  <polygon points="354.043,180.127 355.453,184.182 359.745,184.269 356.324,186.863 357.567,190.972 354.043,188.52 350.519,190.972 351.762,186.863 348.342,184.269 352.634,184.182" fill="#c62bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.02s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="143.673" cy="336.09" r="4.334" fill="#c32bee" opacity="0">
+</polygon>
+  <polygon points="143.673,330.123 145.076,334.159 149.349,334.246 145.944,336.828 147.181,340.918 143.673,338.477 140.166,340.918 141.403,336.828 137.998,334.246 142.27,334.159" fill="#c32bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.04s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="197.756" cy="82.1765" r="4.312" fill="#bf2bee" opacity="0">
+</polygon>
+  <polygon points="197.756,76.2365 199.153,80.2543 203.406,80.3409 200.016,82.9107 201.248,86.982 197.756,84.5525 194.265,86.982 195.497,82.9107 192.107,80.3409 196.36,80.2543" fill="#bf2bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.06s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="330.025" cy="307.017" r="4.29" fill="#bb2bee" opacity="0">
+</polygon>
+  <polygon points="330.025,301.105 331.415,305.104 335.648,305.19 332.274,307.748 333.5,311.801 330.025,309.382 326.55,311.801 327.776,307.748 324.402,305.19 328.635,305.104" fill="#bb2bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.08s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="79.427" cy="230.205" r="4.268" fill="#b82bee" opacity="0">
+</polygon>
+  <polygon points="79.427,224.32 80.8106,228.3 85.0239,228.386 81.6658,230.932 82.8861,234.966 79.427,232.559 75.9679,234.966 77.1882,230.932 73.83,228.386 78.0433,228.3" fill="#b82bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.1s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 79.427 230.205;360 79.427 230.205" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="317.217" cy="117.038" r="4.246" fill="#b42bee" opacity="0">
+</polygon>
+  <polygon points="317.217,111.18 318.594,115.142 322.788,115.228 319.445,117.762 320.66,121.777 317.217,119.381 313.774,121.777 314.988,117.762 311.646,115.228 315.84,115.142" fill="#b42bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.12s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="217.855" cy="362.25" r="4.224" fill="#b12bee" opacity="0">
+</polygon>
+  <polygon points="217.855,356.42 219.225,360.364 223.399,360.449 220.073,362.971 221.282,366.967 217.855,364.582 214.428,366.967 215.637,362.971 212.31,360.449 216.484,360.364" fill="#b12bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.14s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="125.057" cy="113.168" r="4.202" fill="#ad2bee" opacity="0">
+</polygon>
+  <polygon points="125.057,107.366 126.421,111.291 130.576,111.375 127.265,113.886 128.468,117.863 125.057,115.489 121.647,117.863 122.85,113.886 119.539,111.375 123.693,111.291" fill="#ad2bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.16s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="362.822" cy="234.709" r="4.18" fill="#aa2bee" opacity="0">
+</polygon>
+  <polygon points="362.822,228.934 364.18,232.84 368.315,232.924 365.019,235.423 366.217,239.381 362.822,237.019 359.428,239.381 360.625,235.423 357.33,232.924 361.464,232.84" fill="#aa2bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.18s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="104.229" cy="306.017" r="4.158" fill="#a62bee" opacity="0">
+</polygon>
+  <polygon points="104.229,300.27 105.58,304.157 109.695,304.241 106.415,306.727 107.607,310.667 104.229,308.316 100.85,310.667 102.042,306.727 98.7625,304.241 102.877,304.157" fill="#a62bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.2s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 104.229 306.017;360 104.229 306.017" keyTimes="0;1" dur="12.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="247.386" cy="77.7349" r="4.136" fill="#a22bee" opacity="0">
+</polygon>
+  <polygon points="247.386,72.0149 248.73,75.8838 252.826,75.9673 249.562,78.4419 250.748,82.3625 247.386,80.0229 244.024,82.3625 245.21,78.4419 241.946,75.9673 246.041,75.8838" fill="#a22bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.22s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="296.243" cy="343.951" r="4.114" fill="#9f2bee" opacity="0">
+</polygon>
+  <polygon points="296.243,338.258 297.581,342.108 301.657,342.192 298.409,344.654 299.589,348.556 296.243,346.228 292.897,348.556 294.077,344.654 290.829,342.192 294.905,342.108" fill="#9f2bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.24s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="79.4357" cy="179.927" r="4.092" fill="#9b2bee" opacity="0">
+</polygon>
+  <polygon points="79.4357,174.262 80.7676,178.094 84.8234,178.177 81.5908,180.628 82.7655,184.51 79.4357,182.193 76.1059,184.51 77.2806,180.628 74.0479,178.177 78.1037,178.094" fill="#9b2bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.2600000000000002s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="351.289" cy="154.313" r="4.07" fill="#982bee" opacity="0">
+</polygon>
+  <polygon points="351.289,148.675 352.614,152.488 356.65,152.571 353.433,155.01 354.602,158.874 351.289,156.568 347.975,158.874 349.144,155.01 345.927,152.571 349.963,152.488" fill="#982bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.2800000000000002s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="167.335" cy="357.715" r="4.048" fill="#942bee" opacity="0">
+</polygon>
+  <polygon points="167.335,352.105 168.654,355.899 172.67,355.981 169.469,358.408 170.632,362.253 167.335,359.959 164.037,362.253 165.201,358.408 161.999,355.981 166.016,355.899" fill="#942bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.3000000000000003s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 167.335 357.715;360 167.335 357.715" keyTimes="0;1" dur="10.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="165.576" cy="82.2886" r="4.026" fill="#902bee" opacity="0">
+</polygon>
+  <polygon points="165.576,76.7061 166.889,80.4821 170.886,80.5635 167.7,82.9787 168.858,86.805 165.576,84.5216 162.295,86.805 163.453,82.9787 160.267,80.5635 164.264,80.4821" fill="#902bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.32s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="353.721" cy="285.058" r="4.004" fill="#8d2bee" opacity="0">
+</polygon>
+  <polygon points="353.721,279.503 355.027,283.261 359.004,283.342 355.834,285.745 356.986,289.552 353.721,287.28 350.455,289.552 351.607,285.745 348.437,283.342 352.415,283.261" fill="#8d2bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.34s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="76.8495" cy="262.534" r="3.982" fill="#892bee" opacity="0">
+</polygon>
+  <polygon points="76.8495,257.006 78.1491,260.745 82.1065,260.825 78.9523,263.217 80.0985,267.005 76.8495,264.745 73.6005,267.005 74.7467,263.217 71.5925,260.825 75.5499,260.745" fill="#892bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.36s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="297.146" cy="91.4037" r="3.96" fill="#862bee" opacity="0">
+</polygon>
+  <polygon points="297.146,85.9037 298.439,89.6238 302.377,89.7041 299.239,92.0835 300.379,95.8533 297.146,93.6037 293.914,95.8533 295.054,92.0835 291.916,89.7041 295.853,89.6238" fill="#862bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.38s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="250.104" cy="367.546" r="3.938" fill="#822bee" opacity="0">
+</polygon>
+  <polygon points="250.104,362.073 251.391,365.775 255.309,365.855 252.186,368.222 253.321,371.973 250.104,369.735 246.888,371.973 248.022,368.222 244.9,365.855 248.818,365.775" fill="#822bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.4s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 250.104 367.546;360 250.104 367.546" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="97.6342" cy="131.174" r="3.916" fill="#7f2bee" opacity="0">
+</polygon>
+  <polygon points="97.6342,125.729 98.9144,129.412 102.813,129.492 99.7056,131.847 100.835,135.579 97.6342,133.352 94.4337,135.579 95.5628,131.847 92.4557,129.492 96.354,129.412" fill="#7f2bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.42s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="370.844" cy="202.771" r="3.894" fill="#7b2bee" opacity="0">
+</polygon>
+  <polygon points="370.844,197.353 372.118,201.018 375.996,201.097 372.905,203.44 374.028,207.154 370.844,204.938 367.66,207.154 368.783,203.44 365.692,201.097 369.57,201.018" fill="#7b2bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.44s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="120.006" cy="335.062" r="3.872" fill="#772bee" opacity="0">
+</polygon>
+  <polygon points="120.006,329.672 121.273,333.318 125.132,333.397 122.056,335.729 123.174,339.423 120.006,337.218 116.838,339.423 117.955,335.729 114.88,333.397 118.739,333.318" fill="#772bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.46s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="215.994" cy="66.9982" r="3.85" fill="#742bee" opacity="0">
+</polygon>
+  <polygon points="215.994,61.6357 217.254,65.2629 221.094,65.3411 218.034,67.6611 219.146,71.3366 215.994,69.1432 212.842,71.3366 213.953,67.6611 210.893,65.3411 214.733,65.2629" fill="#742bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.48s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="326.729" cy="330.552" r="3.828" fill="#702bee" opacity="0">
+</polygon>
+  <polygon points="326.729,325.217 327.984,328.826 331.803,328.904 328.759,331.212 329.865,334.869 326.729,332.686 323.594,334.869 324.7,331.212 321.656,328.904 325.475,328.826" fill="#702bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.5s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 326.729 330.552;360 326.729 330.552" keyTimes="0;1" dur="12.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="66.0166" cy="210.539" r="3.806" fill="#6d2bee" opacity="0">
+</polygon>
+  <polygon points="66.0166,205.231 67.2644,208.821 71.0643,208.899 68.0357,211.195 69.1362,214.833 66.0166,212.662 62.8969,214.833 63.9975,211.195 60.9688,208.899 64.7687,208.821" fill="#6d2bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.52s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="340.405" cy="122.581" r="3.784" fill="#692bee" opacity="0">
+</polygon>
+  <polygon points="340.405,117.301 341.647,120.873 345.427,120.95 342.414,123.234 343.509,126.853 340.405,124.693 337.302,126.853 338.397,123.234 335.384,120.95 339.164,120.873" fill="#692bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.54s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="196.932" cy="373.763" r="3.762" fill="#662bee" opacity="0">
+</polygon>
+  <polygon points="196.932,368.511 198.167,372.063 201.928,372.14 198.93,374.412 200.019,378.012 196.932,375.864 193.845,378.012 194.934,374.412 191.937,372.14 195.697,372.063" fill="#662bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.56s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="132.809" cy="90.5385" r="3.74" fill="#622bee" opacity="0">
+</polygon>
+  <polygon points="132.809,85.3135 134.037,88.8477 137.778,88.9239 134.796,91.1844 135.88,94.7656 132.809,92.6285 129.737,94.7656 130.821,91.1844 127.839,88.9239 131.58,88.8477" fill="#622bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.58s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="372.325" cy="256.705" r="3.718" fill="#5e2bee" opacity="0">
+</polygon>
+  <polygon points="372.325,251.507 373.547,255.023 377.268,255.099 374.302,257.347 375.38,260.91 372.325,258.784 369.27,260.91 370.347,257.347 367.381,255.099 371.103,255.023" fill="#5e2bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.6s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 372.325 256.705;360 372.325 256.705" keyTimes="0;1" dur="10.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="82.3641" cy="296.117" r="3.696" fill="#5b2bee" opacity="0">
+</polygon>
+  <polygon points="82.3641,290.947 83.5797,294.444 87.2811,294.519 84.3309,296.756 85.403,300.3 82.3641,298.185 79.3253,300.3 80.3974,296.756 77.4472,294.519 81.1486,294.444" fill="#5b2bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.62s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="270.262" cy="70.3385" r="3.674" fill="#572bee" opacity="0">
+</polygon>
+  <polygon points="270.262,65.196 271.471,68.6743 275.153,68.7494 272.218,70.9741 273.285,74.4989 270.262,72.3955 267.239,74.4989 268.306,70.9741 265.371,68.7494 269.053,68.6743" fill="#572bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.64s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="284.273" cy="364.849" r="3.652" fill="#542bee" opacity="0">
+</polygon>
+  <polygon points="284.273,359.734 285.476,363.194 289.138,363.268 286.219,365.481 287.279,368.987 284.273,366.895 281.266,368.987 282.327,365.481 279.408,363.268 283.07,363.194" fill="#542bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.66s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="74.2224" cy="156.372" r="3.63" fill="#502bee" opacity="0">
+</polygon>
+  <polygon points="74.2224,151.284 75.4185,154.726 79.0609,154.8 76.1578,157.001 77.2127,160.488 74.2224,158.407 71.232,160.488 72.287,157.001 69.3839,154.8 73.0262,154.726" fill="#502bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.68s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="371.029" cy="168.256" r="3.608" fill="#4d2bee" opacity="0">
+</polygon>
+  <polygon points="371.029,163.196 372.218,166.619 375.841,166.692 372.953,168.881 374.003,172.35 371.029,170.28 368.054,172.35 369.104,168.881 366.216,166.692 369.839,166.619" fill="#4d2bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.7s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 371.029 168.256;360 371.029 168.256" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="143.308" cy="360.687" r="3.586" fill="#492bee" opacity="0">
+</polygon>
+  <polygon points="143.308,355.654 144.491,359.058 148.094,359.132 145.222,361.309 146.266,364.758 143.308,362.7 140.35,364.758 141.393,361.309 138.522,359.132 142.125,359.058" fill="#492bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.72s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="181.378" cy="63.8903" r="3.564" fill="#452bee" opacity="0">
+</polygon>
+  <polygon points="181.378,58.8853 182.555,62.2707 186.138,62.3437 183.282,64.509 184.32,67.9395 181.378,65.8923 178.436,67.9395 179.474,64.509 176.618,62.3437 180.202,62.2707" fill="#452bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.74s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="354.413" cy="309.344" r="3.542" fill="#422bee" opacity="0">
+</polygon>
+  <polygon points="354.413,304.367 355.583,307.734 359.147,307.806 356.307,309.96 357.339,313.371 354.413,311.335 351.487,313.371 352.519,309.96 349.679,307.806 353.243,307.734" fill="#422bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.7600000000000002s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="59.9641" cy="245.004" r="3.52" fill="#3e2bee" opacity="0">
+</polygon>
+  <polygon points="59.9641,240.054 61.1279,243.402 64.6718,243.474 61.8472,245.616 62.8736,249.008 59.9641,246.984 57.0546,249.008 58.081,245.616 55.2564,243.474 58.8003,243.402" fill="#3e2bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.7800000000000002s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="321.477" cy="93.0096" r="3.498" fill="#3b2bee" opacity="0">
+</polygon>
+  <polygon points="321.477,88.0871 322.634,91.4167 326.158,91.4885 323.349,93.6181 324.37,96.992 321.477,94.9786 318.583,96.992 319.604,93.6181 316.795,91.4885 320.319,91.4167" fill="#3b2bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.8000000000000003s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 321.477 93.0096;360 321.477 93.0096" keyTimes="0;1" dur="12.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="230.993" cy="382.759" r="3.476" fill="#372bee" opacity="0">
+</polygon>
+  <polygon points="230.993,377.864 232.144,381.175 235.649,381.247 232.855,383.364 233.87,386.72 230.993,384.717 228.116,386.72 229.131,383.364 226.338,381.247 229.842,381.175" fill="#372bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.82s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="101.537" cy="107.016" r="3.454" fill="#332bee" opacity="0">
+</polygon>
+  <polygon points="101.537,102.148 102.682,105.441 106.166,105.512 103.389,107.617 104.398,110.954 101.537,108.963 98.6761,110.954 99.6854,107.617 96.9079,105.512 100.393,105.441" fill="#332bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.84s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="384.242" cy="223.303" r="3.432" fill="#302bee" opacity="0">
+</polygon>
+  <polygon points="384.242,218.463 385.38,221.736 388.845,221.807 386.083,223.901 387.087,227.218 384.242,225.239 381.397,227.218 382.401,223.901 379.639,221.807 383.104,221.736" fill="#302bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.86s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="96.2343" cy="328.884" r="3.41" fill="#2c2bee" opacity="0">
+</polygon>
+  <polygon points="96.2343,324.072 97.3657,327.327 100.811,327.397 98.065,329.479 99.063,332.777 96.2343,330.809 93.4055,332.777 94.4035,329.479 91.6573,327.397 95.1028,327.327" fill="#2c2bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.88s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="237.773" cy="55.5456" r="3.388" fill="#2b2dee" opacity="0">
+</polygon>
+  <polygon points="237.773,50.7606 238.898,53.9972 242.323,54.067 239.593,56.1371 240.585,59.4168 237.773,57.4596 234.96,59.4168 235.952,56.1371 233.222,54.067 236.648,53.9972" fill="#2b2dee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.9s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 237.773 55.5456;360 237.773 55.5456" keyTimes="0;1" dur="10.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="318.317" cy="353.725" r="3.366" fill="#2b30ee" opacity="0">
+</polygon>
+  <polygon points="318.317,348.967 319.435,352.185 322.841,352.255 320.127,354.313 321.113,357.574 318.317,355.628 315.52,357.574 316.507,354.313 313.792,352.255 317.198,352.185" fill="#2b30ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.92s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="56.6217" cy="187.698" r="3.344" fill="#2b34ee" opacity="0">
+</polygon>
+  <polygon points="56.6217,182.968 57.7338,186.167 61.1202,186.236 58.4211,188.282 59.4019,191.524 56.6217,189.59 53.8415,191.524 54.8223,188.282 52.1232,186.236 55.5096,186.167" fill="#2b34ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.94s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="362.77" cy="133.167" r="3.322" fill="#2b37ee" opacity="0">
+</polygon>
+  <polygon points="362.77,128.465 363.876,131.645 367.243,131.714 364.559,133.748 365.534,136.971 362.77,135.048 360.006,136.971 360.981,133.748 358.298,131.714 361.665,131.645" fill="#2b37ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.96s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="173.224" cy="381.005" r="3.3" fill="#2b3bee" opacity="0">
+</polygon>
+  <polygon points="173.224,376.33 174.323,379.492 177.67,379.561 175.002,381.583 175.972,384.787 173.224,382.875 170.476,384.787 171.445,381.583 168.777,379.561 172.124,379.492" fill="#2b3bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.98s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="145.487" cy="69.1822" r="3.278" fill="#2b3fee" opacity="0">
+</polygon>
+  <polygon points="145.487,64.5347 146.58,67.6783 149.907,67.7461 147.255,69.7567 148.219,72.9421 145.487,71.0412 142.756,72.9421 143.719,69.7567 141.067,67.7461 144.395,67.6783" fill="#2b3fee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.0s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 145.487 69.1822;360 145.487 69.1822" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="377.337" cy="281.078" r="3.256" fill="#2b42ee" opacity="0">
+</polygon>
+  <polygon points="377.337,276.458 378.424,279.583 381.731,279.65 379.095,281.649 380.053,284.815 377.337,282.926 374.622,284.815 375.58,281.649 372.943,279.65 376.251,279.583" fill="#2b42ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.02s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="62.2102" cy="281.444" r="3.234" fill="#2b46ee" opacity="0">
+</polygon>
+  <polygon points="62.2102,276.851 63.2899,279.957 66.5779,280.024 63.9573,282.011 64.9096,285.159 62.2102,283.281 59.5108,285.159 60.4631,282.011 57.8425,280.024 61.1304,279.957" fill="#2b46ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.04s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="295.09" cy="67.6127" r="3.212" fill="#2b49ee" opacity="0">
+</polygon>
+  <polygon points="295.09,63.0477 296.163,66.1354 299.431,66.202 296.826,68.177 297.773,71.3059 295.09,69.4387 292.406,71.3059 293.353,68.177 290.748,66.202 294.016,66.1354" fill="#2b49ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.06s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="267.721" cy="383.617" r="3.19" fill="#2b4dee" opacity="0">
+</polygon>
+  <polygon points="267.721,379.079 268.788,382.148 272.036,382.215 269.447,384.178 270.388,387.288 267.721,385.432 265.054,387.288 265.995,384.178 263.406,382.215 266.654,382.148" fill="#2b4dee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.08s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="73.8216" cy="131.304" r="3.168" fill="#2b50ee" opacity="0">
+</polygon>
+  <polygon points="73.8216,126.794 74.882,129.844 78.1109,129.91 75.5373,131.861 76.4725,134.952 73.8216,133.108 71.1707,134.952 72.1059,131.861 69.5323,129.91 72.7612,129.844" fill="#2b50ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.1s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 73.8216 131.304;360 73.8216 131.304" keyTimes="0;1" dur="12.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="388.238" cy="186.554" r="3.146" fill="#2b54ee" opacity="0">
+</polygon>
+  <polygon points="388.238,182.071 389.292,185.103 392.501,185.169 389.943,187.108 390.872,190.18 388.238,188.347 385.603,190.18 386.532,187.108 383.975,185.169 387.184,185.103" fill="#2b54ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.12s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="118.216" cy="358.744" r="3.124" fill="#2b58ee" opacity="0">
+</polygon>
+  <polygon points="118.216,354.289 119.264,357.303 122.453,357.368 119.911,359.295 120.835,362.349 118.216,360.526 115.598,362.349 116.521,359.295 113.979,357.368 117.169,357.303" fill="#2b58ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.14s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="201.273" cy="48.3997" r="3.102" fill="#2b5bee" opacity="0">
+</polygon>
+  <polygon points="201.273,43.9722 202.314,46.9669 205.484,47.0315 202.958,48.9469 203.876,51.9816 201.273,50.1707 198.671,51.9816 199.589,48.9469 197.063,47.0315 200.232,46.9669" fill="#2b5bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.16s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="350.13" cy="334.241" r="3.08" fill="#2b5fee" opacity="0">
+</polygon>
+  <polygon points="350.13,329.841 351.164,332.817 354.314,332.882 351.803,334.785 352.716,337.801 350.13,336.001 347.543,337.801 348.456,334.785 345.945,332.882 349.095,332.817" fill="#2b5fee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.18s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="46.3375" cy="223.674" r="3.058" fill="#2b62ee" opacity="0">
+</polygon>
+  <polygon points="46.3375,219.302 47.3655,222.259 50.496,222.323 48.0009,224.215 48.9076,227.212 46.3375,225.423 43.7674,227.212 44.6741,224.215 42.179,222.323 45.3094,222.259" fill="#2b62ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.2s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 46.3375 223.674;360 46.3375 223.674" keyTimes="0;1" dur="10.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="345.961" cy="99.6119" r="3.036" fill="#2b66ee" opacity="0">
+</polygon>
+  <polygon points="345.961,95.2669 346.983,98.2058 350.094,98.2692 347.614,100.149 348.515,103.127 345.961,101.35 343.407,103.127 344.308,100.149 341.829,98.2692 344.94,98.2058" fill="#2b66ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.22s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="208.405" cy="394.392" r="3.014" fill="#2b69ee" opacity="0">
+</polygon>
+  <polygon points="208.405,390.074 209.42,392.995 212.511,393.058 210.047,394.926 210.942,397.885 208.405,396.119 205.867,397.885 206.762,394.926 204.298,393.058 207.39,392.995" fill="#2b69ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.24s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="110.416" cy="83.158" r="2.992" fill="#2b6dee" opacity="0">
+</polygon>
+  <polygon points="110.416,78.868 111.425,81.7698 114.496,81.8323 112.048,83.6883 112.938,86.6287 110.416,84.874 107.894,86.6287 108.784,83.6883 106.336,81.8323 109.407,81.7698" fill="#2b6dee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.2600000000000002s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="393.767" cy="246.963" r="2.97" fill="#2b71ee" opacity="0">
+</polygon>
+  <polygon points="393.767,242.7 394.769,245.583 397.82,245.645 395.388,247.489 396.272,250.411 393.767,248.668 391.261,250.411 392.145,247.489 389.713,245.645 392.764,245.583" fill="#2b71ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.2800000000000002s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="73.2138" cy="317.791" r="2.948" fill="#2b74ee" opacity="0">
+</polygon>
+  <polygon points="73.2138,313.556 74.2095,316.42 77.2415,316.482 74.8249,318.314 75.7031,321.217 73.2138,319.485 70.7245,321.217 71.6027,318.314 69.1861,316.482 72.2181,316.42" fill="#2b74ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.3000000000000003s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 73.2138 317.791;360 73.2138 317.791" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="262.307" cy="48.2247" r="2.926" fill="#2b78ee" opacity="0">
+</polygon>
+  <polygon points="262.307,44.0172 263.296,46.8631 266.308,46.9245 263.907,48.7448 264.78,51.6286 262.307,49.9077 259.833,51.6286 260.706,48.7448 258.305,46.9245 261.317,46.8631" fill="#2b78ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.3200000000000003s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="305.09" cy="375.704" r="2.904" fill="#2b7bee" opacity="0">
+</polygon>
+  <polygon points="305.09,371.524 306.073,374.351 309.065,374.412 306.68,376.221 307.547,379.086 305.09,377.376 302.633,379.086 303.5,376.221 301.115,374.412 304.107,374.351" fill="#2b7bee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.34s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="51.582" cy="162.495" r="2.882" fill="#2b7fee" opacity="0">
+</polygon>
+  <polygon points="51.582,158.343 52.5583,161.151 55.5313,161.212 53.1617,163.009 54.0228,165.855 51.582,164.156 49.1413,165.855 50.0023,163.009 47.6328,161.212 50.6057,161.151" fill="#2b7fee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.36s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="383.512" cy="148.427" r="2.86" fill="#2b82ee" opacity="0">
+</polygon>
+  <polygon points="383.512,144.302 384.482,147.093 387.435,147.153 385.081,148.937 385.937,151.765 383.512,150.077 381.087,151.765 381.943,148.937 379.589,147.153 382.542,147.093" fill="#2b82ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.38s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="147.565" cy="383.705" r="2.838" fill="#2b86ee" opacity="0">
+</polygon>
+  <polygon points="147.565,379.608 148.529,382.379 151.462,382.439 149.124,384.212 149.974,387.02 147.565,385.344 145.157,387.02 146.006,384.212 143.668,382.439 146.602,382.379" fill="#2b86ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.4s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 147.565 383.705;360 147.565 383.705" keyTimes="0;1" dur="12.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="162.664" cy="49.8643" r="2.816" fill="#2b8aee" opacity="0">
+</polygon>
+  <polygon points="162.664,45.7943 163.621,48.5472 166.534,48.6066 164.212,50.3673 165.056,53.157 162.664,51.4923 160.271,53.157 161.115,50.3673 158.793,48.6066 161.707,48.5472" fill="#2b8aee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.42s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="377.659" cy="306.975" r="2.794" fill="#2b8dee" opacity="0">
+</polygon>
+  <polygon points="377.659,302.933 378.609,305.667 381.504,305.726 379.197,307.475 380.035,310.245 377.659,308.592 375.283,310.245 376.121,307.475 373.814,305.726 376.709,305.667" fill="#2b8dee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.44s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="44.4911" cy="262.486" r="2.772" fill="#2b91ee" opacity="0">
+</polygon>
+  <polygon points="44.4911,258.471 45.4351,261.187 48.3096,261.245 46.0185,262.982 46.8511,265.734 44.4911,264.092 42.1311,265.734 42.9637,262.982 40.6726,261.245 43.5471,261.187" fill="#2b91ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.46s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="321.006" cy="69.6879" r="2.75" fill="#2b94ee" opacity="0">
+</polygon>
+  <polygon points="321.006,65.7004 321.943,68.3975 324.798,68.4557 322.522,70.1808 323.349,72.9139 321.006,71.2829 318.662,72.9139 319.489,70.1808 317.213,68.4557 320.068,68.3975" fill="#2b94ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.48s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="247.132" cy="399.575" r="2.728" fill="#2b98ee" opacity="0">
+</polygon>
+  <polygon points="247.132,395.615 248.064,398.293 250.899,398.351 248.639,400.064 249.46,402.778 247.132,401.159 244.805,402.778 245.626,400.064 243.366,398.351 246.201,398.293" fill="#2b98ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.5s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 247.132 399.575;360 247.132 399.575" keyTimes="0;1" dur="10.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="78.292" cy="105.591" r="2.706" fill="#2b9cee" opacity="0">
+</polygon>
+  <polygon points="78.292,101.658 79.2166,104.318 82.032,104.375 79.788,106.077 80.6035,108.772 78.292,107.164 75.9805,108.772 76.796,106.077 74.552,104.375 77.3674,104.318" fill="#2b9cee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.52s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="402.286" cy="208.608" r="2.684" fill="#2b9fee" opacity="0">
+</polygon>
+  <polygon points="402.286,204.703 403.204,207.344 406,207.401 403.772,209.091 404.582,211.767 402.286,210.17 399.991,211.767 400.801,209.091 398.572,207.401 401.368,207.344" fill="#2b9fee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.54s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="92.9269" cy="351.901" r="2.662" fill="#2ba3ee" opacity="0">
+</polygon>
+  <polygon points="92.9269,348.024 93.8385,350.646 96.6146,350.703 94.4019,352.38 95.206,355.038 92.9269,353.452 90.6477,355.038 91.4518,352.38 89.2391,350.703 92.0152,350.646" fill="#2ba3ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.56s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="224.616" cy="36.3929" r="2.64" fill="#2ba6ee" opacity="0">
+</polygon>
+  <polygon points="224.616,32.5429 225.521,35.147 228.277,35.2032 226.08,36.8688 226.878,39.5076 224.616,37.9329 222.353,39.5076 223.151,36.8688 220.954,35.2032 223.71,35.147" fill="#2ba6ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.58s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="340.955" cy="358.889" r="2.618" fill="#2baaee" opacity="0">
+</polygon>
+  <polygon points="340.955,355.066 341.854,357.652 344.591,357.707 342.41,359.361 343.202,361.981 340.955,360.418 338.709,361.981 339.501,359.361 337.32,357.707 340.057,357.652" fill="#2baaee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.6s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 340.955 358.889;360 340.955 358.889" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="36.4885" cy="199.234" r="2.596" fill="#2badee" opacity="0">
+</polygon>
+  <polygon points="36.4885,195.439 37.3808,198.006 40.0978,198.062 37.9322,199.703 38.7192,202.304 36.4885,200.752 34.2579,202.304 35.0448,199.703 32.8793,198.062 35.5963,198.006" fill="#2badee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.62s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="369.753" cy="111.054" r="2.574" fill="#2bb1ee" opacity="0">
+</polygon>
+  <polygon points="369.753,107.287 370.639,109.835 373.336,109.89 371.186,111.52 371.967,114.102 369.753,112.561 367.538,114.102 368.32,111.52 366.17,109.89 368.867,109.835" fill="#2bb1ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.64s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="183.067" cy="401.985" r="2.552" fill="#2bb5ee" opacity="0">
+</polygon>
+  <polygon points="183.067,398.245 183.947,400.775 186.624,400.829 184.49,402.447 185.266,405.011 183.067,403.481 180.869,405.011 181.645,402.447 179.51,400.829 182.188,400.775" fill="#2bb5ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.66s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="124.045" cy="60.4302" r="2.53" fill="#2bb8ee" opacity="0">
+</polygon>
+  <polygon points="124.045,56.7177 124.918,59.2288 127.576,59.283 125.457,60.8891 126.227,63.4337 124.045,61.9152 121.863,63.4337 122.633,60.8891 120.514,59.283 123.172,59.2288" fill="#2bb8ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.68s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="399.024" cy="272.988" r="2.508" fill="#2bbcee" opacity="0">
+</polygon>
+  <polygon points="399.024,269.303 399.89,271.796 402.528,271.85 400.426,273.444 401.19,275.97 399.024,274.462 396.858,275.97 397.622,273.444 395.519,271.85 398.157,271.796" fill="#2bbcee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.7s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 399.024 272.988;360 399.024 272.988" keyTimes="0;1" dur="12.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="51.7494" cy="302.076" r="2.486" fill="#2bbfee" opacity="0">
+</polygon>
+  <polygon points="51.7494,298.418 52.6094,300.892 55.2279,300.946 53.1408,302.528 53.8992,305.035 51.7494,303.539 49.5996,305.035 50.358,302.528 48.2709,300.946 50.8895,300.892" fill="#2bbfee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.72s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="288.805" cy="45.3634" r="2.464" fill="#2bc3ee" opacity="0">
+</polygon>
+  <polygon points="288.805,41.7334 289.659,44.1887 292.258,44.2417 290.186,45.8121 290.939,48.3001 288.805,46.8154 286.672,48.3001 287.424,45.8121 285.353,44.2417 287.952,44.1887" fill="#2bc3ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.74s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="287.408" cy="395.715" r="2.442" fill="#2bc6ee" opacity="0">
+</polygon>
+  <polygon points="287.408,392.112 288.255,394.549 290.834,394.601 288.779,396.16 289.526,398.629 287.408,397.156 285.291,398.629 286.038,396.16 283.982,394.601 286.561,394.549" fill="#2bc6ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.7600000000000002s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="51.1571" cy="135.744" r="2.42" fill="#2bcaee" opacity="0">
+</polygon>
+  <polygon points="51.1571,132.169 51.9977,134.588 54.5572,134.64 52.5171,136.186 53.2585,138.637 51.1571,137.174 49.0558,138.637 49.7971,136.186 47.7571,134.64 50.3166,134.588" fill="#2bcaee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.7800000000000002s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="401.89" cy="167.94" r="2.398" fill="#2bceee" opacity="0">
+</polygon>
+  <polygon points="401.89,164.392 402.724,166.792 405.264,166.844 403.24,168.378 403.975,170.81 401.89,169.359 399.805,170.81 400.541,168.378 398.516,166.844 401.056,166.792" fill="#2bceee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.8000000000000003s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 401.89 167.94;360 401.89 167.94" keyTimes="0;1" dur="10.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="120.786" cy="381.674" r="2.376" fill="#2bd1ee" opacity="0">
+</polygon>
+  <polygon points="120.786,378.154 121.614,380.535 124.134,380.586 122.126,382.109 122.855,384.521 120.786,383.082 118.717,384.521 119.447,382.109 117.439,380.586 119.959,380.535" fill="#2bd1ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.8200000000000003s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="183.855" cy="33.2845" r="2.354" fill="#2bd5ee" opacity="0">
+</polygon>
+  <polygon points="183.855,29.792 184.676,32.1543 187.177,32.2053 185.184,33.7162 185.908,36.11 183.855,34.6815 181.802,36.11 182.526,33.7162 180.533,32.2053 183.034,32.1543" fill="#2bd5ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.84s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="373.172" cy="333.556" r="2.332" fill="#2bd8ee" opacity="0">
+</polygon>
+  <polygon points="373.172,330.091 373.986,332.435 376.467,332.485 374.49,333.985 375.208,336.359 373.172,334.942 371.135,336.359 371.853,333.985 369.876,332.485 372.357,332.435" fill="#2bd8ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.86s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="29.8617" cy="239.783" r="2.31" fill="#2bdcee" opacity="0">
+</polygon>
+  <polygon points="29.8617,236.346 30.6699,238.671 33.131,238.721 31.1694,240.208 31.8822,242.564 29.8617,241.158 27.8412,242.564 28.554,240.208 26.5925,238.721 29.0535,238.671" fill="#2bdcee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.88s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="347.164" cy="76.6103" r="2.288" fill="#2bdfee" opacity="0">
+</polygon>
+  <polygon points="347.164,73.2003 347.966,75.5068 350.407,75.5565 348.461,77.0318 349.169,79.369 347.164,77.9743 345.16,79.369 345.867,77.0318 343.921,75.5565 346.362,75.5068" fill="#2bdfee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.9s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 347.164 76.6103;360 347.164 76.6103" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
-</circle>
-  <circle cx="223.099" cy="412.118" r="2.266" fill="#2be3ee" opacity="0">
+</polygon>
+  <polygon points="223.099,408.735 223.894,411.023 226.315,411.072 224.385,412.536 225.087,414.854 223.099,413.471 221.11,414.854 221.812,412.536 219.882,411.072 222.303,411.023" fill="#2be3ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.92s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="87.6076" cy="80.0772" r="2.244" fill="#2be7ee" opacity="0">
+</polygon>
+  <polygon points="87.6076,76.7222 88.3964,78.9915 90.7983,79.0404 88.8839,80.4919 89.5796,82.7915 87.6076,81.4192 85.6355,82.7915 86.3312,80.4919 84.4168,79.0404 86.8187,78.9915" fill="#2be7ee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.94s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="412.623" cy="233.78" r="2.222" fill="#2beaee" opacity="0">
+</polygon>
+  <polygon points="412.623,230.453 413.405,232.704 415.788,232.752 413.889,234.192 414.579,236.472 412.623,235.111 410.667,236.472 411.357,234.192 409.458,232.752 411.841,232.704" fill="#2beaee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.96s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
-  <circle cx="68.2769" cy="340.254" r="2.2" fill="#2beeee" opacity="0">
+</polygon>
+  <polygon points="68.2769,336.954 69.0528,339.186 71.4154,339.234 69.5323,340.662 70.2166,342.924 68.2769,341.574 66.3373,342.924 67.0216,340.662 65.1385,339.234 67.5011,339.186" fill="#2beeee" opacity="0">
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.98s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
-</circle>
+</polygon>
 </svg>
