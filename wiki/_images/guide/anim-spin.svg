@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="240" height="160" viewBox="0 0 240 160">
   <rect width="100%" height="100%" fill="#1a1a2e" />
-  <rect x="87.5" y="37.5" width="65" height="65" fill="dodgerblue" stroke="white" stroke-width="2">
-  <animateTransform attributeName="transform" type="rotate" values="0 120 70;360 120 70" keyTimes="0;1" dur="2.5s" fill="freeze" repeatCount="indefinite" additive="sum" />
+  <rect x="74.4" y="38.4" width="91.2" height="60.8" fill="dodgerblue" stroke="white" stroke-width="2">
+  <animateTransform attributeName="transform" type="rotate" values="0 120 68.8;360 120 68.8" keyTimes="0;1" dur="2.5s" fill="freeze" repeatCount="indefinite" additive="sum" />
 </rect>
-  <text x="120" y="140" font-size="11" font-family="sans-serif" font-style="normal" font-weight="normal" fill="gray" text-anchor="middle" dominant-baseline="middle">.spin(360, repeat=True)</text>
+  <text x="120" y="140.8" font-size="10.4" font-family="sans-serif" font-style="normal" font-weight="normal" fill="gray" text-anchor="middle" dominant-baseline="middle">.spin(360, repeat=True)</text>
 </svg>

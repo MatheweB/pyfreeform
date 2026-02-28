@@ -540,6 +540,76 @@ def _check_anim_compatibility(
     return template
 
 
+# ── Resampling for mixed-timing reactive animations ───────────────────
+
+
+def _compute_cycle_duration(
+    anims: list[PropertyAnimation],
+) -> tuple[float, bool]:
+    """Compute a unified cycle duration and repeat flag for mixed-timing animations.
+
+    Returns:
+        (duration, all_repeat): The cycle duration in seconds and whether
+        all animations repeat (so the unified animation should too).
+    """
+    if not anims:
+        return (1.0, False)
+
+    all_repeat = all(a.repeat for a in anims)
+
+    if not all_repeat:
+        # Use the max end time (delay + duration)
+        return (max(a.delay + a.duration for a in anims), False)
+
+    # For repeating animations, compute practical LCM of durations
+    # so the unified cycle covers full cycles of every animation.
+    durations = [a.duration for a in anims if a.duration > 0]
+    if not durations:
+        return (1.0, True)
+
+    # Convert to centiseconds for integer LCM (avoids float imprecision)
+    cs_values = [max(1, round(d * 100)) for d in durations]
+    result = cs_values[0]
+    for v in cs_values[1:]:
+        result = abs(result * v) // math.gcd(result, v)
+
+    # Cap at 30 seconds to avoid huge SVGs
+    return (min(result / 100.0, 30.0), True)
+
+
+def _build_resampled_animate(
+    svg_attr: str,
+    val_list: list[str],
+    key_times: list[float],
+    duration: float,
+    delay: float,
+    repeat: bool | int,
+) -> str:
+    """Build an ``<animate>`` from pre-computed, pre-eased sample values.
+
+    Unlike ``_build_reactive_animate`` which uses a template animation,
+    this builds from explicit parameters. Easing and bounce are already
+    baked into the sampled values, so ``calcMode="linear"`` is used.
+    """
+    n_segments = max(1, len(val_list) - 1)
+
+    parts = [f'<animate attributeName="{svg_attr}"']
+    parts.append(f' values="{";".join(val_list)}"')
+    parts.append(f' keyTimes="{";".join(svg_num(t) for t in key_times)}"')
+    parts.append(f' dur="{duration}s"')
+    if delay > 0:
+        parts.append(f' begin="{delay}s"')
+    # calcMode="linear" — easing is pre-baked into the sampled values
+    # (no keySplines needed)
+    if repeat is True:
+        parts.append(' repeatCount="indefinite"')
+    elif isinstance(repeat, int) and repeat > 1:
+        parts.append(f' repeatCount="{repeat}"')
+    parts.append(' fill="freeze"')
+    parts.append(" />")
+    return "".join(parts)
+
+
 def _connection_path_d_at(conn: Connection, start: Coord, end: Coord) -> str:
     """Compute connection SVG path ``d`` for arbitrary start/end points."""
     if conn._shape_kind == "line":
@@ -818,35 +888,65 @@ class SMILRenderer(SVGRenderer):
         if not all_rx_anims:
             return []
 
+        # Fast path: all animations share identical timing
         template = _check_anim_compatibility(all_rx_anims)
-        if template is None:
-            return []
+        if template is not None:
+            n_keyframes = len(template.keyframes)
+            val_list: list[str] = []
+            for k in range(n_keyframes):
+                pts: list[str] = []
+                for pair, spec in vertex_info:
+                    if isinstance(spec, Coord):
+                        pts.append(f"{svg_num(spec.x)},{svg_num(spec.y)}")
+                    elif pair is not None:
+                        entity = spec if isinstance(spec, _Entity) else spec[0]
+                        ax, ay = _resolve_abs_at_keyframe(
+                            entity, pair[0].keyframes[k].value, pair[1].keyframes[k].value,
+                        )
+                        pts.append(f"{svg_num(ax)},{svg_num(ay)}")
+                    else:
+                        if isinstance(spec, _Entity):
+                            pos = spec.position
+                        else:
+                            pos = spec[0].anchor(spec[1])
+                        pts.append(f"{svg_num(pos.x)},{svg_num(pos.y)}")
+                val_list.append(" ".join(pts))
+            return [_build_reactive_animate("points", val_list, template)]
 
-        n_keyframes = len(template.keyframes)
+        # Slow path: mixed timing — resample all animations onto a unified timeline.
+        # Each vertex's easing/bounce/repeat is baked into the sampled values.
+        all_anims = []
+        for pair, _ in vertex_info:
+            if pair is not None:
+                all_anims.extend(pair)
+        cycle, all_repeat = _compute_cycle_duration(all_anims)
+        n_samples = max(2, min(120, int(cycle * 20)))
 
-        # Build a points string for each keyframe
-        val_list: list[str] = []
-        for k in range(n_keyframes):
+        val_list_r: list[str] = []
+        key_times: list[float] = []
+        for i in range(n_samples):
+            t = i * cycle / (n_samples - 1) if n_samples > 1 else 0.0
+            key_times.append(t / cycle if cycle > 0 else 0.0)
             pts: list[str] = []
             for pair, spec in vertex_info:
                 if isinstance(spec, Coord):
                     pts.append(f"{svg_num(spec.x)},{svg_num(spec.y)}")
                 elif pair is not None:
                     entity = spec if isinstance(spec, _Entity) else spec[0]
-                    ax, ay = _resolve_abs_at_keyframe(
-                        entity, pair[0].keyframes[k].value, pair[1].keyframes[k].value,
-                    )
+                    rx = pair[0].evaluate(t)
+                    ry = pair[1].evaluate(t)
+                    ax, ay = _resolve_abs_at_keyframe(entity, rx, ry)
                     pts.append(f"{svg_num(ax)},{svg_num(ay)}")
                 else:
-                    # Entity ref with no move animation — constant position
                     if isinstance(spec, _Entity):
                         pos = spec.position
                     else:
                         pos = spec[0].anchor(spec[1])
                     pts.append(f"{svg_num(pos.x)},{svg_num(pos.y)}")
-            val_list.append(" ".join(pts))
+            val_list_r.append(" ".join(pts))
 
-        return [_build_reactive_animate("points", val_list, template)]
+        return [_build_resampled_animate("points", val_list_r, key_times,
+                                         cycle, 0.0, all_repeat)]
 
     def render_polygon(self, polygon: Polygon) -> str:
         reactive = self._reactive_polygon_anims(polygon)
@@ -1001,15 +1101,30 @@ class SMILRenderer(SVGRenderer):
         if end_pair:
             rx_anims.append(end_pair[0])
 
+        # Fast path: identical timing on all endpoints
         template = _check_anim_compatibility(rx_anims)
-        if template is None:
-            return []
+        if template is not None:
+            n_kf = len(template.keyframes)
+            if conn._shape_kind == "line":
+                return self._reactive_line_anims(conn, start_pair, end_pair, template, n_kf)
+            return self._reactive_path_anims(conn, start_pair, end_pair, template, n_kf)
 
-        n_kf = len(template.keyframes)
+        # Slow path: mixed timing — resample onto unified timeline
+        all_anims: list[PropertyAnimation] = []
+        if start_pair:
+            all_anims.extend(start_pair)
+        if end_pair:
+            all_anims.extend(end_pair)
+        cycle, all_repeat = _compute_cycle_duration(all_anims)
+        n_samples = max(2, min(120, int(cycle * 20)))
 
         if conn._shape_kind == "line":
-            return self._reactive_line_anims(conn, start_pair, end_pair, template, n_kf)
-        return self._reactive_path_anims(conn, start_pair, end_pair, template, n_kf)
+            return self._reactive_line_anims_resampled(
+                conn, start_pair, end_pair, cycle, n_samples, all_repeat,
+            )
+        return self._reactive_path_anims_resampled(
+            conn, start_pair, end_pair, cycle, n_samples, all_repeat,
+        )
 
     def _reactive_line_anims(
         self, conn: Connection,
@@ -1072,6 +1187,78 @@ class SMILRenderer(SVGRenderer):
             d_vals.append(_connection_path_d_at(conn, start_k, end_k))
 
         return [_build_reactive_animate("d", d_vals, template)]
+
+    # ── Resampled reactive connection methods (mixed timing) ──────────
+
+    def _eval_endpoint_at(
+        self, entity: Any,
+        pair: tuple[PropertyAnimation, PropertyAnimation] | None,
+        fallback: Coord, t: float,
+    ) -> Coord:
+        """Evaluate a connection endpoint at time *t*, returning absolute Coord."""
+        if pair is None:
+            return fallback
+        rx = pair[0].evaluate(t)
+        ry = pair[1].evaluate(t)
+        ax, ay = _resolve_abs_at_keyframe(entity, rx, ry)
+        return Coord(ax, ay)
+
+    def _reactive_line_anims_resampled(
+        self, conn: Connection,
+        start_pair: tuple[PropertyAnimation, PropertyAnimation] | None,
+        end_pair: tuple[PropertyAnimation, PropertyAnimation] | None,
+        cycle: float, n_samples: int, all_repeat: bool,
+    ) -> list[str]:
+        """Resampled x1/y1/x2/y2 animations for mixed-timing line connections."""
+        result: list[str] = []
+        key_times: list[float] = []
+        x1_vals: list[str] = []
+        y1_vals: list[str] = []
+        x2_vals: list[str] = []
+        y2_vals: list[str] = []
+
+        for i in range(n_samples):
+            t = i * cycle / (n_samples - 1) if n_samples > 1 else 0.0
+            key_times.append(t / cycle if cycle > 0 else 0.0)
+
+            sp = self._eval_endpoint_at(conn._start, start_pair, conn.start_point, t)
+            ep = self._eval_endpoint_at(conn._end, end_pair, conn.end_point, t)
+
+            if start_pair:
+                x1_vals.append(svg_num(sp.x))
+                y1_vals.append(svg_num(sp.y))
+            if end_pair:
+                x2_vals.append(svg_num(ep.x))
+                y2_vals.append(svg_num(ep.y))
+
+        if start_pair:
+            result.append(_build_resampled_animate("x1", x1_vals, key_times, cycle, 0.0, all_repeat))
+            result.append(_build_resampled_animate("y1", y1_vals, key_times, cycle, 0.0, all_repeat))
+        if end_pair:
+            result.append(_build_resampled_animate("x2", x2_vals, key_times, cycle, 0.0, all_repeat))
+            result.append(_build_resampled_animate("y2", y2_vals, key_times, cycle, 0.0, all_repeat))
+
+        return result
+
+    def _reactive_path_anims_resampled(
+        self, conn: Connection,
+        start_pair: tuple[PropertyAnimation, PropertyAnimation] | None,
+        end_pair: tuple[PropertyAnimation, PropertyAnimation] | None,
+        cycle: float, n_samples: int, all_repeat: bool,
+    ) -> list[str]:
+        """Resampled ``d`` animation for mixed-timing curved connections."""
+        d_vals: list[str] = []
+        key_times: list[float] = []
+
+        for i in range(n_samples):
+            t = i * cycle / (n_samples - 1) if n_samples > 1 else 0.0
+            key_times.append(t / cycle if cycle > 0 else 0.0)
+
+            sp = self._eval_endpoint_at(conn._start, start_pair, conn.start_point, t)
+            ep = self._eval_endpoint_at(conn._end, end_pair, conn.end_point, t)
+            d_vals.append(_connection_path_d_at(conn, sp, ep))
+
+        return [_build_resampled_animate("d", d_vals, key_times, cycle, 0.0, all_repeat)]
 
     def render_connection(self, conn: Connection) -> str:
         reactive = self._reactive_connection_anims(conn)

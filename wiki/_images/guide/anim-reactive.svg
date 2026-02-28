@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="160" viewBox="0 0 360 160">
+  <rect width="100%" height="100%" fill="#1a1a2e" />
+  <line x1="223.2" y1="32" x2="331.2" y2="112" stroke="skyblue" stroke-width="2" stroke-linecap="round">
+  <animate attributeName="x1" values="223.2;270;223.2" keyTimes="0;0.5;1" dur="2.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
+  <animate attributeName="y1" values="32;112;32" keyTimes="0;0.5;1" dur="2.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
+  <animate attributeName="x2" values="331.2;288;331.2" keyTimes="0;0.5;1" dur="2.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
+  <animate attributeName="y2" values="112;28.8;112" keyTimes="0;0.5;1" dur="2.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
+</line>
+  <polygon points="36,19.2 36,115.2 151.2,115.2 151.2,19.2" fill="mediumpurple" stroke="white" stroke-width="1" fill-opacity="0.7" stroke-opacity="0.7">
+  <animate attributeName="points" values="36,19.2 36,115.2 151.2,115.2 151.2,19.2;72,44.8 57.6,92.8 172.8,92.8 187.2,44.8;36,19.2 36,115.2 151.2,115.2 151.2,19.2" keyTimes="0;0.5;1" dur="2.0s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
+</polygon>
+  <circle cx="36" cy="19.2" r="3.2" fill="white">
+  <animate attributeName="cx" values="36;72;36" keyTimes="0;0.5;1" dur="2.0s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
+  <animate attributeName="cy" values="19.2;44.8;19.2" keyTimes="0;0.5;1" dur="2.0s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
+</circle>
+  <circle cx="36" cy="115.2" r="3.2" fill="white">
+  <animate attributeName="cx" values="36;57.6;36" keyTimes="0;0.5;1" dur="2.0s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
+  <animate attributeName="cy" values="115.2;92.8;115.2" keyTimes="0;0.5;1" dur="2.0s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
+</circle>
+  <circle cx="151.2" cy="115.2" r="3.2" fill="white">
+  <animate attributeName="cx" values="151.2;172.8;151.2" keyTimes="0;0.5;1" dur="2.0s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
+  <animate attributeName="cy" values="115.2;92.8;115.2" keyTimes="0;0.5;1" dur="2.0s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
+</circle>
+  <circle cx="151.2" cy="19.2" r="3.2" fill="white">
+  <animate attributeName="cx" values="151.2;187.2;151.2" keyTimes="0;0.5;1" dur="2.0s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
+  <animate attributeName="cy" values="19.2;44.8;19.2" keyTimes="0;0.5;1" dur="2.0s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
+</circle>
+  <circle cx="223.2" cy="32" r="4.8" fill="coral">
+  <animate attributeName="cx" values="223.2;270;223.2" keyTimes="0;0.5;1" dur="2.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
+  <animate attributeName="cy" values="32;112;32" keyTimes="0;0.5;1" dur="2.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
+</circle>
+  <circle cx="331.2" cy="112" r="4.8" fill="gold">
+  <animate attributeName="cx" values="331.2;288;331.2" keyTimes="0;0.5;1" dur="2.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
+  <animate attributeName="cy" values="112;28.8;112" keyTimes="0;0.5;1" dur="2.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
+</circle>
+  <text x="180" y="147.2" font-size="9.6" font-family="sans-serif" font-style="normal" font-weight="normal" fill="gray" text-anchor="middle" dominant-baseline="middle">vertices + endpoints react to .move()</text>
+</svg>

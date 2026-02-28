@@ -860,8 +860,8 @@ class TestReactivePolygonAnimation:
         # Static coords should appear in the values (constant across keyframes)
         assert "100,100" in svg
 
-    def test_incompatible_vertex_anims_no_reactive(self):
-        """Vertices with different durations produce no reactive animation."""
+    def test_incompatible_vertex_anims_resampled(self):
+        """Vertices with different durations produce resampled reactive animation."""
         scene = Scene(200, 200)
         a = Point(0, 0)
         b = Point(0, 0)
@@ -874,7 +874,8 @@ class TestReactivePolygonAnimation:
         poly = Polygon([a, b, c], fill="red")
         scene.place(poly)
         svg = SMILRenderer().render_entity(poly)
-        assert '<animate attributeName="points"' not in svg
+        # Mixed timing now produces a resampled reactive animation
+        assert '<animate attributeName="points"' in svg
 
     def test_own_animations_coexist(self):
         """Polygon's own opacity animation + reactive vertex animation both appear."""
