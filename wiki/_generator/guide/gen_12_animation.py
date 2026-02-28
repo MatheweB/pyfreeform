@@ -213,7 +213,8 @@ def generate():
     zz = Zigzag(start=(w * 0.06, h * 0.77), end=(w * 0.48, h * 0.77),
                 amplitude=h * 0.07, teeth=5)
     cell.add_path(zz, width=2, color="skyblue") \
-        .draw(duration=2.5, easing="ease-in-out")
+        .draw(duration=2.0, easing="ease-in-out",
+              bounce=True, repeat=True)
 
     # Self-drawing wave
     wv = Wave(start=(w * 0.52, h * 0.77), end=(w * 0.96, h * 0.77),

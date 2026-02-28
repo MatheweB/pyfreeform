@@ -323,8 +323,9 @@ class TestSMILRenderer:
         p = Path(Wave(), width=2, color="blue")
         p.draw(duration=2.0)
         svg = SMILRenderer().render_entity(p)
-        assert "stroke-dasharray" in svg
-        assert "stroke-dashoffset" in svg
+        assert 'pathLength="1"' in svg
+        assert 'stroke-dasharray="1"' in svg
+        assert 'stroke-dashoffset="1"' in svg
         assert "<animate" in svg
 
     def test_easing_produces_key_splines(self):
@@ -680,7 +681,7 @@ class TestBounceSMIL:
         assert "keySplines" not in svg
 
     def test_draw_bounce_values(self):
-        """bounce=True on draw() produces forward-then-reverse dashoffset."""
+        """bounce=True on draw() produces normalized forward-then-reverse dashoffset."""
         from pyfreeform.paths import Wave
         wave = Wave(start=(0, 0), end=(100, 0), amplitude=30, frequency=2)
         path = Path(wave, width=2, color="red")
@@ -688,8 +689,8 @@ class TestBounceSMIL:
         scene.place(path)
         path.draw(duration=2.0, bounce=True, repeat=True)
         svg = SMILRenderer().render_entity(path)
-        # Should have 3 values (forward;peak;forward) for dashoffset
-        assert 'values="' in svg
+        # Normalized to [0, 1] via pathLength="1"
+        assert 'values="1;0;1"' in svg
         assert 'keyTimes="0;0.5;1"' in svg
 
     def test_rotation_bounce(self):

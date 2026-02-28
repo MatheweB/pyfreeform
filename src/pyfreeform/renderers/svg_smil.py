@@ -312,14 +312,16 @@ def _render_motion_smil(anim: MotionAnimation) -> str:
 def _render_draw_smil(anim: DrawAnimation, entity: Entity) -> str:
     """Render a DrawAnimation as stroke-dashoffset ``<animate>``.
 
-    The parent element must have stroke-dasharray set to the path length.
+    Uses ``pathLength="1"`` on the parent element so dash values are
+    normalized to ``[0, 1]`` — no arc-length mismatch between Python
+    and the browser, which eliminates round-cap flash artifacts.
     """
     length = entity.arc_length() if hasattr(entity, "arc_length") else 0
     if length <= 0:
         return ""
 
-    from_val = svg_num(length) if not anim.reverse else "0"
-    to_val = "0" if not anim.reverse else svg_num(length)
+    from_val = "1" if not anim.reverse else "0"
+    to_val = "0" if not anim.reverse else "1"
 
     if anim.bounce:
         return build_animate_element(
@@ -402,15 +404,20 @@ class SMILRenderer(SVGRenderer):
         return None
 
     def _draw_attrs(self, entity: Entity | Connection) -> str:
-        """Build stroke-dasharray/offset attrs for draw animation."""
+        """Build pathLength/stroke-dasharray/offset attrs for draw animation.
+
+        Uses ``pathLength="1"`` so all dash values are normalized to
+        ``[0, 1]``, eliminating arc-length precision mismatches between
+        Python and the browser (which cause round-cap flash artifacts).
+        """
         length = entity.arc_length() if hasattr(entity, "arc_length") else 0
         if length <= 0:
             return ""
         draw_anim = self._has_draw_animation(entity)
         if draw_anim is None:
             return ""
-        offset = svg_num(length) if not draw_anim.reverse else "0"
-        return f' stroke-dasharray="{svg_num(length)}" stroke-dashoffset="{offset}"'
+        offset = "1" if not draw_anim.reverse else "0"
+        return f' pathLength="1" stroke-dasharray="1" stroke-dashoffset="{offset}"'
 
     # ------------------------------------------------------------------
     # Overridden entity renderers (animation-aware)
