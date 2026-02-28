@@ -3,378 +3,378 @@
   <rect width="100%" height="100%" fill="#0a0a1a" />
   <circle cx="239.4" cy="210" r="4.2" fill="coral">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="230.789" cy="230.789" r="4.2" fill="coral">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.05s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="210" cy="239.4" r="4.2" fill="coral">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.1s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="0.1s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="0.1s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="189.211" cy="230.789" r="4.2" fill="coral">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.15000000000000002s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="180.6" cy="210" r="4.2" fill="coral">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.2s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="0.2s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="0.2s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="189.211" cy="189.211" r="4.2" fill="coral">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.25s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="210" cy="180.6" r="4.2" fill="coral">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.30000000000000004s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="0.30000000000000004s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="0.30000000000000004s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="230.789" cy="189.211" r="4.2" fill="coral">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.35000000000000003s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="268.14" cy="218.787" r="4.2" fill="gold">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.3s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="0.3s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="0.3s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="255.957" cy="246.68" r="4.2" fill="gold">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.35s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="231.46" cy="264.744" r="4.2" fill="gold">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.4s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="0.4s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="0.4s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="201.213" cy="268.14" r="4.2" fill="gold">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.45s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="173.32" cy="255.957" r="4.2" fill="gold">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="0.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="0.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="155.256" cy="231.46" r="4.2" fill="gold">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.55s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="151.86" cy="201.213" r="4.2" fill="gold">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.6000000000000001s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="0.6000000000000001s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="0.6000000000000001s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="164.043" cy="173.32" r="4.2" fill="gold">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.65s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="188.54" cy="155.256" r="4.2" fill="gold">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.7s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="0.7s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="0.7s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="218.787" cy="151.86" r="4.2" fill="gold">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.75s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="246.68" cy="164.043" r="4.2" fill="gold">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.8s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="0.8s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="0.8s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="264.744" cy="188.54" r="4.2" fill="gold">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.8500000000000001s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="294.261" cy="236.065" r="4.2" fill="#ff6b9d">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.6s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="0.6s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="0.6s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="277.872" cy="266.326" r="4.2" fill="#ff6b9d">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.65s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="251.151" cy="288.012" r="4.2" fill="#ff6b9d">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.7s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="0.7s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="0.7s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="218.164" cy="297.821" r="4.2" fill="#ff6b9d">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.75s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="183.935" cy="294.261" r="4.2" fill="#ff6b9d">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.8s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="0.8s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="0.8s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="153.674" cy="277.872" r="4.2" fill="#ff6b9d">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.85s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="131.988" cy="251.151" r="4.2" fill="#ff6b9d">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.9s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="0.9s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="0.9s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="122.179" cy="218.164" r="4.2" fill="#ff6b9d">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.95s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="125.739" cy="183.935" r="4.2" fill="#ff6b9d">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.0s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="1.0s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="1.0s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="142.128" cy="153.674" r="4.2" fill="#ff6b9d">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.05s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="168.849" cy="131.988" r="4.2" fill="#ff6b9d">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.1s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="1.1s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="1.1s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="201.836" cy="122.179" r="4.2" fill="#ff6b9d">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.15s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="236.065" cy="125.739" r="4.2" fill="#ff6b9d">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.2000000000000002s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="1.2000000000000002s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="1.2000000000000002s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="266.326" cy="142.128" r="4.2" fill="#ff6b9d">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.25s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="288.012" cy="168.849" r="4.2" fill="#ff6b9d">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.3s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="1.3s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="1.3s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="297.821" cy="201.836" r="4.2" fill="#ff6b9d">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.35s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="315.893" cy="261.152" r="4.2" fill="skyblue">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.8999999999999999s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="0.8999999999999999s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="0.8999999999999999s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="294.903" cy="291.371" r="4.2" fill="skyblue">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.95s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="265.603" cy="313.625" r="4.2" fill="skyblue">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="0.9999999999999999s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="0.9999999999999999s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="0.9999999999999999s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="230.859" cy="325.735" r="4.2" fill="skyblue">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.0499999999999998s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="194.074" cy="326.517" r="4.2" fill="skyblue">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.0999999999999999s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="1.0999999999999999s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="1.0999999999999999s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="158.848" cy="315.893" r="4.2" fill="skyblue">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.15s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="128.629" cy="294.903" r="4.2" fill="skyblue">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.2s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="1.2s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="1.2s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="106.375" cy="265.603" r="4.2" fill="skyblue">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.25s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="94.2647" cy="230.859" r="4.2" fill="skyblue">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.2999999999999998s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="1.2999999999999998s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="1.2999999999999998s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="93.4834" cy="194.074" r="4.2" fill="skyblue">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.3499999999999999s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="104.107" cy="158.848" r="4.2" fill="skyblue">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.4s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="1.4s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="1.4s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="125.097" cy="128.629" r="4.2" fill="skyblue">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.45s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="154.397" cy="106.375" r="4.2" fill="skyblue">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="1.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="1.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="189.141" cy="94.2647" r="4.2" fill="skyblue">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.5499999999999998s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="225.926" cy="93.4834" r="4.2" fill="skyblue">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.6s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="1.6s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="1.6s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="261.152" cy="104.107" r="4.2" fill="skyblue">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.65s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="291.371" cy="125.097" r="4.2" fill="skyblue">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.7s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="1.7s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="1.7s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="313.625" cy="154.397" r="4.2" fill="skyblue">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.75s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="325.735" cy="189.141" r="4.2" fill="skyblue">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.7999999999999998s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="1.7999999999999998s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="1.7999999999999998s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="326.517" cy="225.926" r="4.2" fill="skyblue">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.85s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="331.324" cy="293.002" r="4.2" fill="mediumpurple">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.2s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="1.2s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="1.2s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="305.708" cy="321.575" r="4.2" fill="mediumpurple">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.25s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="273.569" cy="342.544" r="4.2" fill="mediumpurple">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.3s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="1.3s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="1.3s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="237.098" cy="354.481" r="4.2" fill="mediumpurple">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.35s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="198.78" cy="356.571" r="4.2" fill="mediumpurple">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.4s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="1.4s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="1.4s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="161.227" cy="348.673" r="4.2" fill="mediumpurple">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.45s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="126.998" cy="331.324" r="4.2" fill="mediumpurple">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="1.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="1.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="98.4247" cy="305.708" r="4.2" fill="mediumpurple">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.55s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="77.4556" cy="273.569" r="4.2" fill="mediumpurple">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.6s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="1.6s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="1.6s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="65.5191" cy="237.098" r="4.2" fill="mediumpurple">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.65s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="63.4288" cy="198.78" r="4.2" fill="mediumpurple">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.7s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="1.7s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="1.7s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="71.3271" cy="161.227" r="4.2" fill="mediumpurple">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.75s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="88.6757" cy="126.998" r="4.2" fill="mediumpurple">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.8s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="1.8s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="1.8s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="114.292" cy="98.4247" r="4.2" fill="mediumpurple">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.85s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="146.431" cy="77.4556" r="4.2" fill="mediumpurple">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.9s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="1.9s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="1.9s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="182.902" cy="65.5191" r="4.2" fill="mediumpurple">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.95s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="221.22" cy="63.4288" r="4.2" fill="mediumpurple">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="2.0s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="2.0s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="2.0s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="258.773" cy="71.3271" r="4.2" fill="mediumpurple">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="2.05s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="293.002" cy="88.6757" r="4.2" fill="mediumpurple">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="2.1s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="2.1s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="2.1s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="321.575" cy="114.292" r="4.2" fill="mediumpurple">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="2.15s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="342.544" cy="146.431" r="4.2" fill="mediumpurple">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="2.2s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="2.2s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="2.2s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="354.481" cy="182.902" r="4.2" fill="mediumpurple">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="2.25s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="356.571" cy="221.22" r="4.2" fill="mediumpurple">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="2.3s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="2.3s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="2.3s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="348.673" cy="258.773" r="4.2" fill="mediumpurple">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="2.35s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="339.07" cy="330.241" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="1.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="1.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="309.078" cy="355.947" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.55s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="274.117" cy="374.335" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.6s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="1.6s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="1.6s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="235.942" cy="384.482" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.65s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="196.466" cy="385.88" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.7s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="1.7s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="1.7s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="157.668" cy="378.459" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.75s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="121.494" cy="362.59" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.8s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="1.8s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="1.8s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="89.7589" cy="339.07" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.85s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="64.0529" cy="309.078" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.9s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="1.9s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="1.9s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="45.6652" cy="274.117" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="1.95s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="35.518" cy="235.942" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="2.0s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="2.0s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="2.0s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="34.12" cy="196.466" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="2.05s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="41.5414" cy="157.668" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="2.1s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="2.1s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="2.1s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="57.41" cy="121.494" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="2.15s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="80.9301" cy="89.7589" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="2.2s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="2.2s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="2.2s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="110.922" cy="64.0529" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="2.25s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="145.883" cy="45.6652" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="2.3s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="2.3s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="2.3s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="184.058" cy="35.518" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="2.35s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="223.534" cy="34.12" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="2.4s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="2.4s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="2.4s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="262.332" cy="41.5414" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="2.45s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="298.506" cy="57.41" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="2.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="2.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="2.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="330.241" cy="80.9301" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="2.55s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="355.947" cy="110.922" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="2.6s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="2.6s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="2.6s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="374.335" cy="145.883" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="2.6500000000000004s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="384.482" cy="184.058" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="2.7s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="2.7s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="2.7s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="385.88" cy="223.534" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="2.75s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="378.459" cy="262.332" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="2.8s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" begin="2.8s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="1;0.3;1" keyTimes="0;0.5;1" dur="2.0s" begin="2.8s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
   <circle cx="362.59" cy="298.506" r="4.2" fill="limegreen">
   <animate attributeName="r" values="4.2;10;4.2" keyTimes="0;0.5;1" dur="2.0s" begin="2.85s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />

@@ -13,13 +13,14 @@ from wiki._generator import save
 
 
 def generate():
-    # --- 1. Fade: coral dot fading out ---
+    # --- 1. Fade: coral dot pulsing opacity ---
     scene = Scene.with_grid(cols=1, rows=1, cell_width=240, cell_height=160,
                             background="#1a1a2e")
     cell = scene.grid[0][0]
     cell.add_dot(at=(0.5, 0.43), radius=0.2, color="coral") \
-        .fade(to=0.0, duration=3.0, easing="ease-in-out")
-    cell.add_text(".fade(to=0.0, duration=3.0)", at=(0.5, 0.88),
+        .fade(to=0.0, duration=3.0, easing="ease-in-out",
+              bounce=True, repeat=True)
+    cell.add_text(".fade(to=0.0, bounce=True)", at=(0.5, 0.88),
                   font_size=0.065, color="gray")
     save(scene, "guide/anim-fade.svg")
 
@@ -34,7 +35,7 @@ def generate():
                   font_size=0.065, color="gray")
     save(scene, "guide/anim-spin.svg")
 
-    # --- 3. Draw: wave drawing itself ---
+    # --- 3. Draw: wave drawing and undrawing ---
     scene = Scene.with_grid(cols=1, rows=1, cell_width=360, cell_height=140,
                             background="#1a1a2e")
     cell = scene.grid[0][0]
@@ -42,12 +43,12 @@ def generate():
     wave = Wave(start=(w * 0.08, h * 0.4), end=(w * 0.92, h * 0.4),
                 amplitude=h * 0.28, frequency=3)
     cell.add_path(wave, width=3, color="limegreen") \
-        .draw(duration=2.5, easing="ease-in-out")
-    cell.add_text(".draw(duration=2.5)", at=(0.5, 0.88),
+        .draw(duration=2.5, easing="ease-in-out", bounce=True, repeat=True)
+    cell.add_text(".draw(bounce=True)", at=(0.5, 0.88),
                   font_size=0.075, color="gray")
     save(scene, "guide/anim-draw.svg")
 
-    # --- 4. Easing: four dots racing across with different curves ---
+    # --- 4. Easing: four dots sliding back and forth with different curves ---
     scene = Scene.with_grid(cols=1, rows=1, cell_width=440, cell_height=210,
                             background="#1a1a2e")
     cell = scene.grid[0][0]
@@ -58,20 +59,22 @@ def generate():
         cell.add_text(name, at=(0.11, y), font_size=0.055, color="gray")
         cell.add_line(start=(0.26, y), end=(0.95, y), width=1, color="#333")
         cell.add_dot(at=(0.26, y), radius=0.035, color=color) \
-            .move(to=(0.95, y), duration=3.0, easing=name, repeat=True)
+            .move(to=(0.95, y), duration=3.0, easing=name,
+                  bounce=True, repeat=True)
     cell.add_text("all move the same distance in 3s", at=(0.5, 0.95),
                   font_size=0.045, color="#555")
     save(scene, "guide/anim-easing.svg")
 
-    # --- 5. Chaining: rect that fades AND spins ---
+    # --- 5. Chaining: rect that fades AND spins simultaneously ---
     scene = Scene.with_grid(cols=1, rows=1, cell_width=240, cell_height=160,
                             background="#1a1a2e")
     cell = scene.grid[0][0]
     cell.add_rect(at=(0.5, 0.43), width=0.35, height=0.35,
                   fill="mediumpurple", stroke="white", stroke_width=1) \
-        .fade(to=0.3, duration=2.0, easing="ease-in-out") \
+        .fade(to=0.3, duration=2.0, easing="ease-in-out",
+              bounce=True, repeat=True) \
         .spin(360, duration=3.0, repeat=True)
-    cell.add_text(".fade(to=0.3).spin(360)", at=(0.5, 0.88),
+    cell.add_text(".fade(...).spin(360)", at=(0.5, 0.88),
                   font_size=0.065, color="gray")
     save(scene, "guide/anim-chaining.svg")
 
@@ -82,8 +85,8 @@ def generate():
     d1 = cell.add_dot(at=(0.1, 0.42), radius=0.04, color="white")
     d2 = cell.add_dot(at=(0.9, 0.42), radius=0.04, color="white")
     conn = d1.connect(d2, curvature=0.4, color="skyblue", width=2)
-    conn.draw(duration=2.0, easing="ease-in-out")
-    cell.add_text("conn.draw(duration=2.0)", at=(0.5, 0.88),
+    conn.draw(duration=2.0, easing="ease-in-out", bounce=True, repeat=True)
+    cell.add_text("conn.draw(bounce=True)", at=(0.5, 0.88),
                   font_size=0.085, color="gray")
     save(scene, "guide/anim-connection.svg")
 
@@ -98,7 +101,7 @@ def generate():
                   font_size=0.06, color="gray")
     save(scene, "guide/anim-animate.svg")
 
-    # --- 8. Zoom: pulsing dot (smaller initial to stay on screen) ---
+    # --- 8. Zoom: pulsing circle ---
     scene = Scene.with_grid(cols=1, rows=1, cell_width=240, cell_height=160,
                             background="#1a1a2e")
     cell = scene.grid[0][0]
@@ -115,14 +118,15 @@ def generate():
     cell = scene.grid[0][0]
     cell.add_rect(at=(0.5, 0.43), width=0.33, height=0.33,
                   fill="gold", stroke="white", stroke_width=1) \
-        .fade(to=0.3, duration=1.5, easing="ease-in-out") \
+        .fade(to=0.3, duration=1.5, easing="ease-in-out",
+              bounce=True) \
         .then() \
-        .spin(360, duration=2.0, repeat=True)
+        .spin(360, duration=2.0, easing="ease-in-out", bounce=True)
     cell.add_text(".fade(...).then().spin(...)", at=(0.5, 0.88),
                   font_size=0.06, color="gray")
     save(scene, "guide/anim-then.svg")
 
-    # --- 10. Stagger: row of dots fading ---
+    # --- 10. Stagger: row of dots pulsing ---
     scene = Scene.with_grid(cols=1, rows=1, cell_width=360, cell_height=140,
                             background="#1a1a2e")
     cell = scene.grid[0][0]
@@ -131,7 +135,8 @@ def generate():
         d = cell.add_dot(at=(0.1 + i * 0.15, 0.4), radius=0.08, color="coral")
         dots.append(d)
     stagger(*dots, offset=0.3,
-            each=lambda d: d.fade(to=0.0, duration=1.5, easing="ease-in-out"))
+            each=lambda d: d.fade(to=0.0, duration=1.5, easing="ease-in-out",
+                                  bounce=True, repeat=True))
     cell.add_text("stagger(*dots, offset=0.3, ...)", at=(0.5, 0.88),
                   font_size=0.065, color="gray")
     save(scene, "guide/anim-stagger.svg")
@@ -185,13 +190,15 @@ def generate():
     da = cell.add_dot(at=(0.06, 0.12), radius=0.012, color="white")
     db = cell.add_dot(at=(0.94, 0.12), radius=0.012, color="white")
     cn = da.connect(db, curvature=0.3, color="coral", width=2)
-    cn.draw(duration=2.0, delay=0.3, easing="ease-in-out")
+    cn.draw(duration=2.0, delay=0.3, easing="ease-in-out",
+            bounce=True, repeat=True)
 
-    # Spinning rect with fade
+    # Spinning rect with pulsing opacity
     cell.add_rect(at=(0.17, 0.43), width=0.1, height=0.16,
                   fill="mediumpurple", stroke="white", stroke_width=1) \
         .spin(360, duration=3.0, repeat=True) \
-        .fade(to=0.3, duration=2.0, easing="ease-in-out")
+        .fade(to=0.3, duration=2.0, easing="ease-in-out",
+              bounce=True, repeat=True)
 
     # Pulsing dot
     cell.add_dot(at=(0.43, 0.43), radius=0.025, color="coral") \
@@ -200,19 +207,22 @@ def generate():
 
     # Fading dot
     cell.add_dot(at=(0.74, 0.43), radius=0.06, color="gold") \
-        .fade(to=0.0, duration=3.0, easing="ease-in-out")
+        .fade(to=0.0, duration=3.0, easing="ease-in-out",
+              bounce=True, repeat=True)
 
     # Self-drawing zigzag
     zz = Zigzag(start=(w * 0.06, h * 0.77), end=(w * 0.48, h * 0.77),
                 amplitude=h * 0.07, teeth=5)
     cell.add_path(zz, width=2, color="skyblue") \
-        .draw(duration=2.0, easing="ease-in-out")
+        .draw(duration=2.0, easing="ease-in-out",
+              bounce=True, repeat=True)
 
     # Self-drawing wave
     wv = Wave(start=(w * 0.52, h * 0.77), end=(w * 0.96, h * 0.77),
               amplitude=h * 0.07, frequency=3)
     cell.add_path(wv, width=2, color="limegreen") \
-        .draw(duration=2.5, delay=0.5, easing="ease-in-out")
+        .draw(duration=2.5, delay=0.5, easing="ease-in-out",
+              bounce=True, repeat=True)
 
     # Row of spinning squares
     sq_colors = ["coral", "gold", "skyblue", "limegreen", "mediumpurple"]

@@ -225,12 +225,13 @@ def _generate_breathing_mandala():
                 delay=per_dot_delay,
                 easing="ease-in-out", bounce=True, repeat=True,
             )
-            # Alternate dots also fade
+            # Alternate dots also pulse opacity
             if j % 2 == 0:
                 dot.fade(
                     to=0.3, duration=2.0,
                     delay=per_dot_delay,
                     easing="ease-in-out",
+                    bounce=True, repeat=True,
                 )
 
     # Center jewel
