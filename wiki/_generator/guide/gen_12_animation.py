@@ -118,11 +118,10 @@ def generate():
     cell = scene.grid[0][0]
     cell.add_rect(at=(0.5, 0.43), width=0.33, height=0.33,
                   fill="gold", stroke="white", stroke_width=1) \
-        .fade(to=0.3, duration=1.5, easing="ease-in-out",
-              bounce=True) \
+        .fade(to=0.3, duration=1.5, easing="ease-in-out") \
         .then() \
-        .spin(360, duration=2.0, easing="ease-in-out", bounce=True)
-    cell.add_text(".fade(...).then().spin(...)", at=(0.5, 0.88),
+        .spin(360, duration=2.0, easing="ease-in-out")
+    cell.add_text(".fade(...).then().spin(360)", at=(0.5, 0.88),
                   font_size=0.06, color="gray")
     save(scene, "guide/anim-then.svg")
 
@@ -214,8 +213,7 @@ def generate():
     zz = Zigzag(start=(w * 0.06, h * 0.77), end=(w * 0.48, h * 0.77),
                 amplitude=h * 0.07, teeth=5)
     cell.add_path(zz, width=2, color="skyblue") \
-        .draw(duration=2.0, easing="ease-in-out",
-              bounce=True, repeat=True)
+        .draw(duration=2.5, easing="ease-in-out")
 
     # Self-drawing wave
     wv = Wave(start=(w * 0.52, h * 0.77), end=(w * 0.96, h * 0.77),

@@ -12,14 +12,14 @@ Animate opacity with `.fade()`. Pass the target opacity and a duration:
 ```python
 dot = cell.add_dot(at="center", radius=0.2, color="coral")
 
-dot.fade(to=0.0, duration=3.0, easing="ease-in-out")
+dot.fade(to=0.0, duration=3.0, easing="ease-in-out", bounce=True, repeat=True)
 ```
 
-The dot starts fully visible and smoothly fades to invisible over 3 seconds.
+The dot pulses — fading to invisible and back again. `bounce=True` reverses each cycle, and `repeat=True` loops forever.
 
 <figure markdown>
 ![Fade animation](../_images/guide/anim-fade.svg){ width="240" }
-<figcaption>A coral dot fading to invisible.</figcaption>
+<figcaption>A coral dot pulsing between visible and invisible.</figcaption>
 </figure>
 
 Fade to any value — `to=0.3` makes the entity ghostly, `to=1.0` fades it *in* (if it started transparent).
@@ -71,12 +71,14 @@ wave_shape = Wave(start=(w * 0.08, h * 0.4), end=(w * 0.92, h * 0.4),
                   amplitude=h * 0.28, frequency=3)
 path = cell.add_path(wave_shape, width=3, color="limegreen")
 
-path.draw(duration=2.5, easing="ease-in-out")
+path.draw(duration=2.5, easing="ease-in-out", bounce=True, repeat=True)
 ```
+
+The wave draws itself left to right, then undraws back — `bounce=True` reverses the stroke reveal each cycle.
 
 <figure markdown>
 ![Draw animation](../_images/guide/anim-draw.svg){ width="360" }
-<figcaption>A wave path drawing itself from left to right.</figcaption>
+<figcaption>A wave drawing and undrawing itself in a loop.</figcaption>
 </figure>
 
 Connections support `.draw()` too:
@@ -86,12 +88,12 @@ d1 = cell.add_dot(at=(0.1, 0.42), radius=0.04, color="white")
 d2 = cell.add_dot(at=(0.9, 0.42), radius=0.04, color="white")
 
 conn = d1.connect(d2, curvature=0.4, color="skyblue", width=2)
-conn.draw(duration=2.0, easing="ease-in-out")
+conn.draw(duration=2.0, easing="ease-in-out", bounce=True, repeat=True)
 ```
 
 <figure markdown>
 ![Connection animation](../_images/guide/anim-connection.svg){ width="360" }
-<figcaption>A curved connection drawing itself between two dots.</figcaption>
+<figcaption>A curved connection drawing and undrawing itself between two dots.</figcaption>
 </figure>
 
 !!! tip "Delayed draw + opacity"
@@ -169,14 +171,15 @@ All animation methods return `self`, so you can chain them:
 rect = cell.add_rect(at="center", width=0.35, height=0.35,
                      fill="mediumpurple", stroke="white", stroke_width=1)
 
-rect.fade(to=0.3, duration=2.0, easing="ease-in-out").spin(360, duration=3.0, repeat=True)
+rect.fade(to=0.3, duration=2.0, easing="ease-in-out",
+          bounce=True, repeat=True).spin(360, duration=3.0, repeat=True)
 ```
 
-This applies both a fade and a spin to the same entity — they play simultaneously.
+This applies both a fade and a spin to the same entity — they play simultaneously. The rect pulses between 30% and full opacity while spinning continuously.
 
 <figure markdown>
 ![Chaining](../_images/guide/anim-chaining.svg){ width="240" }
-<figcaption>A rect that fades to 30% opacity while spinning forever.</figcaption>
+<figcaption>A rect pulsing opacity while spinning — both animations play at once.</figcaption>
 </figure>
 
 ## Sequential Chaining
@@ -184,14 +187,16 @@ This applies both a fade and a spin to the same entity — they play simultaneou
 Use `.then()` to start an animation *after* the previous ones finish — no manual delay math:
 
 ```python
-rect.fade(to=0.3, duration=1.5).then().spin(360, duration=2.0)
+rect.fade(to=0.3, duration=1.5, easing="ease-in-out") \
+    .then() \
+    .spin(360, duration=2.0, easing="ease-in-out")
 ```
 
-The spin starts at exactly 1.5 seconds, when the fade ends.
+The rect fades to 30% opacity over 1.5 seconds, then spins a full turn. The spin starts at exactly 1.5 seconds — when the fade ends.
 
 <figure markdown>
 ![Then chaining](../_images/guide/anim-then.svg){ width="300" }
-<figcaption>A rect that fades, then spins — playing one after the other.</figcaption>
+<figcaption>Fade to ghostly, then spin — two steps playing one after the other.</figcaption>
 </figure>
 
 Add a gap between animations:
@@ -346,7 +351,7 @@ Here's what happens when you combine multiple animation types in one scene — s
 
 <figure markdown>
 ![Showcase](../_images/guide/anim-showcase.svg){ width="460" }
-<figcaption>A combined scene: self-drawing connection, spinning rect with fade, pulsing dot, fading dot, self-drawing zigzag and wave, row of spinning squares.</figcaption>
+<figcaption>A combined scene: self-drawing connection, spinning rect with fade, pulsing dot, fading dot, self-drawing paths, and a row of spinning squares.</figcaption>
 </figure>
 
 !!! info "See also"
