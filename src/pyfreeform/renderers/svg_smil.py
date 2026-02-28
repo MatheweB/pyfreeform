@@ -2,18 +2,33 @@
 
 from __future__ import annotations
 
-import math
 from typing import TYPE_CHECKING, Any
 
 from ..animation.models import (
-    Animation,
     DrawAnimation,
     MotionAnimation,
     PropertyAnimation,
 )
-from ..core.coord import Coord
 from ..core.svg_utils import opacity_attr, svg_num, fill_stroke_attrs, shape_opacity_attrs, stroke_attrs, xml_escape
 from ..config.caps import svg_cap_and_marker_attrs
+from .smil_elements import (
+    build_animate_element,
+    format_value,
+    smil_easing,
+    smil_easing_n,
+    smil_repeat,
+)
+from .smil_reactive import (
+    build_reactive_animate,
+    build_resampled_animate,
+    check_anim_compatibility,
+    compute_cycle_duration,
+    connection_path_d_at,
+    extract_position_anims,
+    resolve_abs_position,
+    resolve_vertex_at_keyframe,
+    resolve_vertex_at_time,
+)
 from .svg import SVGRenderer, _build_svg_transform
 
 if TYPE_CHECKING:
@@ -103,48 +118,12 @@ def _resolve_svg_attr(entity_type: str, prop: str) -> str | None:
 # SMIL element rendering
 # ======================================================================
 
-def _smil_repeat(repeat: bool | int) -> str:
-    """Convert repeat parameter to SVG repeatCount attribute."""
-    if repeat is True:
-        return ' repeatCount="indefinite"'
-    if isinstance(repeat, int) and repeat > 1:
-        return f' repeatCount="{repeat}"'
-    return ""
 
-
-def _apply_bounce(
-    values: list[str], key_times: list[float],
-) -> tuple[list[str], list[float]]:
-    """Mirror values and key-times for bounce (forward then backward).
-
-    Forward half maps to [0, 0.5], backward half to [0.5, 1].
-    The peak value is shared (not duplicated) between halves.
-    """
-    n = len(values)
-    if n < 2:
-        return values, key_times
-
-    # Forward half: compress into [0, 0.5]
-    forward_kt = [t * 0.5 for t in key_times]
-
-    # Backward half: reverse values (skip last) and remap times
-    backward_vals = values[-2::-1]
-    backward_kt = [
-        0.5 + (1.0 - key_times[i]) * 0.5
-        for i in range(n - 2, -1, -1)
-    ]
-
-    return values + backward_vals, forward_kt + backward_kt
-
-
-def _smil_easing_n(easing: Any, n_segments: int) -> str:
-    """Build calcMode + keySplines for *n_segments* segments."""
-    from ..animation.models import Easing
-
-    if easing == Easing.LINEAR:
-        return ""
-    spline = f"{easing.x1} {easing.y1} {easing.x2} {easing.y2}"
-    return f' calcMode="spline" keySplines="{";".join([spline] * n_segments)}"'
+def _anim_key_times(anim: PropertyAnimation) -> list[float]:
+    """Compute normalized [0..1] keyTimes from animation keyframes."""
+    dur = anim.duration
+    base = anim.keyframes[0].time if anim.keyframes else 0
+    return [(kf.time - base) / dur if dur > 0 else 0 for kf in anim.keyframes]
 
 
 def _render_property_smil(anim: PropertyAnimation, entity: Entity) -> str:
@@ -163,36 +142,16 @@ def _render_property_smil(anim: PropertyAnimation, entity: Entity) -> str:
 
     svg_attr = _resolve_svg_attr(entity_type, anim.prop)
     if svg_attr is None:
-        # Try using the prop name directly as SVG attribute
         svg_attr = anim.prop
 
-    val_list = [_format_value(kf.value) for kf in anim.keyframes]
-    dur = anim.duration
-    base = anim.keyframes[0].time if anim.keyframes else 0
-    kt_list = [(kf.time - base) / dur if dur > 0 else 0 for kf in anim.keyframes]
-
-    if anim.bounce:
-        val_list, kt_list = _apply_bounce(val_list, kt_list)
-
-    n_segments = max(1, len(val_list) - 1)
-
-    parts = [f'<animate attributeName="{svg_attr}"']
-    parts.append(f' values="{";".join(val_list)}"')
-    parts.append(f' keyTimes="{";".join(svg_num(t) for t in kt_list)}"')
-    parts.append(f' dur="{anim.duration}s"')
-
-    if anim.delay > 0:
-        parts.append(f' begin="{anim.delay}s"')
-
-    parts.append(_smil_easing_n(anim.easing, n_segments))
-
-    if anim.hold:
-        parts.append(' fill="freeze"')
-
-    parts.append(_smil_repeat(anim.repeat))
-
-    parts.append(" />")
-    return "".join(parts)
+    return build_animate_element(
+        attribute_name=svg_attr,
+        values=[format_value(kf.value) for kf in anim.keyframes],
+        key_times=_anim_key_times(anim),
+        duration=anim.duration, delay=anim.delay,
+        easing=anim.easing, bounce=anim.bounce,
+        hold=anim.hold, repeat=anim.repeat,
+    )
 
 
 def _render_rotation_smil(anim: PropertyAnimation, entity: Entity) -> str:
@@ -200,119 +159,60 @@ def _render_rotation_smil(anim: PropertyAnimation, entity: Entity) -> str:
     center = entity.rotation_center
     cx, cy = svg_num(center.x), svg_num(center.y)
 
-    val_list = [f"{svg_num(kf.value)} {cx} {cy}" for kf in anim.keyframes]
-    dur = anim.duration
-    base = anim.keyframes[0].time if anim.keyframes else 0
-    kt_list = [(kf.time - base) / dur if dur > 0 else 0 for kf in anim.keyframes]
-
-    if anim.bounce:
-        val_list, kt_list = _apply_bounce(val_list, kt_list)
-
-    n_segments = max(1, len(val_list) - 1)
-
-    parts = [
-        '<animateTransform attributeName="transform" type="rotate"',
-        f' values="{";".join(val_list)}"',
-        f' keyTimes="{";".join(svg_num(t) for t in kt_list)}"',
-        f' dur="{anim.duration}s"',
-    ]
-
-    if anim.delay > 0:
-        parts.append(f' begin="{anim.delay}s"')
-
-    parts.append(_smil_easing_n(anim.easing, n_segments))
-
-    if anim.hold:
-        parts.append(' fill="freeze"')
-
-    parts.append(_smil_repeat(anim.repeat))
-    parts.append(' additive="sum" />')
-    return "".join(parts)
+    return build_animate_element(
+        tag="animateTransform",
+        attribute_name="transform",
+        values=[f"{svg_num(kf.value)} {cx} {cy}" for kf in anim.keyframes],
+        key_times=_anim_key_times(anim),
+        duration=anim.duration, delay=anim.delay,
+        easing=anim.easing, bounce=anim.bounce,
+        hold=anim.hold, repeat=anim.repeat,
+        extra_attrs=' type="rotate" additive="sum"',
+    )
 
 
 def _render_scale_smil(anim: PropertyAnimation, entity: Entity) -> str:
     """Render scale as ``<animateTransform type="scale">``."""
-    val_list = [svg_num(kf.value) for kf in anim.keyframes]
-    dur = anim.duration
-    base = anim.keyframes[0].time if anim.keyframes else 0
-    kt_list = [(kf.time - base) / dur if dur > 0 else 0 for kf in anim.keyframes]
-
-    if anim.bounce:
-        val_list, kt_list = _apply_bounce(val_list, kt_list)
-
-    n_segments = max(1, len(val_list) - 1)
-
-    parts = [
-        '<animateTransform attributeName="transform" type="scale"',
-        f' values="{";".join(val_list)}"',
-        f' keyTimes="{";".join(svg_num(t) for t in kt_list)}"',
-        f' dur="{anim.duration}s"',
-    ]
-
-    if anim.delay > 0:
-        parts.append(f' begin="{anim.delay}s"')
-
-    parts.append(_smil_easing_n(anim.easing, n_segments))
-
-    if anim.hold:
-        parts.append(' fill="freeze"')
-
-    parts.append(_smil_repeat(anim.repeat))
-    parts.append(' additive="sum" />')
-    return "".join(parts)
+    return build_animate_element(
+        tag="animateTransform",
+        attribute_name="transform",
+        values=[svg_num(kf.value) for kf in anim.keyframes],
+        key_times=_anim_key_times(anim),
+        duration=anim.duration, delay=anim.delay,
+        easing=anim.easing, bounce=anim.bounce,
+        hold=anim.hold, repeat=anim.repeat,
+        extra_attrs=' type="scale" additive="sum"',
+    )
 
 
 def _render_position_smil(anim: PropertyAnimation, entity: Entity) -> str:
     """Render a relative position animation as ``<animate>`` on cx/cy or x/y."""
     entity_type = type(entity).__name__
 
-    # Map at_rx/at_ry to actual SVG position attributes
+    # Map at_rx/at_ry to actual SVG position attributes and resolve values
     if anim.prop == "at_rx":
         svg_attr = _resolve_svg_attr(entity_type, "cx") or _resolve_svg_attr(entity_type, "x") or "cx"
         surface = entity._surface
         if surface:
-            _, _, sw, _ = surface._x, surface._y, surface._width, surface._height
-            val_list = [
-                svg_num(surface._x + kf.value * sw) for kf in anim.keyframes
-            ]
+            val_list = [svg_num(surface._x + kf.value * surface._width) for kf in anim.keyframes]
         else:
             val_list = [svg_num(kf.value) for kf in anim.keyframes]
     else:  # at_ry
         svg_attr = _resolve_svg_attr(entity_type, "cy") or _resolve_svg_attr(entity_type, "y") or "cy"
         surface = entity._surface
         if surface:
-            _, _, _, sh = surface._x, surface._y, surface._width, surface._height
-            val_list = [
-                svg_num(surface._y + kf.value * sh) for kf in anim.keyframes
-            ]
+            val_list = [svg_num(surface._y + kf.value * surface._height) for kf in anim.keyframes]
         else:
             val_list = [svg_num(kf.value) for kf in anim.keyframes]
 
-    dur = anim.duration
-    base = anim.keyframes[0].time if anim.keyframes else 0
-    kt_list = [(kf.time - base) / dur if dur > 0 else 0 for kf in anim.keyframes]
-
-    if anim.bounce:
-        val_list, kt_list = _apply_bounce(val_list, kt_list)
-
-    n_segments = max(1, len(val_list) - 1)
-
-    parts = [f'<animate attributeName="{svg_attr}"']
-    parts.append(f' values="{";".join(val_list)}"')
-    parts.append(f' keyTimes="{";".join(svg_num(t) for t in kt_list)}"')
-    parts.append(f' dur="{anim.duration}s"')
-
-    if anim.delay > 0:
-        parts.append(f' begin="{anim.delay}s"')
-
-    parts.append(_smil_easing_n(anim.easing, n_segments))
-
-    if anim.hold:
-        parts.append(' fill="freeze"')
-
-    parts.append(_smil_repeat(anim.repeat))
-    parts.append(" />")
-    return "".join(parts)
+    return build_animate_element(
+        attribute_name=svg_attr,
+        values=val_list,
+        key_times=_anim_key_times(anim),
+        duration=anim.duration, delay=anim.delay,
+        easing=anim.easing, bounce=anim.bounce,
+        hold=anim.hold, repeat=anim.repeat,
+    )
 
 
 def _translate_path_d(path_d: str, dx: float, dy: float) -> str:
@@ -377,7 +277,6 @@ def _render_motion_smil(anim: MotionAnimation) -> str:
         parts.append(f' begin="{anim.delay}s"')
 
     if anim.bounce:
-        # Use keyPoints to traverse forward then backward along the path
         from ..animation.models import Easing
 
         parts.append(' keyPoints="0;1;0"')
@@ -388,12 +287,12 @@ def _render_motion_smil(anim: MotionAnimation) -> str:
             spline = f"{anim.easing.x1} {anim.easing.y1} {anim.easing.x2} {anim.easing.y2}"
             parts.append(f' calcMode="spline" keySplines="{spline};{spline}"')
     else:
-        parts.append(_smil_easing(anim))
+        parts.append(smil_easing(anim))
 
     if anim.hold:
         parts.append(' fill="freeze"')
 
-    parts.append(_smil_repeat(anim.repeat))
+    parts.append(smil_repeat(anim.repeat))
     parts.append(rotate_attr)
     parts.append(f' path="{path_d}" />')
     return "".join(parts)
@@ -412,277 +311,25 @@ def _render_draw_smil(anim: DrawAnimation, entity: Any) -> str:
     to_val = "0" if not anim.reverse else svg_num(length)
 
     if anim.bounce:
-        # Forward then backward: length→0→length (or 0→length→0 if reversed)
-        val_list = [from_val, to_val, from_val]
-        kt_list = [0.0, 0.5, 1.0]
-        n_segments = 2
-        parts = ['<animate attributeName="stroke-dashoffset"']
-        parts.append(f' values="{";".join(val_list)}"')
-        parts.append(f' keyTimes="{";".join(svg_num(t) for t in kt_list)}"')
-    else:
-        n_segments = 1
-        parts = ['<animate attributeName="stroke-dashoffset"']
-        parts.append(f' from="{from_val}" to="{to_val}"')
+        return build_animate_element(
+            attribute_name="stroke-dashoffset",
+            values=[from_val, to_val, from_val],
+            key_times=[0.0, 0.5, 1.0],
+            duration=anim.duration, delay=anim.delay,
+            easing=anim.easing, bounce=False,  # bounce already manual
+            hold=anim.hold, repeat=anim.repeat,
+        )
 
+    # Non-bounce uses from/to instead of values (simpler SVG output)
+    parts = ['<animate attributeName="stroke-dashoffset"']
+    parts.append(f' from="{from_val}" to="{to_val}"')
     parts.append(f' dur="{anim.duration}s"')
-
     if anim.delay > 0:
         parts.append(f' begin="{anim.delay}s"')
-
-    parts.append(_smil_easing_n(anim.easing, n_segments))
-
+    parts.append(smil_easing_n(anim.easing, 1))
     if anim.hold:
         parts.append(' fill="freeze"')
-
-    parts.append(_smil_repeat(anim.repeat))
-    parts.append(" />")
-    return "".join(parts)
-
-
-# ======================================================================
-# Helpers
-# ======================================================================
-
-def _format_values(anim: PropertyAnimation) -> str:
-    """Format keyframe values as semicolon-separated string."""
-    return ";".join(_format_value(kf.value) for kf in anim.keyframes)
-
-
-def _format_value(v: Any) -> str:
-    """Format a single keyframe value for SVG."""
-    if isinstance(v, float):
-        return svg_num(v)
-    if isinstance(v, int):
-        return str(v)
-    return str(v)
-
-
-def _format_key_times(anim: PropertyAnimation) -> str:
-    """Format keyframe times as normalized 0–1 values."""
-    dur = anim.duration
-    if dur <= 0:
-        return ";".join("0" for _ in anim.keyframes)
-    base = anim.keyframes[0].time
-    return ";".join(
-        svg_num((kf.time - base) / dur) for kf in anim.keyframes
-    )
-
-
-def _smil_easing(anim: PropertyAnimation | MotionAnimation | DrawAnimation) -> str:
-    """Build calcMode + keySplines attributes for easing."""
-    from ..animation.models import Easing
-
-    easing = anim.easing
-    if easing == Easing.LINEAR:
-        return ""
-
-    n_segments = max(1, len(anim.keyframes) - 1) if hasattr(anim, "keyframes") else 1
-    spline = f"{easing.x1} {easing.y1} {easing.x2} {easing.y2}"
-    splines = ";".join([spline] * n_segments)
-    return f' calcMode="spline" keySplines="{splines}"'
-
-
-# ======================================================================
-# Reactive animation helpers
-# ======================================================================
-
-
-def _extract_position_anims(
-    entity: Entity,
-) -> tuple[PropertyAnimation, PropertyAnimation] | None:
-    """Extract the first (at_rx, at_ry) animation pair from an entity.
-
-    Returns ``None`` if the entity has no position (move) animations.
-    """
-    rx_anim: PropertyAnimation | None = None
-    ry_anim: PropertyAnimation | None = None
-    for anim in entity._animations:
-        if isinstance(anim, PropertyAnimation):
-            if anim.prop == "at_rx" and rx_anim is None:
-                rx_anim = anim
-            elif anim.prop == "at_ry" and ry_anim is None:
-                ry_anim = anim
-        if rx_anim is not None and ry_anim is not None:
-            return (rx_anim, ry_anim)
-    return None
-
-
-def _resolve_abs_at_keyframe(
-    entity: Entity, rx: float, ry: float,
-) -> tuple[float, float]:
-    """Convert relative (rx, ry) to absolute pixels using entity's surface."""
-    surface = entity._surface
-    if surface is None:
-        return (rx, ry)
-    return (
-        surface._x + rx * surface._width,
-        surface._y + ry * surface._height,
-    )
-
-
-def _check_anim_compatibility(
-    anims: list[PropertyAnimation],
-) -> PropertyAnimation | None:
-    """Verify all animations share compatible timing; return template or None."""
-    if not anims:
-        return None
-    template = anims[0]
-    for a in anims[1:]:
-        if (
-            a.duration != template.duration
-            or a.delay != template.delay
-            or a.easing != template.easing
-            or a.bounce != template.bounce
-            or a.repeat != template.repeat
-            or len(a.keyframes) != len(template.keyframes)
-        ):
-            return None
-    return template
-
-
-# ── Resampling for mixed-timing reactive animations ───────────────────
-
-
-def _compute_cycle_duration(
-    anims: list[PropertyAnimation],
-) -> tuple[float, bool]:
-    """Compute a unified cycle duration and repeat flag for mixed-timing animations.
-
-    Returns:
-        (duration, all_repeat): The cycle duration in seconds and whether
-        all animations repeat (so the unified animation should too).
-    """
-    if not anims:
-        return (1.0, False)
-
-    all_repeat = all(a.repeat for a in anims)
-
-    if not all_repeat:
-        # Use the max end time (delay + duration)
-        return (max(a.delay + a.duration for a in anims), False)
-
-    # For repeating animations, compute practical LCM of durations
-    # so the unified cycle covers full cycles of every animation.
-    durations = [a.duration for a in anims if a.duration > 0]
-    if not durations:
-        return (1.0, True)
-
-    # Convert to centiseconds for integer LCM (avoids float imprecision)
-    cs_values = [max(1, round(d * 100)) for d in durations]
-    result = cs_values[0]
-    for v in cs_values[1:]:
-        result = abs(result * v) // math.gcd(result, v)
-
-    # Cap at 30 seconds to avoid huge SVGs
-    return (min(result / 100.0, 30.0), True)
-
-
-def _build_resampled_animate(
-    svg_attr: str,
-    val_list: list[str],
-    key_times: list[float],
-    duration: float,
-    delay: float,
-    repeat: bool | int,
-) -> str:
-    """Build an ``<animate>`` from pre-computed, pre-eased sample values.
-
-    Unlike ``_build_reactive_animate`` which uses a template animation,
-    this builds from explicit parameters. Easing and bounce are already
-    baked into the sampled values, so ``calcMode="linear"`` is used.
-    """
-    n_segments = max(1, len(val_list) - 1)
-
-    parts = [f'<animate attributeName="{svg_attr}"']
-    parts.append(f' values="{";".join(val_list)}"')
-    parts.append(f' keyTimes="{";".join(svg_num(t) for t in key_times)}"')
-    parts.append(f' dur="{duration}s"')
-    if delay > 0:
-        parts.append(f' begin="{delay}s"')
-    # calcMode="linear" — easing is pre-baked into the sampled values
-    # (no keySplines needed)
-    if repeat is True:
-        parts.append(' repeatCount="indefinite"')
-    elif isinstance(repeat, int) and repeat > 1:
-        parts.append(f' repeatCount="{repeat}"')
-    parts.append(' fill="freeze"')
-    parts.append(" />")
-    return "".join(parts)
-
-
-def _connection_path_d_at(conn: Connection, start: Coord, end: Coord) -> str:
-    """Compute connection SVG path ``d`` for arbitrary start/end points."""
-    if conn._shape_kind == "line":
-        return (
-            f"M {svg_num(start.x)} {svg_num(start.y)}"
-            f" L {svg_num(end.x)} {svg_num(end.y)}"
-        )
-
-    ss, se = conn._source_start, conn._source_end
-    if ss is None or se is None:
-        return (
-            f"M {svg_num(start.x)} {svg_num(start.y)}"
-            f" L {svg_num(end.x)} {svg_num(end.y)}"
-        )
-
-    src_dx, src_dy = se.x - ss.x, se.y - ss.y
-    src_len = math.hypot(src_dx, src_dy)
-    if src_len < 1e-9:
-        return f"M {svg_num(start.x)} {svg_num(start.y)} L {svg_num(start.x)} {svg_num(start.y)}"
-
-    tgt_dx, tgt_dy = end.x - start.x, end.y - start.y
-    tgt_len = math.hypot(tgt_dx, tgt_dy)
-    scale = tgt_len / src_len
-
-    src_angle = math.atan2(src_dy, src_dx)
-    tgt_angle = math.atan2(tgt_dy, tgt_dx)
-    rot = tgt_angle - src_angle
-    cos_r, sin_r = math.cos(rot), math.sin(rot)
-
-    def transform(p: Coord) -> Coord:
-        dx = p.x - ss.x
-        dy = p.y - ss.y
-        rx = scale * (cos_r * dx - sin_r * dy)
-        ry = scale * (sin_r * dx + cos_r * dy)
-        return Coord(start.x + rx, start.y + ry)
-
-    first = transform(conn._shape_beziers[0][0])
-    parts = [f"M {svg_num(first.x)} {svg_num(first.y)}"]
-    for _, cp1, cp2, p3 in conn._shape_beziers:
-        tcp1, tcp2, tp3 = transform(cp1), transform(cp2), transform(p3)
-        parts.append(
-            f" C {svg_num(tcp1.x)} {svg_num(tcp1.y)}"
-            f" {svg_num(tcp2.x)} {svg_num(tcp2.y)}"
-            f" {svg_num(tp3.x)} {svg_num(tp3.y)}"
-        )
-    return "".join(parts)
-
-
-def _build_reactive_animate(
-    svg_attr: str,
-    val_list: list[str],
-    template: PropertyAnimation,
-) -> str:
-    """Build a single ``<animate>`` element from pre-computed values and a template."""
-    dur = template.duration
-    base = template.keyframes[0].time if template.keyframes else 0
-    kt_list = [(kf.time - base) / dur if dur > 0 else 0 for kf in template.keyframes]
-
-    if template.bounce:
-        val_list, kt_list = _apply_bounce(val_list, kt_list)
-
-    n_segments = max(1, len(val_list) - 1)
-
-    parts = [f'<animate attributeName="{svg_attr}"']
-    parts.append(f' values="{";".join(val_list)}"')
-    parts.append(f' keyTimes="{";".join(svg_num(t) for t in kt_list)}"')
-    parts.append(f' dur="{dur}s"')
-    if template.delay > 0:
-        parts.append(f' begin="{template.delay}s"')
-    parts.append(_smil_easing_n(template.easing, n_segments))
-    if template.hold:
-        parts.append(' fill="freeze"')
-    parts.append(_smil_repeat(template.repeat))
+    parts.append(smil_repeat(anim.repeat))
     parts.append(" />")
     return "".join(parts)
 
@@ -878,7 +525,7 @@ class SMILRenderer(SVGRenderer):
                 entity = spec[0]
 
             if entity is not None:
-                pair = _extract_position_anims(entity)
+                pair = extract_position_anims(entity)
                 vertex_info.append((pair, spec))
                 if pair is not None:
                     all_rx_anims.append(pair[0])
@@ -889,29 +536,17 @@ class SMILRenderer(SVGRenderer):
             return []
 
         # Fast path: all animations share identical timing
-        template = _check_anim_compatibility(all_rx_anims)
+        template = check_anim_compatibility(all_rx_anims)
         if template is not None:
             n_keyframes = len(template.keyframes)
             val_list: list[str] = []
             for k in range(n_keyframes):
                 pts: list[str] = []
                 for pair, spec in vertex_info:
-                    if isinstance(spec, Coord):
-                        pts.append(f"{svg_num(spec.x)},{svg_num(spec.y)}")
-                    elif pair is not None:
-                        entity = spec if isinstance(spec, _Entity) else spec[0]
-                        ax, ay = _resolve_abs_at_keyframe(
-                            entity, pair[0].keyframes[k].value, pair[1].keyframes[k].value,
-                        )
-                        pts.append(f"{svg_num(ax)},{svg_num(ay)}")
-                    else:
-                        if isinstance(spec, _Entity):
-                            pos = spec.position
-                        else:
-                            pos = spec[0].anchor(spec[1])
-                        pts.append(f"{svg_num(pos.x)},{svg_num(pos.y)}")
+                    c = resolve_vertex_at_keyframe(spec, pair, k)
+                    pts.append(f"{svg_num(c.x)},{svg_num(c.y)}")
                 val_list.append(" ".join(pts))
-            return [_build_reactive_animate("points", val_list, template)]
+            return [build_reactive_animate("points", val_list, template)]
 
         # Slow path: mixed timing — resample all animations onto a unified timeline.
         # Each vertex's easing/bounce/repeat is baked into the sampled values.
@@ -919,7 +554,7 @@ class SMILRenderer(SVGRenderer):
         for pair, _ in vertex_info:
             if pair is not None:
                 all_anims.extend(pair)
-        cycle, all_repeat = _compute_cycle_duration(all_anims)
+        cycle, all_repeat = compute_cycle_duration(all_anims)
         n_samples = max(2, min(120, int(cycle * 20)))
 
         val_list_r: list[str] = []
@@ -929,24 +564,12 @@ class SMILRenderer(SVGRenderer):
             key_times.append(t / cycle if cycle > 0 else 0.0)
             pts: list[str] = []
             for pair, spec in vertex_info:
-                if isinstance(spec, Coord):
-                    pts.append(f"{svg_num(spec.x)},{svg_num(spec.y)}")
-                elif pair is not None:
-                    entity = spec if isinstance(spec, _Entity) else spec[0]
-                    rx = pair[0].evaluate(t)
-                    ry = pair[1].evaluate(t)
-                    ax, ay = _resolve_abs_at_keyframe(entity, rx, ry)
-                    pts.append(f"{svg_num(ax)},{svg_num(ay)}")
-                else:
-                    if isinstance(spec, _Entity):
-                        pos = spec.position
-                    else:
-                        pos = spec[0].anchor(spec[1])
-                    pts.append(f"{svg_num(pos.x)},{svg_num(pos.y)}")
+                c = resolve_vertex_at_time(spec, pair, t)
+                pts.append(f"{svg_num(c.x)},{svg_num(c.y)}")
             val_list_r.append(" ".join(pts))
 
-        return [_build_resampled_animate("points", val_list_r, key_times,
-                                         cycle, 0.0, all_repeat)]
+        return [build_resampled_animate("points", val_list_r, key_times,
+                                        cycle, 0.0, all_repeat)]
 
     def render_polygon(self, polygon: Polygon) -> str:
         reactive = self._reactive_polygon_anims(polygon)
@@ -1089,8 +712,8 @@ class SMILRenderer(SVGRenderer):
         """Synthesize SMIL elements from animated connection endpoints."""
         from ..core.entity import Entity as _Entity
 
-        start_pair = _extract_position_anims(conn._start) if isinstance(conn._start, _Entity) else None
-        end_pair = _extract_position_anims(conn._end) if isinstance(conn._end, _Entity) else None
+        start_pair = extract_position_anims(conn._start) if isinstance(conn._start, _Entity) else None
+        end_pair = extract_position_anims(conn._end) if isinstance(conn._end, _Entity) else None
 
         if start_pair is None and end_pair is None:
             return []
@@ -1102,7 +725,7 @@ class SMILRenderer(SVGRenderer):
             rx_anims.append(end_pair[0])
 
         # Fast path: identical timing on all endpoints
-        template = _check_anim_compatibility(rx_anims)
+        template = check_anim_compatibility(rx_anims)
         if template is not None:
             n_kf = len(template.keyframes)
             if conn._shape_kind == "line":
@@ -1115,7 +738,7 @@ class SMILRenderer(SVGRenderer):
             all_anims.extend(start_pair)
         if end_pair:
             all_anims.extend(end_pair)
-        cycle, all_repeat = _compute_cycle_duration(all_anims)
+        cycle, all_repeat = compute_cycle_duration(all_anims)
         n_samples = max(2, min(120, int(cycle * 20)))
 
         if conn._shape_kind == "line":
@@ -1138,24 +761,20 @@ class SMILRenderer(SVGRenderer):
         if start_pair:
             x1_vals, y1_vals = [], []
             for k in range(n_kf):
-                ax, ay = _resolve_abs_at_keyframe(
-                    conn._start, start_pair[0].keyframes[k].value, start_pair[1].keyframes[k].value,
-                )
-                x1_vals.append(svg_num(ax))
-                y1_vals.append(svg_num(ay))
-            result.append(_build_reactive_animate("x1", x1_vals, template))
-            result.append(_build_reactive_animate("y1", y1_vals, template))
+                c = resolve_vertex_at_keyframe(conn._start, start_pair, k)
+                x1_vals.append(svg_num(c.x))
+                y1_vals.append(svg_num(c.y))
+            result.append(build_reactive_animate("x1", x1_vals, template))
+            result.append(build_reactive_animate("y1", y1_vals, template))
 
         if end_pair:
             x2_vals, y2_vals = [], []
             for k in range(n_kf):
-                ax, ay = _resolve_abs_at_keyframe(
-                    conn._end, end_pair[0].keyframes[k].value, end_pair[1].keyframes[k].value,
-                )
-                x2_vals.append(svg_num(ax))
-                y2_vals.append(svg_num(ay))
-            result.append(_build_reactive_animate("x2", x2_vals, template))
-            result.append(_build_reactive_animate("y2", y2_vals, template))
+                c = resolve_vertex_at_keyframe(conn._end, end_pair, k)
+                x2_vals.append(svg_num(c.x))
+                y2_vals.append(svg_num(c.y))
+            result.append(build_reactive_animate("x2", x2_vals, template))
+            result.append(build_reactive_animate("y2", y2_vals, template))
 
         return result
 
@@ -1168,40 +787,13 @@ class SMILRenderer(SVGRenderer):
         """Synthesize ``d`` animation for a curved/path connection."""
         d_vals: list[str] = []
         for k in range(n_kf):
-            if start_pair:
-                sx, sy = _resolve_abs_at_keyframe(
-                    conn._start, start_pair[0].keyframes[k].value, start_pair[1].keyframes[k].value,
-                )
-                start_k = Coord(sx, sy)
-            else:
-                start_k = conn.start_point
+            start_k = resolve_vertex_at_keyframe(conn._start, start_pair, k) if start_pair else conn.start_point
+            end_k = resolve_vertex_at_keyframe(conn._end, end_pair, k) if end_pair else conn.end_point
+            d_vals.append(connection_path_d_at(conn, start_k, end_k))
 
-            if end_pair:
-                ex, ey = _resolve_abs_at_keyframe(
-                    conn._end, end_pair[0].keyframes[k].value, end_pair[1].keyframes[k].value,
-                )
-                end_k = Coord(ex, ey)
-            else:
-                end_k = conn.end_point
-
-            d_vals.append(_connection_path_d_at(conn, start_k, end_k))
-
-        return [_build_reactive_animate("d", d_vals, template)]
+        return [build_reactive_animate("d", d_vals, template)]
 
     # ── Resampled reactive connection methods (mixed timing) ──────────
-
-    def _eval_endpoint_at(
-        self, entity: Any,
-        pair: tuple[PropertyAnimation, PropertyAnimation] | None,
-        fallback: Coord, t: float,
-    ) -> Coord:
-        """Evaluate a connection endpoint at time *t*, returning absolute Coord."""
-        if pair is None:
-            return fallback
-        rx = pair[0].evaluate(t)
-        ry = pair[1].evaluate(t)
-        ax, ay = _resolve_abs_at_keyframe(entity, rx, ry)
-        return Coord(ax, ay)
 
     def _reactive_line_anims_resampled(
         self, conn: Connection,
@@ -1221,8 +813,8 @@ class SMILRenderer(SVGRenderer):
             t = i * cycle / (n_samples - 1) if n_samples > 1 else 0.0
             key_times.append(t / cycle if cycle > 0 else 0.0)
 
-            sp = self._eval_endpoint_at(conn._start, start_pair, conn.start_point, t)
-            ep = self._eval_endpoint_at(conn._end, end_pair, conn.end_point, t)
+            sp = resolve_vertex_at_time(conn._start, start_pair, t) if start_pair else conn.start_point
+            ep = resolve_vertex_at_time(conn._end, end_pair, t) if end_pair else conn.end_point
 
             if start_pair:
                 x1_vals.append(svg_num(sp.x))
@@ -1232,11 +824,11 @@ class SMILRenderer(SVGRenderer):
                 y2_vals.append(svg_num(ep.y))
 
         if start_pair:
-            result.append(_build_resampled_animate("x1", x1_vals, key_times, cycle, 0.0, all_repeat))
-            result.append(_build_resampled_animate("y1", y1_vals, key_times, cycle, 0.0, all_repeat))
+            result.append(build_resampled_animate("x1", x1_vals, key_times, cycle, 0.0, all_repeat))
+            result.append(build_resampled_animate("y1", y1_vals, key_times, cycle, 0.0, all_repeat))
         if end_pair:
-            result.append(_build_resampled_animate("x2", x2_vals, key_times, cycle, 0.0, all_repeat))
-            result.append(_build_resampled_animate("y2", y2_vals, key_times, cycle, 0.0, all_repeat))
+            result.append(build_resampled_animate("x2", x2_vals, key_times, cycle, 0.0, all_repeat))
+            result.append(build_resampled_animate("y2", y2_vals, key_times, cycle, 0.0, all_repeat))
 
         return result
 
@@ -1254,11 +846,11 @@ class SMILRenderer(SVGRenderer):
             t = i * cycle / (n_samples - 1) if n_samples > 1 else 0.0
             key_times.append(t / cycle if cycle > 0 else 0.0)
 
-            sp = self._eval_endpoint_at(conn._start, start_pair, conn.start_point, t)
-            ep = self._eval_endpoint_at(conn._end, end_pair, conn.end_point, t)
-            d_vals.append(_connection_path_d_at(conn, sp, ep))
+            sp = resolve_vertex_at_time(conn._start, start_pair, t) if start_pair else conn.start_point
+            ep = resolve_vertex_at_time(conn._end, end_pair, t) if end_pair else conn.end_point
+            d_vals.append(connection_path_d_at(conn, sp, ep))
 
-        return [_build_resampled_animate("d", d_vals, key_times, cycle, 0.0, all_repeat)]
+        return [build_resampled_animate("d", d_vals, key_times, cycle, 0.0, all_repeat)]
 
     def render_connection(self, conn: Connection) -> str:
         reactive = self._reactive_connection_anims(conn)
@@ -1283,16 +875,11 @@ class SMILRenderer(SVGRenderer):
         anims = [a for a in anims if a]
         anims.extend(reactive)
 
+        draw_extra = self._draw_attrs(conn)
+
         if conn._shape_kind == "line":
             p1 = conn.start_point
             p2 = conn.end_point
-            draw_anim = next((a for a in conn._animations if isinstance(a, DrawAnimation)), None)
-            draw_extra = ""
-            if draw_anim and hasattr(conn, "arc_length"):
-                length = conn.arc_length()
-                if length > 0:
-                    offset = svg_num(length) if not draw_anim.reverse else "0"
-                    draw_extra = f' stroke-dasharray="{svg_num(length)}" stroke-dashoffset="{offset}"'
             attrs = (
                 f' x1="{svg_num(p1.x)}" y1="{svg_num(p1.y)}"'
                 f' x2="{svg_num(p2.x)}" y2="{svg_num(p2.y)}"'
@@ -1303,13 +890,6 @@ class SMILRenderer(SVGRenderer):
             tag = "line"
         else:
             d_attr = conn.to_svg_path_d()
-            draw_anim = next((a for a in conn._animations if isinstance(a, DrawAnimation)), None)
-            draw_extra = ""
-            if draw_anim and hasattr(conn, "arc_length"):
-                length = conn.arc_length()
-                if length > 0:
-                    offset = svg_num(length) if not draw_anim.reverse else "0"
-                    draw_extra = f' stroke-dasharray="{svg_num(length)}" stroke-dashoffset="{offset}"'
             attrs = (
                 f' d="{d_attr}" fill="none"'
                 f"{stroke_attrs(conn.color, conn.width, svg_cap, marker_attrs)}"
@@ -1330,29 +910,11 @@ def _render_connection_prop_smil(anim: PropertyAnimation, conn: Any) -> str:
     svg_attr_map = {"opacity": "opacity", "color": "stroke", "width": "stroke-width"}
     svg_attr = svg_attr_map.get(anim.prop, anim.prop)
 
-    val_list = [_format_value(kf.value) for kf in anim.keyframes]
-    dur = anim.duration
-    base = anim.keyframes[0].time if anim.keyframes else 0
-    kt_list = [(kf.time - base) / dur if dur > 0 else 0 for kf in anim.keyframes]
-
-    if anim.bounce:
-        val_list, kt_list = _apply_bounce(val_list, kt_list)
-
-    n_segments = max(1, len(val_list) - 1)
-
-    parts = [f'<animate attributeName="{svg_attr}"']
-    parts.append(f' values="{";".join(val_list)}"')
-    parts.append(f' keyTimes="{";".join(svg_num(t) for t in kt_list)}"')
-    parts.append(f' dur="{anim.duration}s"')
-
-    if anim.delay > 0:
-        parts.append(f' begin="{anim.delay}s"')
-
-    parts.append(_smil_easing_n(anim.easing, n_segments))
-
-    if anim.hold:
-        parts.append(' fill="freeze"')
-
-    parts.append(_smil_repeat(anim.repeat))
-    parts.append(" />")
-    return "".join(parts)
+    return build_animate_element(
+        attribute_name=svg_attr,
+        values=[format_value(kf.value) for kf in anim.keyframes],
+        key_times=_anim_key_times(anim),
+        duration=anim.duration, delay=anim.delay,
+        easing=anim.easing, bounce=anim.bounce,
+        hold=anim.hold, repeat=anim.repeat,
+    )

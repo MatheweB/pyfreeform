@@ -381,6 +381,6 @@
 </circle>
   <circle cx="210" cy="210" r="8.4" fill="white">
   <animate attributeName="r" values="8.4;16;8.4" keyTimes="0;0.5;1" dur="1.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
-  <animateTransform attributeName="transform" type="rotate" values="0 210 210;360 210 210" keyTimes="0;1" dur="6.0s" fill="freeze" repeatCount="indefinite" additive="sum" />
+  <animateTransform attributeName="transform" values="0 210 210;360 210 210" keyTimes="0;1" dur="6.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </circle>
 </svg>

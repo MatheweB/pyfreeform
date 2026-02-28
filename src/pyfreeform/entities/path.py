@@ -15,6 +15,7 @@ from ..gradient import Gradient
 from ..paths import Lissajous, Spiral, Wave, Zigzag
 
 if TYPE_CHECKING:
+    from ..animation.models import EasingLike, RepeatLike
     from ..core.pathable import Pathable
 
 
@@ -559,8 +560,8 @@ class Path(Entity):
         *,
         duration: float = 1.0,
         delay: float = 0.0,
-        easing: str = "ease-in-out",
-        repeat: bool | int = False,
+        easing: EasingLike = "ease-in-out",
+        repeat: RepeatLike = False,
         bounce: bool = False,
         hold: bool = True,
         reverse: bool = False,
@@ -582,13 +583,9 @@ class Path(Entity):
         Returns:
             self, for method chaining.
         """
-        from ..animation.builders import build_draw
-
-        delay = self._consume_chain_delay(delay)
-        self._animations.append(build_draw(
-            duration=duration, delay=delay, easing=easing,
-            repeat=repeat, bounce=bounce, hold=hold, reverse=reverse,
-        ))
+        from ..animation.shared import add_draw
+        add_draw(self, duration=duration, delay=delay, easing=easing,
+            repeat=repeat, bounce=bounce, hold=hold, reverse=reverse)
         return self
 
     def to_svg(self) -> str:

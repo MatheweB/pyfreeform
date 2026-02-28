@@ -19,6 +19,7 @@ from .tangent import get_angle_at, perpendicular_shift
 
 
 if TYPE_CHECKING:
+    from ..animation.models import EasingLike, RepeatLike
     from ..config.caps import CapName
     from ..config.styles import PathStyle
     from ..entities.path import Path
@@ -797,12 +798,6 @@ class Entity(ABC):
         """Current animations on this entity (copy)."""
         return list(self._animations)
 
-    def _consume_chain_delay(self, delay: float) -> float:
-        """Add any accumulated chain delay to the explicit delay, then reset."""
-        result = delay + self._chain_delay
-        self._chain_delay = 0.0
-        return result
-
     def then(self, gap: float = 0) -> Entity:
         """Chain: start the next animation after all current ones finish.
 
@@ -821,18 +816,8 @@ class Entity(ABC):
             dot.fade(to=0.0, duration=1.0).then().spin(360, duration=1.0)
             dot.fade(to=0.0, duration=1.0).then(0.5).spin(360, duration=1.0)
         """
-        if not self._animations:
-            return self
-
-        def _effective_end(anim: object) -> float:
-            dur = anim.duration  # type: ignore[union-attr]
-            d = anim.delay  # type: ignore[union-attr]
-            rep = getattr(anim, "repeat", False)
-            if isinstance(rep, int) and rep > 1:
-                return d + dur * rep
-            return d + dur
-
-        self._chain_delay = max(_effective_end(a) for a in self._animations) + gap
+        from ..animation.shared import apply_chain
+        apply_chain(self, gap)
         return self
 
     def fade(
@@ -841,8 +826,8 @@ class Entity(ABC):
         *,
         duration: float = 1.0,
         delay: float = 0.0,
-        easing: str | tuple | object = "linear",
-        repeat: bool | int = False,
+        easing: EasingLike = "linear",
+        repeat: RepeatLike = False,
         bounce: bool = False,
         hold: bool = True,
     ) -> Entity:
@@ -860,21 +845,20 @@ class Entity(ABC):
         Returns:
             Self, for method chaining.
         """
-        from ..animation.builders import build_fade
-        delay = self._consume_chain_delay(delay)
-        self._animations.append(build_fade(self, to, duration=duration,
-            delay=delay, easing=easing, repeat=repeat, bounce=bounce, hold=hold))
+        from ..animation.shared import add_fade
+        add_fade(self, to, duration=duration, delay=delay, easing=easing,
+            repeat=repeat, bounce=bounce, hold=hold)
         return self
 
     def move(
         self,
-        to: tuple | object | None = None,
+        to: RelCoordLike | None = None,
         *,
-        by: tuple | object | None = None,
+        by: RelCoordLike | None = None,
         duration: float = 1.0,
         delay: float = 0.0,
-        easing: str | tuple | object = "ease-in-out",
-        repeat: bool | int = False,
+        easing: EasingLike = "ease-in-out",
+        repeat: RepeatLike = False,
         bounce: bool = False,
         hold: bool = True,
     ) -> Entity:
@@ -904,7 +888,8 @@ class Entity(ABC):
             ValueError: If both *to* and *by* are given, or neither.
         """
         from ..animation.builders import build_move
-        delay = self._consume_chain_delay(delay)
+        from ..animation.shared import consume_chain_delay
+        delay = consume_chain_delay(self, delay)
         self._animations.extend(build_move(self, to, by=by, duration=duration,
             delay=delay, easing=easing, repeat=repeat, bounce=bounce, hold=hold))
         return self
@@ -915,8 +900,8 @@ class Entity(ABC):
         *,
         duration: float = 1.0,
         delay: float = 0.0,
-        easing: str | tuple | object = "linear",
-        repeat: bool | int = False,
+        easing: EasingLike = "linear",
+        repeat: RepeatLike = False,
         bounce: bool = False,
         hold: bool = True,
     ) -> Entity:
@@ -935,7 +920,8 @@ class Entity(ABC):
             Self, for method chaining.
         """
         from ..animation.builders import build_spin
-        delay = self._consume_chain_delay(delay)
+        from ..animation.shared import consume_chain_delay
+        delay = consume_chain_delay(self, delay)
         self._animations.append(build_spin(self, angle, duration=duration,
             delay=delay, easing=easing, repeat=repeat, bounce=bounce, hold=hold))
         return self
@@ -946,8 +932,8 @@ class Entity(ABC):
         *,
         duration: float = 1.0,
         delay: float = 0.0,
-        easing: str | tuple | object = "ease-in-out",
-        repeat: bool | int = False,
+        easing: EasingLike = "ease-in-out",
+        repeat: RepeatLike = False,
         bounce: bool = False,
         hold: bool = True,
     ) -> Entity:
@@ -974,19 +960,20 @@ class Entity(ABC):
             dot.zoom(to=1.5, bounce=True, repeat=True)  # pulse
         """
         from ..animation.builders import build_scale
-        delay = self._consume_chain_delay(delay)
+        from ..animation.shared import consume_chain_delay
+        delay = consume_chain_delay(self, delay)
         self._animations.append(build_scale(self, to, duration=duration,
             delay=delay, easing=easing, repeat=repeat, bounce=bounce, hold=hold))
         return self
 
     def follow(
         self,
-        path: object,
+        path: Pathable,
         *,
         duration: float = 1.0,
         delay: float = 0.0,
-        easing: str | tuple | object = "linear",
-        repeat: bool | int = False,
+        easing: EasingLike = "linear",
+        repeat: RepeatLike = False,
         bounce: bool = False,
         hold: bool = True,
         rotate: bool | float = False,
@@ -1008,7 +995,8 @@ class Entity(ABC):
             Self, for method chaining.
         """
         from ..animation.builders import build_follow
-        delay = self._consume_chain_delay(delay)
+        from ..animation.shared import consume_chain_delay
+        delay = consume_chain_delay(self, delay)
         self._animations.append(build_follow(path, duration=duration,
             delay=delay, easing=easing, repeat=repeat, bounce=bounce,
             hold=hold, rotate=rotate))
@@ -1022,8 +1010,8 @@ class Entity(ABC):
         keyframes: dict[float, Any] | None = None,
         duration: float = 1.0,
         delay: float = 0.0,
-        easing: str | tuple | object = "linear",
-        repeat: bool | int = False,
+        easing: EasingLike = "linear",
+        repeat: RepeatLike = False,
         bounce: bool = False,
         hold: bool = True,
     ) -> Entity:
@@ -1051,11 +1039,10 @@ class Entity(ABC):
         Raises:
             ValueError: If neither ``to`` nor ``keyframes`` is provided.
         """
-        from ..animation.builders import build_animate
-        delay = self._consume_chain_delay(delay)
-        self._animations.append(build_animate(self, prop, to=to,
-            keyframes=keyframes, duration=duration, delay=delay, easing=easing,
-            repeat=repeat, bounce=bounce, hold=hold))
+        from ..animation.shared import add_generic_animate
+        add_generic_animate(self, prop, to=to, keyframes=keyframes,
+            duration=duration, delay=delay, easing=easing,
+            repeat=repeat, bounce=bounce, hold=hold)
         return self
 
     def clear_animations(self) -> Entity:
@@ -1064,8 +1051,8 @@ class Entity(ABC):
         Returns:
             Self, for method chaining.
         """
-        self._animations.clear()
-        self._chain_delay = 0.0
+        from ..animation.shared import clear_all_animations
+        clear_all_animations(self)
         return self
 
     # =========================================================================

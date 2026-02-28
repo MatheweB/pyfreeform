@@ -15,6 +15,7 @@ from .positions import AnchorSpec
 from .svg_utils import opacity_attr, stroke_attrs, svg_num
 
 if TYPE_CHECKING:
+    from ..animation.models import EasingLike, RepeatLike
     from ..entities.path import Path
     from .entity import Entity
     from .surface import Surface
@@ -428,12 +429,6 @@ class Connection:
         """All animations attached to this connection."""
         return list(self._animations)
 
-    def _consume_chain_delay(self, delay: float) -> float:
-        """Add any accumulated chain delay to the explicit delay, then reset."""
-        result = delay + self._chain_delay
-        self._chain_delay = 0.0
-        return result
-
     def then(self, gap: float = 0) -> Connection:
         """Chain: start the next animation after all current ones finish.
 
@@ -443,18 +438,8 @@ class Connection:
         Returns:
             Self, for method chaining.
         """
-        if not self._animations:
-            return self
-
-        def _effective_end(anim: object) -> float:
-            dur = anim.duration  # type: ignore[union-attr]
-            d = anim.delay  # type: ignore[union-attr]
-            rep = getattr(anim, "repeat", False)
-            if isinstance(rep, int) and rep > 1:
-                return d + dur * rep
-            return d + dur
-
-        self._chain_delay = max(_effective_end(a) for a in self._animations) + gap
+        from ..animation.shared import apply_chain
+        apply_chain(self, gap)
         return self
 
     def fade(
@@ -463,18 +448,15 @@ class Connection:
         *,
         duration: float = 1.0,
         delay: float = 0.0,
-        easing: str = "linear",
-        repeat: bool | int = False,
+        easing: EasingLike = "linear",
+        repeat: RepeatLike = False,
         bounce: bool = False,
         hold: bool = True,
     ) -> Connection:
         """Animate opacity."""
-        from ..animation.builders import build_fade
-        delay = self._consume_chain_delay(delay)
-        self._animations.append(build_fade(
-            self, to, duration=duration, delay=delay, easing=easing,
-            repeat=repeat, bounce=bounce, hold=hold,
-        ))
+        from ..animation.shared import add_fade
+        add_fade(self, to, duration=duration, delay=delay, easing=easing,
+            repeat=repeat, bounce=bounce, hold=hold)
         return self
 
     def draw(
@@ -482,48 +464,42 @@ class Connection:
         *,
         duration: float = 1.0,
         delay: float = 0.0,
-        easing: str = "ease-in-out",
-        repeat: bool | int = False,
+        easing: EasingLike = "ease-in-out",
+        repeat: RepeatLike = False,
         bounce: bool = False,
         hold: bool = True,
         reverse: bool = False,
     ) -> Connection:
         """Animate the connection drawing itself."""
-        from ..animation.builders import build_draw
-        delay = self._consume_chain_delay(delay)
-        self._animations.append(build_draw(
-            duration=duration, delay=delay, easing=easing,
-            repeat=repeat, bounce=bounce, hold=hold, reverse=reverse,
-        ))
+        from ..animation.shared import add_draw
+        add_draw(self, duration=duration, delay=delay, easing=easing,
+            repeat=repeat, bounce=bounce, hold=hold, reverse=reverse)
         return self
 
     def animate(
         self,
         prop: str,
         *,
-        to: object = None,
-        keyframes: dict[float, object] | None = None,
+        to: Any | None = None,
+        keyframes: dict[float, Any] | None = None,
         duration: float = 1.0,
         delay: float = 0.0,
-        easing: str = "linear",
-        repeat: bool | int = False,
+        easing: EasingLike = "linear",
+        repeat: RepeatLike = False,
         bounce: bool = False,
         hold: bool = True,
     ) -> Connection:
         """Animate any property."""
-        from ..animation.builders import build_animate
-        delay = self._consume_chain_delay(delay)
-        self._animations.append(build_animate(
-            self, prop, to=to, keyframes=keyframes,
+        from ..animation.shared import add_generic_animate
+        add_generic_animate(self, prop, to=to, keyframes=keyframes,
             duration=duration, delay=delay, easing=easing,
-            repeat=repeat, bounce=bounce, hold=hold,
-        ))
+            repeat=repeat, bounce=bounce, hold=hold)
         return self
 
     def clear_animations(self) -> Connection:
         """Remove all animations."""
-        self._animations.clear()
-        self._chain_delay = 0.0
+        from ..animation.shared import clear_all_animations
+        clear_all_animations(self)
         return self
 
     def to_svg(self) -> str:

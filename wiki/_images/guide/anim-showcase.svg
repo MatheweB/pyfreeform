@@ -7,7 +7,7 @@
   <circle cx="27.6" cy="36" r="3.6" fill="white" />
   <circle cx="432.4" cy="36" r="3.6" fill="white" />
   <rect x="55.2" y="105" width="46" height="48" fill="mediumpurple" stroke="white" stroke-width="1">
-  <animateTransform attributeName="transform" type="rotate" values="0 78.2 129;360 78.2 129" keyTimes="0;1" dur="3.0s" fill="freeze" repeatCount="indefinite" additive="sum" />
+  <animateTransform attributeName="transform" values="0 78.2 129;360 78.2 129" keyTimes="0;1" dur="3.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
   <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="2.0s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
 </rect>
   <circle cx="197.8" cy="129" r="7.5" fill="coral">
@@ -23,18 +23,18 @@
   <animate attributeName="stroke-dashoffset" from="334.844" to="0" dur="2.5s" begin="0.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
 </path>
   <rect x="94.3" y="272.25" width="13.8" height="13.5" fill="coral">
-  <animateTransform attributeName="transform" type="rotate" values="0 101.2 279;360 101.2 279" keyTimes="0;1" dur="1.5s" fill="freeze" repeatCount="indefinite" additive="sum" />
+  <animateTransform attributeName="transform" values="0 101.2 279;360 101.2 279" keyTimes="0;1" dur="1.5s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </rect>
   <rect x="163.3" y="272.25" width="13.8" height="13.5" fill="gold">
-  <animateTransform attributeName="transform" type="rotate" values="0 170.2 279;360 170.2 279" keyTimes="0;1" dur="1.8s" fill="freeze" repeatCount="indefinite" additive="sum" />
+  <animateTransform attributeName="transform" values="0 170.2 279;360 170.2 279" keyTimes="0;1" dur="1.8s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </rect>
   <rect x="232.3" y="272.25" width="13.8" height="13.5" fill="skyblue">
-  <animateTransform attributeName="transform" type="rotate" values="0 239.2 279;360 239.2 279" keyTimes="0;1" dur="2.1s" fill="freeze" repeatCount="indefinite" additive="sum" />
+  <animateTransform attributeName="transform" values="0 239.2 279;360 239.2 279" keyTimes="0;1" dur="2.1s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </rect>
   <rect x="301.3" y="272.25" width="13.8" height="13.5" fill="limegreen">
-  <animateTransform attributeName="transform" type="rotate" values="0 308.2 279;360 308.2 279" keyTimes="0;1" dur="2.4s" fill="freeze" repeatCount="indefinite" additive="sum" />
+  <animateTransform attributeName="transform" values="0 308.2 279;360 308.2 279" keyTimes="0;1" dur="2.4s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </rect>
   <rect x="370.3" y="272.25" width="13.8" height="13.5" fill="mediumpurple">
-  <animateTransform attributeName="transform" type="rotate" values="0 377.2 279;360 377.2 279" keyTimes="0;1" dur="2.7s" fill="freeze" repeatCount="indefinite" additive="sum" />
+  <animateTransform attributeName="transform" values="0 377.2 279;360 377.2 279" keyTimes="0;1" dur="2.7s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </rect>
 </svg>
