@@ -3,21 +3,21 @@
 Standalone functions that convert :mod:`~pyfreeform.animation.models`
 objects (PropertyAnimation, MotionAnimation, DrawAnimation) into SVG
 SMIL element strings.  These are pure functions — no renderer instance
-needed — used by :class:`~pyfreeform.renderers.svg_smil.SMILRenderer`.
+needed — used by :class:`~pyfreeform.renderers.svg.smil.SMILRenderer`.
 """
 
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from ..animation.models import (
+from ...animation.models import (
     DrawAnimation,
     Easing,
     MotionAnimation,
     PropertyAnimation,
 )
-from ..core.entity import Entity
-from ..core.svg_utils import svg_num
+from ...core.entity import Entity
+from ...core.svg_utils import svg_num
 from .smil_elements import (
     build_animate_element,
     format_value,
@@ -26,7 +26,7 @@ from .smil_elements import (
 )
 
 if TYPE_CHECKING:
-    from ..core.connection import Connection
+    from ...core.connection import Connection
 
 
 # ======================================================================

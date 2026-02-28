@@ -11,15 +11,15 @@ import math
 from collections.abc import Callable
 from typing import TYPE_CHECKING
 
-from ..animation.models import Easing, PropertyAnimation, _apply_repeat, _interpolate
-from ..core.coord import Coord
-from ..core.entity import Entity
-from ..core.svg_utils import svg_num
+from ...animation.models import Easing, PropertyAnimation, _apply_repeat, _interpolate
+from ...core.coord import Coord
+from ...core.entity import Entity
+from ...core.svg_utils import svg_num
 from .smil_elements import build_animate_element
 
 if TYPE_CHECKING:
-    from ..core.connection import Connection
-    from ..entities.polygon import Polygon
+    from ...core.connection import Connection
+    from ...entities.polygon import Polygon
 
 # A vertex/endpoint spec: raw Coord, Entity, or (Entity, anchor_name) tuple.
 VertexSpec = Coord | Entity | tuple[Entity, str]

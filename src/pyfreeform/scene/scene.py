@@ -429,7 +429,7 @@ class Scene(Surface):
             Rendered output as a string.
         """
         if renderer is None:
-            from ..renderers.svg_smil import SMILRenderer
+            from ..renderers import SMILRenderer
             renderer = SMILRenderer()
         return renderer.render_scene(self)
 

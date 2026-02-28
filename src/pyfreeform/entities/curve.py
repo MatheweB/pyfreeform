@@ -6,8 +6,8 @@ import math
 
 from ..core.bezier import curvature_control_point, quadratic_to_cubic, sample_arc_length
 from ..core.coord import Coord, CoordLike
-from ..config.caps import CapName, svg_cap_and_marker_attrs
-from ..core.svg_utils import opacity_attr, stroke_attrs, svg_num
+from ..config.caps import CapName
+from ..core.svg_utils import svg_num
 from .endpoint_entity import EndpointEntity
 
 
@@ -392,7 +392,7 @@ class Curve(EndpointEntity):
 
     def to_svg(self) -> str:
         """Render to SVG path element (delegates to renderer)."""
-        from ..renderers.svg_smil import SMILRenderer
+        from ..renderers import SMILRenderer
         return SMILRenderer().render_entity(self)
 
     def __repr__(self) -> str:

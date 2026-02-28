@@ -12,13 +12,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from ..animation.models import (
+from ...animation.models import (
     DrawAnimation,
     MotionAnimation,
     PropertyAnimation,
 )
-from ..core.entity import Entity
-from ..core.svg_utils import (
+from ...core.entity import Entity
+from ...core.svg_utils import (
     fill_stroke_attrs,
     opacity_attr,
     shape_opacity_attrs,
@@ -26,7 +26,7 @@ from ..core.svg_utils import (
     svg_num,
     xml_escape,
 )
-from ..config.caps import svg_cap_and_marker_attrs
+from ...config.caps import svg_cap_and_marker_attrs
 from .smil_converters import (
     render_connection_prop_smil,
     render_draw_smil,
@@ -37,19 +37,19 @@ from .smil_reactive import (
     reactive_connection_anims,
     reactive_polygon_anims,
 )
-from .svg import SVGRenderer, _build_svg_transform
+from .static import SVGRenderer, _build_svg_transform
 
 if TYPE_CHECKING:
-    from ..core.connection import Connection
-    from ..entities.curve import Curve
-    from ..entities.dot import Dot
-    from ..entities.ellipse import Ellipse
-    from ..entities.entity_group import EntityGroup
-    from ..entities.line import Line
-    from ..entities.path import Path
-    from ..entities.polygon import Polygon
-    from ..entities.rect import Rect
-    from ..entities.text import Text
+    from ...core.connection import Connection
+    from ...entities.curve import Curve
+    from ...entities.dot import Dot
+    from ...entities.ellipse import Ellipse
+    from ...entities.entity_group import EntityGroup
+    from ...entities.line import Line
+    from ...entities.path import Path
+    from ...entities.polygon import Polygon
+    from ...entities.rect import Rect
+    from ...entities.text import Text
 
 
 # ======================================================================

@@ -9,7 +9,6 @@ from ..core.coord import Coord, CoordLike
 from ..core.entity import Entity
 from ..core.positions import NAMED_POSITIONS
 from ..core.relcoord import RelCoord
-from ..core.svg_utils import fill_stroke_attrs, shape_opacity_attrs, svg_num
 from ..gradient import Gradient
 
 
@@ -351,7 +350,7 @@ class Rect(Entity):
 
     def to_svg(self) -> str:
         """Render to SVG rect element (delegates to renderer)."""
-        from ..renderers.svg_smil import SMILRenderer
+        from ..renderers import SMILRenderer
         return SMILRenderer().render_entity(self)
 
     def __repr__(self) -> str:

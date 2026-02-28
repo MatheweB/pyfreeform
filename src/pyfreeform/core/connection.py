@@ -6,13 +6,13 @@ import math
 from typing import TYPE_CHECKING, Any, Union
 
 from ..color import Color, ColorLike, apply_brightness
-from ..config.caps import CapName, collect_markers, svg_cap_and_marker_attrs
+from ..config.caps import CapName, collect_markers
 from ..config.styles import PathStyle
 from ..gradient import Gradient, PaintLike
 from .bezier import curvature_control_point, eval_cubic, quadratic_to_cubic
 from .coord import Coord
 from .positions import AnchorSpec
-from .svg_utils import opacity_attr, stroke_attrs, svg_num
+from .svg_utils import svg_num
 
 if TYPE_CHECKING:
     from ..animation.models import EasingLike, RepeatLike
@@ -504,7 +504,7 @@ class Connection:
 
     def to_svg(self) -> str:
         """Render connection as SVG element (delegates to renderer)."""
-        from ..renderers.svg_smil import SMILRenderer
+        from ..renderers import SMILRenderer
         return SMILRenderer().render_connection(self)
 
     def __repr__(self) -> str:

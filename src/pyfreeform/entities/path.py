@@ -9,8 +9,8 @@ from ..color import Color
 from ..core.bezier import eval_cubic, eval_cubic_derivative, fit_cubic_beziers
 from ..core.coord import Coord
 from ..core.entity import Entity
-from ..config.caps import CapName, collect_markers, svg_cap_and_marker_attrs
-from ..core.svg_utils import shape_opacity_attrs, stroke_attrs, svg_num
+from ..config.caps import CapName, collect_markers
+from ..core.svg_utils import svg_num
 from ..gradient import Gradient
 from ..paths import Lissajous, Spiral, Wave, Zigzag
 
@@ -590,7 +590,7 @@ class Path(Entity):
 
     def to_svg(self) -> str:
         """Render to SVG path element (delegates to renderer)."""
-        from ..renderers.svg_smil import SMILRenderer
+        from ..renderers import SMILRenderer
         return SMILRenderer().render_entity(self)
 
     def __repr__(self) -> str:

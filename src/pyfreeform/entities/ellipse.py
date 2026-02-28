@@ -8,7 +8,7 @@ from ..color import Color, apply_brightness
 from ..core.coord import Coord, CoordLike
 from ..core.entity import Entity
 from ..core.bezier import sample_arc_length
-from ..core.svg_utils import fill_stroke_attrs, shape_opacity_attrs, svg_num
+from ..core.svg_utils import svg_num
 from ..gradient import Gradient
 
 
@@ -472,7 +472,7 @@ class Ellipse(Entity):
 
     def to_svg(self) -> str:
         """Render to SVG ellipse element (delegates to renderer)."""
-        from ..renderers.svg_smil import SMILRenderer
+        from ..renderers import SMILRenderer
         return SMILRenderer().render_entity(self)
 
     def __repr__(self) -> str:

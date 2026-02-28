@@ -10,7 +10,6 @@ from ..color import Color, apply_brightness
 from ..core.relcoord import RelCoordLike
 from ..core.coord import Coord
 from ..core.entity import Entity
-from ..core.svg_utils import opacity_attr, svg_num, xml_escape
 from ..gradient import Gradient
 
 # ---------------------------------------------------------------------------
@@ -431,7 +430,7 @@ class Text(Entity):
 
     def to_svg(self) -> str:
         """Render to SVG text element (delegates to renderer)."""
-        from ..renderers.svg_smil import SMILRenderer
+        from ..renderers import SMILRenderer
         return SMILRenderer().render_entity(self)
 
     def __repr__(self) -> str:

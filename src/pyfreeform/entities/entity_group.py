@@ -6,7 +6,6 @@ import math
 
 from ..core.coord import Coord, CoordLike
 from ..core.entity import Entity
-from ..core.svg_utils import opacity_attr, svg_num
 
 
 class EntityGroup(Entity):
@@ -183,7 +182,7 @@ class EntityGroup(Entity):
 
     def to_svg(self) -> str:
         """Render to SVG ``<g>`` element (delegates to renderer)."""
-        from ..renderers.svg_smil import SMILRenderer
+        from ..renderers import SMILRenderer
         return SMILRenderer().render_entity(self)
 
     # =========================================================================

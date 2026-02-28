@@ -392,9 +392,8 @@ def _apply_repeat(
         return None if t >= duration else t
 
     # Finite repeat: check bounds
-    if repeat is not True:
-        if t >= duration * int(repeat):
-            return None
+    if repeat is not True and t >= duration * int(repeat):
+        return None
 
     # Cycle logic (shared by infinite and finite repeat)
     cycle = t / duration
@@ -415,13 +414,13 @@ def _interpolate(a: Any, b: Any, t: float) -> Any:
         - Color strings: RGB channel interpolation
         - Tuples of numbers: element-wise lerp
     """
-    if isinstance(a, (int, float)) and isinstance(b, (int, float)):
+    if isinstance(a, int | float) and isinstance(b, int | float):
         return a + (b - a) * t
 
     if isinstance(a, tuple) and isinstance(b, tuple):
         return tuple(
             a_i + (b_i - a_i) * t
-            for a_i, b_i in zip(a, b)
+            for a_i, b_i in zip(a, b, strict=True)
         )
 
     if isinstance(a, str) and isinstance(b, str):

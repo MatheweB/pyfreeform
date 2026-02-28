@@ -5,8 +5,8 @@ from __future__ import annotations
 import math
 
 from ..core.coord import Coord, CoordLike
-from ..config.caps import CapName, svg_cap_and_marker_attrs
-from ..core.svg_utils import opacity_attr, stroke_attrs, svg_num
+from ..config.caps import CapName
+from ..core.svg_utils import svg_num
 from .endpoint_entity import EndpointEntity
 
 
@@ -309,7 +309,7 @@ class Line(EndpointEntity):
 
     def to_svg(self) -> str:
         """Render to SVG line element (delegates to renderer)."""
-        from ..renderers.svg_smil import SMILRenderer
+        from ..renderers import SMILRenderer
         return SMILRenderer().render_entity(self)
 
     def __repr__(self) -> str:

@@ -201,7 +201,7 @@ Renderers convert a scene into an output format. The base class defines the inte
         - render_entity
         - render_connection
 
-::: pyfreeform.renderers.svg_smil.SMILRenderer
+::: pyfreeform.renderers.svg.SMILRenderer
     options:
       heading_level: 3
       show_root_full_path: false

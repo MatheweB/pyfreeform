@@ -7,8 +7,8 @@ values, keyTimes, and timing parameters.
 
 from __future__ import annotations
 
-from ..animation.models import Easing, RepeatLike
-from ..core.svg_utils import svg_num
+from ...animation.models import Easing, RepeatLike
+from ...core.svg_utils import svg_num
 
 
 # ======================================================================

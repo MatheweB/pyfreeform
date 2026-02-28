@@ -9,7 +9,6 @@ from ..color import Color, apply_brightness
 from ..core.coord import Coord, CoordLike
 from ..core.relcoord import RelCoord
 from ..core.entity import Entity
-from ..core.svg_utils import fill_stroke_attrs, shape_opacity_attrs, svg_num
 from ..gradient import Gradient
 
 if TYPE_CHECKING:
@@ -327,7 +326,7 @@ class Polygon(Entity):
 
     def to_svg(self) -> str:
         """Render to SVG polygon element (delegates to renderer)."""
-        from ..renderers.svg_smil import SMILRenderer
+        from ..renderers import SMILRenderer
         return SMILRenderer().render_entity(self)
 
     def __repr__(self) -> str:

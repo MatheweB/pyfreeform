@@ -772,7 +772,7 @@ class Entity(ABC):
         Returns:
             SVG element (e.g., '<circle ... />').
         """
-        from ..renderers.svg_smil import SMILRenderer
+        from ..renderers import SMILRenderer
         return SMILRenderer().render_entity(self)
 
     @abstractmethod

@@ -1,7 +1,6 @@
 """Pluggable rendering backends for PyFreeform."""
 
 from .base import Renderer
-from .svg import SVGRenderer
-from .svg_smil import SMILRenderer
+from .svg import SMILRenderer, SVGRenderer
 
 __all__ = ["Renderer", "SMILRenderer", "SVGRenderer"]

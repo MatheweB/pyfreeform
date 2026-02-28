@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING
 
 from ..color import Color, apply_brightness
 from ..core.entity import Entity
-from ..core.svg_utils import opacity_attr, svg_num
 from ..gradient import Gradient
 
 if TYPE_CHECKING:
@@ -161,7 +160,7 @@ class Dot(Entity):
 
     def to_svg(self) -> str:
         """Render to SVG circle element (delegates to renderer)."""
-        from ..renderers.svg_smil import SMILRenderer
+        from ..renderers import SMILRenderer
         return SMILRenderer().render_entity(self)
 
     def __repr__(self) -> str:
