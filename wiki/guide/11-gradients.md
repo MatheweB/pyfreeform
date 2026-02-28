@@ -294,12 +294,8 @@ cell.add_polygon(Polygon.hexagon(size=0.75), fill=gem)
 
 ## What's Next?
 
-You've completed the Guide! Put your skills to work with self-contained projects:
+Add motion to your artwork with animations:
 
-[Browse Recipes &rarr;](../recipes/index.md){ .md-button }
-
-Or explore the complete API reference:
-
-[API Reference &rarr;](../api-reference/index.md){ .md-button }
+[Animation &rarr;](12-animation.md){ .md-button }
 
 [&larr; Layout & Alignment](10-layout-alignment.md){ .md-button }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="120" viewBox="0 0 360 120">
+  <rect width="100%" height="100%" fill="#1a1a2e" />
+  <path d="M 40 50 C 133.333 87.3333 226.667 87.3333 320 50" fill="none" stroke="skyblue" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="287.296" stroke-dashoffset="287.296">
+  <animate attributeName="stroke-dashoffset" from="287.296" to="0" dur="2.0s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
+</path>
+  <circle cx="40" cy="50" r="7" fill="white" />
+  <circle cx="320" cy="50" r="7" fill="white" />
+  <text x="180" y="105" font-size="11" font-family="sans-serif" font-style="normal" font-weight="normal" fill="gray" text-anchor="middle" dominant-baseline="middle">conn.draw(duration=2.0)</text>
+</svg>

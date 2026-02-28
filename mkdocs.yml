@@ -120,6 +120,7 @@ nav:
     - Connections & Anchors: guide/09-connections-and-anchors.md
     - Layout & Alignment: guide/10-layout-alignment.md
     - Gradients: guide/11-gradients.md
+    - Animation: guide/12-animation.md
   - Recipes:
     - recipes/index.md
     - Image-to-Art Portraits: recipes/01-image-to-art.md
@@ -139,6 +140,7 @@ nav:
     - Transforms: api-reference/transforms.md
     - Styling & Caps: api-reference/styling.md
     - Types & Utilities: api-reference/types.md
+    - Animation & Rendering: api-reference/animation.md
   - Developer Guide:
     - developer-guide/index.md
     - Architecture Overview: developer-guide/01-architecture.md
