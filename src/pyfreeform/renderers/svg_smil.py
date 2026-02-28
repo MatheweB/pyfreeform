@@ -22,15 +22,16 @@ from .smil_elements import (
 from .smil_reactive import (
     AnimPair,
     VertexSpec,
+    _get_easing_table,
     build_reactive_animate,
     build_resampled_animate,
     check_anim_compatibility,
+    check_delay_only_mismatch,
     compute_cycle_duration,
     connection_path_d_at,
     extract_position_anims,
-    resolve_abs_position,
     resolve_vertex_at_keyframe,
-    resolve_vertex_at_time,
+    resolve_vertex_at_time_fast,
 )
 from .svg import SVGRenderer, _build_svg_transform
 
@@ -238,7 +239,6 @@ def _translate_path_d(path_d: str, dx: float, dy: float) -> str:
     tokens = re.split(r"(\s+|,)", path_d)
     result: list[str] = []
     coord_idx = 0  # alternates 0=x, 1=y
-    in_command = False
 
     for tok in tokens:
         stripped = tok.strip().rstrip(",")
@@ -248,7 +248,6 @@ def _translate_path_d(path_d: str, dx: float, dy: float) -> str:
         if stripped in ("M", "C", "L", "Q", "S", "T", "H", "V", "A", "Z"):
             result.append(tok)
             coord_idx = 0
-            in_command = stripped not in ("Z",)
             continue
         try:
             val = float(stripped)
@@ -281,7 +280,7 @@ def _render_motion_smil(anim: MotionAnimation) -> str:
     rotate_attr = ""
     if anim.rotate is True:
         rotate_attr = ' rotate="auto"'
-    elif isinstance(anim.rotate, (int, float)) and anim.rotate:
+    elif isinstance(anim.rotate, int | float) and anim.rotate:
         rotate_attr = f' rotate="{svg_num(anim.rotate)}"'
 
     parts = [f'<animateMotion dur="{anim.duration}s"']
@@ -551,8 +550,19 @@ class SMILRenderer(SVGRenderer):
         if not all_rx_anims:
             return []
 
-        # Fast path: all animations share identical timing
+        # Fast path: all animations share identical timing, OR same
+        # timing with different delays (delay-only mismatch).  The
+        # delay-only case uses the average delay as a per-polygon
+        # start offset — the tiny per-vertex delay difference within
+        # one polygon is invisible, while per-polygon offsets create
+        # the visible ripple effect.
         template = check_anim_compatibility(all_rx_anims)
+        avg_delay: float | None = None
+        if template is None:
+            delay_result = check_delay_only_mismatch(all_rx_anims)
+            if delay_result is not None:
+                template, avg_delay = delay_result
+
         if template is not None:
             n_keyframes = len(template.keyframes)
             val_list: list[str] = []
@@ -562,16 +572,23 @@ class SMILRenderer(SVGRenderer):
                     c = resolve_vertex_at_keyframe(spec, pair, k)
                     pts.append(f"{svg_num(c.x)},{svg_num(c.y)}")
                 val_list.append(" ".join(pts))
-            return [build_reactive_animate("points", val_list, template)]
+            return [build_reactive_animate(
+                "points", val_list, template, delay=avg_delay,
+            )]
 
         # Slow path: mixed timing — resample all animations onto a unified timeline.
         # Each vertex's easing/bounce/repeat is baked into the sampled values.
+        # Uses a pre-computed easing lookup table for O(1) evaluation instead
+        # of per-call Newton-Raphson — critical for large grids (10 000+ polygons).
         all_anims = []
         for pair, _ in vertex_info:
             if pair is not None:
                 all_anims.extend(pair)
         cycle, all_repeat = compute_cycle_duration(all_anims)
         n_samples = max(2, min(120, int(cycle * 20)))
+
+        # Build easing table once — shared across all vertices
+        easing_table = _get_easing_table(all_anims[0].easing) if all_anims else []
 
         val_list_r: list[str] = []
         key_times: list[float] = []
@@ -580,7 +597,7 @@ class SMILRenderer(SVGRenderer):
             key_times.append(t / cycle if cycle > 0 else 0.0)
             pts: list[str] = []
             for pair, spec in vertex_info:
-                c = resolve_vertex_at_time(spec, pair, t)
+                c = resolve_vertex_at_time_fast(spec, pair, t, easing_table)
                 pts.append(f"{svg_num(c.x)},{svg_num(c.y)}")
             val_list_r.append(" ".join(pts))
 
@@ -738,8 +755,13 @@ class SMILRenderer(SVGRenderer):
         if end_pair:
             rx_anims.append(end_pair[0])
 
-        # Fast path: identical timing on all endpoints
+        # Fast path: identical timing, or same timing with different delays
         template = check_anim_compatibility(rx_anims)
+        if template is None:
+            delay_result = check_delay_only_mismatch(rx_anims)
+            if delay_result is not None:
+                template, _ = delay_result  # avg_delay unused — endpoints are few
+
         if template is not None:
             n_kf = len(template.keyframes)
             if conn._shape_kind == "line":
@@ -754,13 +776,16 @@ class SMILRenderer(SVGRenderer):
             all_anims.extend(end_pair)
         cycle, all_repeat = compute_cycle_duration(all_anims)
         n_samples = max(2, min(120, int(cycle * 20)))
+        easing_table = _get_easing_table(all_anims[0].easing) if all_anims else []
 
         if conn._shape_kind == "line":
             return self._reactive_line_anims_resampled(
                 conn, start_pair, end_pair, cycle, n_samples, all_repeat,
+                easing_table,
             )
         return self._reactive_path_anims_resampled(
             conn, start_pair, end_pair, cycle, n_samples, all_repeat,
+            easing_table,
         )
 
     def _reactive_line_anims(
@@ -814,6 +839,7 @@ class SMILRenderer(SVGRenderer):
         start_pair: tuple[PropertyAnimation, PropertyAnimation] | None,
         end_pair: tuple[PropertyAnimation, PropertyAnimation] | None,
         cycle: float, n_samples: int, all_repeat: bool,
+        easing_table: list[float],
     ) -> list[str]:
         """Resampled x1/y1/x2/y2 animations for mixed-timing line connections."""
         result: list[str] = []
@@ -827,8 +853,8 @@ class SMILRenderer(SVGRenderer):
             t = i * cycle / (n_samples - 1) if n_samples > 1 else 0.0
             key_times.append(t / cycle if cycle > 0 else 0.0)
 
-            sp = resolve_vertex_at_time(conn._start, start_pair, t) if start_pair else conn.start_point
-            ep = resolve_vertex_at_time(conn._end, end_pair, t) if end_pair else conn.end_point
+            sp = resolve_vertex_at_time_fast(conn._start, start_pair, t, easing_table) if start_pair else conn.start_point
+            ep = resolve_vertex_at_time_fast(conn._end, end_pair, t, easing_table) if end_pair else conn.end_point
 
             if start_pair:
                 x1_vals.append(svg_num(sp.x))
@@ -851,6 +877,7 @@ class SMILRenderer(SVGRenderer):
         start_pair: tuple[PropertyAnimation, PropertyAnimation] | None,
         end_pair: tuple[PropertyAnimation, PropertyAnimation] | None,
         cycle: float, n_samples: int, all_repeat: bool,
+        easing_table: list[float],
     ) -> list[str]:
         """Resampled ``d`` animation for mixed-timing curved connections."""
         d_vals: list[str] = []
@@ -860,8 +887,8 @@ class SMILRenderer(SVGRenderer):
             t = i * cycle / (n_samples - 1) if n_samples > 1 else 0.0
             key_times.append(t / cycle if cycle > 0 else 0.0)
 
-            sp = resolve_vertex_at_time(conn._start, start_pair, t) if start_pair else conn.start_point
-            ep = resolve_vertex_at_time(conn._end, end_pair, t) if end_pair else conn.end_point
+            sp = resolve_vertex_at_time_fast(conn._start, start_pair, t, easing_table) if start_pair else conn.start_point
+            ep = resolve_vertex_at_time_fast(conn._end, end_pair, t, easing_table) if end_pair else conn.end_point
             d_vals.append(connection_path_d_at(conn, sp, ep))
 
         return [build_resampled_animate("d", d_vals, key_times, cycle, 0.0, all_repeat)]

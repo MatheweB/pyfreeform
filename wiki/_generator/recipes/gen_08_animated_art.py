@@ -248,11 +248,11 @@ def _generate_breathing_mandala():
 
 
 def _generate_sierpinski_triangle(max_depth=5):
-    """A Sierpinski triangle that cuts itself out depth by depth.
+    """A Sierpinski triangle that cuts itself out depth by depth, then reverses.
 
     All geometry uses relative coords (0–1) within a single cell.
-    Starts with a solid triangle, then progressively removes the center
-    sub-triangle at each depth — revealing the fractal structure.
+    Builds the fractal forward, holds briefly, then unbuilds in reverse
+    order — elements that appeared last disappear first. Loops forever.
     """
     bg = "#0a0a1a"
     scene = Scene.with_grid(cols=1, rows=1, cell_size=420, background=bg)
@@ -266,13 +266,15 @@ def _generate_sierpinski_triangle(max_depth=5):
     def midpoint(a, b):
         return ((a[0] + b[0]) / 2, (a[1] + b[1]) / 2)
 
-    # Step 1: solid outer triangle (fades in first)
+    # Collect all elements with their appear times
+    elements: list[tuple] = []  # (entity, appear_time, target_opacity, fade_dur)
+
+    # Step 1: solid outer triangle
     outer = cell.add_polygon(
         [top, bl, br], fill="#ff6b6b", stroke="#ff6b6b",
         stroke_width=0.5, opacity=0.0,
     )
-    outer.animate("opacity", to=0.85, duration=0.6, easing="ease-out",
-                  hold=True)
+    elements.append((outer, 0.0, 0.85, 0.6))
 
     # Step 2: collect holes by depth
     corners = [(top, bl, br)]
@@ -285,14 +287,14 @@ def _generate_sierpinski_triangle(max_depth=5):
             m01 = midpoint(v0, v1)
             m12 = midpoint(v1, v2)
             m02 = midpoint(v0, v2)
-            holes.append((m01, m12, m02))  # center = the hole
+            holes.append((m01, m12, m02))
             next_corners.extend([
                 (v0, m01, m02), (m01, v1, m12), (m02, m12, v2),
             ])
         holes_by_depth[d] = holes
         corners = next_corners
 
-    # Step 3: animate each depth layer's holes appearing
+    # Step 3: create hole polygons with staggered appear times
     total_delay = 0.8  # after outer triangle fades in
 
     for d in range(1, max_depth + 1):
@@ -304,13 +306,21 @@ def _generate_sierpinski_triangle(max_depth=5):
                 [h0, h1, h2], fill=bg, stroke=bg,
                 stroke_width=0.3, opacity=0.0,
             )
-            hole.animate(
-                "opacity", to=1.0, duration=0.3,
-                delay=total_delay + k * per_hole,
-                easing="ease-out", hold=True,
-            )
+            elements.append((hole, total_delay + k * per_hole, 1.0, 0.3))
 
         total_delay += 1.2 + 0.3
+
+    # Step 4: animate with keyframes + bounce so the whole sequence
+    # plays forward (build), then reverses (unbuild), looping forever.
+    forward_time = total_delay + 0.5  # brief hold of complete fractal
+
+    for entity, appear, target, dur in elements:
+        entity.animate(
+            "opacity",
+            keyframes={0: 0, appear: 0, appear + dur: target,
+                       forward_time: target},
+            bounce=True, repeat=True,
+        )
 
     save(scene, "recipes/anim-sierpinski.svg")
 
