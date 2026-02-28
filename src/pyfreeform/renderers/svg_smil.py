@@ -126,63 +126,77 @@ def _anim_key_times(anim: PropertyAnimation) -> list[float]:
     return [(kf.time - base) / dur if dur > 0 else 0 for kf in anim.keyframes]
 
 
-def _render_property_smil(anim: PropertyAnimation, entity: Entity) -> str:
-    """Render a PropertyAnimation as an SVG ``<animate>`` element."""
+def _transform_common(anim: PropertyAnimation) -> dict:
+    """Shared timing kwargs for ``<animateTransform>`` elements."""
+    return dict(
+        tag="animateTransform",
+        attribute_name="transform",
+        key_times=_anim_key_times(anim),
+        duration=anim.duration, delay=anim.delay,
+        easing=anim.easing, bounce=anim.bounce,
+        hold=anim.hold, repeat=anim.repeat,
+    )
+
+
+def _render_property_smil(anim: PropertyAnimation, entity: Entity) -> list[str]:
+    """Render a PropertyAnimation as one or more SMIL elements."""
     entity_type = type(entity).__name__
 
-    # Special handling for rotation and scale (animateTransform)
     if anim.prop == "rotation":
-        return _render_rotation_smil(anim, entity)
-    if anim.prop == "scale" or anim.prop == "scale_factor":
+        return [_render_rotation_smil(anim, entity)]
+    if anim.prop in ("scale", "scale_factor"):
         return _render_scale_smil(anim, entity)
-
-    # Special handling for position animations
     if anim.prop in ("at_rx", "at_ry"):
-        return _render_position_smil(anim, entity)
+        return [_render_position_smil(anim, entity)]
 
-    svg_attr = _resolve_svg_attr(entity_type, anim.prop)
-    if svg_attr is None:
-        svg_attr = anim.prop
-
-    return build_animate_element(
+    svg_attr = _resolve_svg_attr(entity_type, anim.prop) or anim.prop
+    return [build_animate_element(
         attribute_name=svg_attr,
         values=[format_value(kf.value) for kf in anim.keyframes],
         key_times=_anim_key_times(anim),
         duration=anim.duration, delay=anim.delay,
         easing=anim.easing, bounce=anim.bounce,
         hold=anim.hold, repeat=anim.repeat,
-    )
+    )]
 
 
 def _render_rotation_smil(anim: PropertyAnimation, entity: Entity) -> str:
     """Render rotation as ``<animateTransform type="rotate">``."""
     center = entity.rotation_center
     cx, cy = svg_num(center.x), svg_num(center.y)
-
     return build_animate_element(
-        tag="animateTransform",
-        attribute_name="transform",
+        **_transform_common(anim),
         values=[f"{svg_num(kf.value)} {cx} {cy}" for kf in anim.keyframes],
-        key_times=_anim_key_times(anim),
-        duration=anim.duration, delay=anim.delay,
-        easing=anim.easing, bounce=anim.bounce,
-        hold=anim.hold, repeat=anim.repeat,
         extra_attrs=' type="rotate" additive="sum"',
     )
 
 
-def _render_scale_smil(anim: PropertyAnimation, entity: Entity) -> str:
-    """Render scale as ``<animateTransform type="scale">``."""
-    return build_animate_element(
-        tag="animateTransform",
-        attribute_name="transform",
-        values=[svg_num(kf.value) for kf in anim.keyframes],
-        key_times=_anim_key_times(anim),
-        duration=anim.duration, delay=anim.delay,
-        easing=anim.easing, bounce=anim.bounce,
-        hold=anim.hold, repeat=anim.repeat,
-        extra_attrs=' type="scale" additive="sum"',
-    )
+def _render_scale_smil(anim: PropertyAnimation, entity: Entity) -> list[str]:
+    """Scale around entity center via translate + scale + translate.
+
+    SVG SMIL ``type="scale"`` scales from (0, 0). We emit three
+    synchronized elements for the classic
+    ``translate(cx,cy) scale(s) translate(-cx,-cy)`` pattern.
+    """
+    center = entity.rotation_center
+    cx, cy = svg_num(center.x), svg_num(center.y)
+    ncx, ncy = svg_num(-center.x), svg_num(-center.y)
+    n = len(anim.keyframes)
+    common = _transform_common(anim)
+    return [
+        build_animate_element(
+            **common, values=[f"{cx} {cy}"] * n,
+            extra_attrs=' type="translate" additive="sum"',
+        ),
+        build_animate_element(
+            **common, values=[svg_num(kf.value) for kf in anim.keyframes],
+            extra_attrs=' type="scale" additive="sum"',
+        ),
+        build_animate_element(
+            **common, values=[f"{ncx} {ncy}"] * n,
+            extra_attrs=' type="translate" additive="sum"',
+        ),
+    ]
 
 
 def _render_position_smil(anim: PropertyAnimation, entity: Entity) -> str:
@@ -349,10 +363,10 @@ class SMILRenderer(SVGRenderer):
 
     def _render_animations(self, entity: Entity) -> list[str]:
         """Render all animations on an entity to SMIL element strings."""
-        result = []
+        result: list[str] = []
         for anim in entity._animations:
             if isinstance(anim, PropertyAnimation):
-                result.append(_render_property_smil(anim, entity))
+                result.extend(_render_property_smil(anim, entity))
             elif isinstance(anim, MotionAnimation):
                 result.append(_render_motion_smil(anim))
             elif isinstance(anim, DrawAnimation):
