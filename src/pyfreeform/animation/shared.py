@@ -7,19 +7,24 @@ with correct return types and docstrings.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING
 
-from .models import EasingLike, RepeatLike
+from .builders import build_animate, build_draw, build_fade
+from .models import Animation, EasingLike, RepeatLike
+
+if TYPE_CHECKING:
+    from ..core.connection import Connection
+    from ..core.entity import Entity
 
 
-def consume_chain_delay(target: Any, delay: float) -> float:
+def consume_chain_delay(target: Entity | Connection, delay: float) -> float:
     """Add accumulated chain delay to explicit delay, then reset."""
     result = delay + target._chain_delay
     target._chain_delay = 0.0
     return result
 
 
-def apply_chain(target: Any, gap: float = 0) -> None:
+def apply_chain(target: Entity | Connection, gap: float = 0) -> None:
     """Set chain delay from current animations' end times.
 
     Computes when all current animations end and stores that time
@@ -28,7 +33,7 @@ def apply_chain(target: Any, gap: float = 0) -> None:
     if not target._animations:
         return
 
-    def _effective_end(anim: Any) -> float:
+    def _effective_end(anim: Animation) -> float:
         dur = anim.duration
         d = anim.delay
         rep = getattr(anim, "repeat", False)
@@ -40,7 +45,7 @@ def apply_chain(target: Any, gap: float = 0) -> None:
 
 
 def add_fade(
-    target: Any,
+    target: Entity | Connection,
     to: float,
     *,
     duration: float = 1.0,
@@ -51,8 +56,6 @@ def add_fade(
     hold: bool = True,
 ) -> None:
     """Build and append a fade (opacity) animation."""
-    from .builders import build_fade
-
     delay = consume_chain_delay(target, delay)
     target._animations.append(build_fade(
         target, to, duration=duration, delay=delay, easing=easing,
@@ -61,7 +64,7 @@ def add_fade(
 
 
 def add_draw(
-    target: Any,
+    target: Entity | Connection,
     *,
     duration: float = 1.0,
     delay: float = 0.0,
@@ -72,8 +75,6 @@ def add_draw(
     reverse: bool = False,
 ) -> None:
     """Build and append a draw (stroke reveal) animation."""
-    from .builders import build_draw
-
     delay = consume_chain_delay(target, delay)
     target._animations.append(build_draw(
         duration=duration, delay=delay, easing=easing,
@@ -82,11 +83,11 @@ def add_draw(
 
 
 def add_generic_animate(
-    target: Any,
+    target: Entity | Connection,
     prop: str,
     *,
-    to: Any = None,
-    keyframes: dict[float, Any] | None = None,
+    to: float | int | str | tuple[float, ...] | None = None,
+    keyframes: dict[float, float | int | str | tuple[float, ...]] | None = None,
     duration: float = 1.0,
     delay: float = 0.0,
     easing: EasingLike = "linear",
@@ -95,8 +96,6 @@ def add_generic_animate(
     hold: bool = True,
 ) -> None:
     """Build and append a generic property animation."""
-    from .builders import build_animate
-
     delay = consume_chain_delay(target, delay)
     target._animations.append(build_animate(
         target, prop, to=to, keyframes=keyframes,
@@ -105,7 +104,7 @@ def add_generic_animate(
     ))
 
 
-def clear_all_animations(target: Any) -> None:
+def clear_all_animations(target: Entity | Connection) -> None:
     """Remove all animations and reset chain delay."""
     target._animations.clear()
     target._chain_delay = 0.0

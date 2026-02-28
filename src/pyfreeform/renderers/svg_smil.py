@@ -2,23 +2,26 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from ..animation.models import (
     DrawAnimation,
+    Easing,
     MotionAnimation,
     PropertyAnimation,
 )
+from ..core.entity import Entity
 from ..core.svg_utils import opacity_attr, svg_num, fill_stroke_attrs, shape_opacity_attrs, stroke_attrs, xml_escape
 from ..config.caps import svg_cap_and_marker_attrs
 from .smil_elements import (
     build_animate_element,
     format_value,
-    smil_easing,
     smil_easing_n,
     smil_repeat,
 )
 from .smil_reactive import (
+    AnimPair,
+    VertexSpec,
     build_reactive_animate,
     build_resampled_animate,
     check_anim_compatibility,
@@ -33,7 +36,6 @@ from .svg import SVGRenderer, _build_svg_transform
 
 if TYPE_CHECKING:
     from ..core.connection import Connection
-    from ..core.entity import Entity
     from ..entities.curve import Curve
     from ..entities.dot import Dot
     from ..entities.ellipse import Ellipse
@@ -202,22 +204,19 @@ def _render_scale_smil(anim: PropertyAnimation, entity: Entity) -> list[str]:
 def _render_position_smil(anim: PropertyAnimation, entity: Entity) -> str:
     """Render a relative position animation as ``<animate>`` on cx/cy or x/y."""
     entity_type = type(entity).__name__
+    is_x = anim.prop == "at_rx"
 
-    # Map at_rx/at_ry to actual SVG position attributes and resolve values
-    if anim.prop == "at_rx":
-        svg_attr = _resolve_svg_attr(entity_type, "cx") or _resolve_svg_attr(entity_type, "x") or "cx"
-        surface = entity._surface
-        if surface:
-            val_list = [svg_num(surface._x + kf.value * surface._width) for kf in anim.keyframes]
-        else:
-            val_list = [svg_num(kf.value) for kf in anim.keyframes]
-    else:  # at_ry
-        svg_attr = _resolve_svg_attr(entity_type, "cy") or _resolve_svg_attr(entity_type, "y") or "cy"
-        surface = entity._surface
-        if surface:
-            val_list = [svg_num(surface._y + kf.value * surface._height) for kf in anim.keyframes]
-        else:
-            val_list = [svg_num(kf.value) for kf in anim.keyframes]
+    center_attr = "cx" if is_x else "cy"
+    fallback_attr = "x" if is_x else "y"
+    svg_attr = _resolve_svg_attr(entity_type, center_attr) or _resolve_svg_attr(entity_type, fallback_attr) or center_attr
+
+    surface = entity._surface
+    if surface:
+        offset = surface._x if is_x else surface._y
+        scale = surface._width if is_x else surface._height
+        val_list = [svg_num(offset + kf.value * scale) for kf in anim.keyframes]
+    else:
+        val_list = [svg_num(kf.value) for kf in anim.keyframes]
 
     return build_animate_element(
         attribute_name=svg_attr,
@@ -291,8 +290,6 @@ def _render_motion_smil(anim: MotionAnimation) -> str:
         parts.append(f' begin="{anim.delay}s"')
 
     if anim.bounce:
-        from ..animation.models import Easing
-
         parts.append(' keyPoints="0;1;0"')
         parts.append(' keyTimes="0;0.5;1"')
         if anim.easing == Easing.LINEAR:
@@ -301,7 +298,7 @@ def _render_motion_smil(anim: MotionAnimation) -> str:
             spline = f"{anim.easing.x1} {anim.easing.y1} {anim.easing.x2} {anim.easing.y2}"
             parts.append(f' calcMode="spline" keySplines="{spline};{spline}"')
     else:
-        parts.append(smil_easing(anim))
+        parts.append(smil_easing_n(anim.easing, 1))
 
     if anim.hold:
         parts.append(' fill="freeze"')
@@ -312,7 +309,7 @@ def _render_motion_smil(anim: MotionAnimation) -> str:
     return "".join(parts)
 
 
-def _render_draw_smil(anim: DrawAnimation, entity: Any) -> str:
+def _render_draw_smil(anim: DrawAnimation, entity: Entity) -> str:
     """Render a DrawAnimation as stroke-dashoffset ``<animate>``.
 
     The parent element must have stroke-dasharray set to the path length.
@@ -404,7 +401,7 @@ class SMILRenderer(SVGRenderer):
                 return anim
         return None
 
-    def _draw_attrs(self, entity: Any) -> str:
+    def _draw_attrs(self, entity: Entity | Connection) -> str:
         """Build stroke-dasharray/offset attrs for draw animation."""
         length = entity.arc_length() if hasattr(entity, "arc_length") else 0
         if length <= 0:
@@ -525,17 +522,15 @@ class SMILRenderer(SVGRenderer):
 
     def _reactive_polygon_anims(self, polygon: Polygon) -> list[str]:
         """Synthesize ``<animate attributeName="points">`` from animated vertex entities."""
-        from ..core.entity import Entity as _Entity
-
         # Classify each vertex: (anim_pair | None, spec)
-        vertex_info: list[tuple[tuple[PropertyAnimation, PropertyAnimation] | None, Any]] = []
+        vertex_info: list[tuple[AnimPair | None, VertexSpec]] = []
         all_rx_anims: list[PropertyAnimation] = []
 
         for spec in polygon._vertex_specs:
-            entity: _Entity | None = None
-            if isinstance(spec, _Entity):
+            entity: Entity | None = None
+            if isinstance(spec, Entity):
                 entity = spec
-            elif isinstance(spec, tuple) and isinstance(spec[0], _Entity):
+            elif isinstance(spec, tuple) and isinstance(spec[0], Entity):
                 entity = spec[0]
 
             if entity is not None:
@@ -724,10 +719,8 @@ class SMILRenderer(SVGRenderer):
 
     def _reactive_connection_anims(self, conn: Connection) -> list[str]:
         """Synthesize SMIL elements from animated connection endpoints."""
-        from ..core.entity import Entity as _Entity
-
-        start_pair = extract_position_anims(conn._start) if isinstance(conn._start, _Entity) else None
-        end_pair = extract_position_anims(conn._end) if isinstance(conn._end, _Entity) else None
+        start_pair = extract_position_anims(conn._start) if isinstance(conn._start, Entity) else None
+        end_pair = extract_position_anims(conn._end) if isinstance(conn._end, Entity) else None
 
         if start_pair is None and end_pair is None:
             return []
@@ -919,7 +912,7 @@ class SMILRenderer(SVGRenderer):
         return f"<{tag}{attrs}>\n{anim_str}\n</{tag}>"
 
 
-def _render_connection_prop_smil(anim: PropertyAnimation, conn: Any) -> str:
+def _render_connection_prop_smil(anim: PropertyAnimation, conn: Connection) -> str:
     """Render a property animation for a Connection."""
     svg_attr_map = {"opacity": "opacity", "color": "stroke", "width": "stroke-width"}
     svg_attr = svg_attr_map.get(anim.prop, anim.prop)

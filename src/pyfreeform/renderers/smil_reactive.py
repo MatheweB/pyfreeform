@@ -8,16 +8,19 @@ elements that make the shape follow the moving entities.
 from __future__ import annotations
 
 import math
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Callable
 
 from ..animation.models import PropertyAnimation
 from ..core.coord import Coord
+from ..core.entity import Entity
 from ..core.svg_utils import svg_num
 from .smil_elements import build_animate_element
 
 if TYPE_CHECKING:
     from ..core.connection import Connection
-    from ..core.entity import Entity
+
+# A vertex/endpoint spec: raw Coord, Entity, or (Entity, anchor_name) tuple.
+VertexSpec = Coord | Entity | tuple[Entity, str]
 
 
 # ======================================================================
@@ -122,54 +125,40 @@ def compute_cycle_duration(
 AnimPair = tuple[PropertyAnimation, PropertyAnimation]
 
 
-def resolve_vertex_at_keyframe(
-    spec: Any,
+def _resolve_vertex(
+    spec: VertexSpec,
     pair: AnimPair | None,
-    keyframe_index: int,
+    get_value: Callable[[PropertyAnimation], float],
 ) -> Coord:
-    """Resolve a vertex spec to absolute Coord at a specific keyframe index.
+    """Resolve a vertex/endpoint spec to absolute Coord.
 
-    Works for both polygon vertex specs and connection endpoint specs.
-    Handles: raw Coord, Entity, (Entity, anchor_name) tuple.
+    The *get_value* callable extracts a coordinate value from a
+    PropertyAnimation (e.g. a keyframe lookup or time-based evaluation).
     """
-    from ..core.entity import Entity as _Entity
-
     if isinstance(spec, Coord):
         return spec
     if pair is not None:
-        entity = spec if isinstance(spec, _Entity) else spec[0]
-        rx = pair[0].keyframes[keyframe_index].value
-        ry = pair[1].keyframes[keyframe_index].value
+        entity = spec if isinstance(spec, Entity) else spec[0]
+        rx, ry = get_value(pair[0]), get_value(pair[1])
         ax, ay = resolve_abs_position(entity, rx, ry)
         return Coord(ax, ay)
-    if isinstance(spec, _Entity):
+    if isinstance(spec, Entity):
         return spec.position
     return spec[0].anchor(spec[1])
+
+
+def resolve_vertex_at_keyframe(
+    spec: VertexSpec, pair: AnimPair | None, keyframe_index: int,
+) -> Coord:
+    """Resolve a vertex spec to absolute Coord at a specific keyframe index."""
+    return _resolve_vertex(spec, pair, lambda a: a.keyframes[keyframe_index].value)
 
 
 def resolve_vertex_at_time(
-    spec: Any,
-    pair: AnimPair | None,
-    t: float,
+    spec: VertexSpec, pair: AnimPair | None, t: float,
 ) -> Coord:
-    """Resolve a vertex spec to absolute Coord at a given time.
-
-    Uses ``PropertyAnimation.evaluate(t)`` to interpolate, baking in
-    easing, bounce, and repeat. Used by the resampling (slow) path.
-    """
-    from ..core.entity import Entity as _Entity
-
-    if isinstance(spec, Coord):
-        return spec
-    if pair is not None:
-        entity = spec if isinstance(spec, _Entity) else spec[0]
-        rx = pair[0].evaluate(t)
-        ry = pair[1].evaluate(t)
-        ax, ay = resolve_abs_position(entity, rx, ry)
-        return Coord(ax, ay)
-    if isinstance(spec, _Entity):
-        return spec.position
-    return spec[0].anchor(spec[1])
+    """Resolve a vertex spec to absolute Coord at a given time (with easing)."""
+    return _resolve_vertex(spec, pair, lambda a: a.evaluate(t))
 
 
 # ======================================================================

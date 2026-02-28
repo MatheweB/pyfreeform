@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Callable
 
+from ..core.relcoord import RelCoord
 from .models import (
     DrawAnimation,
     Easing,
@@ -16,12 +17,14 @@ from .models import (
 )
 
 if TYPE_CHECKING:
+    from ..core.connection import Connection
+    from ..core.entity import Entity
     from ..core.pathable import Pathable
     from ..core.relcoord import RelCoordLike
 
 
 def build_fade(
-    entity: Any,
+    entity: Entity | Connection,
     to: float,
     *,
     duration: float = 1.0,
@@ -47,7 +50,7 @@ def build_fade(
 
 
 def build_move(
-    entity: Any,
+    entity: Entity,
     to: RelCoordLike | None = None,
     *,
     by: RelCoordLike | None = None,
@@ -79,8 +82,6 @@ def build_move(
         raise ValueError("Cannot specify both 'to' and 'by'")
     if to is None and by is None:
         raise ValueError("Must specify either 'to' or 'by'")
-
-    from ..core.relcoord import RelCoord
 
     current_at = entity.at
     if current_at is None:
@@ -115,7 +116,7 @@ def build_move(
 
 
 def build_spin(
-    entity: Any,
+    entity: Entity,
     angle: float = 360,
     *,
     duration: float = 1.0,
@@ -187,11 +188,11 @@ def build_draw(
 
 
 def build_animate(
-    entity: Any,
+    entity: Entity | Connection,
     prop: str,
     *,
-    to: Any | None = None,
-    keyframes: dict[float, Any] | None = None,
+    to: float | int | str | tuple[float, ...] | None = None,
+    keyframes: dict[float, float | int | str | tuple[float, ...]] | None = None,
     duration: float = 1.0,
     delay: float = 0.0,
     easing: EasingLike = "linear",
@@ -243,7 +244,7 @@ def build_animate(
 
 
 def build_scale(
-    entity: Any,
+    entity: Entity,
     to: float,
     *,
     duration: float = 1.0,
@@ -269,10 +270,10 @@ def build_scale(
 
 
 def stagger(
-    *entities: Any,
+    *entities: Entity | Connection,
     offset: float = 0.1,
-    each: Callable[[Any], Any],
-) -> list[Any]:
+    each: Callable[[Entity | Connection], Entity | Connection],
+) -> list[Entity | Connection]:
     """Apply an animation to entities with staggered timing.
 
     Calls *each(entity)* for every entity, then adjusts the delay
@@ -299,7 +300,9 @@ def stagger(
     return result
 
 
-def _get_current_value(entity: Any, prop: str) -> Any:
+def _get_current_value(
+    entity: Entity | Connection, prop: str,
+) -> float | int | str:
     """Read the current value of a property from an entity.
 
     Tries direct attribute access. Returns 0 as fallback.

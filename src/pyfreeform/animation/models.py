@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, ClassVar
+
+from ..color import Color
 
 if TYPE_CHECKING:
     from ..core.pathable import Pathable
@@ -388,27 +389,14 @@ def _apply_repeat(
         return 0.0
 
     if repeat is False or repeat == 1:
-        # Single play
-        if t >= duration:
+        return None if t >= duration else t
+
+    # Finite repeat: check bounds
+    if repeat is not True:
+        if t >= duration * int(repeat):
             return None
-        return t
 
-    if repeat is True:
-        # Infinite loop
-        cycle = t / duration
-        if bounce:
-            # Alternate direction on odd cycles
-            cycle_int = int(cycle)
-            frac = cycle - cycle_int
-            if cycle_int % 2 == 1:
-                return duration * (1.0 - frac)
-            return duration * frac
-        return (t % duration)
-
-    # Finite repeat count
-    total = duration * int(repeat)
-    if t >= total:
-        return None
+    # Cycle logic (shared by infinite and finite repeat)
     cycle = t / duration
     if bounce:
         cycle_int = int(cycle)
@@ -416,7 +404,7 @@ def _apply_repeat(
         if cycle_int % 2 == 1:
             return duration * (1.0 - frac)
         return duration * frac
-    return (t % duration)
+    return t % duration
 
 
 def _interpolate(a: Any, b: Any, t: float) -> Any:
@@ -445,8 +433,6 @@ def _interpolate(a: Any, b: Any, t: float) -> Any:
 
 def _interpolate_color(a: str, b: str, t: float) -> str:
     """Interpolate between two color strings in RGB space."""
-    from ..color import Color
-
     try:
         rgb_a = Color(a).to_rgb()
         rgb_b = Color(b).to_rgb()

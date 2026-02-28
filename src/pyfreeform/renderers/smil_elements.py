@@ -7,8 +7,7 @@ values, keyTimes, and timing parameters.
 
 from __future__ import annotations
 
-from typing import Any
-
+from ..animation.models import Easing, RepeatLike
 from ..core.svg_utils import svg_num
 
 
@@ -17,7 +16,7 @@ from ..core.svg_utils import svg_num
 # ======================================================================
 
 
-def format_value(v: Any) -> str:
+def format_value(v: float | int | str) -> str:
     """Format a single keyframe value for SVG output."""
     if isinstance(v, float):
         return svg_num(v)
@@ -26,7 +25,7 @@ def format_value(v: Any) -> str:
     return str(v)
 
 
-def smil_repeat(repeat: bool | int) -> str:
+def smil_repeat(repeat: RepeatLike) -> str:
     """Convert repeat parameter to SVG ``repeatCount`` attribute fragment."""
     if repeat is True:
         return ' repeatCount="indefinite"'
@@ -60,31 +59,15 @@ def apply_bounce(
     return values + backward_vals, forward_kt + backward_kt
 
 
-def smil_easing_n(easing: Any, n_segments: int) -> str:
+def smil_easing_n(easing: Easing, n_segments: int) -> str:
     """Build ``calcMode`` + ``keySplines`` for *n_segments* segments.
 
     Returns an empty string for linear easing (the SVG default).
     """
-    from ..animation.models import Easing
-
     if easing == Easing.LINEAR:
         return ""
     spline = f"{easing.x1} {easing.y1} {easing.x2} {easing.y2}"
     return f' calcMode="spline" keySplines="{";".join([spline] * n_segments)}"'
-
-
-def smil_easing(anim: Any) -> str:
-    """Build ``calcMode`` + ``keySplines`` from an animation's easing and keyframes."""
-    from ..animation.models import Easing
-
-    easing = anim.easing
-    if easing == Easing.LINEAR:
-        return ""
-
-    n_segments = max(1, len(anim.keyframes) - 1) if hasattr(anim, "keyframes") else 1
-    spline = f"{easing.x1} {easing.y1} {easing.x2} {easing.y2}"
-    splines = ";".join([spline] * n_segments)
-    return f' calcMode="spline" keySplines="{splines}"'
 
 
 # ======================================================================
@@ -100,10 +83,10 @@ def build_animate_element(
     key_times: list[float],
     duration: float,
     delay: float = 0.0,
-    easing: Any | None = None,
+    easing: Easing | None = None,
     bounce: bool = False,
     hold: bool = True,
-    repeat: bool | int = False,
+    repeat: RepeatLike = False,
     extra_attrs: str = "",
 ) -> str:
     """Build a single SMIL ``<animate>`` or ``<animateTransform>`` element.
