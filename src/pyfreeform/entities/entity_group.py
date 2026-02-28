@@ -182,30 +182,9 @@ class EntityGroup(Entity):
         return (g_min_x, g_min_y, g_max_x, g_max_y)
 
     def to_svg(self) -> str:
-        """
-        Render to SVG ``<g>`` element with transform.
-
-        Children are rendered inside a ``<g>`` wrapper that applies
-        translate and scale transforms. Children are sorted by z_index.
-
-        Returns:
-            SVG string, or empty string if no children.
-        """
-        if not self._children:
-            return ""
-
-        transforms = [f"translate({svg_num(self.x)}, {svg_num(self.y)})"]
-        if self._rotation != 0:
-            transforms.append(f"rotate({svg_num(self._rotation)})")
-        if self._scale != 1.0:
-            transforms.append(f"scale({svg_num(self._scale)})")
-        transform_str = " ".join(transforms)
-
-        sorted_children = sorted(self._children, key=lambda e: e.z_index)
-        parts = [f'<g transform="{transform_str}"{opacity_attr(self.opacity)}>']
-        parts.extend(f"  {child.to_svg()}" for child in sorted_children)
-        parts.append("</g>")
-        return "\n".join(parts)
+        """Render to SVG ``<g>`` element (delegates to renderer)."""
+        from ..renderers.svg_smil import SMILRenderer
+        return SMILRenderer().render_entity(self)
 
     # =========================================================================
     # TRANSFORM OVERRIDES

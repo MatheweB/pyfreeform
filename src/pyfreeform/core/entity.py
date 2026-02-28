@@ -72,6 +72,9 @@ class Entity(ABC):
         self._rotation: float = 0.0
         self._scale_factor: float = 1.0
 
+        # Animations (renderer-agnostic data)
+        self._animations: list = []
+
     @property
     def z_index(self) -> int:
         """Layer ordering (higher values render on top)."""
@@ -757,14 +760,18 @@ class Entity(ABC):
         br = self._surface._absolute_to_relative(Coord(max_x, max_y))
         return (tl.rx, tl.ry, br.rx, br.ry)
 
-    @abstractmethod
     def to_svg(self) -> str:
         """
         Render this entity to an SVG element string.
 
+        Delegates to the default renderer (SMILRenderer), which handles
+        both static and animated SVG output.
+
         Returns:
             SVG element (e.g., '<circle ... />').
         """
+        from ..renderers.svg_smil import SMILRenderer
+        return SMILRenderer().render_entity(self)
 
     @abstractmethod
     def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
@@ -779,6 +786,195 @@ class Entity(ABC):
         Returns:
             Tuple of (min_x, min_y, max_x, max_y).
         """
+
+    # =========================================================================
+    # ANIMATION API
+    # =========================================================================
+
+    @property
+    def animations(self) -> list:
+        """Current animations on this entity (copy)."""
+        return list(self._animations)
+
+    def fade(
+        self,
+        to: float,
+        *,
+        duration: float = 1.0,
+        delay: float = 0.0,
+        easing: str | tuple | object = "linear",
+        repeat: bool | int = False,
+        bounce: bool = False,
+        hold: bool = True,
+    ) -> Entity:
+        """Animate opacity.
+
+        Args:
+            to: Target opacity (0.0 transparent to 1.0 opaque).
+            duration: Duration in seconds.
+            delay: Seconds before animation starts.
+            easing: Speed curve ("linear", "ease-in-out", etc.).
+            repeat: False=once, True=forever, int=N times.
+            bounce: Alternate direction each cycle.
+            hold: Hold final value after completion.
+
+        Returns:
+            Self, for method chaining.
+        """
+        from ..animation.builders import build_fade
+        self._animations.append(build_fade(self, to, duration=duration,
+            delay=delay, easing=easing, repeat=repeat, bounce=bounce, hold=hold))
+        return self
+
+    def move(
+        self,
+        to: tuple | object,
+        *,
+        duration: float = 1.0,
+        delay: float = 0.0,
+        easing: str | tuple | object = "ease-in-out",
+        repeat: bool | int = False,
+        bounce: bool = False,
+        hold: bool = True,
+    ) -> Entity:
+        """Animate position using relative coordinates.
+
+        Args:
+            to: Target position as RelCoord or (rx, ry) tuple.
+            duration: Duration in seconds.
+            delay: Seconds before animation starts.
+            easing: Speed curve (default "ease-in-out" for natural motion).
+            repeat: False=once, True=forever, int=N times.
+            bounce: Alternate direction each cycle.
+            hold: Hold final value after completion.
+
+        Returns:
+            Self, for method chaining.
+        """
+        from ..animation.builders import build_move
+        self._animations.extend(build_move(self, to, duration=duration,
+            delay=delay, easing=easing, repeat=repeat, bounce=bounce, hold=hold))
+        return self
+
+    def spin(
+        self,
+        angle: float = 360,
+        *,
+        duration: float = 1.0,
+        delay: float = 0.0,
+        easing: str | tuple | object = "linear",
+        repeat: bool | int = False,
+        bounce: bool = False,
+        hold: bool = True,
+    ) -> Entity:
+        """Animate rotation.
+
+        Args:
+            angle: Total rotation in degrees (default 360 = full turn).
+            duration: Duration in seconds.
+            delay: Seconds before animation starts.
+            easing: Speed curve (default "linear" for constant rotation).
+            repeat: False=once, True=forever, int=N times.
+            bounce: Alternate direction each cycle.
+            hold: Hold final value after completion.
+
+        Returns:
+            Self, for method chaining.
+        """
+        from ..animation.builders import build_spin
+        self._animations.append(build_spin(self, angle, duration=duration,
+            delay=delay, easing=easing, repeat=repeat, bounce=bounce, hold=hold))
+        return self
+
+    def follow(
+        self,
+        path: object,
+        *,
+        duration: float = 1.0,
+        delay: float = 0.0,
+        easing: str | tuple | object = "linear",
+        repeat: bool | int = False,
+        bounce: bool = False,
+        hold: bool = True,
+        rotate: bool | float = False,
+    ) -> Entity:
+        """Animate along a path.
+
+        Args:
+            path: A Pathable object (Wave, Spiral, etc.) to follow.
+            duration: Duration in seconds.
+            delay: Seconds before animation starts.
+            easing: Speed curve.
+            repeat: False=once, True=forever, int=N times.
+            bounce: Alternate direction each cycle.
+            hold: Hold final value after completion.
+            rotate: True for auto-rotation along tangent,
+                    float for fixed angle.
+
+        Returns:
+            Self, for method chaining.
+        """
+        from ..animation.builders import build_follow
+        self._animations.append(build_follow(path, duration=duration,
+            delay=delay, easing=easing, repeat=repeat, bounce=bounce,
+            hold=hold, rotate=rotate))
+        return self
+
+    def animate(
+        self,
+        prop: str,
+        *,
+        to: Any | None = None,
+        keyframes: dict[float, Any] | None = None,
+        duration: float = 1.0,
+        delay: float = 0.0,
+        easing: str | tuple | object = "linear",
+        repeat: bool | int = False,
+        bounce: bool = False,
+        hold: bool = True,
+    ) -> Entity:
+        """Animate any property.
+
+        Two modes:
+
+        - **Simple**: ``entity.animate("opacity", to=0.0, duration=2.0)``
+        - **Keyframes**: ``entity.animate("opacity", keyframes={0: 1, 1: 0.3, 2: 1})``
+
+        Args:
+            prop: Property name (e.g., "opacity", "r", "fill", "width").
+            to: Target value (simple mode).
+            keyframes: Dict of {time_seconds: value} (keyframe mode).
+            duration: Duration for simple mode.
+            delay: Seconds before animation starts.
+            easing: Speed curve.
+            repeat: False=once, True=forever, int=N times.
+            bounce: Alternate direction each cycle.
+            hold: Hold final value after completion.
+
+        Returns:
+            Self, for method chaining.
+
+        Raises:
+            ValueError: If neither ``to`` nor ``keyframes`` is provided.
+        """
+        from ..animation.builders import build_animate
+        self._animations.append(build_animate(self, prop, to=to,
+            keyframes=keyframes, duration=duration, delay=delay, easing=easing,
+            repeat=repeat, bounce=bounce, hold=hold))
+        return self
+
+    def clear_animations(self) -> Entity:
+        """Remove all animations from this entity.
+
+        Returns:
+            Self, for method chaining.
+        """
+        self._animations.clear()
+        return self
+
+    # =========================================================================
+    # SVG DEFS COLLECTION (used by renderers)
+    # =========================================================================
 
     def get_required_markers(self) -> list[tuple[str, str]]:
         """Collect SVG marker definitions needed by this entity.

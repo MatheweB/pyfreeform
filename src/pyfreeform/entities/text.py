@@ -430,57 +430,9 @@ class Text(Entity):
         return [(info["path_id"], path_svg)]
 
     def to_svg(self) -> str:
-        """Render to SVG text element."""
-        if self._textpath_info is not None:
-            return self._to_svg_textpath(self._textpath_info)
-
-        escaped = xml_escape(self.content)
-
-        return (
-            f'<text x="{svg_num(self.x)}" y="{svg_num(self.y)}" '
-            f'font-size="{svg_num(self.font_size)}" '
-            f'font-family="{self.font_family}" '
-            f'font-style="{self.font_style}" '
-            f'font-weight="{self.font_weight}" '
-            f'fill="{self.color}" '
-            f'text-anchor="{self.text_anchor}" '
-            f'dominant-baseline="{self.baseline}"'
-            f"{opacity_attr(self.opacity)}"
-            f"{self._build_svg_transform()}>"
-            f"{escaped}"
-            f"</text>"
-        )
-
-    def _to_svg_textpath(self, info: dict[str, object]) -> str:
-        """Render to SVG ``<text>`` element with ``<textPath>`` warping.
-
-        ``textLength`` and ``lengthAdjust`` are placed on **both** the outer
-        ``<text>`` and the inner ``<textPath>`` for cross-browser support:
-        Firefox only reads them on ``<text>``, Safari only on ``<textPath>``.
-        """
-        escaped = xml_escape(self.content)
-
-        offset = info["start_offset"]
-        offset_attr = f' startOffset="{offset}"' if offset not in ("0%", "0.0%") else ""
-
-        text_len = info.get("text_length")
-        textlen_attr = f' textLength="{text_len:.1f}" lengthAdjust="spacing"' if text_len else ""
-
-        return (
-            f'<text font-size="{svg_num(self.font_size)}" '
-            f'font-family="{self.font_family}" '
-            f'font-style="{self.font_style}" '
-            f'font-weight="{self.font_weight}" '
-            f'fill="{self.color}" '
-            f'text-anchor="{self.text_anchor}" '
-            f'dominant-baseline="{self.baseline}"'
-            f"{textlen_attr}"
-            f"{opacity_attr(self.opacity)}>"
-            f'<textPath href="#{info["path_id"]}"'
-            f"{offset_attr}{textlen_attr}>"
-            f"{escaped}"
-            f"</textPath></text>"
-        )
+        """Render to SVG text element (delegates to renderer)."""
+        from ..renderers.svg_smil import SMILRenderer
+        return SMILRenderer().render_entity(self)
 
     def __repr__(self) -> str:
         return (

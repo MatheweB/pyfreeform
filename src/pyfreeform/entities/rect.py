@@ -350,13 +350,9 @@ class Rect(Entity):
         return (min_x, min_y, max_x, max_y)
 
     def to_svg(self) -> str:
-        """Render to SVG rect element."""
-        return (
-            f'<rect x="{svg_num(self.x)}" y="{svg_num(self.y)}" width="{svg_num(self.width)}" height="{svg_num(self.height)}"'
-            f"{fill_stroke_attrs(self.fill, self.stroke, self.stroke_width)}"
-            f"{shape_opacity_attrs(self.opacity, self.fill_opacity, self.stroke_opacity)}"
-            f"{self._build_svg_transform()} />"
-        )
+        """Render to SVG rect element (delegates to renderer)."""
+        from ..renderers.svg_smil import SMILRenderer
+        return SMILRenderer().render_entity(self)
 
     def __repr__(self) -> str:
         rot = f", rotation={self.rotation}°" if self.rotation != 0 else ""

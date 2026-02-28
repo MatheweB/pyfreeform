@@ -415,6 +415,24 @@ class Scene(Surface):
         }
         return gradients
 
+    def render(self, renderer=None) -> str:
+        """
+        Render the scene using the given renderer.
+
+        If no renderer is specified, uses SMILRenderer (supports both
+        static and animated content).
+
+        Args:
+            renderer: A Renderer instance. Defaults to SMILRenderer.
+
+        Returns:
+            Rendered output as a string.
+        """
+        if renderer is None:
+            from ..renderers.svg_smil import SMILRenderer
+            renderer = SMILRenderer()
+        return renderer.render_scene(self)
+
     def to_svg(self) -> str:
         """
         Render the scene to an SVG string.
@@ -426,86 +444,21 @@ class Scene(Surface):
         Returns:
             Complete SVG document as string.
         """
-        # Collect entities and connections once
-        all_entities = self.entities
-        all_connections = self._collect_connections()
+        return self.render()
 
-        if self._viewbox is not None:
-            vb_x, vb_y, vb_w, vb_h = self._viewbox
-            # Scale display height to match the cropped aspect ratio
-            display_h = vb_h * self._width / vb_w if vb_w > 0 else self._height
-            svg_open = (
-                f'<svg xmlns="http://www.w3.org/2000/svg" '
-                f'width="{self._width}" height="{display_h:.1f}" '
-                f'viewBox="{vb_x} {vb_y} {vb_w} {vb_h}">'
-            )
-        else:
-            svg_open = (
-                f'<svg xmlns="http://www.w3.org/2000/svg" '
-                f'width="{self._width}" height="{self._height}" '
-                f'viewBox="0 0 {self._width} {self._height}">'
-            )
-
-        lines = [
-            '<?xml version="1.0" encoding="UTF-8"?>',
-            svg_open,
-        ]
-
-        # Definitions (gradients, markers for arrow caps, paths for textPath)
-        markers = self._collect_markers(all_entities, all_connections)
-        path_defs = self._collect_path_defs(all_entities)
-        gradients = self._collect_gradients(all_entities, all_connections)
-        if markers or path_defs or gradients:
-            lines.append("  <defs>")
-            lines.extend(f"    {svg}" for svg in gradients.values())
-            lines.extend(f"    {svg}" for svg in markers.values())
-            lines.extend(f"    {svg}" for svg in path_defs.values())
-            lines.append("  </defs>")
-
-        # Background
-        if self._background:
-            if self._viewbox is not None:
-                vb_x, vb_y, vb_w, vb_h = self._viewbox
-                lines.append(
-                    f'  <rect x="{vb_x}" y="{vb_y}" '
-                    f'width="{vb_w}" height="{vb_h}" '
-                    f'fill="{self.background}" />'
-                )
-            else:
-                lines.append(
-                    f'  <rect width="100%" height="100%" fill="{self.background}" />'
-                )
-
-        # Collect all renderable objects with their z_index
-        renderables: list[tuple[int, str]] = []
-
-        # Add connections and entities
-        renderables.extend((c.z_index, c.to_svg()) for c in all_connections)
-        renderables.extend((e.z_index, e.to_svg()) for e in all_entities)
-
-        # Sort by z_index (stable sort preserves add-order for same z_index)
-        renderables.sort(key=lambda x: x[0])
-
-        # Render in sorted order (skip invisible entities like Point)
-        for _, svg in renderables:
-            if svg:
-                lines.append(f"  {svg}")
-
-        lines.append("</svg>")
-        return "\n".join(lines)
-
-    def save(self, path: str | Path) -> None:
+    def save(self, path: str | Path, renderer=None) -> None:
         """
         Save the scene to an SVG file.
 
         Args:
             path: File path (will add .svg extension if missing).
+            renderer: Optional Renderer instance. Defaults to SMILRenderer.
         """
         path = Path(path)
         if path.suffix.lower() != ".svg":
             path = path.with_suffix(".svg")
 
-        svg_content = self.to_svg()
+        svg_content = self.render(renderer)
         path.write_text(svg_content, encoding="utf-8")
 
     def crop(self, padding: float = 0) -> Scene:

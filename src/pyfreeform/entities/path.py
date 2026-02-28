@@ -554,32 +554,46 @@ class Path(Entity):
         """Collect SVG marker definitions needed by this path's caps."""
         return collect_markers(self.cap, self.start_cap, self.end_cap, self.width, self.color)
 
+    def draw(
+        self,
+        *,
+        duration: float = 1.0,
+        delay: float = 0.0,
+        easing: str = "ease-in-out",
+        repeat: bool | int = False,
+        bounce: bool = False,
+        hold: bool = True,
+        reverse: bool = False,
+    ) -> Path:
+        """
+        Animate the path drawing itself from start to end.
+
+        The stroke progressively reveals as if being drawn by a pen.
+
+        Args:
+            duration: Animation duration in seconds.
+            delay: Seconds to wait before starting.
+            easing: Easing function name or (x1,y1,x2,y2) tuple.
+            repeat: False=once, True=forever, int=N times.
+            bounce: Alternate direction each cycle.
+            hold: Hold final value after animation ends.
+            reverse: Draw from end to start instead.
+
+        Returns:
+            self, for method chaining.
+        """
+        from ..animation.builders import build_draw
+
+        self._animations.append(build_draw(
+            duration=duration, delay=delay, easing=easing,
+            repeat=repeat, bounce=bounce, hold=hold, reverse=reverse,
+        ))
+        return self
+
     def to_svg(self) -> str:
-        """Render to SVG path element."""
-        if not self._bezier_segments:
-            return ""
-
-        svg_cap, marker_attrs = svg_cap_and_marker_attrs(
-            self.cap, self.start_cap, self.end_cap, self.width, self.color
-        )
-
-        segs = self._bezier_segments
-        parts_d = [f"M {svg_num(segs[0][0].x)} {svg_num(segs[0][0].y)}"]
-        for _, cp1, cp2, p3 in segs:
-            parts_d.append(f" C {svg_num(cp1.x)} {svg_num(cp1.y)} {svg_num(cp2.x)} {svg_num(cp2.y)} {svg_num(p3.x)} {svg_num(p3.y)}")
-        if self._closed:
-            parts_d.append(" Z")
-        d_attr = "".join(parts_d)
-
-        fill_attr = self.fill if self._closed and self._fill is not None else "none"
-
-        return (
-            f'<path d="{d_attr}" fill="{fill_attr}"'
-            f"{stroke_attrs(self.color, self.width, svg_cap, marker_attrs)}"
-            f' stroke-linejoin="round"'
-            f"{shape_opacity_attrs(self.opacity, self.fill_opacity, self.stroke_opacity)}"
-            f"{self._build_svg_transform()} />"
-        )
+        """Render to SVG path element (delegates to renderer)."""
+        from ..renderers.svg_smil import SMILRenderer
+        return SMILRenderer().render_entity(self)
 
     def __repr__(self) -> str:
         kind = "closed" if self._closed else "open"

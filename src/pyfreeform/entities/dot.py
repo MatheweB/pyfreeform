@@ -160,12 +160,9 @@ class Dot(Entity):
         return (self.x - r, self.y - r, self.x + r, self.y + r)
 
     def to_svg(self) -> str:
-        """Render to SVG circle element."""
-        return (
-            f'<circle cx="{svg_num(self.x)}" cy="{svg_num(self.y)}" r="{svg_num(self.radius)}" fill="{self.color}"'
-            f"{opacity_attr(self.opacity)}"
-            f"{self._build_svg_transform()} />"
-        )
+        """Render to SVG circle element (delegates to renderer)."""
+        from ..renderers.svg_smil import SMILRenderer
+        return SMILRenderer().render_entity(self)
 
     def __repr__(self) -> str:
         return f"Dot({self.x}, {self.y}, radius={self.radius}, color={self.color!r})"

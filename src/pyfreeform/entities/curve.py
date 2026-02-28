@@ -391,20 +391,9 @@ class Curve(EndpointEntity):
         return self
 
     def to_svg(self) -> str:
-        """Render to SVG path element (quadratic Bezier)."""
-        s = self.start
-        c = self.control
-        e = self.end
-        svg_cap, marker_attrs = svg_cap_and_marker_attrs(
-            self.cap, self.start_cap, self.end_cap, self.width, self.color
-        )
-        return (
-            f'<path d="M {svg_num(s.x)} {svg_num(s.y)} Q {svg_num(c.x)} {svg_num(c.y)} {svg_num(e.x)} {svg_num(e.y)}"'
-            f' fill="none"'
-            f"{stroke_attrs(self.color, self.width, svg_cap, marker_attrs)}"
-            f"{opacity_attr(self.opacity)}"
-            f"{self._build_svg_transform()} />"
-        )
+        """Render to SVG path element (delegates to renderer)."""
+        from ..renderers.svg_smil import SMILRenderer
+        return SMILRenderer().render_entity(self)
 
     def __repr__(self) -> str:
         return (

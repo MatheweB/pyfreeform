@@ -471,14 +471,9 @@ class Ellipse(Entity):
         return (cx - hw, cy - hh, cx + hw, cy + hh)
 
     def to_svg(self) -> str:
-        """Render to SVG ellipse element."""
-        return (
-            f'<ellipse cx="{svg_num(self.position.x)}" cy="{svg_num(self.position.y)}"'
-            f' rx="{svg_num(self.rx)}" ry="{svg_num(self.ry)}"'
-            f"{fill_stroke_attrs(self.fill, self.stroke, self.stroke_width)}"
-            f"{shape_opacity_attrs(self.opacity, self.fill_opacity, self.stroke_opacity)}"
-            f"{self._build_svg_transform()} />"
-        )
+        """Render to SVG ellipse element (delegates to renderer)."""
+        from ..renderers.svg_smil import SMILRenderer
+        return SMILRenderer().render_entity(self)
 
     def __repr__(self) -> str:
         return (

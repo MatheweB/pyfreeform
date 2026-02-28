@@ -55,6 +55,12 @@ from .image.layer import Layer
 # Layout
 from .layout import align, between, distribute, stack
 
+# Animation
+from .animation.models import Easing
+
+# Renderers
+from .renderers import Renderer, SMILRenderer, SVGRenderer
+
 # Scene
 from .scene.scene import Scene
 
@@ -128,6 +134,7 @@ __all__ = [
     "CoordLike",
     "Curve",
     "Dot",
+    "Easing",
     "Ellipse",
     "Entity",
     "EntityGroup",
@@ -150,6 +157,9 @@ __all__ = [
     "Rect",
     "RelCoord",
     "RelCoordLike",
+    "Renderer",
+    "SMILRenderer",
+    "SVGRenderer",
     "Scene",
     "ShapeStyle",
     "Surface",

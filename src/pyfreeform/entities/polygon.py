@@ -326,14 +326,9 @@ class Polygon(Entity):
         return (min_x, min_y, max_x, max_y)
 
     def to_svg(self) -> str:
-        """Render to SVG polygon element."""
-        points_str = " ".join(f"{svg_num(v.x)},{svg_num(v.y)}" for v in self.vertices)
-        return (
-            f'<polygon points="{points_str}"'
-            f"{fill_stroke_attrs(self.fill, self.stroke, self.stroke_width)}"
-            f"{shape_opacity_attrs(self.opacity, self.fill_opacity, self.stroke_opacity)}"
-            f"{self._build_svg_transform()} />"
-        )
+        """Render to SVG polygon element (delegates to renderer)."""
+        from ..renderers.svg_smil import SMILRenderer
+        return SMILRenderer().render_entity(self)
 
     def __repr__(self) -> str:
         return f"Polygon({len(self._vertex_specs)} vertices, fill={self.fill!r})"

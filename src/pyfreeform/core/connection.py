@@ -162,6 +162,9 @@ class Connection:
                 quadratic_to_cubic(self._source_start, control, self._source_end)
             ]
 
+        # Animation data (renderer-agnostic)
+        self._animations: list = []
+
         # Register with both entities
         start.add_connection(self)
         end.add_connection(self)
@@ -373,6 +376,24 @@ class Connection:
             return 0.0
         return math.degrees(math.atan2(dy, dx))
 
+    def arc_length(self, segments: int = 100) -> float:
+        """Approximate the arc length of the connection by sampling.
+
+        Args:
+            segments: Number of line segments to approximate with.
+
+        Returns:
+            Approximate arc length in pixels.
+        """
+        total = 0.0
+        prev = self.point_at(0.0)
+        for i in range(1, segments + 1):
+            t = i / segments
+            cur = self.point_at(t)
+            total += math.hypot(cur.x - prev.x, cur.y - prev.y)
+            prev = cur
+        return total
+
     def to_svg_path_d(self) -> str:
         """Return SVG path ``d`` attribute for this connection."""
         if self._shape_kind == "line":
@@ -399,32 +420,82 @@ class Connection:
         self._start.remove_connection(self)
         self._end.remove_connection(self)
 
+    # ── Animation API ─────────────────────────────────────────────
+
+    @property
+    def animations(self) -> list:
+        """All animations attached to this connection."""
+        return list(self._animations)
+
+    def fade(
+        self,
+        to: float,
+        *,
+        duration: float = 1.0,
+        delay: float = 0.0,
+        easing: str = "linear",
+        repeat: bool | int = False,
+        bounce: bool = False,
+        hold: bool = True,
+    ) -> Connection:
+        """Animate opacity."""
+        from ..animation.builders import build_fade
+        self._animations.append(build_fade(
+            self, to, duration=duration, delay=delay, easing=easing,
+            repeat=repeat, bounce=bounce, hold=hold,
+        ))
+        return self
+
+    def draw(
+        self,
+        *,
+        duration: float = 1.0,
+        delay: float = 0.0,
+        easing: str = "ease-in-out",
+        repeat: bool | int = False,
+        bounce: bool = False,
+        hold: bool = True,
+        reverse: bool = False,
+    ) -> Connection:
+        """Animate the connection drawing itself."""
+        from ..animation.builders import build_draw
+        self._animations.append(build_draw(
+            duration=duration, delay=delay, easing=easing,
+            repeat=repeat, bounce=bounce, hold=hold, reverse=reverse,
+        ))
+        return self
+
+    def animate(
+        self,
+        prop: str,
+        *,
+        to: object = None,
+        keyframes: dict[float, object] | None = None,
+        duration: float = 1.0,
+        delay: float = 0.0,
+        easing: str = "linear",
+        repeat: bool | int = False,
+        bounce: bool = False,
+        hold: bool = True,
+    ) -> Connection:
+        """Animate any property."""
+        from ..animation.builders import build_animate
+        self._animations.append(build_animate(
+            self, prop, to=to, keyframes=keyframes,
+            duration=duration, delay=delay, easing=easing,
+            repeat=repeat, bounce=bounce, hold=hold,
+        ))
+        return self
+
+    def clear_animations(self) -> Connection:
+        """Remove all animations."""
+        self._animations.clear()
+        return self
+
     def to_svg(self) -> str:
-        """Render connection as SVG element."""
-        if not self._visible:
-            return ""
-
-        svg_cap, marker_attrs = svg_cap_and_marker_attrs(
-            self.cap, self.start_cap, self.end_cap, self.width, self.color
-        )
-
-        if self._shape_kind == "line":
-            p1 = self.start_point
-            p2 = self.end_point
-            return (
-                f'<line x1="{svg_num(p1.x)}" y1="{svg_num(p1.y)}" x2="{svg_num(p2.x)}" y2="{svg_num(p2.y)}"'
-                f"{stroke_attrs(self.color, self.width, svg_cap, marker_attrs)}"
-                f"{opacity_attr(self.opacity)} />"
-            )
-
-        # Curve or path — render as <path>
-        d_attr = self.to_svg_path_d()
-        return (
-            f'<path d="{d_attr}" fill="none"'
-            f"{stroke_attrs(self.color, self.width, svg_cap, marker_attrs)}"
-            f' stroke-linejoin="round"'
-            f"{opacity_attr(self.opacity)} />"
-        )
+        """Render connection as SVG element (delegates to renderer)."""
+        from ..renderers.svg_smil import SMILRenderer
+        return SMILRenderer().render_connection(self)
 
     def __repr__(self) -> str:
         if not self._visible:
