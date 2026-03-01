@@ -28,11 +28,15 @@ from ...core.svg_utils import (
 )
 from ...config.caps import svg_cap_and_marker_attrs
 from .smil_converters import (
+    FillLayerOpt,
+    _anim_key_times,
+    extract_fill_layers,
     render_connection_prop_smil,
     render_draw_smil,
     render_motion_smil,
     render_property_smil,
 )
+from .smil_elements import build_animate_element
 from .smil_reactive import (
     reactive_connection_anims,
     reactive_polygon_anims,
@@ -74,6 +78,22 @@ class SMILRenderer(SVGRenderer):
         """Render all animations on an entity to SMIL element strings."""
         result: list[str] = []
         for anim in entity._animations:
+            if isinstance(anim, PropertyAnimation):
+                result.extend(render_property_smil(anim, entity))
+            elif isinstance(anim, MotionAnimation):
+                result.append(render_motion_smil(anim))
+            elif isinstance(anim, DrawAnimation):
+                result.append(render_draw_smil(anim, entity))
+        return [r for r in result if r]
+
+    def _render_animations_excluding(
+        self, entity: Entity, exclude: set[int],
+    ) -> list[str]:
+        """Like :meth:`_render_animations` but skip indices in *exclude*."""
+        result: list[str] = []
+        for i, anim in enumerate(entity._animations):
+            if i in exclude:
+                continue
             if isinstance(anim, PropertyAnimation):
                 result.extend(render_property_smil(anim, entity))
             elif isinstance(anim, MotionAnimation):
@@ -178,6 +198,20 @@ class SMILRenderer(SVGRenderer):
     def render_rect(self, rect: Rect) -> str:
         if not rect._animations:
             return super().render_rect(rect)
+        fill_opt = extract_fill_layers(rect)
+        if fill_opt is not None:
+            geometry = (
+                f' x="{svg_num(rect.x)}" y="{svg_num(rect.y)}"'
+                f' width="{svg_num(rect.width)}" height="{svg_num(rect.height)}"'
+            )
+            base_attrs = (
+                f"{fill_stroke_attrs(fill_opt.base_color, rect.stroke, rect.stroke_width)}"
+                f"{self._shape_opacity_for_smil(rect.opacity, rect.fill_opacity, rect.stroke_opacity, rect)}"
+            )
+            return self._render_entity_layered(
+                "rect", geometry, rect, fill_opt,
+                base_attrs, _build_svg_transform(rect),
+            )
         attrs = (
             f' x="{svg_num(rect.x)}" y="{svg_num(rect.y)}"'
             f' width="{svg_num(rect.width)}" height="{svg_num(rect.height)}"'
@@ -190,6 +224,21 @@ class SMILRenderer(SVGRenderer):
     def render_ellipse(self, ellipse: Ellipse) -> str:
         if not ellipse._animations:
             return super().render_ellipse(ellipse)
+        fill_opt = extract_fill_layers(ellipse)
+        if fill_opt is not None:
+            geometry = (
+                f' cx="{svg_num(ellipse.position.x)}"'
+                f' cy="{svg_num(ellipse.position.y)}"'
+                f' rx="{svg_num(ellipse.rx)}" ry="{svg_num(ellipse.ry)}"'
+            )
+            base_attrs = (
+                f"{fill_stroke_attrs(fill_opt.base_color, ellipse.stroke, ellipse.stroke_width)}"
+                f"{self._shape_opacity_for_smil(ellipse.opacity, ellipse.fill_opacity, ellipse.stroke_opacity, ellipse)}"
+            )
+            return self._render_entity_layered(
+                "ellipse", geometry, ellipse, fill_opt,
+                base_attrs, _build_svg_transform(ellipse),
+            )
         attrs = (
             f' cx="{svg_num(ellipse.position.x)}"'
             f' cy="{svg_num(ellipse.position.y)}"'
@@ -245,6 +294,23 @@ class SMILRenderer(SVGRenderer):
         reactive = reactive_polygon_anims(polygon)
         if not polygon._animations and not reactive:
             return super().render_polygon(polygon)
+
+        # Opacity-layer optimization: replace fill animation with stacked
+        # opacity layers for GPU-accelerated rendering.
+        fill_opt = extract_fill_layers(polygon)
+        if fill_opt is not None:
+            points_str = " ".join(
+                f"{svg_num(v.x)},{svg_num(v.y)}" for v in polygon.vertices
+            )
+            base_attrs = (
+                f"{fill_stroke_attrs(fill_opt.base_color, polygon.stroke, polygon.stroke_width)}"
+                f"{self._shape_opacity_for_smil(polygon.opacity, polygon.fill_opacity, polygon.stroke_opacity, polygon)}"
+            )
+            return self._render_entity_layered(
+                "polygon", f' points="{points_str}"', polygon, fill_opt,
+                base_attrs, _build_svg_transform(polygon), reactive,
+            )
+
         points_str = " ".join(
             f"{svg_num(v.x)},{svg_num(v.y)}" for v in polygon.vertices
         )
@@ -255,6 +321,90 @@ class SMILRenderer(SVGRenderer):
             f"{_build_svg_transform(polygon)}"
         )
         return self._wrap_element("polygon", attrs, polygon, extra_anims=reactive)
+
+    def _build_layered_svg(
+        self,
+        tag: str,
+        geometry_attrs: str,
+        fill_opt: FillLayerOpt,
+        base_attrs: str,
+        transform: str,
+        base_anims: list[str],
+        overlay_color_attr: str,
+        overlay_extra: str,
+        reactive: list[str] | None,
+    ) -> str:
+        """Render an entity as stacked opacity layers instead of a color animation.
+
+        Emits N ``<tag>`` elements (one per unique color) inside a ``<g>``.
+        The base element carries stroke and non-color animations; each
+        overlay has a synthesized opacity ``<animate>``.  GPU-accelerated
+        opacity compositing replaces CPU-intensive color interpolation.
+
+        Works for both ``fill`` color animations (entities) and ``stroke``
+        color animations (connections) — the *overlay_color_attr* parameter
+        selects which attribute carries the overlay color.
+        """
+        key_times = _anim_key_times(fill_opt.anim)
+
+        # --- Base element: first color, stroke, non-color animations ---
+        all_base_anims = list(base_anims)
+        if reactive:
+            all_base_anims.extend(reactive)
+
+        if all_base_anims:
+            base_anim_str = "\n".join(f"    {a}" for a in all_base_anims)
+            base_el = f"  <{tag}{geometry_attrs}{base_attrs}{transform}>\n{base_anim_str}\n  </{tag}>"
+        else:
+            base_el = f"  <{tag}{geometry_attrs}{base_attrs}{transform} />"
+
+        # --- Overlay elements: one per additional color ---
+        overlay_els: list[str] = []
+        for color, opacities in fill_opt.overlays:
+            overlay_attrs = (
+                f'{geometry_attrs} {overlay_color_attr}="{color}"'
+                f'{overlay_extra} opacity="0"{transform}'
+            )
+            overlay_anims: list[str] = [
+                build_animate_element(
+                    attribute_name="opacity",
+                    values=[svg_num(v) for v in opacities],
+                    key_times=key_times,
+                    duration=fill_opt.anim.duration,
+                    delay=fill_opt.anim.delay,
+                    easing=fill_opt.anim.easing,
+                    bounce=fill_opt.anim.bounce,
+                    hold=fill_opt.anim.hold,
+                    repeat=fill_opt.anim.repeat,
+                ),
+            ]
+            if reactive:
+                overlay_anims.extend(reactive)
+            overlay_anim_str = "\n".join(f"    {a}" for a in overlay_anims)
+            overlay_els.append(
+                f"  <{tag}{overlay_attrs}>\n{overlay_anim_str}\n  </{tag}>"
+            )
+
+        return "\n".join(["<g>", base_el, *overlay_els, "</g>"])
+
+    def _render_entity_layered(
+        self,
+        tag: str,
+        geometry_attrs: str,
+        entity: Entity,
+        fill_opt: FillLayerOpt,
+        base_attrs: str,
+        transform: str,
+        reactive: list[str] | None = None,
+    ) -> str:
+        """Wrapper around :meth:`_build_layered_svg` for entity fill animations."""
+        base_anims = self._render_animations_excluding(
+            entity, {fill_opt.anim_index},
+        )
+        return self._build_layered_svg(
+            tag, geometry_attrs, fill_opt, base_attrs, transform,
+            base_anims, "fill", "", reactive,
+        )
 
     def render_text(self, text: Text) -> str:
         if not text._animations:
@@ -330,16 +480,32 @@ class SMILRenderer(SVGRenderer):
         svg_cap, marker_attrs = svg_cap_and_marker_attrs(
             path.cap, path.start_cap, path.end_cap, path.width, path.color
         )
+        draw_extra = self._draw_attrs(path) if self._has_draw_animation(path) else ""
 
-        d_attr = path.to_svg_path_d()
+        # Opacity-layer optimization for closed paths with fill
+        fill_opt = None
+        if path.closed and path._fill is not None:
+            fill_opt = extract_fill_layers(path)
+        if fill_opt is not None:
+            d_attr = path.to_svg_path_d()
+            base_attrs = (
+                f' fill="{fill_opt.base_color}"'
+                f"{stroke_attrs(path.color, path.width, svg_cap, marker_attrs)}"
+                f' stroke-linejoin="round"'
+                f"{self._shape_opacity_for_smil(path.opacity, path.fill_opacity, path.stroke_opacity, path)}"
+                f"{draw_extra}"
+            )
+            return self._render_entity_layered(
+                "path", f' d="{d_attr}"', path, fill_opt,
+                base_attrs, _build_svg_transform(path),
+            )
+
         fill_attr = (
             path.fill
             if path.closed and path._fill is not None
             else "none"
         )
-
-        draw_extra = self._draw_attrs(path) if self._has_draw_animation(path) else ""
-
+        d_attr = path.to_svg_path_d()
         attrs = (
             f' d="{d_attr}" fill="{fill_attr}"'
             f"{stroke_attrs(path.color, path.width, svg_cap, marker_attrs)}"
@@ -394,40 +560,79 @@ class SMILRenderer(SVGRenderer):
         svg_cap, marker_attrs = svg_cap_and_marker_attrs(
             conn.cap, conn.start_cap, conn.end_cap, conn.width, conn.color
         )
+        draw_extra = self._draw_attrs(conn)
 
-        anims = []
+        # Determine tag and geometry
+        if conn._shape_kind == "line":
+            tag = "line"
+            p1 = conn.start_point
+            p2 = conn.end_point
+            geometry = (
+                f' x1="{svg_num(p1.x)}" y1="{svg_num(p1.y)}"'
+                f' x2="{svg_num(p2.x)}" y2="{svg_num(p2.y)}"'
+            )
+        else:
+            tag = "path"
+            geometry = f' d="{conn.to_svg_path_d()}" fill="none"'
+
+        # Opacity-layer optimization for stroke color animation
+        stroke_opt = extract_fill_layers(conn, target_attr="stroke")
+        if stroke_opt is not None:
+            base_anims: list[str] = []
+            for i, anim in enumerate(conn._animations):
+                if i == stroke_opt.anim_index:
+                    continue
+                if isinstance(anim, PropertyAnimation):
+                    s = render_connection_prop_smil(anim, conn)
+                elif isinstance(anim, DrawAnimation):
+                    s = render_draw_smil(anim, conn)
+                else:
+                    continue
+                if s:
+                    base_anims.append(s)
+
+            base_attrs = (
+                f"{stroke_attrs(stroke_opt.base_color, conn.width, svg_cap, marker_attrs)}"
+                f"{opacity_attr(conn.opacity)}"
+                f"{draw_extra}"
+            )
+            if tag == "path":
+                base_attrs += ' stroke-linejoin="round"'
+
+            overlay_extra = f' stroke-width="{svg_num(conn.width)}" stroke-linecap="{svg_cap}"'
+            if tag == "path":
+                overlay_extra += ' stroke-linejoin="round"'
+
+            return self._build_layered_svg(
+                tag, geometry, stroke_opt, base_attrs, "",
+                base_anims, "stroke", overlay_extra, reactive,
+            )
+
+        # Standard (non-optimized) rendering
+        anims: list[str] = []
         for anim in conn._animations:
             if isinstance(anim, PropertyAnimation):
                 anims.append(render_connection_prop_smil(anim, conn))
             elif isinstance(anim, DrawAnimation):
                 anims.append(render_draw_smil(anim, conn))
-
         anims = [a for a in anims if a]
         anims.extend(reactive)
 
-        draw_extra = self._draw_attrs(conn)
-
-        if conn._shape_kind == "line":
-            p1 = conn.start_point
-            p2 = conn.end_point
+        if tag == "line":
             attrs = (
-                f' x1="{svg_num(p1.x)}" y1="{svg_num(p1.y)}"'
-                f' x2="{svg_num(p2.x)}" y2="{svg_num(p2.y)}"'
+                f"{geometry}"
                 f"{stroke_attrs(conn.color, conn.width, svg_cap, marker_attrs)}"
                 f"{opacity_attr(conn.opacity)}"
                 f"{draw_extra}"
             )
-            tag = "line"
         else:
-            d_attr = conn.to_svg_path_d()
             attrs = (
-                f' d="{d_attr}" fill="none"'
+                f"{geometry}"
                 f"{stroke_attrs(conn.color, conn.width, svg_cap, marker_attrs)}"
                 f' stroke-linejoin="round"'
                 f"{opacity_attr(conn.opacity)}"
                 f"{draw_extra}"
             )
-            tag = "path"
 
         if not anims:
             return f"<{tag}{attrs} />"

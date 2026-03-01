@@ -809,13 +809,15 @@ class TestConnectionPropertySMIL:
         assert 'attributeName="opacity"' in svg
 
     def test_connection_color_animation_smil(self):
-        """Connection color animation maps to stroke attribute."""
+        """Connection color animation uses opacity-layer optimization."""
         d1 = Dot(10, 20, radius=5, color="red")
         d2 = Dot(80, 80, radius=5, color="blue")
         conn = Connection(d1, d2)
         conn.animate("color", keyframes={0: "red", 1.0: "blue"}, duration=1.0)
         svg = SMILRenderer().render_connection(conn)
-        assert 'attributeName="stroke"' in svg
+        # Optimized: no attributeName="stroke", uses opacity layers instead
+        assert "<g>" in svg
+        assert 'attributeName="opacity"' in svg
 
 
 # ======================================================================
@@ -976,3 +978,229 @@ class TestReactiveConnectionAnimation:
         svg = SMILRenderer().render_connection(conn)
         assert '<animate attributeName="x1"' in svg
         assert '<animate attributeName="opacity"' in svg
+
+
+# ======================================================================
+# Fill-to-opacity layer optimization
+# ======================================================================
+
+
+class TestFillLayerOptimization:
+    """GPU-accelerated fill animation via stacked opacity layers."""
+
+    def test_two_color_emits_group(self):
+        """Two-color fill animation produces <g> with 2 <polygon> elements."""
+        poly = Polygon([(0, 0), (100, 0), (50, 80)], fill="white")
+        poly.animate("fill", keyframes={0: "white", 1: "blue", 2: "white"})
+        svg = SMILRenderer().render_entity(poly)
+        assert "<g>" in svg
+        assert svg.count("<polygon") == 2
+
+    def test_three_color_emits_three_polygons(self):
+        """Three unique colors produce 3 <polygon> elements."""
+        poly = Polygon([(0, 0), (100, 0), (50, 80)], fill="red")
+        poly.animate("fill", keyframes={0: "red", 1: "blue", 2: "green"})
+        svg = SMILRenderer().render_entity(poly)
+        assert "<g>" in svg
+        assert svg.count("<polygon") == 3
+
+    def test_base_has_first_color(self):
+        """Base polygon uses the first keyframe color."""
+        poly = Polygon([(0, 0), (100, 0), (50, 80)], fill="#ff0000")
+        poly.animate("fill", keyframes={0: "#ff0000", 1: "#0000ff"})
+        svg = SMILRenderer().render_entity(poly)
+        assert 'fill="#ff0000"' in svg
+
+    def test_overlay_has_target_color(self):
+        """Overlay polygon uses the alternate color."""
+        poly = Polygon([(0, 0), (100, 0), (50, 80)], fill="white")
+        poly.animate("fill", keyframes={0: "white", 1: "#0000ff"})
+        svg = SMILRenderer().render_entity(poly)
+        assert 'fill="#0000ff"' in svg
+
+    def test_overlay_has_opacity_animate(self):
+        """Overlay has <animate attributeName="opacity">."""
+        poly = Polygon([(0, 0), (100, 0), (50, 80)], fill="white")
+        poly.animate("fill", keyframes={0: "white", 1: "blue", 2: "white"})
+        svg = SMILRenderer().render_entity(poly)
+        assert 'attributeName="opacity"' in svg
+
+    def test_no_fill_animate(self):
+        """Optimized output must NOT contain attributeName="fill"."""
+        poly = Polygon([(0, 0), (100, 0), (50, 80)], fill="white")
+        poly.animate("fill", keyframes={0: "white", 1: "blue"})
+        svg = SMILRenderer().render_entity(poly)
+        assert 'attributeName="fill"' not in svg
+
+    def test_overlay_starts_transparent(self):
+        """Overlay polygon has opacity="0"."""
+        poly = Polygon([(0, 0), (100, 0), (50, 80)], fill="white")
+        poly.animate("fill", keyframes={0: "white", 1: "blue"})
+        svg = SMILRenderer().render_entity(poly)
+        assert 'opacity="0"' in svg
+
+    def test_opacity_values_two_color(self):
+        """Two-color A→B→A produces opacity values 0;1;0."""
+        poly = Polygon([(0, 0), (100, 0), (50, 80)], fill="white")
+        poly.animate("fill", keyframes={0: "white", 1: "blue", 2: "white"})
+        svg = SMILRenderer().render_entity(poly)
+        assert 'values="0;1;0"' in svg
+
+    def test_single_color_no_optimization(self):
+        """Single color (no-op animation) falls back to standard rendering."""
+        poly = Polygon([(0, 0), (100, 0), (50, 80)], fill="white")
+        poly.animate("fill", keyframes={0: "white", 1: "white"})
+        svg = SMILRenderer().render_entity(poly)
+        assert "<g>" not in svg
+
+    def test_fallback_when_opacity_animated(self):
+        """Falls back when polygon also animates opacity."""
+        poly = Polygon([(0, 0), (100, 0), (50, 80)], fill="white")
+        poly.animate("fill", keyframes={0: "white", 1: "blue"})
+        poly.fade(to=0.0, duration=1.0)
+        svg = SMILRenderer().render_entity(poly)
+        assert "<g>" not in svg
+        assert 'attributeName="fill"' in svg
+
+    def test_reactive_vertices_on_both_layers(self):
+        """Both layers get reactive vertex tracking animations."""
+        scene = Scene(200, 200)
+        pt = scene.add_point(at=(0.1, 0.1))
+        pt.move(to=(0.5, 0.5), duration=2.0)
+        poly = Polygon(
+            [pt, Coord(100, 100), Coord(0, 100)], fill="white",
+        )
+        poly.animate("fill", keyframes={0: "white", 1: "blue", 2: "white"})
+        scene.place(poly)
+        svg = SMILRenderer().render_entity(poly)
+        assert "<g>" in svg
+        assert svg.count('attributeName="points"') == 2
+
+    def test_other_anims_on_base_only(self):
+        """Non-fill animations (e.g. spin) appear on the base layer only."""
+        poly = Polygon([(0, 0), (100, 0), (50, 80)], fill="white")
+        poly.animate("fill", keyframes={0: "white", 1: "blue"})
+        poly.spin(360, duration=2.0)
+        svg = SMILRenderer().render_entity(poly)
+        assert "<g>" in svg
+        assert svg.count('type="rotate"') == 1
+
+    def test_timing_preserved(self):
+        """Delay, duration, repeat, easing carry over to opacity animation."""
+        poly = Polygon([(0, 0), (100, 0), (50, 80)], fill="white")
+        poly.animate(
+            "fill", keyframes={0: "white", 1: "blue"},
+            delay=0.5, repeat=True, easing="ease-in-out",
+        )
+        svg = SMILRenderer().render_entity(poly)
+        assert 'begin="0.5s"' in svg
+        assert 'repeatCount="indefinite"' in svg
+        assert 'calcMode="spline"' in svg
+
+    def test_overlay_no_stroke(self):
+        """Overlay polygon should not carry the stroke."""
+        poly = Polygon(
+            [(0, 0), (100, 0), (50, 80)],
+            fill="white", stroke="red", stroke_width=2,
+        )
+        poly.animate("fill", keyframes={0: "white", 1: "blue"})
+        svg = SMILRenderer().render_entity(poly)
+        # Base has stroke, overlay doesn't — stroke appears once
+        assert svg.count('stroke="red"') == 1
+        assert svg.count("<polygon") == 2
+
+    # ------------------------------------------------------------------
+    # Rect fill optimization
+    # ------------------------------------------------------------------
+
+    def test_rect_two_color_emits_group(self):
+        """Rect fill animation produces <g> with 2 <rect> elements."""
+        rect = Rect(0, 0, 100, 50, fill="#ff0000")
+        rect.animate("fill", keyframes={0: "#ff0000", 1: "#0000ff", 2: "#ff0000"})
+        svg = SMILRenderer().render_entity(rect)
+        assert "<g>" in svg
+        assert svg.count("<rect") == 2
+
+    def test_rect_no_fill_animate(self):
+        """Optimized rect output has no attributeName="fill"."""
+        rect = Rect(0, 0, 100, 50, fill="#ff0000")
+        rect.animate("fill", keyframes={0: "#ff0000", 1: "#0000ff"})
+        svg = SMILRenderer().render_entity(rect)
+        assert 'attributeName="fill"' not in svg
+
+    def test_rect_overlay_no_stroke(self):
+        """Rect overlay should not carry the stroke."""
+        rect = Rect(0, 0, 100, 50, fill="#ff0000", stroke="green", stroke_width=3)
+        rect.animate("fill", keyframes={0: "#ff0000", 1: "#0000ff"})
+        svg = SMILRenderer().render_entity(rect)
+        assert svg.count('stroke="green"') == 1
+        assert svg.count("<rect") == 2
+
+    # ------------------------------------------------------------------
+    # Ellipse fill optimization
+    # ------------------------------------------------------------------
+
+    def test_ellipse_two_color_emits_group(self):
+        """Ellipse fill animation produces <g> with 2 <ellipse> elements."""
+        ell = Ellipse(50, 50, 30, 20, fill="#ff0000")
+        ell.animate("fill", keyframes={0: "#ff0000", 1: "#00ff00", 2: "#ff0000"})
+        svg = SMILRenderer().render_entity(ell)
+        assert "<g>" in svg
+        assert svg.count("<ellipse") == 2
+
+    def test_ellipse_no_fill_animate(self):
+        """Optimized ellipse output has no attributeName="fill"."""
+        ell = Ellipse(50, 50, 30, 20, fill="#ff0000")
+        ell.animate("fill", keyframes={0: "#ff0000", 1: "#00ff00"})
+        svg = SMILRenderer().render_entity(ell)
+        assert 'attributeName="fill"' not in svg
+
+    # ------------------------------------------------------------------
+    # Path fill optimization
+    # ------------------------------------------------------------------
+
+    def test_path_closed_fill_optimization(self):
+        """Closed path with fill animation gets optimized."""
+        path = Path(Path.Lissajous(size=50), closed=True, fill="#ff0000", color="black")
+        path.animate("fill", keyframes={0: "#ff0000", 1: "#0000ff", 2: "#ff0000"})
+        svg = SMILRenderer().render_entity(path)
+        assert "<g>" in svg
+        assert svg.count("<path") == 2
+        assert 'attributeName="fill"' not in svg
+
+    def test_path_open_no_optimization(self):
+        """Open path does NOT get fill optimized (fill='none')."""
+        path = Path(Path.Wave(start=(0, 0), end=(100, 0)), color="blue")
+        path.animate("fill", keyframes={0: "blue", 1: "red"})
+        svg = SMILRenderer().render_entity(path)
+        # Should NOT have the <g> wrapper — open path has no fill
+        assert "<g>" not in svg
+
+    # ------------------------------------------------------------------
+    # Connection stroke color optimization
+    # ------------------------------------------------------------------
+
+    def test_connection_stroke_optimization(self):
+        """Connection stroke color animation gets optimized."""
+        d1, d2 = Dot(0, 0), Dot(100, 100)
+        conn = Connection(d1, d2)
+        conn.animate("color", keyframes={0: "#ff0000", 1: "#0000ff", 2: "#ff0000"})
+        svg = SMILRenderer().render_connection(conn)
+        assert "<g>" in svg
+        assert svg.count("<line") == 2
+
+    def test_connection_no_stroke_animate(self):
+        """Optimized connection has no attributeName="stroke"."""
+        d1, d2 = Dot(0, 0), Dot(100, 100)
+        conn = Connection(d1, d2)
+        conn.animate("color", keyframes={0: "#ff0000", 1: "#0000ff"})
+        svg = SMILRenderer().render_connection(conn)
+        assert 'attributeName="stroke"' not in svg
+
+    def test_connection_overlay_has_stroke_width(self):
+        """Connection overlay carries stroke-width for proper coverage."""
+        d1, d2 = Dot(0, 0), Dot(100, 100)
+        conn = Connection(d1, d2, width=3)
+        conn.animate("color", keyframes={0: "#ff0000", 1: "#0000ff"})
+        svg = SMILRenderer().render_connection(conn)
+        assert svg.count('stroke-width="3"') == 2  # base + overlay

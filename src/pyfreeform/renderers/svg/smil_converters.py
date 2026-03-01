@@ -8,6 +8,7 @@ needed — used by :class:`~pyfreeform.renderers.svg.smil.SMILRenderer`.
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from ...animation.models import (
@@ -16,6 +17,7 @@ from ...animation.models import (
     MotionAnimation,
     PropertyAnimation,
 )
+from ...color import Color
 from ...core.entity import Entity
 from ...core.svg_utils import svg_num
 from .smil_elements import (
@@ -27,6 +29,105 @@ from .smil_elements import (
 
 if TYPE_CHECKING:
     from ...core.connection import Connection
+
+
+# ======================================================================
+# Fill-to-opacity layer optimization
+# ======================================================================
+
+
+@dataclass(frozen=True, slots=True)
+class FillLayerOpt:
+    """Data for rendering a fill animation as stacked opacity layers.
+
+    Instead of a single ``<animate attributeName="fill">`` (CPU-bound color
+    interpolation), the renderer emits N ``<polygon>`` elements — one base
+    with the first color, plus one overlay per additional color with an
+    opacity animation.  GPU-accelerated opacity compositing replaces
+    per-frame color string parsing.
+    """
+
+    base_color: str
+    """Fill color for the base polygon (first keyframe color)."""
+
+    overlays: list[tuple[str, list[float]]]
+    """(color, opacity_per_keyframe) for each overlay, ordered by first appearance."""
+
+    anim: PropertyAnimation
+    """Original fill animation (timing source for synthesized opacity animations)."""
+
+    anim_index: int
+    """Index in ``entity._animations`` so the fill anim can be excluded."""
+
+
+def extract_fill_layers(
+    entity: Entity, target_attr: str = "fill",
+) -> FillLayerOpt | None:
+    """Detect a color animation suitable for opacity-layer optimization.
+
+    Works for both ``fill`` animations (entities) and ``stroke`` color
+    animations (connections).  Pass ``target_attr="stroke"`` for stroke
+    color optimization.
+
+    Returns :class:`FillLayerOpt` if the entity has exactly one color
+    ``PropertyAnimation`` targeting *target_attr* using solid colors and
+    no conflicting opacity animations.  Returns ``None`` otherwise
+    (caller falls back to standard animation rendering).
+    """
+    entity_type = type(entity).__name__
+
+    fill_anim: PropertyAnimation | None = None
+    fill_index: int = -1
+
+    for i, anim in enumerate(entity._animations):
+        if not isinstance(anim, PropertyAnimation):
+            continue
+        # Conflict: any opacity animation would fight the overlay
+        if anim.prop in ("opacity", "fill_opacity", "stroke_opacity"):
+            return None
+        svg_attr = _resolve_svg_attr(entity_type, anim.prop)
+        if svg_attr == target_attr:
+            if fill_anim is not None:
+                return None  # multiple color animations
+            fill_anim = anim
+            fill_index = i
+
+    if fill_anim is None or len(fill_anim.keyframes) < 2:
+        return None
+
+    # Normalize colors — reject gradients and unparseable values
+    try:
+        normalized = []
+        for kf in fill_anim.keyframes:
+            val = str(kf.value)
+            if val.startswith("url("):
+                return None
+            normalized.append(Color(val).to_hex())
+    except (ValueError, TypeError):
+        return None
+
+    # Need at least 2 unique colors for the optimization to matter
+    unique_ordered: list[str] = []
+    seen: set[str] = set()
+    for c in normalized:
+        if c not in seen:
+            unique_ordered.append(c)
+            seen.add(c)
+    if len(unique_ordered) < 2:
+        return None
+
+    base_color = unique_ordered[0]
+    overlays: list[tuple[str, list[float]]] = []
+    for color in unique_ordered[1:]:
+        opacities = [1.0 if c == color else 0.0 for c in normalized]
+        overlays.append((color, opacities))
+
+    return FillLayerOpt(
+        base_color=base_color,
+        overlays=overlays,
+        anim=fill_anim,
+        anim_index=fill_index,
+    )
 
 
 # ======================================================================
@@ -84,6 +185,10 @@ _PROP_TO_SVG: dict[tuple[str | None, str], str] = {
     ("Path", "color"): "stroke",
     ("Path", "width"): "stroke-width",
     ("Path", "fill"): "fill",
+    # Connection
+    ("Connection", "color"): "stroke",
+    ("Connection", "opacity"): "opacity",
+    ("Connection", "width"): "stroke-width",
 }
 
 
