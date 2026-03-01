@@ -10,6 +10,7 @@ Animation-related logic is split across three supporting modules:
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from ...animation.models import (
@@ -31,6 +32,7 @@ from .smil_converters import (
     FillLayerOpt,
     _anim_key_times,
     extract_fill_layers,
+    fill_layer_timing_key,
     render_connection_prop_smil,
     render_draw_smil,
     render_motion_smil,
@@ -54,6 +56,38 @@ if TYPE_CHECKING:
     from ...entities.polygon import Polygon
     from ...entities.rect import Rect
     from ...entities.text import Text
+    from ...scene.scene import Scene
+
+
+# ======================================================================
+# Batch overlay data
+# ======================================================================
+
+
+@dataclass(frozen=True, slots=True)
+class _PendingOverlay:
+    """Geometry for a single overlay element awaiting batch grouping."""
+
+    tag: str
+    """SVG element tag (``"polygon"``, ``"rect"``, etc.)."""
+
+    geometry_attrs: str
+    """Geometry attributes string (e.g., ``' points="0,0 100,0 50,80"'``)."""
+
+    color_attr: str
+    """Which attribute carries the overlay color (``"fill"`` or ``"stroke"``)."""
+
+    color: str
+    """The overlay color hex value."""
+
+    extra_attrs: str
+    """Additional attributes for overlays (e.g., stroke-width for stroke layers)."""
+
+    transform: str
+    """SVG transform attribute string."""
+
+    reactive: tuple[str, ...]
+    """Per-element reactive animations (vertex tracking)."""
 
 
 # ======================================================================
@@ -375,6 +409,8 @@ class SMILRenderer(SVGRenderer):
         overlay_color_attr: str,
         overlay_extra: str,
         reactive: list[str] | None,
+        *,
+        batch_entity_id: int | None = None,
     ) -> str:
         """Render an entity as stacked opacity layers instead of a color animation.
 
@@ -386,13 +422,40 @@ class SMILRenderer(SVGRenderer):
         Works for both ``fill`` color animations (entities) and ``stroke``
         color animations (connections) — the *overlay_color_attr* parameter
         selects which attribute carries the overlay color.
-        """
-        key_times = _anim_key_times(fill_opt.anim)
 
+        When *batch_entity_id* is set, only the base element is returned
+        and overlay specs are stored in ``self._batch_pending`` for later
+        batch rendering (multiple overlays sharing a single ``<animate>``).
+        """
         # --- Base element: first color, stroke, non-color animations ---
         all_base_anims = list(base_anims)
         if reactive:
             all_base_anims.extend(reactive)
+
+        if batch_entity_id is not None:
+            # Batch mode: return base only, store overlays for later
+            if all_base_anims:
+                base_anim_str = "\n".join(f"  {a}" for a in all_base_anims)
+                base_el = f"<{tag}{geometry_attrs}{base_attrs}{transform}>\n{base_anim_str}\n</{tag}>"
+            else:
+                base_el = f"<{tag}{geometry_attrs}{base_attrs}{transform} />"
+
+            pending: list[_PendingOverlay] = []
+            for color, _opacities in fill_opt.overlays:
+                pending.append(_PendingOverlay(
+                    tag=tag,
+                    geometry_attrs=geometry_attrs,
+                    color_attr=overlay_color_attr,
+                    color=color,
+                    extra_attrs=overlay_extra,
+                    transform=transform,
+                    reactive=tuple(reactive) if reactive else (),
+                ))
+            self._batch_pending[batch_entity_id] = pending
+            return base_el
+
+        # --- Normal mode: full <g> with base + overlays ---
+        key_times = _anim_key_times(fill_opt.anim)
 
         if all_base_anims:
             base_anim_str = "\n".join(f"    {a}" for a in all_base_anims)
@@ -443,9 +506,15 @@ class SMILRenderer(SVGRenderer):
         base_anims = self._render_animations_excluding(
             entity, {fill_opt.anim_index},
         )
+        batch_id = (
+            id(entity)
+            if hasattr(self, "_batch_pending") and id(entity) in self._batch_pending
+            else None
+        )
         return self._build_layered_svg(
             tag, geometry_attrs, fill_opt, base_attrs, transform,
             base_anims, "fill", "", reactive,
+            batch_entity_id=batch_id,
         )
 
     def render_text(self, text: Text) -> str:
@@ -697,3 +766,191 @@ class SMILRenderer(SVGRenderer):
             return f"<{tag}{attrs} />"
         anim_str = "\n".join(f"  {a}" for a in anims)
         return f"<{tag}{attrs}>\n{anim_str}\n</{tag}>"
+
+    # ------------------------------------------------------------------
+    # Fill-layer batching
+    # ------------------------------------------------------------------
+
+    def _render_batch_overlay_group(
+        self,
+        template_opt: FillLayerOpt,
+        overlay_index: int,
+        pending_overlays: list[_PendingOverlay],
+    ) -> str:
+        """Emit a shared ``<g>`` with one ``<animate>`` for batched overlays.
+
+        All *pending_overlays* share the same timing envelope and opacity
+        pattern (determined by ``fill_layer_timing_key``).  The single
+        ``<animate attributeName="opacity">`` on the ``<g>`` replaces N
+        individual per-entity opacity animations.
+        """
+        _color, opacities = template_opt.overlays[overlay_index]
+        key_times = _anim_key_times(template_opt.anim)
+
+        animate_el = build_animate_element(
+            attribute_name="opacity",
+            values=[svg_num(v) for v in opacities],
+            key_times=key_times,
+            duration=template_opt.anim.duration,
+            delay=template_opt.anim.delay,
+            easing=template_opt.anim.easing,
+            bounce=template_opt.anim.bounce,
+            hold=template_opt.anim.hold,
+            repeat=template_opt.anim.repeat,
+        )
+
+        children: list[str] = []
+        for ov in pending_overlays:
+            attrs = (
+                f"{ov.geometry_attrs}"
+                f' {ov.color_attr}="{ov.color}"'
+                f"{ov.extra_attrs}{ov.transform}"
+            )
+            if ov.reactive:
+                reactive_str = "\n".join(f"    {r}" for r in ov.reactive)
+                children.append(
+                    f"  <{ov.tag}{attrs}>\n{reactive_str}\n  </{ov.tag}>"
+                )
+            else:
+                children.append(f"  <{ov.tag}{attrs} />")
+
+        parts = ['<g opacity="0">', f"  {animate_el}"]
+        parts.extend(children)
+        parts.append("</g>")
+        return "\n".join(parts)
+
+    # ------------------------------------------------------------------
+    # Scene rendering with fill-layer batching
+    # ------------------------------------------------------------------
+
+    def render_scene(self, scene: Scene) -> str:
+        """Render a complete animated SVG with fill-layer batching.
+
+        Extends the parent renderer with a pre-scan pass that detects
+        entities sharing the same fill animation timing.  Overlays from
+        those entities are grouped into shared ``<g>`` elements with a
+        single ``<animate>``, reducing the total number of SMIL animation
+        elements the browser must evaluate.
+        """
+        all_entities = scene.entities
+        all_connections = scene._collect_connections()
+
+        # --- Pre-scan: identify batchable fill layers ---
+        entity_fill_opts: dict[int, FillLayerOpt] = {}
+        timing_groups: dict[tuple, list[tuple[Entity, FillLayerOpt]]] = {}
+
+        for entity in all_entities:
+            if not entity._animations:
+                continue
+            fill_opt = extract_fill_layers(entity)
+            if fill_opt is None:
+                continue
+            eid = id(entity)
+            entity_fill_opts[eid] = fill_opt
+            group_key = (entity.z_index, fill_layer_timing_key(fill_opt))
+            timing_groups.setdefault(group_key, []).append((entity, fill_opt))
+
+        # Groups with >= 2 members -> batch mode
+        batched_ids: set[int] = set()
+        active_batches: dict[
+            tuple, list[tuple[Entity, FillLayerOpt]]
+        ] = {}
+        for group_key, members in timing_groups.items():
+            if len(members) >= 2:
+                for entity, _opt in members:
+                    batched_ids.add(id(entity))
+                active_batches[group_key] = members
+
+        # Initialize batch state for _build_layered_svg to detect
+        self._batch_pending: dict[int, list[_PendingOverlay]] = {
+            eid: [] for eid in batched_ids
+        }
+
+        # --- SVG document setup (mirrors parent) ---
+        if scene._viewbox is not None:
+            vb_x, vb_y, vb_w, vb_h = scene._viewbox
+            display_h = vb_h * scene._width / vb_w if vb_w > 0 else scene._height
+            svg_open = (
+                f'<svg xmlns="http://www.w3.org/2000/svg" '
+                f'width="{scene._width}" height="{display_h:.1f}" '
+                f'viewBox="{vb_x} {vb_y} {vb_w} {vb_h}">'
+            )
+        else:
+            svg_open = (
+                f'<svg xmlns="http://www.w3.org/2000/svg" '
+                f'width="{scene._width}" height="{scene._height}" '
+                f'viewBox="0 0 {scene._width} {scene._height}">'
+            )
+
+        lines = [
+            '<?xml version="1.0" encoding="UTF-8"?>',
+            svg_open,
+        ]
+
+        # Definitions (gradients, markers, path defs)
+        markers = self._collect_markers(all_entities, all_connections)
+        path_defs = self._collect_path_defs(all_entities)
+        gradients = self._collect_gradients(all_entities, all_connections)
+        if markers or path_defs or gradients:
+            lines.append("  <defs>")
+            lines.extend(f"    {svg}" for svg in gradients.values())
+            lines.extend(f"    {svg}" for svg in markers.values())
+            lines.extend(f"    {svg}" for svg in path_defs.values())
+            lines.append("  </defs>")
+
+        # Background
+        if scene._background:
+            if scene._viewbox is not None:
+                vb_x, vb_y, vb_w, vb_h = scene._viewbox
+                lines.append(
+                    f'  <rect x="{vb_x}" y="{vb_y}" '
+                    f'width="{vb_w}" height="{vb_h}" '
+                    f'fill="{scene.background}" />'
+                )
+            else:
+                lines.append(
+                    f'  <rect width="100%" height="100%" fill="{scene.background}" />'
+                )
+
+        # --- Render entities and connections ---
+        renderables: list[tuple[int, str]] = []
+        renderables.extend(
+            (c.z_index, self.render_connection(c)) for c in all_connections
+        )
+        renderables.extend(
+            (e.z_index, self.render_entity(e)) for e in all_entities
+        )
+
+        # --- Emit batched overlay groups ---
+        for group_key, members in active_batches.items():
+            z_idx = group_key[0]
+            template_opt = members[0][1]
+            n_overlays = len(template_opt.overlays)
+
+            overlays_by_index: list[list[_PendingOverlay]] = [
+                [] for _ in range(n_overlays)
+            ]
+            for entity, _opt in members:
+                pending = self._batch_pending.get(id(entity), [])
+                for i, ov in enumerate(pending):
+                    if i < n_overlays:
+                        overlays_by_index[i].append(ov)
+
+            for i in range(n_overlays):
+                if overlays_by_index[i]:
+                    overlay_svg = self._render_batch_overlay_group(
+                        template_opt, i, overlays_by_index[i],
+                    )
+                    renderables.append((z_idx, overlay_svg))
+
+        # Clean up batch state
+        del self._batch_pending
+
+        # --- Sort and assemble ---
+        renderables.sort(key=lambda x: x[0])
+        for _, svg in renderables:
+            if svg:
+                lines.append(f"  {svg}")
+
+        lines.append("</svg>")
+        return "\n".join(lines)

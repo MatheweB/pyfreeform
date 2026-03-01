@@ -1245,3 +1245,128 @@ class TestFillLayerOptimization:
         assert "<g>" in svg
         assert svg.count("<path") == 2
         assert 'attributeName="stroke"' not in svg
+
+
+# ======================================================================
+# Fill-layer batching (cross-entity)
+# ======================================================================
+
+
+class TestFillLayerBatching:
+    """Cross-entity fill animation batching at render_scene level."""
+
+    def test_two_same_timing_one_animate(self):
+        """Two polygons with identical fill timing produce 1 shared <animate>."""
+        scene = Scene(200, 200)
+        p1 = Polygon([(0, 0), (50, 0), (25, 40)], fill="white")
+        p2 = Polygon([(60, 0), (110, 0), (85, 40)], fill="white")
+        for p in (p1, p2):
+            p.animate_fill(keyframes={0: "white", 1: "blue", 2: "white"})
+            scene.place(p)
+        svg = scene.to_svg()
+        assert svg.count('attributeName="opacity"') == 1
+
+    def test_different_timing_not_batched(self):
+        """Different durations prevent batching."""
+        scene = Scene(200, 200)
+        p1 = Polygon([(0, 0), (50, 0), (25, 40)], fill="white")
+        p2 = Polygon([(60, 0), (110, 0), (85, 40)], fill="white")
+        p1.animate_fill(keyframes={0: "white", 1: "blue", 2: "white"})
+        p2.animate_fill(keyframes={0: "white", 0.5: "blue", 1: "white"})
+        scene.place(p1)
+        scene.place(p2)
+        svg = scene.to_svg()
+        assert svg.count('attributeName="opacity"') == 2
+
+    def test_different_z_index_not_batched(self):
+        """Different z_index prevents batching."""
+        scene = Scene(200, 200)
+        p1 = Polygon([(0, 0), (50, 0), (25, 40)], fill="white", z_index=0)
+        p2 = Polygon([(60, 0), (110, 0), (85, 40)], fill="white", z_index=1)
+        for p in (p1, p2):
+            p.animate_fill(keyframes={0: "white", 1: "blue", 2: "white"})
+            scene.place(p)
+        svg = scene.to_svg()
+        assert svg.count('attributeName="opacity"') == 2
+
+    def test_single_entity_not_batched(self):
+        """Single entity still uses per-entity rendering."""
+        scene = Scene(200, 200)
+        p1 = Polygon([(0, 0), (50, 0), (25, 40)], fill="white")
+        p1.animate_fill(keyframes={0: "white", 1: "blue", 2: "white"})
+        scene.place(p1)
+        svg = scene.to_svg()
+        # Still has per-entity <g> wrapper
+        assert svg.count('attributeName="opacity"') == 1
+        assert "<g>" in svg
+
+    def test_three_entities_same_timing(self):
+        """Three entities batched together produce 1 shared animate."""
+        scene = Scene(300, 200)
+        for x in (0, 60, 120):
+            p = Polygon([(x, 0), (x + 50, 0), (x + 25, 40)], fill="red")
+            p.animate_fill(keyframes={0: "red", 1: "blue", 2: "red"})
+            scene.place(p)
+        svg = scene.to_svg()
+        assert svg.count('attributeName="opacity"') == 1
+
+    def test_mixed_entity_types_same_timing(self):
+        """Polygon and Rect with same fill timing can be batched."""
+        scene = Scene(200, 200)
+        p = Polygon([(0, 0), (50, 0), (25, 40)], fill="white")
+        r = Rect(60, 0, 50, 40, fill="white")
+        for e in (p, r):
+            e.animate_fill(keyframes={0: "white", 1: "blue", 2: "white"})
+            scene.place(e)
+        svg = scene.to_svg()
+        assert svg.count('attributeName="opacity"') == 1
+
+    def test_three_color_batch(self):
+        """Three-color animation batching produces 2 shared overlay groups."""
+        scene = Scene(200, 200)
+        p1 = Polygon([(0, 0), (50, 0), (25, 40)], fill="red")
+        p2 = Polygon([(60, 0), (110, 0), (85, 40)], fill="red")
+        for p in (p1, p2):
+            p.animate_fill(keyframes={0: "red", 1: "blue", 2: "green"})
+            scene.place(p)
+        svg = scene.to_svg()
+        # 2 overlay groups (one for blue, one for green), each with 1 animate
+        assert svg.count('attributeName="opacity"') == 2
+
+    def test_non_fill_anims_on_base_only(self):
+        """Spin animation appears once per entity (on base), not in overlay group."""
+        scene = Scene(200, 200)
+        p1 = Polygon([(0, 0), (50, 0), (25, 40)], fill="white")
+        p2 = Polygon([(60, 0), (110, 0), (85, 40)], fill="white")
+        for p in (p1, p2):
+            p.animate_fill(keyframes={0: "white", 1: "blue", 2: "white"})
+            p.animate_spin(360, duration=2.0)
+            scene.place(p)
+        svg = scene.to_svg()
+        assert svg.count('type="rotate"') == 2  # one per base
+        assert svg.count('attributeName="opacity"') == 1  # shared
+
+    def test_render_entity_direct_not_batched(self):
+        """Calling render_entity directly (not via render_scene) is not batched."""
+        poly = Polygon([(0, 0), (100, 0), (50, 80)], fill="white")
+        poly.animate_fill(keyframes={0: "white", 1: "blue", 2: "white"})
+        svg = SMILRenderer().render_entity(poly)
+        # Per-entity rendering, not batched
+        assert svg.count('attributeName="opacity"') == 1
+        assert "<g>" in svg
+
+    def test_batch_preserves_base_colors(self):
+        """Batched bases use their own fill_opt base color."""
+        scene = Scene(200, 200)
+        p1 = Polygon([(0, 0), (50, 0), (25, 40)], fill="white")
+        p2 = Polygon([(60, 0), (110, 0), (85, 40)], fill="white")
+        p1.animate_fill(keyframes={0: "white", 1: "#aabbcc", 2: "white"})
+        p2.animate_fill(keyframes={0: "white", 1: "#112233", 2: "white"})
+        scene.place(p1)
+        scene.place(p2)
+        svg = scene.to_svg()
+        # Both overlay colors appear
+        assert "#aabbcc" in svg
+        assert "#112233" in svg
+        # Batched: 1 shared animate
+        assert svg.count('attributeName="opacity"') == 1

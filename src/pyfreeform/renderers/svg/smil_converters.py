@@ -130,6 +130,24 @@ def extract_fill_layers(
     )
 
 
+def fill_layer_timing_key(opt: FillLayerOpt) -> tuple:
+    """Compute a hashable key for batching fill-layer-optimized entities.
+
+    Two entities whose :func:`extract_fill_layers` results share the same
+    timing key produce identical overlay ``<animate>`` elements and can
+    share a single ``<animate>`` in a batched overlay group.
+    """
+    anim = opt.anim
+    kf_times = tuple(kf.time for kf in anim.keyframes)
+    overlay_patterns = tuple(
+        tuple(opacities) for _, opacities in opt.overlays
+    )
+    return (
+        kf_times, anim.delay, anim.easing, anim.hold,
+        anim.repeat, anim.bounce, overlay_patterns,
+    )
+
+
 # ======================================================================
 # Property name → SVG attribute mapping
 # ======================================================================
