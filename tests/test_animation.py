@@ -1370,3 +1370,38 @@ class TestFillLayerBatching:
         assert "#112233" in svg
         # Batched: 1 shared animate
         assert svg.count('attributeName="opacity"') == 1
+
+    def test_different_delay_not_batched(self):
+        """Same keyframes but different delay prevents batching."""
+        scene = Scene(200, 200)
+        p1 = Polygon([(0, 0), (50, 0), (25, 40)], fill="white")
+        p2 = Polygon([(60, 0), (110, 0), (85, 40)], fill="white")
+        p1.animate_fill(keyframes={0: "white", 1: "blue", 2: "white"}, delay=0.0)
+        p2.animate_fill(keyframes={0: "white", 1: "blue", 2: "white"}, delay=0.5)
+        scene.place(p1)
+        scene.place(p2)
+        svg = scene.to_svg()
+        assert svg.count('attributeName="opacity"') == 2
+
+    def test_different_easing_not_batched(self):
+        """Same keyframes but different easing prevents batching."""
+        scene = Scene(200, 200)
+        p1 = Polygon([(0, 0), (50, 0), (25, 40)], fill="white")
+        p2 = Polygon([(60, 0), (110, 0), (85, 40)], fill="white")
+        p1.animate_fill(keyframes={0: "white", 1: "blue", 2: "white"}, easing="linear")
+        p2.animate_fill(keyframes={0: "white", 1: "blue", 2: "white"}, easing="ease-in")
+        scene.place(p1)
+        scene.place(p2)
+        svg = scene.to_svg()
+        assert svg.count('attributeName="opacity"') == 2
+
+    def test_same_bounce_batched(self):
+        """Same timing with identical bounce=True are batched together."""
+        scene = Scene(200, 200)
+        p1 = Polygon([(0, 0), (50, 0), (25, 40)], fill="white")
+        p2 = Polygon([(60, 0), (110, 0), (85, 40)], fill="white")
+        for p in (p1, p2):
+            p.animate_fill(keyframes={0: "white", 1: "blue", 2: "white"}, bounce=True)
+            scene.place(p)
+        svg = scene.to_svg()
+        assert svg.count('attributeName="opacity"') == 1

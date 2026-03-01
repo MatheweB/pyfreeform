@@ -43,11 +43,13 @@ class SVGRenderer(Renderer):
     # Scene rendering
     # ------------------------------------------------------------------
 
-    def render_scene(self, scene: Scene) -> str:
-        """Render a complete SVG document."""
-        all_entities = scene.entities
-        all_connections = scene._collect_connections()
-
+    def _build_svg_header(
+        self,
+        scene: Scene,
+        all_entities: list[Entity],
+        all_connections: list[Connection],
+    ) -> list[str]:
+        """Build SVG preamble: XML declaration, ``<svg>`` open, ``<defs>``, background."""
         if scene._viewbox is not None:
             vb_x, vb_y, vb_w, vb_h = scene._viewbox
             display_h = vb_h * scene._width / vb_w if vb_w > 0 else scene._height
@@ -92,6 +94,15 @@ class SVGRenderer(Renderer):
                 lines.append(
                     f'  <rect width="100%" height="100%" fill="{scene.background}" />'
                 )
+
+        return lines
+
+    def render_scene(self, scene: Scene) -> str:
+        """Render a complete SVG document."""
+        all_entities = scene.entities
+        all_connections = scene._collect_connections()
+
+        lines = self._build_svg_header(scene, all_entities, all_connections)
 
         # Collect all renderables with z_index
         renderables: list[tuple[int, str]] = []
