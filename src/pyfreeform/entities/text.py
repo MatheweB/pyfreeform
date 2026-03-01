@@ -128,6 +128,9 @@ class Text(Entity):
     DEFAULT_FONT_STYLE = "normal"
     DEFAULT_FONT_WEIGHT = "normal"
 
+    # -- typed animation methods (factory-generated) --
+    from ..animation.typed_methods import animate_color, animate_font_size
+
     def __init__(
         self,
         x: float = 0,

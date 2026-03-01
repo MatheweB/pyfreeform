@@ -61,6 +61,12 @@ class Polygon(Entity):
         ```
     """
 
+    # -- typed animation methods (factory-generated) --
+    from ..animation.typed_methods import (
+        animate_fill, animate_stroke, animate_stroke_width,
+        animate_fill_opacity, animate_stroke_opacity,
+    )
+
     def __init__(
         self,
         vertices: Sequence[VertexInput],

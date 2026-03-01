@@ -442,24 +442,10 @@ class Connection:
         apply_chain(self, gap)
         return self
 
-    def fade(
-        self,
-        to: float,
-        *,
-        duration: float = 1.0,
-        delay: float = 0.0,
-        easing: EasingLike = "linear",
-        repeat: RepeatLike = False,
-        bounce: bool = False,
-        hold: bool = True,
-    ) -> Connection:
-        """Animate opacity."""
-        from ..animation.shared import add_fade
-        add_fade(self, to, duration=duration, delay=delay, easing=easing,
-            repeat=repeat, bounce=bounce, hold=hold)
-        return self
+    # -- typed animation methods (factory-generated) --
+    from ..animation.typed_methods import animate_color, animate_width, animate_fade
 
-    def draw(
+    def animate_draw(
         self,
         *,
         duration: float = 1.0,

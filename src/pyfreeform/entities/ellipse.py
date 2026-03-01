@@ -57,6 +57,12 @@ class Ellipse(Entity):
     DEFAULT_STROKE = None
     DEFAULT_STROKE_WIDTH = 1
 
+    # -- typed animation methods (factory-generated) --
+    from ..animation.typed_methods import (
+        animate_fill, animate_stroke, animate_rx, animate_ry,
+        animate_stroke_width, animate_fill_opacity, animate_stroke_opacity,
+    )
+
     def __init__(
         self,
         x: float = 0,

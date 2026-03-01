@@ -79,6 +79,9 @@ class Path(Entity):
     DEFAULT_COLOR = "black"
     DEFAULT_CAP = "round"
 
+    # -- typed animation methods (factory-generated) --
+    from ..animation.typed_methods import animate_color, animate_fill, animate_width
+
     def __init__(
         self,
         pathable: Pathable,
@@ -555,7 +558,7 @@ class Path(Entity):
         """Collect SVG marker definitions needed by this path's caps."""
         return collect_markers(self.cap, self.start_cap, self.end_cap, self.width, self.color)
 
-    def draw(
+    def animate_draw(
         self,
         *,
         duration: float = 1.0,

@@ -289,7 +289,7 @@ def stagger(
 
     Example::
 
-        stagger(*dots, offset=0.2, each=lambda d: d.fade(to=0.0, duration=1.0))
+        stagger(*dots, offset=0.2, each=lambda d: d.animate_fade(to=0.0, duration=1.0))
     """
     result = list(entities)
     for i, entity in enumerate(result):

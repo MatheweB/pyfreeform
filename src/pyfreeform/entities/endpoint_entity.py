@@ -24,6 +24,9 @@ class EndpointEntity(Entity):
     - adjust_relative_end() helper for move_by implementations
     """
 
+    # -- typed animation methods (factory-generated) --
+    from ..animation.typed_methods import animate_color, animate_width
+
     def __init__(
         self,
         x: float,

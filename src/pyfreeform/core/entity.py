@@ -813,44 +813,17 @@ class Entity(ABC):
 
         Example::
 
-            dot.fade(to=0.0, duration=1.0).then().spin(360, duration=1.0)
-            dot.fade(to=0.0, duration=1.0).then(0.5).spin(360, duration=1.0)
+            dot.animate_fade(to=0.0, duration=1.0).then().animate_spin(360, duration=1.0)
+            dot.animate_fade(to=0.0, duration=1.0).then(0.5).animate_spin(360, duration=1.0)
         """
         from ..animation.shared import apply_chain
         apply_chain(self, gap)
         return self
 
-    def fade(
-        self,
-        to: float,
-        *,
-        duration: float = 1.0,
-        delay: float = 0.0,
-        easing: EasingLike = "linear",
-        repeat: RepeatLike = False,
-        bounce: bool = False,
-        hold: bool = True,
-    ) -> Entity:
-        """Animate opacity.
+    # animate_fade assigned from factory (supports both to= and keyframes= modes)
+    from ..animation.typed_methods import animate_fade
 
-        Args:
-            to: Target opacity (0.0 transparent to 1.0 opaque).
-            duration: Duration in seconds.
-            delay: Seconds before animation starts.
-            easing: Speed curve ("linear", "ease-in-out", etc.).
-            repeat: False=once, True=forever, int=N times.
-            bounce: Alternate direction each cycle.
-            hold: Hold final value after completion.
-
-        Returns:
-            Self, for method chaining.
-        """
-        from ..animation.shared import add_fade
-        add_fade(self, to, duration=duration, delay=delay, easing=easing,
-            repeat=repeat, bounce=bounce, hold=hold)
-        return self
-
-    def move(
+    def animate_move(
         self,
         to: RelCoordLike | None = None,
         *,
@@ -866,8 +839,8 @@ class Entity(ABC):
 
         Two modes:
 
-        - **Absolute**: ``entity.move(to=(0.8, 0.5))`` — move to position.
-        - **Relative**: ``entity.move(by=(0.1, 0))`` — move by offset.
+        - **Absolute**: ``entity.animate_move(to=(0.8, 0.5))``
+        - **Relative**: ``entity.animate_move(by=(0.1, 0))``
 
         Args:
             to: Target position as RelCoord or (rx, ry) tuple.
@@ -894,7 +867,7 @@ class Entity(ABC):
             delay=delay, easing=easing, repeat=repeat, bounce=bounce, hold=hold))
         return self
 
-    def spin(
+    def animate_spin(
         self,
         angle: float = 360,
         *,
@@ -926,7 +899,7 @@ class Entity(ABC):
             delay=delay, easing=easing, repeat=repeat, bounce=bounce, hold=hold))
         return self
 
-    def zoom(
+    def animate_zoom(
         self,
         to: float,
         *,
@@ -939,9 +912,6 @@ class Entity(ABC):
     ) -> Entity:
         """Animate scale factor.
 
-        Like ``.scale()`` sets scale immediately, ``.zoom()`` animates it
-        over time (same relationship as ``.rotate()`` vs ``.spin()``).
-
         Args:
             to: Target scale factor (1.0 = original, 2.0 = double, 0.5 = half).
             duration: Duration in seconds.
@@ -953,11 +923,6 @@ class Entity(ABC):
 
         Returns:
             Self, for method chaining.
-
-        Example::
-
-            dot.zoom(to=2.0, duration=1.0)
-            dot.zoom(to=1.5, bounce=True, repeat=True)  # pulse
         """
         from ..animation.builders import build_scale
         from ..animation.shared import consume_chain_delay
@@ -966,7 +931,7 @@ class Entity(ABC):
             delay=delay, easing=easing, repeat=repeat, bounce=bounce, hold=hold))
         return self
 
-    def follow(
+    def animate_follow(
         self,
         path: Pathable,
         *,

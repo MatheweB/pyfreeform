@@ -1,7 +1,7 @@
 """Reactive animation synthesis — polygon vertex and connection endpoint tracking.
 
 When polygon vertices or connection endpoints reference entities with
-``.move()`` animations, this module synthesizes SMIL ``<animate>``
+``.animate_move()`` animations, this module synthesizes SMIL ``<animate>``
 elements that make the shape follow the moving entities.
 """
 

@@ -90,8 +90,8 @@ def _generate_koch_snowflake(depth=4):
         dur = 1.5
         per_seg = dur / max(len(segments), 1)
         for k, seg in enumerate(segments):
-            seg.animate(
-                "opacity", to=alpha, duration=0.3,
+            seg.animate_fade(
+                to=alpha, duration=0.3,
                 delay=total_delay + k * per_seg,
                 easing="ease-out", hold=True,
             )
@@ -121,19 +121,19 @@ def _generate_lissajous_trace():
 
     # The drawn path
     path = cell.add_path(liss, width=2, color="mediumpurple", opacity=0.7)
-    path.draw(duration=6.0, easing="linear")
+    path.animate_draw(duration=6.0, easing="linear")
 
     # Place tracer dot at the Lissajous starting position
     start = liss.point_at(0.0)
     start_rx, start_ry = start.x / w, start.y / h
 
     tracer = cell.add_dot(at=(start_rx, start_ry), radius=0.015, color="coral")
-    tracer.follow(liss, duration=6.0, easing="linear", repeat=True)
+    tracer.animate_follow(liss, duration=6.0, easing="linear", repeat=True)
 
     # Glow dot that pulses
     glow = cell.add_dot(at=(start_rx, start_ry), radius=0.008, color="white")
-    glow.follow(liss, duration=6.0, easing="linear", repeat=True)
-    glow.animate("r", to=8, duration=0.8, easing="ease-in-out",
+    glow.animate_follow(liss, duration=6.0, easing="linear", repeat=True)
+    glow.animate_radius(to=8, duration=0.8, easing="ease-in-out",
                  bounce=True, repeat=True)
 
     save(scene, "recipes/anim-lissajous.svg")
@@ -175,14 +175,14 @@ def _generate_spiral_galaxy(n_stars=200):
     stagger(
         *stars,
         offset=0.02,
-        each=lambda d: d.animate("opacity", to=0.9, duration=0.5,
+        each=lambda d: d.animate_fade(to=0.9, duration=0.5,
                                  easing="ease-out", hold=True),
     )
 
     # A few spinning "arms" via subtle rotation on outer stars
     for i, dot in enumerate(stars):
         if i % 5 == 0:
-            dot.spin(360, duration=8.0 + (i % 3) * 2, repeat=True,
+            dot.animate_spin(360, duration=8.0 + (i % 3) * 2, repeat=True,
                      easing="linear")
 
     save(scene, "recipes/anim-galaxy.svg")
@@ -221,14 +221,14 @@ def _generate_breathing_mandala():
         # Pulse: animate radius in/out with bounce
         for j, dot in enumerate(ring_dots):
             per_dot_delay = phase_delay + j * 0.05
-            dot.animate(
-                "r", to=10, duration=2.0,
+            dot.animate_radius(
+                to=10, duration=2.0,
                 delay=per_dot_delay,
                 easing="ease-in-out", bounce=True, repeat=True,
             )
             # Alternate dots also pulse opacity
             if j % 2 == 0:
-                dot.fade(
+                dot.animate_fade(
                     to=0.3, duration=2.0,
                     delay=per_dot_delay,
                     easing="ease-in-out",
@@ -237,9 +237,9 @@ def _generate_breathing_mandala():
 
     # Center jewel
     center = cell.add_dot(at=(0.5, 0.5), radius=0.02, color="white")
-    center.animate("r", to=16, duration=1.5, easing="ease-in-out",
+    center.animate_radius(to=16, duration=1.5, easing="ease-in-out",
                    bounce=True, repeat=True)
-    center.spin(360, duration=6.0, repeat=True, easing="linear")
+    center.animate_spin(360, duration=6.0, repeat=True, easing="linear")
 
     save(scene, "recipes/anim-mandala.svg")
 
@@ -315,8 +315,7 @@ def _generate_sierpinski_triangle(max_depth=5):
     forward_time = total_delay + 0.5  # brief hold of complete fractal
 
     for entity, appear, target, dur in elements:
-        entity.animate(
-            "opacity",
+        entity.animate_fade(
             keyframes={0: 0, appear: 0, appear + dur: target,
                        forward_time: target},
             bounce=True, repeat=True,

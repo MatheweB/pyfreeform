@@ -39,6 +39,9 @@ class Dot(Entity):
     DEFAULT_RADIUS = 5
     DEFAULT_COLOR = "black"
 
+    # -- typed animation methods (factory-generated) --
+    from ..animation.typed_methods import animate_color, animate_radius
+
     def __init__(
         self,
         x: float = 0,

@@ -43,6 +43,12 @@ class Rect(Entity):
 
     DEFAULT_FILL = "black"
 
+    # -- typed animation methods (factory-generated) --
+    from ..animation.typed_methods import (
+        animate_fill, animate_stroke, animate_width, animate_height,
+        animate_stroke_width, animate_fill_opacity, animate_stroke_opacity,
+    )
+
     def __init__(
         self,
         x: float = 0,
