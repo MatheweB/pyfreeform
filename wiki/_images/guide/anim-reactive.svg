@@ -34,5 +34,5 @@
   <animate attributeName="cx" values="331.2;288;331.2" keyTimes="0;0.5;1" dur="2.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animate attributeName="cy" values="112;28.8;112" keyTimes="0;0.5;1" dur="2.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
 </circle>
-  <text x="180" y="147.2" font-size="9.6" font-family="sans-serif" font-style="normal" font-weight="normal" fill="gray" text-anchor="middle" dominant-baseline="middle">vertices + endpoints react to .move()</text>
+  <text x="180" y="147.2" font-size="9.6" font-family="sans-serif" font-style="normal" font-weight="normal" fill="gray" text-anchor="middle" dominant-baseline="middle">vertices + endpoints react to .animate_move()</text>
 </svg>

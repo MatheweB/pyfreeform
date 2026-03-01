@@ -192,7 +192,7 @@ def build_animate(
     prop: str,
     *,
     to: float | int | str | tuple[float, ...] | None = None,
-    keyframes: dict[float, float | int | str | tuple[float, ...]] | None = None,
+    keyframes: dict[float, float | int | str | tuple[float, ...]] | list[float | int | str | tuple[float, ...]] | None = None,
     duration: float = 1.0,
     delay: float = 0.0,
     easing: EasingLike = "linear",
@@ -202,16 +202,20 @@ def build_animate(
 ) -> PropertyAnimation:
     """Build a generic property animation.
 
-    Two modes:
+    Three modes:
         - Simple: ``animate("opacity", to=0.0, duration=2.0)``
-        - Keyframes: ``animate("opacity", keyframes={0: 1.0, 1: 0.3, 2: 1.0})``
+        - Keyframes (dict): ``animate("opacity", keyframes={0: 1.0, 1: 0.3, 2: 1.0})``
+        - Keyframes (list): ``animate("fill", keyframes=["red", "blue", "red"], duration=2.0)``
+          — values are evenly spaced from 0 to *duration*.
 
     Args:
         entity: The entity being animated (used to read current value).
         prop: Property name (pyfreeform name, e.g., "opacity", "r", "fill").
         to: Target value (simple mode). Mutually exclusive with keyframes.
-        keyframes: Dict of {time_seconds: value} (keyframe mode).
-        duration: Duration for simple mode (ignored if keyframes provided).
+        keyframes: Dict of {time_seconds: value}, or list of values
+            (evenly spaced over *duration*).
+        duration: Duration for simple mode, or total duration when
+            keyframes is a list (ignored if keyframes is a dict).
         delay: Seconds before animation starts.
         easing: Speed curve.
         repeat: False=once, True=forever, int=N times.
@@ -220,11 +224,18 @@ def build_animate(
 
     Raises:
         ValueError: If neither to nor keyframes is provided, or both are.
+        ValueError: If keyframes is a list with fewer than 2 values.
     """
     if to is not None and keyframes is not None:
         raise ValueError("Cannot specify both 'to' and 'keyframes'")
     if to is None and keyframes is None:
         raise ValueError("Must specify either 'to' or 'keyframes'")
+
+    if isinstance(keyframes, list):
+        if len(keyframes) < 2:
+            raise ValueError("keyframes list must have at least 2 values")
+        n = len(keyframes) - 1
+        keyframes = {i * duration / n: v for i, v in enumerate(keyframes)}
 
     if keyframes is not None:
         kf_list = [Keyframe(t, v) for t, v in sorted(keyframes.items())]

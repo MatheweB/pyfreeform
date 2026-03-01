@@ -899,7 +899,7 @@ class Entity(ABC):
             delay=delay, easing=easing, repeat=repeat, bounce=bounce, hold=hold))
         return self
 
-    def animate_zoom(
+    def animate_scale(
         self,
         to: float,
         *,
@@ -972,7 +972,7 @@ class Entity(ABC):
         prop: str,
         *,
         to: Any | None = None,
-        keyframes: dict[float, Any] | None = None,
+        keyframes: dict[float, Any] | list[Any] | None = None,
         duration: float = 1.0,
         delay: float = 0.0,
         easing: EasingLike = "linear",
@@ -985,13 +985,16 @@ class Entity(ABC):
         Two modes:
 
         - **Simple**: ``entity.animate("opacity", to=0.0, duration=2.0)``
-        - **Keyframes**: ``entity.animate("opacity", keyframes={0: 1, 1: 0.3, 2: 1})``
+        - **Keyframes (dict)**: ``entity.animate("opacity", keyframes={0: 1, 1: 0.3, 2: 1})``
+        - **Keyframes (list)**: ``entity.animate("fill", keyframes=["red", "blue", "red"], duration=2.0)``
 
         Args:
             prop: Property name (e.g., "opacity", "r", "fill", "width").
             to: Target value (simple mode).
-            keyframes: Dict of {time_seconds: value} (keyframe mode).
-            duration: Duration for simple mode.
+            keyframes: Dict of {time_seconds: value}, or list of values
+                (evenly spaced over *duration*).
+            duration: Duration for simple mode, or total duration
+                when keyframes is a list.
             delay: Seconds before animation starts.
             easing: Speed curve.
             repeat: False=once, True=forever, int=N times.

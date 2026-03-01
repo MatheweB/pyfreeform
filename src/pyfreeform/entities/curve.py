@@ -3,12 +3,16 @@
 from __future__ import annotations
 
 import math
+from typing import TYPE_CHECKING
 
 from ..core.bezier import curvature_control_point, quadratic_to_cubic, sample_arc_length
 from ..core.coord import Coord, CoordLike
 from ..config.caps import CapName
 from ..core.svg_utils import svg_num
 from .endpoint_entity import EndpointEntity
+
+if TYPE_CHECKING:
+    from ..animation.models import EasingLike, RepeatLike
 
 
 class Curve(EndpointEntity):
@@ -388,6 +392,38 @@ class Curve(EndpointEntity):
         self._position = Coord(self._position.x + dx, self._position.y + dy)
         self._end = Coord(self._end.x + dx, self._end.y + dy)
         self._control = None
+        return self
+
+    def animate_draw(
+        self,
+        *,
+        duration: float = 1.0,
+        delay: float = 0.0,
+        easing: EasingLike = "ease-in-out",
+        repeat: RepeatLike = False,
+        bounce: bool = False,
+        hold: bool = True,
+        reverse: bool = False,
+    ) -> Curve:
+        """Animate the curve drawing itself from start to end.
+
+        The stroke progressively reveals as if being drawn by a pen.
+
+        Args:
+            duration: Animation duration in seconds.
+            delay: Seconds to wait before starting.
+            easing: Easing function name or (x1,y1,x2,y2) tuple.
+            repeat: False=once, True=forever, int=N times.
+            bounce: Alternate direction each cycle.
+            hold: Hold final value after animation ends.
+            reverse: Draw from end to start instead.
+
+        Returns:
+            self, for method chaining.
+        """
+        from ..animation.shared import add_draw
+        add_draw(self, duration=duration, delay=delay, easing=easing,
+            repeat=repeat, bounce=bounce, hold=hold, reverse=reverse)
         return self
 
     def to_svg(self) -> str:

@@ -467,7 +467,7 @@ class Connection:
         prop: str,
         *,
         to: Any | None = None,
-        keyframes: dict[float, Any] | None = None,
+        keyframes: dict[float, Any] | list[Any] | None = None,
         duration: float = 1.0,
         delay: float = 0.0,
         easing: EasingLike = "linear",

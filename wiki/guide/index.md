@@ -20,4 +20,4 @@ The learning path. Each page introduces new concepts through visual examples, bu
 | [Connections & Anchors](09-connections-and-anchors.md) | Live connections, anchor system, connections as paths |
 | [Layout & Alignment](10-layout-alignment.md) | Relative positioning, align, distribute, stack, between |
 | [Gradients](11-gradients.md) | Linear & radial gradients, custom offsets, creative effects |
-| [Animation](12-animation.md) | Fade, spin, zoom, draw, easing, chaining, reactive animation |
+| [Animation](12-animation.md) | Fade, spin, scale, draw, easing, chaining, reactive animation |

@@ -101,16 +101,16 @@ def generate():
                   font_size=0.06, color="gray")
     save(scene, "guide/anim-animate.svg")
 
-    # --- 8. Zoom: pulsing circle ---
+    # --- 8. Scale: pulsing circle ---
     scene = Scene.with_grid(cols=1, rows=1, cell_width=240, cell_height=160,
                             background="#1a1a2e")
     cell = scene.grid[0][0]
     cell.add_dot(at=(0.5, 0.43), radius=0.08, color="tomato") \
-        .animate_zoom(to=2.0, duration=2.0, easing="ease-in-out",
+        .animate_scale(to=2.0, duration=2.0, easing="ease-in-out",
               bounce=True, repeat=True)
-    cell.add_text(".animate_zoom(to=2.0, bounce=True)", at=(0.5, 0.88),
+    cell.add_text(".animate_scale(to=2.0, bounce=True)", at=(0.5, 0.88),
                   font_size=0.065, color="gray")
-    save(scene, "guide/anim-zoom.svg")
+    save(scene, "guide/anim-scale.svg")
 
     # --- 9. Then: sequential fade → spin ---
     scene = Scene.with_grid(cols=1, rows=1, cell_width=300, cell_height=160,

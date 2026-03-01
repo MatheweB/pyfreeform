@@ -143,7 +143,7 @@ def _generate_lissajous_trace():
 
 
 def _generate_spiral_galaxy(n_stars=200):
-    """Stars appear in golden-angle spiral order with staggered zoom.
+    """Stars appear in golden-angle spiral order with staggered scale.
 
     All positions use relative coords within a single cell.
     """

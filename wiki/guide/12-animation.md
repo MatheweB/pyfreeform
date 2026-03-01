@@ -43,26 +43,26 @@ rect.animate_spin(360, duration=2.5, repeat=True, easing="linear")
 The first argument is the total rotation angle in degrees. Use `repeat=True` for continuous spinning.
 
 
-## Zoom
+## Scale
 
-Animate an entity's scale with `.animate_zoom()`:
+Animate an entity's scale with `.animate_scale()`:
 
 ```python
 dot = cell.add_dot(at="center", radius=0.08, color="tomato")
 
-dot.animate_zoom(to=2.0, duration=2.0, easing="ease-in-out", bounce=True, repeat=True)
+dot.animate_scale(to=2.0, duration=2.0, easing="ease-in-out", bounce=True, repeat=True)
 ```
 
 <figure markdown>
-![Zoom animation](../_images/guide/anim-zoom.svg){ width="240" }
+![Scale animation](../_images/guide/anim-scale.svg){ width="240" }
 <figcaption>A dot pulsing between normal size and 2&times; — `bounce=True` reverses each cycle.</figcaption>
 </figure>
 
-`.animate_zoom(to=)` animates the scale factor over time. This is the animated counterpart to `.scale()` — just as `.animate_spin()` is to `.rotate()`.
+`.animate_scale(to=)` animates the scale factor over time. This is the animated counterpart to `.scale()` — just as `.animate_spin()` is to `.rotate()`.
 
 ## Draw
 
-Paths and connections can draw themselves with `.animate_draw()` — the stroke reveals progressively like a pen tracing the shape:
+Lines, curves, paths, and connections can draw themselves with `.animate_draw()` — the stroke reveals progressively like a pen tracing the shape:
 
 ```python
 from pyfreeform.paths import Wave
@@ -326,6 +326,13 @@ rect.animate_width(keyframes={0: 100, 1: 200, 2: 100}, repeat=True)  # multi-ste
 ```
 
 The `keyframes` dict maps times (seconds) to property values at those times.
+
+You can also pass a list — values are distributed evenly over the duration:
+
+```python
+rect.animate_fill(keyframes=["coral", "dodgerblue", "coral"], duration=3.0, repeat=True)
+# equivalent to keyframes={0: "coral", 1.5: "dodgerblue", 3.0: "coral"}
+```
 
 ### Generic `animate()`
 

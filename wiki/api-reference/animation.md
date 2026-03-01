@@ -28,7 +28,7 @@ All entities inherit these methods from the base `Entity` class. Each returns `s
       heading_level: 4
       show_root_full_path: false
 
-::: pyfreeform.core.entity.Entity.animate_zoom
+::: pyfreeform.core.entity.Entity.animate_scale
     options:
       heading_level: 4
       show_root_full_path: false
@@ -62,7 +62,7 @@ All entities inherit these methods from the base `Entity` class. Each returns `s
 
 Each entity subclass exposes only the `animate_*` methods that match its constructor parameters. These are factory-generated with typed signatures — IDE autocomplete shows exactly what's available.
 
-**Color properties** — `to` accepts `ColorLike` (`str | tuple[int, int, int]`), `keyframes` accepts `dict[float, ColorLike]`:
+**Color properties** — `to` accepts `ColorLike` (`str | tuple[int, int, int]`), `keyframes` accepts `dict[float, ColorLike]` or `list[ColorLike]`:
 
 | Method | Dot | Rect | Polygon | Ellipse | Line/Curve | Path | Text |
 |--------|-----|------|---------|---------|------------|------|------|
@@ -70,7 +70,7 @@ Each entity subclass exposes only the `animate_*` methods that match its constru
 | `animate_fill` | — | Yes | Yes | Yes | — | Yes | — |
 | `animate_stroke` | — | Yes | Yes | Yes | — | — | — |
 
-**Numeric properties** — `to` accepts `float`, `keyframes` accepts `dict[float, float]`:
+**Numeric properties** — `to` accepts `float`, `keyframes` accepts `dict[float, float]` or `list[float]`:
 
 | Method | Dot | Rect | Polygon | Ellipse | Line/Curve | Path | Text |
 |--------|-----|------|---------|---------|------------|------|------|
@@ -86,9 +86,19 @@ Each entity subclass exposes only the `animate_*` methods that match its constru
 
 ---
 
-## Path Draw
+## Stroke Draw
 
-Paths have an additional method for stroke-reveal animations:
+Lines, curves, and paths have a stroke-reveal animation method:
+
+::: pyfreeform.entities.line.Line.animate_draw
+    options:
+      heading_level: 3
+      show_root_full_path: false
+
+::: pyfreeform.entities.curve.Curve.animate_draw
+    options:
+      heading_level: 3
+      show_root_full_path: false
 
 ::: pyfreeform.entities.path.Path.animate_draw
     options:

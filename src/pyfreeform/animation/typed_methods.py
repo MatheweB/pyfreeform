@@ -36,7 +36,7 @@ def _color_anim(prop: str) -> Any:
         self,
         to: ColorLike | None = None,
         *,
-        keyframes: dict[float, ColorLike] | None = None,
+        keyframes: dict[float, ColorLike] | list[ColorLike] | None = None,
         duration: float = 1.0,
         delay: float = 0.0,
         easing: EasingLike = "linear",
@@ -54,8 +54,9 @@ def _color_anim(prop: str) -> Any:
         f"Animate the ``{prop}`` color.\n\n"
         "Args:\n"
         "    to: Target color (name, hex, or RGB tuple).\n"
-        "    keyframes: Dict of {time_seconds: color} for multi-step animation.\n"
-        "    duration: Duration in seconds (simple mode only).\n"
+        "    keyframes: Dict of {time_seconds: color} or list of colors\n"
+        "        (evenly spaced over duration) for multi-step animation.\n"
+        "    duration: Duration in seconds (simple mode, or list keyframes).\n"
         "    delay: Seconds before animation starts.\n"
         "    easing: Speed curve.\n"
         "    repeat: False=once, True=forever, int=N times.\n"
@@ -79,7 +80,7 @@ def _numeric_anim(prop: str, label: str | None = None) -> Any:
         self,
         to: float | None = None,
         *,
-        keyframes: dict[float, float] | None = None,
+        keyframes: dict[float, float] | list[float] | None = None,
         duration: float = 1.0,
         delay: float = 0.0,
         easing: EasingLike = "linear",
@@ -97,8 +98,9 @@ def _numeric_anim(prop: str, label: str | None = None) -> Any:
         f"Animate the ``{prop}`` property.\n\n"
         "Args:\n"
         "    to: Target value.\n"
-        "    keyframes: Dict of {time_seconds: value} for multi-step animation.\n"
-        "    duration: Duration in seconds (simple mode only).\n"
+        "    keyframes: Dict of {time_seconds: value} or list of values\n"
+        "        (evenly spaced over duration) for multi-step animation.\n"
+        "    duration: Duration in seconds (simple mode, or list keyframes).\n"
         "    delay: Seconds before animation starts.\n"
         "    easing: Speed curve.\n"
         "    repeat: False=once, True=forever, int=N times.\n"

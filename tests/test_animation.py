@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from pyfreeform import Dot, Easing, Ellipse, Line, Polygon, Rect, Scene, Path, Text, Connection, stagger
+from pyfreeform import Curve, Dot, Easing, Ellipse, Line, Polygon, Rect, Scene, Path, Text, Connection, stagger
 from pyfreeform.core.coord import Coord
 from pyfreeform.entities.point import Point
 from pyfreeform.animation.models import (
@@ -222,6 +222,91 @@ class TestPathDraw:
         assert result is p
         assert len(p.animations) == 1
         assert isinstance(p.animations[0], DrawAnimation)
+
+
+class TestLineDraw:
+    def test_line_draw_returns_self(self):
+        line = Line(0, 0, 100, 50, width=2, color="blue")
+        result = line.animate_draw(duration=1.5)
+        assert result is line
+
+    def test_line_draw_adds_animation(self):
+        line = Line(0, 0, 100, 50, width=2, color="blue")
+        line.animate_draw(duration=1.0)
+        assert len(line.animations) == 1
+        assert isinstance(line.animations[0], DrawAnimation)
+
+    def test_line_draw_smil_output(self):
+        line = Line(0, 0, 100, 0, width=2, color="blue")
+        line.animate_draw(duration=1.0)
+        svg = SMILRenderer().render_entity(line)
+        assert 'pathLength="1"' in svg
+        assert "stroke-dasharray" in svg
+
+
+class TestCurveDraw:
+    def test_curve_draw_returns_self(self):
+        curve = Curve(0, 0, 100, 50, curvature=0.3, width=2, color="red")
+        result = curve.animate_draw(duration=1.5)
+        assert result is curve
+
+    def test_curve_draw_adds_animation(self):
+        curve = Curve(0, 0, 100, 50, curvature=0.3, width=2, color="red")
+        curve.animate_draw(duration=1.0)
+        assert len(curve.animations) == 1
+        assert isinstance(curve.animations[0], DrawAnimation)
+
+    def test_curve_draw_smil_output(self):
+        curve = Curve(0, 0, 100, 0, curvature=0.5, width=2, color="red")
+        curve.animate_draw(duration=1.0)
+        svg = SMILRenderer().render_entity(curve)
+        assert 'pathLength="1"' in svg
+        assert "stroke-dasharray" in svg
+
+
+# ======================================================================
+# Keyframe list shorthand
+# ======================================================================
+
+
+class TestKeyframeList:
+    def test_list_three_values(self):
+        """List of 3 values distributes evenly over duration."""
+        dot = Dot(0, 0, radius=5, color="red")
+        dot.animate_color(keyframes=["red", "blue", "red"], duration=2.0)
+        anim = dot.animations[0]
+        assert len(anim.keyframes) == 3
+        assert anim.keyframes[0].time == pytest.approx(0.0)
+        assert anim.keyframes[1].time == pytest.approx(1.0)
+        assert anim.keyframes[2].time == pytest.approx(2.0)
+        assert anim.keyframes[0].value == "red"
+        assert anim.keyframes[1].value == "blue"
+        assert anim.keyframes[2].value == "red"
+
+    def test_list_two_values(self):
+        """List of 2 values → 0 and duration."""
+        dot = Dot(0, 0)
+        dot.animate_fade(keyframes=[1.0, 0.0], duration=3.0)
+        anim = dot.animations[0]
+        assert len(anim.keyframes) == 2
+        assert anim.keyframes[0].time == pytest.approx(0.0)
+        assert anim.keyframes[1].time == pytest.approx(3.0)
+
+    def test_list_one_value_raises(self):
+        """List with fewer than 2 values raises ValueError."""
+        dot = Dot(0, 0)
+        with pytest.raises(ValueError, match="at least 2"):
+            dot.animate_fade(keyframes=[0.5], duration=1.0)
+
+    def test_list_with_generic_animate(self):
+        """List keyframes work with the generic .animate() method."""
+        dot = Dot(0, 0)
+        dot.animate("opacity", keyframes=[1.0, 0.5, 1.0], duration=4.0)
+        anim = dot.animations[0]
+        assert len(anim.keyframes) == 3
+        assert anim.keyframes[0].time == pytest.approx(0.0)
+        assert anim.keyframes[1].time == pytest.approx(2.0)
+        assert anim.keyframes[2].time == pytest.approx(4.0)
 
 
 # ======================================================================
@@ -545,33 +630,33 @@ class TestMoveBy:
 
 
 # ======================================================================
-# .animate_zoom()
+# .animate_scale()
 # ======================================================================
 
 
-class TestZoom:
-    def test_zoom_returns_self(self):
+class TestScale:
+    def test_scale_returns_self(self):
         dot = Dot(0, 0)
-        result = dot.animate_zoom(to=2.0, duration=1.0)
+        result = dot.animate_scale(to=2.0, duration=1.0)
         assert result is dot
 
-    def test_zoom_adds_animation(self):
+    def test_scale_adds_animation(self):
         dot = Dot(0, 0)
-        dot.animate_zoom(to=2.0)
+        dot.animate_scale(to=2.0)
         assert len(dot.animations) == 1
         assert dot.animations[0].prop == "scale_factor"
 
-    def test_zoom_keyframes(self):
+    def test_scale_keyframes(self):
         dot = Dot(0, 0)
-        dot.animate_zoom(to=2.0, duration=1.5)
+        dot.animate_scale(to=2.0, duration=1.5)
         anim = dot.animations[0]
         assert anim.keyframes[0].value == pytest.approx(1.0)
         assert anim.keyframes[1].value == pytest.approx(2.0)
         assert anim.duration == pytest.approx(1.5)
 
-    def test_zoom_pulse(self):
+    def test_scale_pulse(self):
         dot = Dot(0, 0)
-        dot.animate_zoom(to=1.5, bounce=True, repeat=True, duration=0.8)
+        dot.animate_scale(to=1.5, bounce=True, repeat=True, duration=0.8)
         anim = dot.animations[0]
         assert anim.bounce is True
         assert anim.repeat is True
@@ -585,18 +670,18 @@ class TestZoom:
         assert anim.keyframes[0].value == pytest.approx(1.0)
         assert anim.keyframes[1].value == pytest.approx(3.0)
 
-    def test_zoom_smil_output(self):
+    def test_scale_smil_output(self):
         dot = Dot(10, 20, radius=5, color="red")
-        dot.animate_zoom(to=2.0, duration=1.0)
+        dot.animate_scale(to=2.0, duration=1.0)
         svg = SMILRenderer().render_entity(dot)
         assert "animateTransform" in svg
         assert 'type="scale"' in svg
 
-    def test_zoom_with_then(self):
+    def test_scale_with_then(self):
         dot = Dot(0, 0)
-        dot.animate_fade(to=0.5, duration=1.0).then().animate_zoom(to=2.0, duration=0.5)
-        zoom_anim = dot.animations[1]
-        assert zoom_anim.delay == pytest.approx(1.0)
+        dot.animate_fade(to=0.5, duration=1.0).then().animate_scale(to=2.0, duration=0.5)
+        scale_anim = dot.animations[1]
+        assert scale_anim.delay == pytest.approx(1.0)
 
 
 # ======================================================================
@@ -701,9 +786,9 @@ class TestBounceSMIL:
         assert 'keyTimes="0;0.5;1"' in svg
 
     def test_scale_bounce(self):
-        """bounce=True on zoom mirrors scale values."""
+        """bounce=True on scale mirrors scale values."""
         dot = Dot(10, 20, radius=5, color="red")
-        dot.animate_zoom(to=2.0, duration=1.0, bounce=True, repeat=True)
+        dot.animate_scale(to=2.0, duration=1.0, bounce=True, repeat=True)
         svg = SMILRenderer().render_entity(dot)
         assert "animateTransform" in svg
         assert 'values="1;2;1"' in svg

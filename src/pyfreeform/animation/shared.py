@@ -87,7 +87,7 @@ def add_generic_animate(
     prop: str,
     *,
     to: float | int | str | tuple[float, ...] | None = None,
-    keyframes: dict[float, float | int | str | tuple[float, ...]] | None = None,
+    keyframes: dict[float, float | int | str | tuple[float, ...]] | list[float | int | str | tuple[float, ...]] | None = None,
     duration: float = 1.0,
     delay: float = 0.0,
     easing: EasingLike = "linear",

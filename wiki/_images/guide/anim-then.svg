@@ -5,5 +5,5 @@
   <animate attributeName="opacity" values="1;0.3" keyTimes="0;1" dur="1.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" />
   <animateTransform attributeName="transform" values="0 150 68.8;360 150 68.8" keyTimes="0;1" dur="2.0s" begin="1.5s" calcMode="spline" keySplines="0.42 0.0 0.58 1.0" fill="freeze" type="rotate" additive="sum" />
 </rect>
-  <text x="150" y="140.8" font-size="9.6" font-family="sans-serif" font-style="normal" font-weight="normal" fill="gray" text-anchor="middle" dominant-baseline="middle">.fade(...).then().spin(360)</text>
+  <text x="150" y="140.8" font-size="9.6" font-family="sans-serif" font-style="normal" font-weight="normal" fill="gray" text-anchor="middle" dominant-baseline="middle">.animate_fade(...).then().animate_spin(360)</text>
 </svg>

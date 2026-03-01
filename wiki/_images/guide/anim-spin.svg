@@ -4,5 +4,5 @@
   <rect x="74.4" y="38.4" width="91.2" height="60.8" fill="dodgerblue" stroke="white" stroke-width="2">
   <animateTransform attributeName="transform" values="0 120 68.8;360 120 68.8" keyTimes="0;1" dur="2.5s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </rect>
-  <text x="120" y="140.8" font-size="10.4" font-family="sans-serif" font-style="normal" font-weight="normal" fill="gray" text-anchor="middle" dominant-baseline="middle">.spin(360, repeat=True)</text>
+  <text x="120" y="140.8" font-size="10.4" font-family="sans-serif" font-style="normal" font-weight="normal" fill="gray" text-anchor="middle" dominant-baseline="middle">.animate_spin(360, repeat=True)</text>
 </svg>
