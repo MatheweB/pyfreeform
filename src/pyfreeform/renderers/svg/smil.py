@@ -258,9 +258,30 @@ class SMILRenderer(SVGRenderer):
             line.cap, line.start_cap, line.end_cap, line.width, line.color
         )
         draw_extra = self._draw_attrs(line) if self._has_draw_animation(line) else ""
-        attrs = (
+        geometry = (
             f' x1="{svg_num(s.x)}" y1="{svg_num(s.y)}"'
             f' x2="{svg_num(e.x)}" y2="{svg_num(e.y)}"'
+        )
+
+        stroke_opt = extract_fill_layers(line, target_attr="stroke")
+        if stroke_opt is not None:
+            base_attrs = (
+                f"{stroke_attrs(stroke_opt.base_color, line.width, svg_cap, marker_attrs)}"
+                f"{opacity_attr(line.opacity)}"
+                f"{draw_extra}"
+            )
+            overlay_extra = f' stroke-width="{svg_num(line.width)}" stroke-linecap="{svg_cap}"'
+            base_anims = self._render_animations_excluding(
+                line, {stroke_opt.anim_index},
+            )
+            return self._build_layered_svg(
+                "line", geometry, stroke_opt, base_attrs,
+                _build_svg_transform(line), base_anims,
+                "stroke", overlay_extra, None,
+            )
+
+        attrs = (
+            f"{geometry}"
             f"{stroke_attrs(line.color, line.width, svg_cap, marker_attrs)}"
             f"{opacity_attr(line.opacity)}"
             f"{draw_extra}"
@@ -278,11 +299,32 @@ class SMILRenderer(SVGRenderer):
             curve.cap, curve.start_cap, curve.end_cap, curve.width, curve.color
         )
         draw_extra = self._draw_attrs(curve) if self._has_draw_animation(curve) else ""
-        attrs = (
+        geometry = (
             f' d="M {svg_num(s.x)} {svg_num(s.y)}'
             f" Q {svg_num(c.x)} {svg_num(c.y)}"
             f' {svg_num(e.x)} {svg_num(e.y)}"'
             f' fill="none"'
+        )
+
+        stroke_opt = extract_fill_layers(curve, target_attr="stroke")
+        if stroke_opt is not None:
+            base_attrs = (
+                f"{stroke_attrs(stroke_opt.base_color, curve.width, svg_cap, marker_attrs)}"
+                f"{opacity_attr(curve.opacity)}"
+                f"{draw_extra}"
+            )
+            overlay_extra = f' stroke-width="{svg_num(curve.width)}" stroke-linecap="{svg_cap}"'
+            base_anims = self._render_animations_excluding(
+                curve, {stroke_opt.anim_index},
+            )
+            return self._build_layered_svg(
+                "path", geometry, stroke_opt, base_attrs,
+                _build_svg_transform(curve), base_anims,
+                "stroke", overlay_extra, None,
+            )
+
+        attrs = (
+            f"{geometry}"
             f"{stroke_attrs(curve.color, curve.width, svg_cap, marker_attrs)}"
             f"{opacity_attr(curve.opacity)}"
             f"{draw_extra}"
@@ -481,13 +523,14 @@ class SMILRenderer(SVGRenderer):
             path.cap, path.start_cap, path.end_cap, path.width, path.color
         )
         draw_extra = self._draw_attrs(path) if self._has_draw_animation(path) else ""
+        d_attr = path.to_svg_path_d()
+        fill_attr = path.fill if path.closed and path._fill is not None else "none"
 
-        # Opacity-layer optimization for closed paths with fill
+        # Opacity-layer optimization: fill (closed paths) or stroke color
         fill_opt = None
         if path.closed and path._fill is not None:
             fill_opt = extract_fill_layers(path)
         if fill_opt is not None:
-            d_attr = path.to_svg_path_d()
             base_attrs = (
                 f' fill="{fill_opt.base_color}"'
                 f"{stroke_attrs(path.color, path.width, svg_cap, marker_attrs)}"
@@ -500,12 +543,28 @@ class SMILRenderer(SVGRenderer):
                 base_attrs, _build_svg_transform(path),
             )
 
-        fill_attr = (
-            path.fill
-            if path.closed and path._fill is not None
-            else "none"
-        )
-        d_attr = path.to_svg_path_d()
+        stroke_opt = extract_fill_layers(path, target_attr="stroke")
+        if stroke_opt is not None:
+            base_attrs = (
+                f' fill="{fill_attr}"'
+                f"{stroke_attrs(stroke_opt.base_color, path.width, svg_cap, marker_attrs)}"
+                f' stroke-linejoin="round"'
+                f"{self._shape_opacity_for_smil(path.opacity, path.fill_opacity, path.stroke_opacity, path)}"
+                f"{draw_extra}"
+            )
+            overlay_extra = (
+                f' fill="none" stroke-width="{svg_num(path.width)}"'
+                f' stroke-linecap="{svg_cap}" stroke-linejoin="round"'
+            )
+            base_anims = self._render_animations_excluding(
+                path, {stroke_opt.anim_index},
+            )
+            return self._build_layered_svg(
+                "path", f' d="{d_attr}"', stroke_opt, base_attrs,
+                _build_svg_transform(path), base_anims,
+                "stroke", overlay_extra, None,
+            )
+
         attrs = (
             f' d="{d_attr}" fill="{fill_attr}"'
             f"{stroke_attrs(path.color, path.width, svg_cap, marker_attrs)}"

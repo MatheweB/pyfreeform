@@ -1168,13 +1168,22 @@ class TestFillLayerOptimization:
         assert svg.count("<path") == 2
         assert 'attributeName="fill"' not in svg
 
-    def test_path_open_no_optimization(self):
+    def test_path_open_no_fill_optimization(self):
         """Open path does NOT get fill optimized (fill='none')."""
         path = Path(Path.Wave(start=(0, 0), end=(100, 0)), color="blue")
         path.animate("fill", keyframes={0: "blue", 1: "red"})
         svg = SMILRenderer().render_entity(path)
         # Should NOT have the <g> wrapper — open path has no fill
         assert "<g>" not in svg
+
+    def test_path_open_stroke_optimization(self):
+        """Open path with stroke color animation gets optimized."""
+        path = Path(Path.Wave(start=(0, 0), end=(100, 0)), color="#ff0000", width=2)
+        path.animate("color", keyframes={0: "#ff0000", 1: "#0000ff", 2: "#ff0000"})
+        svg = SMILRenderer().render_entity(path)
+        assert "<g>" in svg
+        assert svg.count("<path") == 2
+        assert 'attributeName="stroke"' not in svg
 
     # ------------------------------------------------------------------
     # Connection stroke color optimization
@@ -1204,3 +1213,37 @@ class TestFillLayerOptimization:
         conn.animate("color", keyframes={0: "#ff0000", 1: "#0000ff"})
         svg = SMILRenderer().render_connection(conn)
         assert svg.count('stroke-width="3"') == 2  # base + overlay
+
+    # ------------------------------------------------------------------
+    # Line stroke color optimization
+    # ------------------------------------------------------------------
+
+    def test_line_stroke_optimization(self):
+        """Line stroke color animation gets optimized."""
+        line = Line(0, 0, 100, 100, width=2, color="#ff0000")
+        line.animate("color", keyframes={0: "#ff0000", 1: "#0000ff", 2: "#ff0000"})
+        svg = SMILRenderer().render_entity(line)
+        assert "<g>" in svg
+        assert svg.count("<line") == 2
+        assert 'attributeName="stroke"' not in svg
+
+    def test_line_overlay_has_stroke_width(self):
+        """Line overlay carries stroke-width."""
+        line = Line(0, 0, 100, 100, width=4, color="#ff0000")
+        line.animate("color", keyframes={0: "#ff0000", 1: "#0000ff"})
+        svg = SMILRenderer().render_entity(line)
+        assert svg.count('stroke-width="4"') == 2
+
+    # ------------------------------------------------------------------
+    # Curve stroke color optimization
+    # ------------------------------------------------------------------
+
+    def test_curve_stroke_optimization(self):
+        """Curve stroke color animation gets optimized."""
+        from pyfreeform import Curve
+        curve = Curve(0, 0, 100, 100, curvature=0.3, width=2, color="#ff0000")
+        curve.animate("color", keyframes={0: "#ff0000", 1: "#00ff00", 2: "#ff0000"})
+        svg = SMILRenderer().render_entity(curve)
+        assert "<g>" in svg
+        assert svg.count("<path") == 2
+        assert 'attributeName="stroke"' not in svg
