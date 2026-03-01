@@ -1,18 +1,18 @@
 # Animation
 
-PyFreeform supports animations on any entity. Call a method like `.fade()` or `.spin()`, save as SVG, and open in a browser to see it play. Under the hood, animations use SVG SMIL — no JavaScript required.
+PyFreeform supports animations on any entity. Call a method like `.animate_fade()` or `.animate_spin()`, save as SVG, and open in a browser to see it play. Under the hood, animations use SVG SMIL — no JavaScript required.
 
 !!! tip "Browser preview"
     Animated SVGs play automatically when opened in a web browser. They won't animate in image viewers or editors.
 
 ## Fade
 
-Animate opacity with `.fade()`. Pass the target opacity and a duration:
+Animate opacity with `.animate_fade()`. Pass the target opacity and a duration:
 
 ```python
 dot = cell.add_dot(at="center", radius=0.2, color="coral")
 
-dot.fade(to=0.0, duration=3.0, easing="ease-in-out", bounce=True, repeat=True)
+dot.animate_fade(to=0.0, duration=3.0, easing="ease-in-out", bounce=True, repeat=True)
 ```
 
 The dot pulses — fading to invisible and back again. `bounce=True` reverses each cycle, and `repeat=True` loops forever.
@@ -22,17 +22,17 @@ The dot pulses — fading to invisible and back again. `bounce=True` reverses ea
 <figcaption>A coral dot pulsing between visible and invisible.</figcaption>
 </figure>
 
-Fade to any value — `to=0.3` makes the entity ghostly, `to=1.0` fades it *in* (if it started transparent).
+Fade to any value — `to=0.3` makes the entity ghostly, `to=1.0` animates it *in* (if it started transparent).
 
 ## Spin
 
-Rotate an entity with `.spin()`:
+Rotate an entity with `.animate_spin()`:
 
 ```python
 rect = cell.add_rect(at="center", width=0.38, height=0.38,
                      fill="dodgerblue", stroke="white", stroke_width=2)
 
-rect.spin(360, duration=2.5, repeat=True, easing="linear")
+rect.animate_spin(360, duration=2.5, repeat=True, easing="linear")
 ```
 
 <figure markdown>
@@ -42,14 +42,15 @@ rect.spin(360, duration=2.5, repeat=True, easing="linear")
 
 The first argument is the total rotation angle in degrees. Use `repeat=True` for continuous spinning.
 
+
 ## Zoom
 
-Animate an entity's scale with `.zoom()`:
+Animate an entity's scale with `.animate_zoom()`:
 
 ```python
 dot = cell.add_dot(at="center", radius=0.08, color="tomato")
 
-dot.zoom(to=2.0, duration=2.0, easing="ease-in-out", bounce=True, repeat=True)
+dot.animate_zoom(to=2.0, duration=2.0, easing="ease-in-out", bounce=True, repeat=True)
 ```
 
 <figure markdown>
@@ -57,11 +58,11 @@ dot.zoom(to=2.0, duration=2.0, easing="ease-in-out", bounce=True, repeat=True)
 <figcaption>A dot pulsing between normal size and 2&times; — `bounce=True` reverses each cycle.</figcaption>
 </figure>
 
-`.zoom(to=)` animates the scale factor over time. This is the animated counterpart to `.scale()` — just as `.spin()` is to `.rotate()`.
+`.animate_zoom(to=)` animates the scale factor over time. This is the animated counterpart to `.scale()` — just as `.animate_spin()` is to `.rotate()`.
 
 ## Draw
 
-Paths and connections can draw themselves with `.draw()` — the stroke reveals progressively like a pen tracing the shape:
+Paths and connections can draw themselves with `.animate_draw()` — the stroke reveals progressively like a pen tracing the shape:
 
 ```python
 from pyfreeform.paths import Wave
@@ -71,24 +72,24 @@ wave_shape = Wave(start=(w * 0.08, h * 0.4), end=(w * 0.92, h * 0.4),
                   amplitude=h * 0.28, frequency=3)
 path = cell.add_path(wave_shape, width=3, color="limegreen")
 
-path.draw(duration=2.5, easing="ease-in-out", bounce=True, repeat=True)
+path.animate_draw(duration=2.5, easing="ease-in-out", bounce=True, repeat=True)
 ```
 
-The wave draws itself left to right, then undraws back — `bounce=True` reverses the stroke reveal each cycle.
+The wave draws itself left to right, then un-draws back — `bounce=True` reverses the stroke reveal each cycle.
 
 <figure markdown>
 ![Draw animation](../_images/guide/anim-draw.svg){ width="360" }
 <figcaption>A wave drawing and undrawing itself in a loop.</figcaption>
 </figure>
 
-Connections support `.draw()` too:
+Connections support `.animate_draw()` too:
 
 ```python
 d1 = cell.add_dot(at=(0.1, 0.42), radius=0.04, color="white")
 d2 = cell.add_dot(at=(0.9, 0.42), radius=0.04, color="white")
 
 conn = d1.connect(d2, curvature=0.4, color="skyblue", width=2)
-conn.draw(duration=2.0, easing="ease-in-out", bounce=True, repeat=True)
+conn.animate_draw(duration=2.0, easing="ease-in-out", bounce=True, repeat=True)
 ```
 
 <figure markdown>
@@ -97,12 +98,12 @@ conn.draw(duration=2.0, easing="ease-in-out", bounce=True, repeat=True)
 </figure>
 
 !!! tip "Delayed draw"
-    When using `.draw()` with a `delay`, the stroke is fully hidden during the wait — then the draw begins on schedule. Pair it with a fade for a smooth entrance:
+    When using `.animate_draw()` with a `delay`, the stroke is fully hidden during the wait — then the draw begins on schedule. Pair it with a fade for a smooth entrance:
 
     ```python
     conn = d1.connect(d2, color="skyblue", width=2, opacity=0.0)
-    conn.fade(to=1.0, duration=0.15, delay=2.0, hold=True)
-    conn.draw(duration=1.0, delay=2.0)
+    conn.animate_fade(to=1.0, duration=0.15, delay=2.0, hold=True)
+    conn.animate_draw(duration=1.0, delay=2.0)
     ```
 
 ---
@@ -114,7 +115,7 @@ Easing controls the *speed curve* of an animation — whether it starts slow, en
 Pass a string name:
 
 ```python
-dot.fade(to=0.0, duration=2.0, easing="ease-in-out")
+dot.animate_fade(to=0.0, duration=2.0, easing="ease-in-out")
 ```
 
 <figure markdown>
@@ -129,12 +130,12 @@ Available named easings:
 | `"linear"` | Constant speed (default for most animations) |
 | `"ease-in"` | Starts slow, accelerates |
 | `"ease-out"` | Starts fast, decelerates |
-| `"ease-in-out"` | Slow start and end (default for `draw` and `move`) |
+| `"ease-in-out"` | Slow start and end (default for `animate_draw` and `animate_move`) |
 
 You can also pass a custom cubic-bezier as a tuple:
 
 ```python
-dot.fade(to=0.0, easing=(0.68, -0.55, 0.27, 1.55))  # overshoot
+dot.animate_fade(to=0.0, easing=(0.68, -0.55, 0.27, 1.55))  # overshoot
 ```
 
 Or use the `Easing` class directly:
@@ -142,8 +143,8 @@ Or use the `Easing` class directly:
 ```python
 from pyfreeform import Easing
 
-dot.fade(to=0.0, easing=Easing(0.68, -0.55, 0.27, 1.55))
-dot.fade(to=0.0, easing=Easing.EASE_IN_OUT)
+dot.animate_fade(to=0.0, easing=Easing(0.68, -0.55, 0.27, 1.55))
+dot.animate_fade(to=0.0, easing=Easing.EASE_IN_OUT)
 ```
 
 ---
@@ -171,11 +172,12 @@ All animation methods return `self`, so you can chain them:
 rect = cell.add_rect(at="center", width=0.35, height=0.35,
                      fill="mediumpurple", stroke="white", stroke_width=1)
 
-rect.fade(to=0.3, duration=2.0, easing="ease-in-out",
-          bounce=True, repeat=True).spin(360, duration=3.0, repeat=True)
+rect.animate_fade(to=0.3, duration=2.0, easing="ease-in-out",
+          bounce=True, repeat=True).animate_spin(360, duration=3.0, repeat=True)
 ```
 
 This applies both a fade and a spin to the same entity — they play simultaneously. The rect pulses between 30% and full opacity while spinning continuously.
+
 
 <figure markdown>
 ![Chaining](../_images/guide/anim-chaining.svg){ width="240" }
@@ -187,9 +189,9 @@ This applies both a fade and a spin to the same entity — they play simultaneou
 Use `.then()` to start an animation *after* the previous ones finish — no manual delay math:
 
 ```python
-rect.fade(to=0.3, duration=1.5, easing="ease-in-out") \
+rect.animate_fade(to=0.3, duration=1.5, easing="ease-in-out") \
     .then() \
-    .spin(360, duration=2.0, easing="ease-in-out")
+    .animate_spin(360, duration=2.0, easing="ease-in-out")
 ```
 
 The rect fades to 30% opacity over 1.5 seconds, then spins a full turn. The spin starts at exactly 1.5 seconds — when the fade ends.
@@ -202,20 +204,20 @@ The rect fades to 30% opacity over 1.5 seconds, then spins a full turn. The spin
 Add a gap between animations:
 
 ```python
-dot.fade(to=0.0, duration=1.0).then(0.5).spin(360, duration=1.0)
+dot.animate_fade(to=0.0, duration=1.0).then(0.5).animate_spin(360, duration=1.0)
 # spin starts at 1.5s (1.0 fade + 0.5 gap)
 ```
 
 Chain as many times as you like:
 
 ```python
-dot.fade(to=0.5, duration=1.0).then().spin(360, duration=2.0).then().fade(to=1.0, duration=0.5)
+dot.animate_fade(to=0.5, duration=1.0).then().animate_spin(360, duration=2.0).then().animate_fade(to=1.0, duration=0.5)
 ```
 
 `.then()` also works on connections:
 
 ```python
-conn.draw(duration=1.5).then().fade(to=0.0, duration=0.5)
+conn.animate_draw(duration=1.5).then().animate_fade(to=0.0, duration=0.5)
 ```
 
 ## Stagger
@@ -229,7 +231,7 @@ dots = []
 for i in range(6):
     dots.append(cell.add_dot(at=(0.1 + i * 0.15, 0.4), radius=0.08, color="coral"))
 
-stagger(*dots, offset=0.3, each=lambda d: d.fade(to=0.0, duration=1.5))
+stagger(*dots, offset=0.3, each=lambda d: d.animate_fade(to=0.0, duration=1.5))
 ```
 
 <figure markdown>
@@ -240,16 +242,16 @@ stagger(*dots, offset=0.3, each=lambda d: d.fade(to=0.0, duration=1.5))
 The `each` callback applies animation(s) to each entity, and `stagger` offsets the timing by `offset` seconds per entity. You can apply multiple animations at once:
 
 ```python
-stagger(*dots, offset=0.15, each=lambda d: d.fade(to=0.0).spin(360))
+stagger(*dots, offset=0.15, each=lambda d: d.animate_fade(to=0.0).animate_spin(360))
 ```
 
 ## Move
 
-Animate position with `.move()`. Use `to=` for an absolute target, or `by=` for a relative offset:
+Animate position with `.animate_move()`. Use `to=` for an absolute target, or `by=` for a relative offset:
 
 ```python
-dot.move(to=(0.8, 0.5), duration=1.0)     # move to position
-dot.move(by=(0.1, 0), duration=1.0)        # shift right by 10%
+dot.animate_move(to=(0.8, 0.5), duration=1.0)     # move to position
+dot.animate_move(by=(0.1, 0), duration=1.0)        # shift right by 10%
 ```
 
 Positions are relative coordinates — `(0.0, 0.0)` is the top-left and `(1.0, 1.0)` is the bottom-right of the containing surface.
@@ -258,7 +260,7 @@ Positions are relative coordinates — `(0.0, 0.0)` is the top-left and `(1.0, 1
 
 ## Reactive Animation
 
-When a **Polygon** references entities as vertices, or a **Connection** references entities as endpoints, those shapes automatically animate when the referenced entities move.
+When a **Polygon** references entities as vertices, or a **Connection** references entities as endpoints, those shapes automatically animate when the referenced entities are animated with `.animate_move()`.
 
 ```python
 # Four dots in a cell — polygon tracks their positions
@@ -272,10 +274,10 @@ poly = Polygon([p1, p2, p3, p4], fill="mediumpurple", stroke="white",
 scene.place(poly)
 
 # Move dots inward — polygon follows automatically
-p1.move(to=(0.2, 0.28), duration=2.0, bounce=True, repeat=True, easing="ease-in-out")
-p2.move(to=(0.16, 0.58), duration=2.0, bounce=True, repeat=True, easing="ease-in-out")
-p3.move(to=(0.48, 0.58), duration=2.0, bounce=True, repeat=True, easing="ease-in-out")
-p4.move(to=(0.52, 0.28), duration=2.0, bounce=True, repeat=True, easing="ease-in-out")
+p1.animate_move(to=(0.2, 0.28), duration=2.0, bounce=True, repeat=True, easing="ease-in-out")
+p2.animate_move(to=(0.16, 0.58), duration=2.0, bounce=True, repeat=True, easing="ease-in-out")
+p3.animate_move(to=(0.48, 0.58), duration=2.0, bounce=True, repeat=True, easing="ease-in-out")
+p4.animate_move(to=(0.52, 0.28), duration=2.0, bounce=True, repeat=True, easing="ease-in-out")
 ```
 
 The polygon's shape animates to follow its vertices — no extra code needed.
@@ -287,7 +289,7 @@ d1 = cell.add_dot(at=(0.62, 0.2), radius=0.03, color="coral")
 d2 = cell.add_dot(at=(0.92, 0.7), radius=0.03, color="gold")
 conn = d1.connect(d2, color="skyblue", width=2)
 
-d1.move(to=(0.75, 0.7), duration=2.5, bounce=True, repeat=True, easing="ease-in-out")
+d1.animate_move(to=(0.75, 0.7), duration=2.5, bounce=True, repeat=True, easing="ease-in-out")
 # conn follows d1 automatically — both straight lines and curves
 ```
 
@@ -297,33 +299,41 @@ d1.move(to=(0.75, 0.7), duration=2.5, bounce=True, repeat=True, easing="ease-in-
 </figure>
 
 !!! tip "Mixed timing"
-    Vertices and endpoints can have different durations, easings, delays, and even different repeat/bounce settings — each vertex follows its own timing schedule. When timings differ, pyfreeform resamples all animations onto a unified timeline so the shape morphs smoothly.
+    Vertices and endpoints can have different durations, easings, delays, and even different repeat/bounce settings — each vertex follows its own timing schedule. When timings differ, PyFreeform resamples all animations onto a unified timeline so the shape morphs smoothly.
 
 ---
 
-## Generic `animate()`
+## Typed Property Methods
 
-For properties without a named method, use `.animate()`. This lets you animate any SVG-mappable attribute:
+Every animatable property has its own method on the relevant entity type — IDE autocomplete shows exactly what you can animate:
 
 ```python
 dot = cell.add_dot(at="center", radius=0.06, color="coral")
 
-dot.animate("r", to=35, duration=1.2, easing="ease-in-out", repeat=True, bounce=True)
+dot.animate_radius(to=35, duration=1.2, easing="ease-in-out", repeat=True, bounce=True)
 ```
 
 <figure markdown>
-![Generic animate](../_images/guide/anim-animate.svg){ width="240" }
+![Typed animate](../_images/guide/anim-animate.svg){ width="240" }
 <figcaption>A dot pulsing in size — `bounce=True` reverses each cycle.</figcaption>
 </figure>
 
 More examples:
 
 ```python
-rect.animate("fill", to="coral", duration=2.0)         # color transition
-rect.animate("width", keyframes={0: 100, 1: 200, 2: 100}, repeat=True)  # multi-step
+rect.animate_fill(to="coral", duration=2.0)         # color transition
+rect.animate_width(keyframes={0: 100, 1: 200, 2: 100}, repeat=True)  # multi-step
 ```
 
 The `keyframes` dict maps times (seconds) to property values at those times.
+
+### Generic `animate()`
+
+For rare properties without a typed method, the generic `.animate()` is still available as an escape hatch:
+
+```python
+dot.animate("custom_attr", to=42, duration=1.0)
+```
 
 ---
 
@@ -347,7 +357,7 @@ scene.render(SMILRenderer())
 
 ## Showcase
 
-Here's what happens when you combine multiple animation types in one scene — spinning, fading, pulsing, and drawing all playing together:
+Here's what happens when you combine multiple animation types in one scene — spinning, fading, pulsing, and self-drawing all playing together:
 
 <figure markdown>
 ![Showcase](../_images/guide/anim-showcase.svg){ width="460" }

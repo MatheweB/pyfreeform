@@ -66,8 +66,8 @@ for d in range(1, 5):
     dur = 1.5
     per_seg = dur / max(len(segments), 1)
     for k, seg in enumerate(segments):
-        seg.animate("opacity", to=0.85, duration=0.3,
-                    delay=total_delay + k * per_seg, easing="ease-out")
+        seg.animate_fade(to=0.85, duration=0.3,
+                         delay=total_delay + k * per_seg, easing="ease-out")
     total_delay += dur + 0.3
 ```
 
@@ -98,19 +98,19 @@ liss = Lissajous(center=(cx, cy), a=5, b=4, delta=math.pi / 2, size=150)
 # The curve draws itself
 path = Path(liss, width=2, color="mediumpurple", opacity=0.7)
 scene.place(path)
-path.draw(duration=6.0, easing="linear")
+path.animate_draw(duration=6.0, easing="linear")
 
 # A dot follows the same curve
 start = liss.point_at(0.0)
 tracer = Dot(start.x, start.y, radius=6, color="coral")
 scene.place(tracer)
-tracer.follow(liss, duration=6.0, easing="linear", repeat=True)
+tracer.animate_follow(liss, duration=6.0, easing="linear", repeat=True)
 
 # Glowing center on the tracer — pulse radius, not scale
 glow = Dot(start.x, start.y, radius=3, color="white")
 scene.place(glow)
-glow.follow(liss, duration=6.0, easing="linear", repeat=True)
-glow.animate("r", to=8, duration=0.8, easing="ease-in-out", bounce=True, repeat=True)
+glow.animate_follow(liss, duration=6.0, easing="linear", repeat=True)
+glow.animate_radius(to=8, duration=0.8, easing="ease-in-out", bounce=True, repeat=True)
 ```
 
 <figure markdown>
@@ -153,12 +153,12 @@ for i in range(1, 201):
 
 # Stagger: each star fades in with offset timing
 stagger(*stars, offset=0.02,
-        each=lambda d: d.animate("opacity", to=0.9, duration=0.5, easing="ease-out"))
+        each=lambda d: d.animate_fade(to=0.9, duration=0.5, easing="ease-out"))
 
 # Some stars spin for a twinkling effect
 for i, dot in enumerate(stars):
     if i % 5 == 0:
-        dot.spin(360, duration=8.0 + (i % 3) * 2, repeat=True, easing="linear")
+        dot.animate_spin(360, duration=8.0 + (i % 3) * 2, repeat=True, easing="linear")
 ```
 
 <figure markdown>
@@ -199,14 +199,14 @@ for ring_idx in range(n_rings):
         dot = Dot(x, y, radius=4, color=color)
         scene.place(dot)
 
-        dot.animate("r", to=10, duration=2.0, delay=phase_delay + j * 0.05,
-                    easing="ease-in-out", bounce=True, repeat=True)
+        dot.animate_radius(to=10, duration=2.0, delay=phase_delay + j * 0.05,
+                           easing="ease-in-out", bounce=True, repeat=True)
 
 # Center jewel
 center = Dot(cx, cy, radius=8, color="white")
 scene.place(center)
-center.animate("r", to=16, duration=1.5, easing="ease-in-out", bounce=True, repeat=True)
-center.spin(360, duration=6.0, repeat=True, easing="linear")
+center.animate_radius(to=16, duration=1.5, easing="ease-in-out", bounce=True, repeat=True)
+center.animate_spin(360, duration=6.0, repeat=True, easing="linear")
 ```
 
 <figure markdown>
@@ -238,7 +238,7 @@ def midpoint(a, b):
 outer = Polygon([top, bl, br], fill="#ff6b6b", stroke="#ff6b6b",
                 stroke_width=0.5, opacity=0.0)
 scene.place(outer)
-outer.animate("opacity", to=0.85, duration=0.6, easing="ease-out", hold=True)
+outer.animate_fade(to=0.85, duration=0.6, easing="ease-out", hold=True)
 
 # Collect holes by depth: each depth removes center sub-triangles
 corners = [(top, bl, br)]
@@ -258,9 +258,9 @@ for d in range(1, max_depth + 1):
         hole = Polygon([h0, h1, h2], fill=bg, stroke=bg,
                        stroke_width=0.3, opacity=0.0)
         scene.place(hole)
-        hole.animate("opacity", to=1.0, duration=0.3,
-                     delay=total_delay + k * per_hole,
-                     easing="ease-out", hold=True)
+        hole.animate_fade(to=1.0, duration=0.3,
+                          delay=total_delay + k * per_hole,
+                          easing="ease-out", hold=True)
 
     total_delay += 1.2 + 0.3
 ```
@@ -282,6 +282,6 @@ These recipes barely scratch the surface. Try combining techniques:
 - **Lissajous + color keyframes**: Animate fill color as a dot traces the curve
 - **Galaxy + connections**: Connect nearby stars with self-drawing connections
 - **Mandala + .then()**: Sequentially build each ring, then start the breathing animation
-- **Fractal + follow**: Trace a dot along a Koch snowflake edge using `.follow()`
+- **Fractal + follow**: Trace a dot along a Koch snowflake edge using `.animate_follow()`
 
 [&larr; Hidden Gems](07-hidden-gems.md){ .md-button }
