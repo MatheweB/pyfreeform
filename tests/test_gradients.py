@@ -87,7 +87,7 @@ class TestParseStops:
 
     def test_bool_not_treated_as_int(self):
         # (True, 128, 0) should NOT be treated as RGB
-        with pytest.raises(Exception):
+        with pytest.raises(TypeError):
             _parse_stops(((True, 128, 0), "blue"))
 
     def test_invalid_format(self):

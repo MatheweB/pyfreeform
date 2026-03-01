@@ -11,50 +11,78 @@ Animations add motion to entities. Renderers convert scenes (with or without ani
 
 All entities inherit these methods from the base `Entity` class. Each returns `self` for chaining.
 
-::: pyfreeform.core.entity.Entity.fade
+### Universal Methods
+
+::: pyfreeform.core.entity.Entity.animate_fade
     options:
-      heading_level: 3
+      heading_level: 4
       show_root_full_path: false
 
-::: pyfreeform.core.entity.Entity.move
+::: pyfreeform.core.entity.Entity.animate_move
     options:
-      heading_level: 3
+      heading_level: 4
       show_root_full_path: false
 
-::: pyfreeform.core.entity.Entity.spin
+::: pyfreeform.core.entity.Entity.animate_spin
     options:
-      heading_level: 3
+      heading_level: 4
       show_root_full_path: false
 
-::: pyfreeform.core.entity.Entity.zoom
+::: pyfreeform.core.entity.Entity.animate_zoom
     options:
-      heading_level: 3
+      heading_level: 4
       show_root_full_path: false
 
-::: pyfreeform.core.entity.Entity.follow
+::: pyfreeform.core.entity.Entity.animate_follow
     options:
-      heading_level: 3
+      heading_level: 4
       show_root_full_path: false
 
 ::: pyfreeform.core.entity.Entity.animate
     options:
-      heading_level: 3
+      heading_level: 4
       show_root_full_path: false
 
 ::: pyfreeform.core.entity.Entity.then
     options:
-      heading_level: 3
+      heading_level: 4
       show_root_full_path: false
 
 ::: pyfreeform.core.entity.Entity.clear_animations
     options:
-      heading_level: 3
+      heading_level: 4
       show_root_full_path: false
 
 ::: pyfreeform.core.entity.Entity.animations
     options:
-      heading_level: 3
+      heading_level: 4
       show_root_full_path: false
+
+### Typed Property Methods
+
+Each entity subclass exposes only the `animate_*` methods that match its constructor parameters. These are factory-generated with typed signatures — IDE autocomplete shows exactly what's available.
+
+**Color properties** — `to` accepts `ColorLike` (`str | tuple[int, int, int]`), `keyframes` accepts `dict[float, ColorLike]`:
+
+| Method | Dot | Rect | Polygon | Ellipse | Line/Curve | Path | Text |
+|--------|-----|------|---------|---------|------------|------|------|
+| `animate_color` | Yes | — | — | — | Yes | Yes | Yes |
+| `animate_fill` | — | Yes | Yes | Yes | — | Yes | — |
+| `animate_stroke` | — | Yes | Yes | Yes | — | — | — |
+
+**Numeric properties** — `to` accepts `float`, `keyframes` accepts `dict[float, float]`:
+
+| Method | Dot | Rect | Polygon | Ellipse | Line/Curve | Path | Text |
+|--------|-----|------|---------|---------|------------|------|------|
+| `animate_radius` | Yes | — | — | — | — | — | — |
+| `animate_width` | — | Yes | — | — | Yes | Yes | — |
+| `animate_height` | — | Yes | — | — | — | — | — |
+| `animate_stroke_width` | — | Yes | Yes | Yes | — | — | — |
+| `animate_rx` | — | — | — | Yes | — | — | — |
+| `animate_ry` | — | — | — | Yes | — | — | — |
+| `animate_font_size` | — | — | — | — | — | — | Yes |
+| `animate_fill_opacity` | — | Yes | Yes | Yes | — | — | — |
+| `animate_stroke_opacity` | — | Yes | Yes | Yes | — | — | — |
 
 ---
 
@@ -62,7 +90,7 @@ All entities inherit these methods from the base `Entity` class. Each returns `s
 
 Paths have an additional method for stroke-reveal animations:
 
-::: pyfreeform.entities.path.Path.draw
+::: pyfreeform.entities.path.Path.animate_draw
     options:
       heading_level: 3
       show_root_full_path: false
@@ -73,12 +101,12 @@ Paths have an additional method for stroke-reveal animations:
 
 Connections support a subset of animation methods:
 
-::: pyfreeform.core.connection.Connection.fade
+::: pyfreeform.core.connection.Connection.animate_fade
     options:
       heading_level: 3
       show_root_full_path: false
 
-::: pyfreeform.core.connection.Connection.draw
+::: pyfreeform.core.connection.Connection.animate_draw
     options:
       heading_level: 3
       show_root_full_path: false

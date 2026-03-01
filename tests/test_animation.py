@@ -9,9 +9,7 @@ from pyfreeform.core.coord import Coord
 from pyfreeform.entities.point import Point
 from pyfreeform.animation.models import (
     DrawAnimation,
-    Easing,
     Keyframe,
-    MotionAnimation,
     PropertyAnimation,
     coerce_easing,
 )

@@ -18,16 +18,32 @@ Usage in an entity module::
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from ..color import ColorLike
+    from .models import EasingLike, RepeatLike
+
 
 # ======================================================================
 # Factory helpers
 # ======================================================================
 
-def _color_anim(prop: str):
+def _color_anim(prop: str) -> Any:
     """Create a typed color animation method for *prop*."""
 
-    def method(self, to=None, *, keyframes=None, duration=1.0, delay=0.0,
-               easing="linear", repeat=False, bounce=False, hold=True):
+    def method(
+        self,
+        to: ColorLike | None = None,
+        *,
+        keyframes: dict[float, ColorLike] | None = None,
+        duration: float = 1.0,
+        delay: float = 0.0,
+        easing: EasingLike = "linear",
+        repeat: RepeatLike = False,
+        bounce: bool = False,
+        hold: bool = True,
+    ) -> Any:
         return self.animate(prop, to=to, keyframes=keyframes,
                             duration=duration, delay=delay, easing=easing,
                             repeat=repeat, bounce=bounce, hold=hold)
@@ -51,7 +67,7 @@ def _color_anim(prop: str):
     return method
 
 
-def _numeric_anim(prop: str, label: str | None = None):
+def _numeric_anim(prop: str, label: str | None = None) -> Any:
     """Create a typed numeric animation method for *prop*.
 
     *label* overrides the documented property name (e.g. ``"opacity"``
@@ -59,8 +75,18 @@ def _numeric_anim(prop: str, label: str | None = None):
     """
     display = label or prop
 
-    def method(self, to=None, *, keyframes=None, duration=1.0, delay=0.0,
-               easing="linear", repeat=False, bounce=False, hold=True):
+    def method(
+        self,
+        to: float | None = None,
+        *,
+        keyframes: dict[float, float] | None = None,
+        duration: float = 1.0,
+        delay: float = 0.0,
+        easing: EasingLike = "linear",
+        repeat: RepeatLike = False,
+        bounce: bool = False,
+        hold: bool = True,
+    ) -> Any:
         return self.animate(prop, to=to, keyframes=keyframes,
                             duration=duration, delay=delay, easing=easing,
                             repeat=repeat, bounce=bounce, hold=hold)
@@ -88,21 +114,21 @@ def _numeric_anim(prop: str, label: str | None = None):
 # Pre-built color animation methods
 # ======================================================================
 
-animate_fill: object = _color_anim("fill")
-animate_color: object = _color_anim("color")
-animate_stroke: object = _color_anim("stroke")
+animate_fill = _color_anim("fill")
+animate_color = _color_anim("color")
+animate_stroke = _color_anim("stroke")
 
 # ======================================================================
 # Pre-built numeric animation methods
 # ======================================================================
 
-animate_fade: object = _numeric_anim("opacity", label="fade")
-animate_radius: object = _numeric_anim("r", label="radius")
-animate_width: object = _numeric_anim("width")
-animate_height: object = _numeric_anim("height")
-animate_stroke_width: object = _numeric_anim("stroke_width")
-animate_rx: object = _numeric_anim("rx")
-animate_ry: object = _numeric_anim("ry")
-animate_font_size: object = _numeric_anim("font_size")
-animate_fill_opacity: object = _numeric_anim("fill_opacity")
-animate_stroke_opacity: object = _numeric_anim("stroke_opacity")
+animate_fade = _numeric_anim("opacity", label="fade")
+animate_radius = _numeric_anim("r", label="radius")
+animate_width = _numeric_anim("width")
+animate_height = _numeric_anim("height")
+animate_stroke_width = _numeric_anim("stroke_width")
+animate_rx = _numeric_anim("rx")
+animate_ry = _numeric_anim("ry")
+animate_font_size = _numeric_anim("font_size")
+animate_fill_opacity = _numeric_anim("fill_opacity")
+animate_stroke_opacity = _numeric_anim("stroke_opacity")
