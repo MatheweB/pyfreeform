@@ -5,6 +5,8 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import TYPE_CHECKING, Literal, NamedTuple, TypeAlias
 
+from .cap_shapes import CAPS
+
 CapName: TypeAlias = Literal[
     "butt", "round", "square",
     "arrow", "arrow_in", "diamond",
@@ -213,8 +215,6 @@ def svg_cap_and_marker_attrs(
 
 # ── Register built-in caps from cap_shapes data ─────────────────────
 def _register_builtins() -> None:
-    from .cap_shapes import CAPS
-
     for name, cfg in CAPS.items():
         gen = cap_shape(cfg["vertices"], tip=cfg["tip"])  # type: ignore[arg-type]
         start_gen = None

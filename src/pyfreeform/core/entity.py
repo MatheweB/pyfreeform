@@ -7,8 +7,17 @@ from abc import ABC, abstractmethod
 from collections.abc import Collection
 from typing import TYPE_CHECKING, Any, Literal
 
+from ..animation.builders import build_follow, build_move, build_scale, build_spin
+from ..animation.shared import (
+    add_generic_animate,
+    apply_chain,
+    clear_all_animations,
+    consume_chain_delay,
+)
+from ..animation import typed_methods
 from ..color import ColorLike
 from ..gradient import Gradient
+from ..renderers import SMILRenderer
 from .binding import Binding
 from .connection import Connection
 from .coord import Coord, CoordLike
@@ -772,7 +781,6 @@ class Entity(ABC):
         Returns:
             SVG element (e.g., '<circle ... />').
         """
-        from ..renderers import SMILRenderer
         return SMILRenderer().render_entity(self)
 
     @abstractmethod
@@ -816,12 +824,11 @@ class Entity(ABC):
             dot.animate_fade(to=0.0, duration=1.0).then().animate_spin(360, duration=1.0)
             dot.animate_fade(to=0.0, duration=1.0).then(0.5).animate_spin(360, duration=1.0)
         """
-        from ..animation.shared import apply_chain
         apply_chain(self, gap)
         return self
 
     # animate_fade assigned from factory (supports both to= and keyframes= modes)
-    from ..animation.typed_methods import animate_fade
+    animate_fade = typed_methods.animate_fade
 
     def animate_move(
         self,
@@ -860,8 +867,6 @@ class Entity(ABC):
         Raises:
             ValueError: If both *to* and *by* are given, or neither.
         """
-        from ..animation.builders import build_move
-        from ..animation.shared import consume_chain_delay
         delay = consume_chain_delay(self, delay)
         self._animations.extend(build_move(self, to, by=by, duration=duration,
             delay=delay, easing=easing, repeat=repeat, bounce=bounce, hold=hold))
@@ -892,8 +897,6 @@ class Entity(ABC):
         Returns:
             Self, for method chaining.
         """
-        from ..animation.builders import build_spin
-        from ..animation.shared import consume_chain_delay
         delay = consume_chain_delay(self, delay)
         self._animations.append(build_spin(self, angle, duration=duration,
             delay=delay, easing=easing, repeat=repeat, bounce=bounce, hold=hold))
@@ -924,8 +927,6 @@ class Entity(ABC):
         Returns:
             Self, for method chaining.
         """
-        from ..animation.builders import build_scale
-        from ..animation.shared import consume_chain_delay
         delay = consume_chain_delay(self, delay)
         self._animations.append(build_scale(self, to, duration=duration,
             delay=delay, easing=easing, repeat=repeat, bounce=bounce, hold=hold))
@@ -959,8 +960,6 @@ class Entity(ABC):
         Returns:
             Self, for method chaining.
         """
-        from ..animation.builders import build_follow
-        from ..animation.shared import consume_chain_delay
         delay = consume_chain_delay(self, delay)
         self._animations.append(build_follow(path, duration=duration,
             delay=delay, easing=easing, repeat=repeat, bounce=bounce,
@@ -1007,7 +1006,6 @@ class Entity(ABC):
         Raises:
             ValueError: If neither ``to`` nor ``keyframes`` is provided.
         """
-        from ..animation.shared import add_generic_animate
         add_generic_animate(self, prop, to=to, keyframes=keyframes,
             duration=duration, delay=delay, easing=easing,
             repeat=repeat, bounce=bounce, hold=hold)
@@ -1019,7 +1017,6 @@ class Entity(ABC):
         Returns:
             Self, for method chaining.
         """
-        from ..animation.shared import clear_all_animations
         clear_all_animations(self)
         return self
 

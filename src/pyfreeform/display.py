@@ -5,10 +5,8 @@ from __future__ import annotations
 import tempfile
 import webbrowser
 from pathlib import Path
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from .scene import Scene
+from .scene import Scene
 
 
 def display(target: Scene | str | Path) -> None:
@@ -31,9 +29,6 @@ def display(target: Scene | str | Path) -> None:
         display("my_art.svg")  # Opens existing file
         ```
     """
-    # Import here to avoid circular imports
-    from .scene import Scene
-
     if isinstance(target, Scene):
         # Render scene to a temporary file
         with tempfile.NamedTemporaryFile(

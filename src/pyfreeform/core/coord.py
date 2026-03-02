@@ -167,14 +167,15 @@ class Coord:
         if isinstance(value, tuple) and len(value) == 2:
             return Coord(*value)
 
-        from ..entities.point import Point
-
-        if isinstance(value, Point):
-            return Coord(value.x, value.y)
+        # Duck-type: Point or any object with x/y (avoids circular import)
+        try:
+            return Coord(value.x, value.y)  # type: ignore[union-attr]
+        except AttributeError:
+            pass
 
         raise TypeError(
             f"Cannot coerce {type(value).__name__} to Coord. "
-            "Expected `Coord` or `tuple[float, float]` (or `Point` Entity since .x and .y are always from its center)"
+            "Expected Coord, tuple[float, float], or object with x/y attributes."
         )
 
     def __repr__(self) -> str:

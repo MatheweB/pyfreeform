@@ -5,9 +5,11 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING
 
+from ..animation import typed_methods
 from ..color import Color, apply_brightness
 from ..core.entity import Entity
 from ..gradient import Gradient
+from ..renderers import SMILRenderer
 
 if TYPE_CHECKING:
     from ..core.coord import Coord
@@ -40,7 +42,8 @@ class Dot(Entity):
     DEFAULT_COLOR = "black"
 
     # -- typed animation methods (factory-generated) --
-    from ..animation.typed_methods import animate_color, animate_radius
+    animate_color = typed_methods.animate_color
+    animate_radius = typed_methods.animate_radius
 
     def __init__(
         self,
@@ -163,7 +166,6 @@ class Dot(Entity):
 
     def to_svg(self) -> str:
         """Render to SVG circle element (delegates to renderer)."""
-        from ..renderers import SMILRenderer
         return SMILRenderer().render_entity(self)
 
     def __repr__(self) -> str:

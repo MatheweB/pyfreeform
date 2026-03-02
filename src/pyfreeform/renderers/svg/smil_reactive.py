@@ -13,16 +13,16 @@ from typing import TYPE_CHECKING
 
 from ...animation.models import Easing, PropertyAnimation, _apply_repeat, _interpolate
 from ...core.coord import Coord
-from ...core.entity import Entity
 from ...core.svg_utils import svg_num
 from .smil_elements import build_animate_element
 
 if TYPE_CHECKING:
     from ...core.connection import Connection
+    from ...core.entity import Entity
     from ...entities.polygon import Polygon
 
-# A vertex/endpoint spec: raw Coord, Entity, or (Entity, anchor_name) tuple.
-VertexSpec = Coord | Entity | tuple[Entity, str]
+    # A vertex/endpoint spec: raw Coord, Entity, or (Entity, anchor_name) tuple.
+    VertexSpec = Coord | Entity | tuple[Entity, str]
 
 
 # ======================================================================
@@ -247,11 +247,11 @@ def _resolve_vertex(
     if isinstance(spec, Coord):
         return spec
     if pair is not None:
-        entity = spec if isinstance(spec, Entity) else spec[0]
+        entity = spec if not isinstance(spec, tuple) else spec[0]
         rx, ry = get_value(pair[0]), get_value(pair[1])
         ax, ay = resolve_abs_position(entity, rx, ry)
         return Coord(ax, ay)
-    if isinstance(spec, Entity):
+    if not isinstance(spec, tuple):
         return spec.position
     return spec[0].anchor(spec[1])
 
@@ -397,10 +397,12 @@ def reactive_polygon_anims(polygon: Polygon) -> list[str]:
 
     for spec in polygon._vertex_specs:
         entity: Entity | None = None
-        if isinstance(spec, Entity):
-            entity = spec
-        elif isinstance(spec, tuple) and isinstance(spec[0], Entity):
+        if isinstance(spec, Coord):
+            pass  # static vertex, no entity
+        elif isinstance(spec, tuple):
             entity = spec[0]
+        else:
+            entity = spec
 
         if entity is not None:
             pair = extract_position_anims(entity)
@@ -478,8 +480,8 @@ def reactive_connection_anims(conn: Connection) -> list[str]:
 
     Pure function — dispatches to line or path helpers below.
     """
-    start_pair = extract_position_anims(conn._start) if isinstance(conn._start, Entity) else None
-    end_pair = extract_position_anims(conn._end) if isinstance(conn._end, Entity) else None
+    start_pair = extract_position_anims(conn._start) if hasattr(conn._start, '_animations') else None
+    end_pair = extract_position_anims(conn._end) if hasattr(conn._end, '_animations') else None
 
     if start_pair is None and end_pair is None:
         return []

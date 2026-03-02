@@ -8,13 +8,14 @@ from typing import TYPE_CHECKING
 from ..color import Color
 from ..core.surface import Surface
 from ..grid.grid import Grid
+from ..image import Image
+from ..renderers import SMILRenderer
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
     from ..core.connection import Connection
     from ..core.entity import Entity
-    from ..image import Image
 
 
 class Scene(Surface):
@@ -123,10 +124,8 @@ class Scene(Surface):
             - cell.rgb: Tuple (r, g, b)
             - cell.alpha: Float 0.0-1.0
         """
-        from ..image import Image as ImageClass
-
         # Load image if path provided
-        image = ImageClass.load(source) if isinstance(source, str | Path) else source
+        image = Image.load(source) if isinstance(source, str | Path) else source
 
         # Create grid from image
         grid = Grid.from_image(
@@ -429,7 +428,6 @@ class Scene(Surface):
             Rendered output as a string.
         """
         if renderer is None:
-            from ..renderers import SMILRenderer
             renderer = SMILRenderer()
         return renderer.render_scene(self)
 

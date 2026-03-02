@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from abc import abstractmethod
 
+from ..animation import typed_methods
 from ..color import Color, apply_brightness
 from ..config.caps import CapName, collect_markers
 from ..core.coord import Coord
@@ -25,7 +26,8 @@ class EndpointEntity(Entity):
     """
 
     # -- typed animation methods (factory-generated) --
-    from ..animation.typed_methods import animate_color, animate_width
+    animate_color = typed_methods.animate_color
+    animate_width = typed_methods.animate_width
 
     def __init__(
         self,

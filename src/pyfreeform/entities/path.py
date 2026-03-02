@@ -5,6 +5,8 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING
 
+from ..animation import typed_methods
+from ..animation.shared import add_draw
 from ..color import Color
 from ..core.bezier import eval_cubic, eval_cubic_derivative, fit_cubic_beziers
 from ..core.coord import Coord
@@ -13,6 +15,7 @@ from ..config.caps import CapName, collect_markers
 from ..core.svg_utils import svg_num
 from ..gradient import Gradient
 from ..paths import Lissajous, Spiral, Wave, Zigzag
+from ..renderers import SMILRenderer
 
 if TYPE_CHECKING:
     from ..animation.models import EasingLike, RepeatLike
@@ -80,7 +83,9 @@ class Path(Entity):
     DEFAULT_CAP = "round"
 
     # -- typed animation methods (factory-generated) --
-    from ..animation.typed_methods import animate_color, animate_fill, animate_width
+    animate_color = typed_methods.animate_color
+    animate_fill = typed_methods.animate_fill
+    animate_width = typed_methods.animate_width
 
     def __init__(
         self,
@@ -586,14 +591,12 @@ class Path(Entity):
         Returns:
             self, for method chaining.
         """
-        from ..animation.shared import add_draw
         add_draw(self, duration=duration, delay=delay, easing=easing,
             repeat=repeat, bounce=bounce, hold=hold, reverse=reverse)
         return self
 
     def to_svg(self) -> str:
         """Render to SVG path element (delegates to renderer)."""
-        from ..renderers import SMILRenderer
         return SMILRenderer().render_entity(self)
 
     def __repr__(self) -> str:

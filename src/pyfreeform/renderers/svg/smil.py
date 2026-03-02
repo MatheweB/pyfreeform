@@ -18,7 +18,6 @@ from ...animation.models import (
     MotionAnimation,
     PropertyAnimation,
 )
-from ...core.entity import Entity
 from ...core.svg_utils import (
     fill_stroke_attrs,
     opacity_attr,
@@ -47,6 +46,7 @@ from .static import SVGRenderer, _build_svg_transform
 
 if TYPE_CHECKING:
     from ...core.connection import Connection
+    from ...core.entity import Entity
     from ...entities.curve import Curve
     from ...entities.dot import Dot
     from ...entities.ellipse import Ellipse

@@ -4,12 +4,14 @@ from __future__ import annotations
 
 import math
 
+from ..animation import typed_methods
 from ..color import Color, apply_brightness
 from ..core.coord import Coord, CoordLike
 from ..core.entity import Entity
 from ..core.positions import NAMED_POSITIONS
 from ..core.relcoord import RelCoord
 from ..gradient import Gradient
+from ..renderers import SMILRenderer
 
 
 class Rect(Entity):
@@ -44,10 +46,13 @@ class Rect(Entity):
     DEFAULT_FILL = "black"
 
     # -- typed animation methods (factory-generated) --
-    from ..animation.typed_methods import (
-        animate_fill, animate_stroke, animate_width, animate_height,
-        animate_stroke_width, animate_fill_opacity, animate_stroke_opacity,
-    )
+    animate_fill = typed_methods.animate_fill
+    animate_stroke = typed_methods.animate_stroke
+    animate_width = typed_methods.animate_width
+    animate_height = typed_methods.animate_height
+    animate_stroke_width = typed_methods.animate_stroke_width
+    animate_fill_opacity = typed_methods.animate_fill_opacity
+    animate_stroke_opacity = typed_methods.animate_stroke_opacity
 
     def __init__(
         self,
@@ -356,7 +361,6 @@ class Rect(Entity):
 
     def to_svg(self) -> str:
         """Render to SVG rect element (delegates to renderer)."""
-        from ..renderers import SMILRenderer
         return SMILRenderer().render_entity(self)
 
     def __repr__(self) -> str:

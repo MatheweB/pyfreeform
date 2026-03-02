@@ -8,6 +8,7 @@ needed — used by :class:`~pyfreeform.renderers.svg.smil.SMILRenderer`.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
@@ -18,7 +19,6 @@ from ...animation.models import (
     PropertyAnimation,
 )
 from ...color import Color
-from ...core.entity import Entity
 from ...core.svg_utils import svg_num
 from .smil_elements import (
     build_animate_element,
@@ -29,6 +29,7 @@ from .smil_elements import (
 
 if TYPE_CHECKING:
     from ...core.connection import Connection
+    from ...core.entity import Entity
 
 
 # ======================================================================
@@ -348,8 +349,6 @@ def _translate_path_d(path_d: str, dx: float, dy: float) -> str:
 
     Handles absolute M, C, L, Q, S, T, A commands and Z (no coords).
     """
-    import re
-
     tokens = re.split(r"(\s+|,)", path_d)
     result: list[str] = []
     coord_idx = 0  # alternates 0=x, 1=y

@@ -5,11 +5,13 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING
 
+from ..animation import typed_methods
 from ..color import Color, apply_brightness
 from ..core.coord import Coord, CoordLike
 from ..core.relcoord import RelCoord
 from ..core.entity import Entity
 from ..gradient import Gradient
+from ..renderers import SMILRenderer
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -62,10 +64,11 @@ class Polygon(Entity):
     """
 
     # -- typed animation methods (factory-generated) --
-    from ..animation.typed_methods import (
-        animate_fill, animate_stroke, animate_stroke_width,
-        animate_fill_opacity, animate_stroke_opacity,
-    )
+    animate_fill = typed_methods.animate_fill
+    animate_stroke = typed_methods.animate_stroke
+    animate_stroke_width = typed_methods.animate_stroke_width
+    animate_fill_opacity = typed_methods.animate_fill_opacity
+    animate_stroke_opacity = typed_methods.animate_stroke_opacity
 
     def __init__(
         self,
@@ -332,7 +335,6 @@ class Polygon(Entity):
 
     def to_svg(self) -> str:
         """Render to SVG polygon element (delegates to renderer)."""
-        from ..renderers import SMILRenderer
         return SMILRenderer().render_entity(self)
 
     def __repr__(self) -> str:

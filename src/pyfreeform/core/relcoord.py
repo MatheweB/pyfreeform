@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Literal, TypeAlias, Union
+from typing import Final, Literal, TypeAlias, Union
 
 NamedPosition: TypeAlias = Literal[
     "center",
@@ -104,8 +104,6 @@ class RelCoord:
         if isinstance(value, tuple) and len(value) == 2:
             return RelCoord(*value)
 
-        from .positions import NAMED_POSITIONS
-
         if isinstance(value, str) and value in NAMED_POSITIONS:
             return RelCoord(*NAMED_POSITIONS[value])
 
@@ -116,3 +114,16 @@ class RelCoord:
 
     def __repr__(self) -> str:
         return f"RelCoord({self.rx}, {self.ry})"
+
+
+NAMED_POSITIONS: Final[dict[NamedPosition, RelCoord]] = {
+    "center": RelCoord(0.5, 0.5),
+    "top_left": RelCoord(0.0, 0.0),
+    "top_right": RelCoord(1.0, 0.0),
+    "bottom_left": RelCoord(0.0, 1.0),
+    "bottom_right": RelCoord(1.0, 1.0),
+    "top": RelCoord(0.5, 0.0),
+    "bottom": RelCoord(0.5, 1.0),
+    "left": RelCoord(0.0, 0.5),
+    "right": RelCoord(1.0, 0.5),
+}

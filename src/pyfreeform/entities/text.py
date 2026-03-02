@@ -6,11 +6,13 @@ import functools
 
 from PIL import ImageFont
 
+from ..animation import typed_methods
 from ..color import Color, apply_brightness
 from ..core.relcoord import RelCoordLike
 from ..core.coord import Coord
 from ..core.entity import Entity
 from ..gradient import Gradient
+from ..renderers import SMILRenderer
 
 # ---------------------------------------------------------------------------
 # Font measurement via Pillow
@@ -129,7 +131,8 @@ class Text(Entity):
     DEFAULT_FONT_WEIGHT = "normal"
 
     # -- typed animation methods (factory-generated) --
-    from ..animation.typed_methods import animate_color, animate_font_size
+    animate_color = typed_methods.animate_color
+    animate_font_size = typed_methods.animate_font_size
 
     def __init__(
         self,
@@ -433,7 +436,6 @@ class Text(Entity):
 
     def to_svg(self) -> str:
         """Render to SVG text element (delegates to renderer)."""
-        from ..renderers import SMILRenderer
         return SMILRenderer().render_entity(self)
 
     def __repr__(self) -> str:

@@ -4,12 +4,14 @@ from __future__ import annotations
 
 import math
 
+from ..animation import typed_methods
 from ..color import Color, apply_brightness
 from ..core.coord import Coord, CoordLike
 from ..core.entity import Entity
 from ..core.bezier import sample_arc_length
 from ..core.svg_utils import svg_num
 from ..gradient import Gradient
+from ..renderers import SMILRenderer
 
 
 class Ellipse(Entity):
@@ -58,10 +60,13 @@ class Ellipse(Entity):
     DEFAULT_STROKE_WIDTH = 1
 
     # -- typed animation methods (factory-generated) --
-    from ..animation.typed_methods import (
-        animate_fill, animate_stroke, animate_rx, animate_ry,
-        animate_stroke_width, animate_fill_opacity, animate_stroke_opacity,
-    )
+    animate_fill = typed_methods.animate_fill
+    animate_stroke = typed_methods.animate_stroke
+    animate_rx = typed_methods.animate_rx
+    animate_ry = typed_methods.animate_ry
+    animate_stroke_width = typed_methods.animate_stroke_width
+    animate_fill_opacity = typed_methods.animate_fill_opacity
+    animate_stroke_opacity = typed_methods.animate_stroke_opacity
 
     def __init__(
         self,
@@ -478,7 +483,6 @@ class Ellipse(Entity):
 
     def to_svg(self) -> str:
         """Render to SVG ellipse element (delegates to renderer)."""
-        from ..renderers import SMILRenderer
         return SMILRenderer().render_entity(self)
 
     def __repr__(self) -> str:

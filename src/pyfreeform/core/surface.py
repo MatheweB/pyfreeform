@@ -7,6 +7,15 @@ from collections.abc import Collection
 from typing import TYPE_CHECKING, Any, Literal
 
 from ..color import apply_brightness
+from ..entities.curve import Curve
+from ..entities.dot import Dot
+from ..entities.ellipse import Ellipse
+from ..entities.line import Line
+from ..entities.path import Path
+from ..entities.point import Point
+from ..entities.polygon import Polygon
+from ..entities.rect import Rect
+from ..entities.text import Text, _measure_text_width
 from ..gradient import Gradient, PaintLike
 from .binding import Binding
 from .connection import Connection
@@ -25,15 +34,6 @@ if TYPE_CHECKING:
         ShapeStyle,
         TextStyle,
     )
-    from ..entities.curve import Curve
-    from ..entities.dot import Dot
-    from ..entities.ellipse import Ellipse
-    from ..entities.line import Line
-    from ..entities.path import Path
-    from ..entities.point import Point
-    from ..entities.polygon import Polygon
-    from ..entities.rect import Rect
-    from ..entities.text import Text
     from .entity import Entity
 
 
@@ -506,7 +506,7 @@ class Surface:
             cell.add_dot(along=line, t=0.5)  # Midpoint of a line
             ```
         """
-        from ..entities.dot import Dot
+
 
         color, z_index, opacity = self._unpack_fill_style(
             style, color, z_index, opacity, color_brightness,
@@ -600,7 +600,7 @@ class Surface:
             cell.add_line(start=(0,0), end=(20,0), along=curve, t=0.5, align=True)
             ```
         """
-        from ..entities.line import Line
+
 
         width, color, z_index, cap, start_cap, end_cap, opacity = self._unpack_path_style(
             style, width, color, z_index, cap, start_cap, end_cap, opacity, color_brightness,
@@ -785,7 +785,7 @@ class Surface:
             cell.add_dot(along=curve, t=cell.brightness)  # Dot slides along!
             ```
         """
-        from ..entities.curve import Curve
+
 
         width, color, z_index, cap, start_cap, end_cap, opacity = self._unpack_path_style(
             style, width, color, z_index, cap, start_cap, end_cap, opacity, color_brightness,
@@ -902,7 +902,7 @@ class Surface:
             cell.add_path(ellipse, start_t=0.0, end_t=0.25, color="red")
             ```
         """
-        from ..entities.path import Path
+
 
         width, color, z_index, cap, start_cap, end_cap, opacity = self._unpack_path_style(
             style, width, color, z_index, cap, start_cap, end_cap, opacity, None,
@@ -987,7 +987,7 @@ class Surface:
             cell.add_ellipse(rx=0.1, ry=0.06, along=curve, t=0.5, align=True)
             ```
         """
-        from ..entities.ellipse import Ellipse
+
 
         fill, stroke, stroke_width, z_index, opacity, fill_opacity, stroke_opacity = (
             self._unpack_shape_style(
@@ -1096,7 +1096,7 @@ class Surface:
             cell.add_polygon(Polygon.hexagon(), along=curve, t=0.5, align=True)
             ```
         """
-        from ..entities.polygon import Polygon
+
 
         fill, stroke, stroke_width, z_index, opacity, fill_opacity, stroke_opacity = (
             self._unpack_shape_style(
@@ -1231,7 +1231,7 @@ class Surface:
             cell.add_text("Partial", along=curve, start_offset=0.2, end_offset=0.8)
             ```
         """
-        from ..entities.text import Text, _measure_text_width
+
 
         if style:
             color = style.color
@@ -1423,7 +1423,7 @@ class Surface:
             cell.add_rect(width=0.2, height=0.1, along=curve, t=0.5, align=True)
             ```
         """
-        from ..entities.rect import Rect
+
 
         fill, stroke, stroke_width, z_index, opacity, fill_opacity, stroke_opacity = (
             self._unpack_shape_style(
@@ -1507,7 +1507,7 @@ class Surface:
             cell.add_fill(color="blue", opacity=0.5)
             ```
         """
-        from ..entities.rect import Rect
+
 
         color, z_index, opacity = self._unpack_fill_style(
             style, color, z_index, opacity, color_brightness,
@@ -1555,7 +1555,7 @@ class Surface:
             cell.add_border(color=palette.grid)
             ```
         """
-        from ..entities.rect import Rect
+
 
         if style:
             color = style.color
@@ -1623,7 +1623,7 @@ class Surface:
             tri = Polygon([a, b, c], fill="coral")
             ```
         """
-        from ..entities.point import Point
+
 
 
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)

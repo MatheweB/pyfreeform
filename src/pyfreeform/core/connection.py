@@ -5,10 +5,18 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING, Any, Union
 
+from ..animation import typed_methods
+from ..animation.shared import (
+    add_draw,
+    add_generic_animate,
+    apply_chain,
+    clear_all_animations,
+)
 from ..color import Color, ColorLike, apply_brightness
 from ..config.caps import CapName, collect_markers
 from ..config.styles import PathStyle
 from ..gradient import Gradient, PaintLike
+from ..renderers import SMILRenderer
 from .bezier import curvature_control_point, eval_cubic, quadratic_to_cubic
 from .coord import Coord
 from .positions import AnchorSpec
@@ -438,12 +446,13 @@ class Connection:
         Returns:
             Self, for method chaining.
         """
-        from ..animation.shared import apply_chain
         apply_chain(self, gap)
         return self
 
     # -- typed animation methods (factory-generated) --
-    from ..animation.typed_methods import animate_color, animate_width, animate_fade
+    animate_color = typed_methods.animate_color
+    animate_width = typed_methods.animate_width
+    animate_fade = typed_methods.animate_fade
 
     def animate_draw(
         self,
@@ -457,7 +466,6 @@ class Connection:
         reverse: bool = False,
     ) -> Connection:
         """Animate the connection drawing itself."""
-        from ..animation.shared import add_draw
         add_draw(self, duration=duration, delay=delay, easing=easing,
             repeat=repeat, bounce=bounce, hold=hold, reverse=reverse)
         return self
@@ -476,7 +484,6 @@ class Connection:
         hold: bool = True,
     ) -> Connection:
         """Animate any property."""
-        from ..animation.shared import add_generic_animate
         add_generic_animate(self, prop, to=to, keyframes=keyframes,
             duration=duration, delay=delay, easing=easing,
             repeat=repeat, bounce=bounce, hold=hold)
@@ -484,13 +491,11 @@ class Connection:
 
     def clear_animations(self) -> Connection:
         """Remove all animations."""
-        from ..animation.shared import clear_all_animations
         clear_all_animations(self)
         return self
 
     def to_svg(self) -> str:
         """Render connection as SVG element (delegates to renderer)."""
-        from ..renderers import SMILRenderer
         return SMILRenderer().render_connection(self)
 
     def __repr__(self) -> str:

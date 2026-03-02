@@ -5,9 +5,11 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING
 
+from ..animation.shared import add_draw
 from ..core.coord import Coord, CoordLike
 from ..config.caps import CapName
 from ..core.svg_utils import svg_num
+from ..renderers import SMILRenderer
 from .endpoint_entity import EndpointEntity
 
 if TYPE_CHECKING:
@@ -338,14 +340,12 @@ class Line(EndpointEntity):
         Returns:
             self, for method chaining.
         """
-        from ..animation.shared import add_draw
         add_draw(self, duration=duration, delay=delay, easing=easing,
             repeat=repeat, bounce=bounce, hold=hold, reverse=reverse)
         return self
 
     def to_svg(self) -> str:
         """Render to SVG line element (delegates to renderer)."""
-        from ..renderers import SMILRenderer
         return SMILRenderer().render_entity(self)
 
     def __repr__(self) -> str:

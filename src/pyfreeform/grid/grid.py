@@ -6,13 +6,12 @@ import math
 from typing import TYPE_CHECKING, Literal
 
 from ..core.coord import Coord
+from ..image import Image, Layer
 from .cell import Cell
 from .cell_group import CellGroup
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
-
-    from ..image import Image, Layer
 
 
 class Grid:
@@ -312,10 +311,7 @@ class Grid:
                     "hex" - Store hex color string (requires Image source)
         """
         # Handle Image source
-        from ..image import Image as ImageClass
-        from ..image import Layer as LayerClass
-
-        if isinstance(source, ImageClass):
+        if isinstance(source, Image):
             image = source
             # Resize to match grid if needed
             if image.width != self._cols or image.height != self._rows:
@@ -332,7 +328,7 @@ class Grid:
                     else:
                         cell.data[name] = image.rgb_at(col, row)
 
-        elif isinstance(source, LayerClass):
+        elif isinstance(source, Layer):
             layer = source
             # Sample layer at each cell position
             for row in range(self._rows):

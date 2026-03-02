@@ -6,6 +6,7 @@ import math
 
 from ..core.coord import Coord, CoordLike
 from ..core.entity import Entity
+from ..renderers import SMILRenderer
 
 
 class EntityGroup(Entity):
@@ -182,7 +183,6 @@ class EntityGroup(Entity):
 
     def to_svg(self) -> str:
         """Render to SVG ``<g>`` element (delegates to renderer)."""
-        from ..renderers import SMILRenderer
         return SMILRenderer().render_entity(self)
 
     # =========================================================================
