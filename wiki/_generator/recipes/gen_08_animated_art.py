@@ -174,8 +174,7 @@ def _generate_spiral_galaxy(n_stars=200):
     stagger(
         *stars,
         offset=0.02,
-        each=lambda d: d.animate_fade(to=0.9, duration=0.5,
-                                 easing="ease-out", hold=True),
+        each=lambda d: d.animate_fade(to=0.9, duration=0.5, easing="ease-out"),
     )
 
     # A few spinning "arms" via subtle rotation on outer stars

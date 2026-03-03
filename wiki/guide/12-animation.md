@@ -294,7 +294,8 @@ dots = []
 for i in range(6):
     dots.append(cell.add_dot(at=(0.1 + i * 0.15, 0.4), radius=0.08, color="coral"))
 
-stagger(*dots, offset=0.3, each=lambda d: d.animate_fade(to=0.0, duration=1.5))
+stagger(*dots, offset=0.3,
+        each=lambda d: d.animate_fade(to=0.0, duration=1.5, easing="ease-in-out").loop(bounce=True))
 ```
 
 <figure markdown>
@@ -355,7 +356,8 @@ d2 = cell.add_dot(at=(0.92, 0.7), radius=0.03, color="gold")
 conn = d1.connect(d2, color="skyblue", width=2)
 
 d1.animate_move(to=(0.75, 0.7), duration=2.5, easing="ease-in-out").loop(bounce=True)
-# conn follows d1 automatically — both straight lines and curves
+d2.animate_move(to=(0.8, 0.18), duration=2.5, easing="ease-in-out").loop(bounce=True)
+# conn follows both endpoints automatically — both straight lines and curves
 ```
 
 <figure markdown>

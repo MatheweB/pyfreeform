@@ -106,9 +106,8 @@ tracer.loop()
 # Glowing center on the tracer — pulse radius, not scale
 glow = Dot(start.x, start.y, radius=3, color="white")
 scene.place(glow)
-glow.animate_follow(liss, duration=6.0, easing="linear")
-glow.animate_radius(to=8, duration=0.8, easing="ease-in-out")
-glow.loop(bounce=True)
+glow.animate_follow(liss, duration=6.0, easing="linear", repeat=True)
+glow.animate_radius(to=8, duration=0.8, easing="ease-in-out", bounce=True, repeat=True)
 ```
 
 <figure markdown>
@@ -127,7 +126,7 @@ Stars bloom outward in golden-angle phyllotaxis order. Each star fades in with s
 
 ```python
 import math
-from pyfreeform import Scene, Dot, stagger
+from pyfreeform import Scene, Polygon, stagger
 from pyfreeform.color import hsl
 
 scene = Scene(440, 440, background="#050510")
@@ -144,8 +143,9 @@ for i in range(1, 201):
     y = cy + r * math.sin(angle)
 
     hue = (40 - t * 220) % 360
-    radius = 2.0 + 4.0 * (1 - t)
-    dot = Dot(x, y, radius=radius, color=hsl(hue, 0.85, 0.55), opacity=0.0)
+    star_size = 2.0 + 4.0 * (1 - t)
+    dot = Polygon(Polygon.star(size=star_size, center=(x, y)),
+                  fill=hsl(hue, 0.85, 0.55), opacity=0.0)
     scene.place(dot)
     stars.append(dot)
 
@@ -198,8 +198,12 @@ for ring_idx in range(n_rings):
         dot = Dot(x, y, radius=4, color=color)
         scene.place(dot)
 
-        dot.animate_radius(to=10, duration=2.0, delay=phase_delay + j * 0.05,
+        per_dot_delay = phase_delay + j * 0.05
+        dot.animate_radius(to=10, duration=2.0, delay=per_dot_delay,
                            easing="ease-in-out")
+        if j % 2 == 0:
+            dot.animate_fade(to=0.3, duration=2.0, delay=per_dot_delay,
+                             easing="ease-in-out")
         dot.loop(bounce=True)
 
 # Center jewel
@@ -226,6 +230,7 @@ from pyfreeform import Scene, Polygon
 
 scene = Scene(420, 420, background="#0a0a1a")
 bg = "#0a0a1a"
+max_depth = 5
 
 margin = 420 * 0.08
 top = (210, margin)
@@ -235,35 +240,42 @@ br = (420 - margin, 420 - margin)
 def midpoint(a, b):
     return ((a[0] + b[0]) / 2, (a[1] + b[1]) / 2)
 
-# Solid outer triangle
+# Collect all (entity, appear_time, target_opacity, fade_duration)
 outer = Polygon([top, bl, br], fill="#ff6b6b", stroke="#ff6b6b",
                 stroke_width=0.5, opacity=0.0)
 scene.place(outer)
-outer.animate_fade(to=0.85, duration=0.6, easing="ease-out", hold=True)
+elements = [(outer, 0.0, 0.85, 0.6)]
 
-# Collect holes by depth: each depth removes center sub-triangles
+# Build holes depth by depth
 corners = [(top, bl, br)]
-total_delay = 0.8
-max_depth = 5
-
+holes_by_depth = {}
 for d in range(1, max_depth + 1):
     holes, next_corners = [], []
     for v0, v1, v2 in corners:
         m01, m12, m02 = midpoint(v0, v1), midpoint(v1, v2), midpoint(v0, v2)
         holes.append((m01, m12, m02))
         next_corners.extend([(v0, m01, m02), (m01, v1, m12), (m02, m12, v2)])
+    holes_by_depth[d] = holes
     corners = next_corners
 
+total_delay = 0.8
+for d in range(1, max_depth + 1):
+    holes = holes_by_depth[d]
     per_hole = min(0.04, 1.2 / max(len(holes), 1))
     for k, (h0, h1, h2) in enumerate(holes):
         hole = Polygon([h0, h1, h2], fill=bg, stroke=bg,
                        stroke_width=0.3, opacity=0.0)
         scene.place(hole)
-        hole.animate_fade(to=1.0, duration=0.3,
-                          delay=total_delay + k * per_hole,
-                          easing="ease-out", hold=True)
-
+        elements.append((hole, total_delay + k * per_hole, 1.0, 0.3))
     total_delay += 1.2 + 0.3
+
+# Animate with keyframes so the whole sequence bounces as a unit
+forward_time = total_delay + 0.5
+for entity, appear, target, dur in elements:
+    entity.animate_fade(
+        keyframes={0: 0, appear: 0, appear + dur: target, forward_time: target},
+    )
+    entity.loop(bounce=True)
 ```
 
 <figure markdown>
