@@ -123,6 +123,10 @@ def build_animate_element(
     if bounce:
         values, key_times = apply_bounce(values, key_times)
 
+    assert len(values) == len(key_times), (
+        f"values and key_times must have the same length, "
+        f"got {len(values)} values and {len(key_times)} key_times"
+    )
     n_segments = max(1, len(values) - 1)
 
     parts = [f'<{tag}']

@@ -229,7 +229,9 @@ class PropertyAnimation:
             Interpolated property value at time t.
         """
         if len(self.keyframes) < 2:
-            return self.keyframes[0].value if self.keyframes else None
+            if not self.keyframes:
+                raise ValueError("PropertyAnimation has no keyframes")
+            return self.keyframes[0].value
 
         dur = self.duration
         if dur <= 0:
@@ -316,16 +318,19 @@ class MotionAnimation:
         """
         t = t - self.delay
         if t < 0:
-            pt = self.path.point_at(0.0)
+            pt = self.path.point_at(1.0 if self.reverse else 0.0)
             return (pt.x, pt.y)
 
         path_t = _apply_repeat(t, self.duration, self.repeat, self.bounce)
         if path_t is None:
-            pt = self.path.point_at(1.0) if self.hold else self.path.point_at(0.0)
+            end = 0.0 if self.reverse else 1.0
+            pt = self.path.point_at(end if self.hold else 1.0 - end)
             return (pt.x, pt.y)
 
         normalized = path_t / self.duration if self.duration > 0 else 1.0
         eased = self.easing.evaluate(normalized)
+        if self.reverse:
+            eased = 1.0 - eased
         pt = self.path.point_at(eased)
         return (pt.x, pt.y)
 
