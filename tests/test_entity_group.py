@@ -467,3 +467,109 @@ def test_entity_group_rotation_property():
     assert group.rotation == 0.0
     group.rotate(45)
     assert group.rotation == pytest.approx(45.0)
+
+
+# =========================================================================
+# EntityGroup.from_entities() tests
+# =========================================================================
+
+
+class TestFromEntities:
+    """Tests for EntityGroup.from_entities() non-destructive capture."""
+
+    def _cell_with_dots(self):
+        """200×100 scene with two dots placed at absolute pixel positions."""
+        scene = Scene(200, 100)
+        # Place directly (pixel mode) so bounds are predictable
+        d1 = Dot(50, 50, radius=10, color="red")
+        d2 = Dot(150, 50, radius=10, color="blue")
+        scene.place(d1)
+        scene.place(d2)
+        return scene, d1, d2
+
+    def test_from_entities_non_destructive(self):
+        """Original entities must remain in the surface after from_entities()."""
+        scene, d1, d2 = self._cell_with_dots()
+        original_count = len(scene._entities)
+
+        EntityGroup.from_entities([d1, d2])
+
+        # Surface still has the same entities
+        assert len(scene._entities) == original_count
+        assert d1 in scene._entities
+        assert d2 in scene._entities
+
+    def test_from_entities_group_at_centroid(self):
+        """Group should be placed at the centroid of all entities' bounding boxes."""
+        scene, d1, d2 = self._cell_with_dots()
+        # d1 bounds: (40, 40, 60, 60), d2 bounds: (140, 40, 160, 60)
+        # overall: min_x=40, min_y=40, max_x=160, max_y=60
+        # centroid: cx=(40+160)/2=100, cy=(40+60)/2=50
+        group = EntityGroup.from_entities([d1, d2])
+
+        assert abs(group.x - 100.0) < 0.5
+        assert abs(group.y - 50.0) < 0.5
+
+    def test_from_entities_children_in_local_space(self):
+        """Children should be translated to local space relative to group origin."""
+        scene, d1, d2 = self._cell_with_dots()
+        group = EntityGroup.from_entities([d1, d2])
+
+        # Group at (100, 50); d1 was at (50, 50) → local (-50, 0)
+        # d2 was at (150, 50) → local (50, 0)
+        children = group.children
+        assert len(children) == 2
+
+        xs = sorted(c.x for c in children)
+        assert abs(xs[0] - (-50.0)) < 0.5
+        assert abs(xs[1] - 50.0) < 0.5
+
+    def test_from_entities_children_surface_cleared(self):
+        """Children in the group should have _surface=None (detached from original)."""
+        scene, d1, d2 = self._cell_with_dots()
+        group = EntityGroup.from_entities([d1, d2])
+
+        for child in group.children:
+            assert child._surface is None
+
+    def test_from_entities_single_entity(self):
+        """Single entity → group at entity's center, one child at (0, 0)."""
+        scene = Scene(200, 100)
+        dot = Dot(100, 50, radius=10, color="red")
+        scene.place(dot)
+
+        group = EntityGroup.from_entities([dot])
+
+        # Group at dot's bounds center: (90+110)/2=100, (40+60)/2=50
+        assert abs(group.x - 100.0) < 0.5
+        assert abs(group.y - 50.0) < 0.5
+        # Child at local (0, 0)
+        child = group.children[0]
+        assert abs(child.x - 0.0) < 0.5
+        assert abs(child.y - 0.0) < 0.5
+
+    def test_from_entities_empty_list(self):
+        """Empty list → empty group at (0, 0)."""
+        group = EntityGroup.from_entities([])
+        assert len(group.children) == 0
+        assert group.x == 0.0
+        assert group.y == 0.0
+
+    def test_from_entities_preserves_entity_type(self):
+        """Children should be the same entity type as the originals."""
+        scene = Scene(200, 100)
+        dot = Dot(100, 50, radius=10, color="red")
+        scene.place(dot)
+
+        group = EntityGroup.from_entities([dot])
+
+        assert isinstance(group.children[0], Dot)
+
+    def test_from_entities_renders_to_svg(self):
+        """Group created by from_entities() should render to valid SVG."""
+        scene, d1, d2 = self._cell_with_dots()
+        group = EntityGroup.from_entities([d1, d2])
+
+        svg = group.to_svg()
+        assert "<g" in svg
+        assert "<circle" in svg  # Dot renders as circle

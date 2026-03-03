@@ -52,11 +52,10 @@ def generate():
     scene = Scene.with_grid(cols=6, rows=5, cell_size=48, background=colors.background)
     for cell in scene.grid:
         nx, ny = cell.normalized_position
-        cx, cy = cell.center
         turns = 2 + nx * 3
-        spiral = Path.Spiral(center=(cx, cy), end_radius=scene.grid.cell_width * 0.42, turns=turns)
         cell.add_path(
-            spiral,
+            Path.Spiral(center=(0.5, 0.5), end_radius=0.42, turns=turns),
+            relative=True,
             segments=48,
             width=0.8 + ny * 1.5,
             color=colors.primary,

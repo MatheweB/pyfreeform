@@ -110,6 +110,22 @@ for cell in scene.grid:
 !!! warning "New instance per cell"
     Always create a new EntityGroup for each cell. Groups placed in cells should not be reused directly — wrap creation in a factory function.
 
+### Capturing Existing Entities
+
+If entities are already placed in a cell, use `EntityGroup.from_entities()` to capture them into a group — non-destructively. The originals remain in the surface; the group holds deep copies in local coordinate space:
+
+```python
+title = cell.add_text("Score", at=(0.5, 0.3), font_size=0.2, color="navy")
+value = cell.add_text("42", at=(0.5, 0.6), font_size=0.35, color="coral")
+
+# Both entities remain in the cell; group is a new unit positioned at their centroid
+group = EntityGroup.from_entities([title, value])
+group.animate_fade(to=0, duration=1.5)   # fade both together
+cell.add(group)
+```
+
+The group's origin is placed at the centroid of all entities' bounding boxes. This is useful when you build up a layout with individual `add_*` calls and then want to animate or transform them as a unit.
+
 ---
 
 ## Reactive Polygons

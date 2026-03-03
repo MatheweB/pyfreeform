@@ -94,6 +94,38 @@ scene.place(path)
 <figcaption>Three Lissajous curves with different frequency ratios, layered with semi-transparent fills.</figcaption>
 </figure>
 
+### Relative Coordinates
+
+Path shapes use pixel coordinates by default. When working inside a cell you usually don't want to multiply by `cell.width` and `cell.height`. Pass `relative=True` to `add_path()` and write the pathable's coordinates as surface-relative fractions (0.0–1.0) — exactly like every other `add_*` method:
+
+```python
+# Without relative=True — pixel math required
+w, h = cell.width, cell.height
+cell.add_path(
+    Path.Wave(start=(w * 0.05, h * 0.5), end=(w * 0.95, h * 0.5), amplitude=h * 0.15),
+    width=2, color="coral",
+)
+
+# With relative=True — fraction-first, no pixel math
+cell.add_path(
+    Path.Wave(start=(0.05, 0.5), end=(0.95, 0.5), amplitude=0.15),
+    relative=True, width=2, color="coral",
+)
+
+# Works for all four built-in shapes
+cell.add_path(
+    Path.Spiral(center=(0.5, 0.5), end_radius=0.38, turns=4),
+    relative=True, width=1, color="teal",
+)
+```
+
+The four built-in shapes already use normalized defaults (`Wave()` defaults to `start=(0,0), end=(1,0)`) — `relative=True` is the bridge that maps those fractions to the cell's actual pixel dimensions at render time.
+
+!!! note "Use relative=True with path shapes, not with entities"
+    `relative=True` is designed for Wave, Spiral, Lissajous, and Zigzag. Don't use it with an `Ellipse` entity as a pathable — the entity already lives in pixel space and would be double-scaled.
+
+---
+
 ## Custom Pathables
 
 You can also create your own — any object with `point_at(t) -> Coord` works as a path:

@@ -40,10 +40,8 @@ def generate():
     scene = Scene.with_grid(cols=1, rows=1, cell_width=360, cell_height=140,
                             background="#1a1a2e")
     cell = scene.grid[0][0]
-    w, h = cell.width, cell.height
-    wave = Wave(start=(w * 0.08, h * 0.4), end=(w * 0.92, h * 0.4),
-                amplitude=h * 0.28, frequency=3)
-    cell.add_path(wave, width=3, color="limegreen") \
+    cell.add_path(Wave(start=(0.08, 0.4), end=(0.92, 0.4), amplitude=0.28, frequency=3),
+                  relative=True, width=3, color="limegreen") \
         .animate_draw(duration=2.5, easing="ease-in-out") \
         .loop(bounce=True)
     cell.add_text(".animate_draw().loop(bounce=True)", at=(0.5, 0.88),
@@ -180,7 +178,6 @@ def generate():
     scene = Scene.with_grid(cols=1, rows=1, cell_width=460, cell_height=300,
                             background="#1a1a2e")
     cell = scene.grid[0][0]
-    w, h = cell.width, cell.height
 
     # Self-drawing connection across the top
     da = cell.add_dot(at=(0.06, 0.12), radius=0.012, color="white")
@@ -206,16 +203,14 @@ def generate():
         .loop(bounce=True)
 
     # Self-drawing zigzag
-    zz = Zigzag(start=(w * 0.06, h * 0.77), end=(w * 0.48, h * 0.77),
-                amplitude=h * 0.07, teeth=5)
-    cell.add_path(zz, width=2, color="skyblue") \
+    cell.add_path(Zigzag(start=(0.06, 0.77), end=(0.48, 0.77), amplitude=0.07, teeth=5),
+                  relative=True, width=2, color="skyblue") \
         .animate_draw(duration=2.0, easing="ease-in-out") \
         .loop(bounce=True)
 
     # Self-drawing wave
-    wv = Wave(start=(w * 0.52, h * 0.77), end=(w * 0.96, h * 0.77),
-              amplitude=h * 0.07, frequency=3)
-    cell.add_path(wv, width=2, color="limegreen") \
+    cell.add_path(Wave(start=(0.52, 0.77), end=(0.96, 0.77), amplitude=0.07, frequency=3),
+                  relative=True, width=2, color="limegreen") \
         .animate_draw(duration=2.5, delay=0.5, easing="ease-in-out") \
         .loop(bounce=True)
 

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import itertools
+import math
 from collections.abc import Collection
 from typing import TYPE_CHECKING, Any, Literal
 
@@ -35,6 +36,51 @@ if TYPE_CHECKING:
         TextStyle,
     )
     from .entity import Entity
+
+
+class _ScaledPathable:
+    """Wraps a normalized (0–1) pathable and maps its coords to pixel space.
+
+    Used by ``Surface.add_path(relative=True)`` to allow path shapes
+    (Wave, Spiral, Lissajous, Zigzag) to be specified in surface-relative
+    fractions instead of absolute pixel coordinates.
+    """
+
+    def __init__(
+        self, pathable: Pathable, sx: float, sy: float, sw: float, sh: float
+    ) -> None:
+        self._p = pathable
+        self._sx = sx
+        self._sy = sy
+        self._sw = sw
+        self._sh = sh
+
+    @property
+    def is_closed(self) -> bool:
+        return self._p.is_closed
+
+    def point_at(self, t: float) -> Coord:
+        p = self._p.point_at(t)
+        return Coord(self._sx + p.x * self._sw, self._sy + p.y * self._sh)
+
+    def angle_at(self, t: float) -> float:
+        # Finite-difference in pixel space (handles non-square surfaces correctly)
+        eps = 1e-4
+        p0 = self.point_at(max(0.0, t - eps))
+        p1 = self.point_at(min(1.0, t + eps))
+        dx, dy = p1.x - p0.x, p1.y - p0.y
+        if dx == 0 and dy == 0:
+            return 0.0
+        return math.degrees(math.atan2(dy, dx))
+
+    def arc_length(self, samples: int = 200) -> float:
+        total = 0.0
+        prev = self.point_at(0.0)
+        for i in range(1, samples + 1):
+            curr = self.point_at(i / samples)
+            total += math.hypot(curr.x - prev.x, curr.y - prev.y)
+            prev = curr
+        return total
 
 
 class Surface:
@@ -845,6 +891,7 @@ class Surface:
         self,
         pathable: Pathable,
         *,
+        relative: bool = False,
         segments: int = 64,
         closed: bool = False,
         start_t: float = 0.0,
@@ -874,6 +921,11 @@ class Surface:
 
         Args:
             pathable: Any object implementing ``point_at(t)``.
+            relative: If ``True``, treat the pathable's coordinates as
+                surface-relative fractions (0.0–1.0) and scale them to
+                pixel space automatically. Lets you write
+                ``Wave(start=(0.1, 0.5), end=(0.9, 0.5), amplitude=0.15)``
+                instead of ``Wave(start=(w*0.1, h*0.5), ...)``.
             segments: Number of cubic Bézier segments (higher = smoother).
             closed: Close the path smoothly back to start.
             start_t: Start parameter on the pathable (0.0-1.0).
@@ -895,14 +947,17 @@ class Surface:
 
         Example:
             ```python
-            wave = Wave(start=cell.center, end=cell.top_right, amplitude=10, frequency=3)
-            cell.add_path(wave, color="blue", width=2)
+            # Fraction-first (relative=True)
+            cell.add_path(Wave(start=(0.05, 0.5), end=(0.95, 0.5), amplitude=0.15),
+                          relative=True, color="blue", width=2)
+
             # Arc of an ellipse (quarter circle):
             ellipse = cell.add_ellipse(rx=0.4, ry=0.4)
             cell.add_path(ellipse, start_t=0.0, end_t=0.25, color="red")
             ```
         """
-
+        if relative:
+            pathable = _ScaledPathable(pathable, self.x, self.y, self.width, self.height)
 
         width, color, z_index, cap, start_cap, end_cap, opacity = self._unpack_path_style(
             style, width, color, z_index, cap, start_cap, end_cap, opacity, None,

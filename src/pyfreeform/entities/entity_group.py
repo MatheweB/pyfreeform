@@ -83,6 +83,70 @@ class EntityGroup(Entity):
         self._children.append(entity)
         return entity
 
+    @classmethod
+    def from_entities(
+        cls,
+        entities: list[Entity],
+        *,
+        z_index: int = 0,
+        opacity: float = 1.0,
+    ) -> EntityGroup:
+        """
+        Create a non-destructive EntityGroup from entities already in a surface.
+
+        The original entities remain in their containing surfaces unchanged.
+        The returned group holds deep copies positioned in local space, with
+        the group's origin at the centroid of all entities' bounding boxes.
+
+        Args:
+            entities: Entities to capture. Should already be placed in a surface.
+            z_index:  Layer ordering for the new group.
+            opacity:  Group-level opacity.
+
+        Returns:
+            New EntityGroup positioned at the centroid of the input entities.
+
+        Example:
+            ```python
+            title = cell.add_text("Hello", at=(0.5, 0.3), font_size=0.2, color="navy")
+            icon  = cell.add_dot(at=(0.5, 0.6), radius=0.08, color="coral")
+
+            # Originals remain in cell; group is a new unit for joint animation
+            group = EntityGroup.from_entities([title, icon])
+            group.animate_fade(to=0, duration=1.0)
+            cell.add(group)
+            ```
+        """
+        import copy
+
+        resolved = []
+        for e in entities:
+            # Memo trick: reuse the same surface object so deepcopy doesn't
+            # recursively copy the entire scene graph (which would be very slow).
+            memo = {id(e._surface): e._surface} if e._surface is not None else {}
+            e_copy = copy.deepcopy(e, memo)
+            e_copy._resolve_to_absolute()
+            resolved.append(e_copy)
+
+        if not resolved:
+            return cls(0, 0, z_index=z_index, opacity=opacity)
+
+        all_bounds = [e.bounds() for e in resolved]
+        min_x = min(b[0] for b in all_bounds)
+        min_y = min(b[1] for b in all_bounds)
+        max_x = max(b[2] for b in all_bounds)
+        max_y = max(b[3] for b in all_bounds)
+        cx = (min_x + max_x) / 2
+        cy = (min_y + max_y) / 2
+
+        for e in resolved:
+            e._move_by(-cx, -cy)
+            e._surface = None  # Detach; now lives in group's local space
+
+        group = cls(cx, cy, z_index=z_index, opacity=opacity)
+        group._children = resolved
+        return group
+
     @property
     def children(self) -> list[Entity]:
         """The child entities in this group (copy)."""

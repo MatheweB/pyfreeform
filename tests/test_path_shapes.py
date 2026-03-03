@@ -109,3 +109,96 @@ def test_connection_with_lissajous_arc():
     # Connection should render without error
     svg = conn.to_svg()
     assert "<path" in svg or "<line" in svg
+
+
+# =========================================================================
+# add_path(relative=True) — _ScaledPathable wrapping
+# =========================================================================
+
+
+class TestAddPathRelative:
+    """Tests for the relative=True path scaling feature."""
+
+    def _scene(self) -> Scene:
+        # 200×100 scene at (0, 0) — easy to reason about
+        return Scene(200, 100)
+
+    def test_wave_start_maps_to_scene_origin(self):
+        """Wave start=(0, 0) with relative=True → scene's top-left (0, 0)."""
+        scene = self._scene()
+        path = scene.add_path(
+            Wave(start=(0.0, 0.0), end=(1.0, 0.0), amplitude=0.0),
+            relative=True,
+        )
+        start = path.point_at(0.0)
+        assert abs(start.x - 0.0) < 0.5
+        assert abs(start.y - 0.0) < 0.5
+
+    def test_wave_end_maps_to_scene_right_edge(self):
+        """Wave end=(1, 0) with relative=True → x=200 (scene width)."""
+        scene = self._scene()
+        path = scene.add_path(
+            Wave(start=(0.0, 0.0), end=(1.0, 0.0), amplitude=0.0),
+            relative=True,
+        )
+        end = path.point_at(1.0)
+        assert abs(end.x - 200.0) < 0.5
+
+    def test_wave_midline_maps_to_vertical_center(self):
+        """Wave along y=0.5 → y=50 (half of scene height=100)."""
+        scene = self._scene()
+        path = scene.add_path(
+            Wave(start=(0.0, 0.5), end=(1.0, 0.5), amplitude=0.0),
+            relative=True,
+        )
+        mid = path.point_at(0.5)
+        assert abs(mid.y - 50.0) < 0.5
+
+    def test_spiral_center_maps_to_scene_center(self):
+        """Spiral(center=(0.5, 0.5)) → pixel center (100, 50)."""
+        scene = self._scene()
+        # Tiny spiral so all points cluster around center
+        path = scene.add_path(
+            Spiral(center=(0.5, 0.5), start_radius=0.0, end_radius=0.001, turns=1),
+            relative=True,
+        )
+        # t=0 → start_radius=0, so point_at(0) ≈ center
+        start = path.point_at(0.0)
+        assert abs(start.x - 100.0) < 1.0
+        assert abs(start.y - 50.0) < 1.0
+
+    def test_relative_false_passes_pathable_unchanged(self):
+        """Without relative=True, pathable coords are used as-is (pixels)."""
+        scene = self._scene()
+        # Wave in pixel coords — starts at x=10, ends at x=190
+        path = scene.add_path(
+            Wave(start=(10.0, 50.0), end=(190.0, 50.0), amplitude=0.0),
+            relative=False,
+        )
+        start = path.point_at(0.0)
+        assert abs(start.x - 10.0) < 0.5
+        assert abs(start.y - 50.0) < 0.5
+
+    def test_relative_path_spans_correct_width(self):
+        """Wave from x=0.1 to x=0.9 should span 80% of the scene width."""
+        scene = self._scene()
+        path = scene.add_path(
+            Wave(start=(0.1, 0.5), end=(0.9, 0.5), amplitude=0.0),
+            relative=True,
+        )
+        start = path.point_at(0.0)
+        end = path.point_at(1.0)
+        width_spanned = end.x - start.x
+        assert abs(width_spanned - 160.0) < 1.0  # 0.8 * 200 = 160
+
+    def test_lissajous_closed_with_relative(self):
+        """Lissajous with relative=True renders without error (is_closed passes through)."""
+        scene = self._scene()
+        # Should not raise
+        path = scene.add_path(
+            Lissajous(center=(0.5, 0.5), size=0.3),
+            relative=True,
+            closed=True,
+        )
+        svg = scene.to_svg()
+        assert "<path" in svg
