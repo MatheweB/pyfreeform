@@ -10,6 +10,7 @@ from ..animation.shared import (
     add_draw,
     add_generic_animate,
     apply_chain,
+    apply_loop,
     clear_all_animations,
 )
 from ..color import Color, ColorLike, apply_brightness
@@ -460,14 +461,14 @@ class Connection:
         duration: float = 1.0,
         delay: float = 0.0,
         easing: EasingLike = "ease-in-out",
-        repeat: RepeatLike = False,
-        bounce: bool = False,
         hold: bool = True,
         reverse: bool = False,
+        repeat: RepeatLike = False,
+        bounce: bool = False,
     ) -> Connection:
         """Animate the connection drawing itself."""
         add_draw(self, duration=duration, delay=delay, easing=easing,
-            repeat=repeat, bounce=bounce, hold=hold, reverse=reverse)
+            hold=hold, reverse=reverse, repeat=repeat, bounce=bounce)
         return self
 
     def animate(
@@ -479,15 +480,36 @@ class Connection:
         duration: float = 1.0,
         delay: float = 0.0,
         easing: EasingLike = "linear",
+        hold: bool = True,
         repeat: RepeatLike = False,
         bounce: bool = False,
-        hold: bool = True,
     ) -> Connection:
         """Animate any property."""
         add_generic_animate(self, prop, to=to, keyframes=keyframes,
-            duration=duration, delay=delay, easing=easing,
-            repeat=repeat, bounce=bounce, hold=hold)
+            duration=duration, delay=delay, easing=easing, hold=hold,
+            repeat=repeat, bounce=bounce)
         return self
+
+    def loop(self, *, bounce: bool = False, times: RepeatLike = True) -> None:
+        """Loop all animations on this connection.
+
+        Terminal method — returns ``None``. Call this as the last step
+        after building your animation or chain.
+
+        Args:
+            bounce: If ``True``, alternate direction each cycle. Default ``False``.
+            times: ``True`` = loop forever (default); ``int >= 2`` = loop N times.
+
+        Raises:
+            ValueError: If *times* does not represent a real loop.
+            ValueError: If no animations have been added yet.
+
+        Example::
+
+            conn.animate_draw(duration=2.0).loop(bounce=True)
+            conn.animate_fade(to=0.2).then().animate_draw(duration=1.5).loop()
+        """
+        apply_loop(self, bounce=bounce, times=times)
 
     def clear_animations(self) -> Connection:
         """Remove all animations."""

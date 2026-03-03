@@ -5,79 +5,75 @@ Five animations that showcase what's possible when you combine PyFreeform's anim
 !!! tip "Browser preview"
     Animated SVGs play in web browsers. They won't animate in image viewers or editors like Inkscape.
 
-## Animated Fractal — Koch Snowflake
+## Mandelbrot Set
 
-Build a Koch snowflake iteration by iteration. Each depth level appears in sequence, revealing the fractal's self-similar structure as it grows:
+The Mandelbrot set revealed iteration by iteration on a 100&times;100 grid. Each cell maps to a point on the complex plane, colored by escape iteration. The set assembles band-by-band, holds, then dissolves in reverse — looping forever:
 
 ```python
-import math
-from pyfreeform import Scene, Line
+from pyfreeform import Scene, Rect
+from pyfreeform.color import hsl
 
-scene = Scene(420, 420, background="#0a0a1a")
-cx, cy = 210, 210
-r = 420 * 0.38
+cols, rows = 100, 100
+scene = Scene(cols * 4, rows * 4, background="#0a0a1a")
+max_iter = 50
 
-# Equilateral triangle vertices
-v = []
-for i in range(3):
-    angle = math.radians(-90 + i * 120)
-    v.append((cx + r * math.cos(angle), cy + r * math.sin(angle)))
+# Map grid to complex plane: x ∈ [-2, 0.5], y ∈ [-1.25, 1.25]
+x_min, x_max = -2.0, 0.5
+y_min, y_max = -1.25, 1.25
 
-def koch_points(p1, p2, depth):
-    """Recursively subdivide a segment into Koch curve points."""
-    if depth == 0:
-        return [p1]
-    x1, y1 = p1
-    x2, y2 = p2
-    dx, dy = (x2 - x1) / 3, (y2 - y1) / 3
-    a = (x1 + dx, y1 + dy)
-    b = (x1 + 2 * dx, y1 + 2 * dy)
-    peak = (
-        (a[0] + b[0]) / 2 + math.sqrt(3) / 2 * (a[1] - b[1]),
-        (a[1] + b[1]) / 2 + math.sqrt(3) / 2 * (b[0] - a[0]),
-    )
-    return (
-        koch_points(p1, a, depth - 1)
-        + koch_points(a, peak, depth - 1)
-        + koch_points(peak, b, depth - 1)
-        + koch_points(b, p2, depth - 1)
-    )
+by_iter = {}
 
-# Build each depth layer with sequential animation
-colors = ["#ff6b6b", "#ffd93d", "#6bcb77", "#4d96ff"]
-total_delay = 0.0
+for row in range(rows):
+    for col in range(cols):
+        cx = x_min + (col + 0.5) / cols * (x_max - x_min)
+        cy = y_min + (row + 0.5) / rows * (y_max - y_min)
+        c = complex(cx, cy)
 
-for d in range(1, 5):
-    points = []
-    for i in range(3):
-        points.extend(koch_points(v[i], v[(i + 1) % 3], d))
-    points.append(points[0])
+        z = 0 + 0j
+        escape = max_iter
+        for i in range(max_iter):
+            z = z * z + c
+            if z.real * z.real + z.imag * z.imag > 4:
+                escape = i
+                break
 
-    color = colors[(d - 1) % len(colors)]
-    segments = []
-    step = max(1, len(points) // 80)
-    for j in range(0, len(points) - 1, step):
-        end_idx = min(j + step, len(points) - 1)
-        line = Line(*points[j], *points[end_idx], width=1.5, color=color, opacity=0.0)
-        scene.place(line)
-        segments.append(line)
+        x_px, y_px = col * 4, row * 4
+        if escape == max_iter:
+            scene.place(Rect(x_px, y_px, 4, 4, fill="#0c0c2a"))
+            continue
 
-    # Each segment fades in with staggered timing
-    dur = 1.5
-    per_seg = dur / max(len(segments), 1)
-    for k, seg in enumerate(segments):
-        seg.animate_fade(to=0.85, duration=0.3,
-                         delay=total_delay + k * per_seg, easing="ease-out")
-    total_delay += dur + 0.3
+        t = escape / max_iter
+        hue = (240 + t * 300) % 360
+        color = hsl(hue, 0.85, 0.35 + 0.3 * t)
+        r = Rect(x_px, y_px, 4, 4, fill=color, opacity=0.0)
+        scene.place(r)
+        by_iter.setdefault(escape, []).append(r)
+
+# Compute per-band delays, then animate with bounce
+delay = 0.0
+band_delays = []
+for i in sorted(by_iter):
+    band_delays.append((delay, by_iter[i]))
+    delay += 0.06
+
+forward_time = delay + 0.5
+
+for appear, fills in band_delays:
+    for fill in fills:
+        fill.animate_fade(
+            keyframes={0: 0, appear: 0, appear + 0.4: 1.0,
+                       forward_time: 1.0},
+        )
+        fill.loop(bounce=True)
 ```
 
 <figure markdown>
-![Koch snowflake animation](../_images/recipes/anim-koch.svg){ width="420" }
-<figcaption>A Koch snowflake assembling itself — each fractal depth appears in sequence, colored by iteration.</figcaption>
+![Mandelbrot set animation](../_images/recipes/anim-mandelbrot.svg){ width="400" }
+<figcaption>The Mandelbrot set assembling itself, then dissolving in reverse — the fractal boundary is the last to appear and first to vanish.</figcaption>
 </figure>
 
-!!! tip "Fractal math"
-    Each Koch iteration replaces every line segment with 4 segments at 1/3 the length. After *n* iterations, the snowflake has 3 &times; 4<sup>n</sup> segments. The perimeter grows without bound, but the area converges — a classic fractal paradox.
+!!! tip "The Mandelbrot set"
+    For each point *c* in the complex plane, iterate *z* &rarr; *z*&sup2; + *c* starting from *z* = 0. If *z* stays bounded, *c* is in the set. The boundary between "escapes" and "stays" is infinitely detailed — zoom in anywhere on the edge and you'll find miniature copies of the whole set.
 
 ---
 
@@ -104,13 +100,15 @@ path.animate_draw(duration=6.0, easing="linear")
 start = liss.point_at(0.0)
 tracer = Dot(start.x, start.y, radius=6, color="coral")
 scene.place(tracer)
-tracer.animate_follow(liss, duration=6.0, easing="linear", repeat=True)
+tracer.animate_follow(liss, duration=6.0, easing="linear")
+tracer.loop()
 
 # Glowing center on the tracer — pulse radius, not scale
 glow = Dot(start.x, start.y, radius=3, color="white")
 scene.place(glow)
-glow.animate_follow(liss, duration=6.0, easing="linear", repeat=True)
-glow.animate_radius(to=8, duration=0.8, easing="ease-in-out", bounce=True, repeat=True)
+glow.animate_follow(liss, duration=6.0, easing="linear")
+glow.animate_radius(to=8, duration=0.8, easing="ease-in-out")
+glow.loop(bounce=True)
 ```
 
 <figure markdown>
@@ -158,7 +156,8 @@ stagger(*stars, offset=0.02,
 # Some stars spin for a twinkling effect
 for i, dot in enumerate(stars):
     if i % 5 == 0:
-        dot.animate_spin(360, duration=8.0 + (i % 3) * 2, repeat=True, easing="linear")
+        dot.animate_spin(360, duration=8.0 + (i % 3) * 2, easing="linear")
+        dot.loop()
 ```
 
 <figure markdown>
@@ -200,13 +199,15 @@ for ring_idx in range(n_rings):
         scene.place(dot)
 
         dot.animate_radius(to=10, duration=2.0, delay=phase_delay + j * 0.05,
-                           easing="ease-in-out", bounce=True, repeat=True)
+                           easing="ease-in-out")
+        dot.loop(bounce=True)
 
 # Center jewel
 center = Dot(cx, cy, radius=8, color="white")
 scene.place(center)
-center.animate_radius(to=16, duration=1.5, easing="ease-in-out", bounce=True, repeat=True)
-center.animate_spin(360, duration=6.0, repeat=True, easing="linear")
+center.animate_radius(to=16, duration=1.5, easing="ease-in-out")
+center.animate_spin(360, duration=6.0, easing="linear")
+center.loop(bounce=True)
 ```
 
 <figure markdown>
@@ -282,6 +283,6 @@ These recipes barely scratch the surface. Try combining techniques:
 - **Lissajous + color keyframes**: Animate fill color as a dot traces the curve
 - **Galaxy + connections**: Connect nearby stars with self-drawing connections
 - **Mandala + .then()**: Sequentially build each ring, then start the breathing animation
-- **Fractal + follow**: Trace a dot along a Koch snowflake edge using `.animate_follow()`
+- **Mandelbrot + zoom**: Animate into the boundary by narrowing the complex-plane window each frame
 
 [&larr; Hidden Gems](07-hidden-gems.md){ .md-button }

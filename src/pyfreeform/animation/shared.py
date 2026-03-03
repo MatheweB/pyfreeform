@@ -44,6 +44,45 @@ def apply_chain(target: Entity | Connection, gap: float = 0) -> None:
     target._chain_delay = max(_effective_end(a) for a in target._animations) + gap
 
 
+def apply_loop(
+    target: Entity | Connection,
+    *,
+    bounce: bool = False,
+    times: RepeatLike = True,
+) -> None:
+    """Stamp looping behaviour onto all animations on *target*.
+
+    Called by ``Entity.loop()`` and ``Connection.loop()``. Iterates all
+    animations and sets their ``bounce`` and ``repeat`` fields directly
+    on the dataclass instances — the SMIL renderer reads these fields at
+    render time, so no renderer changes are needed.
+
+    Args:
+        target: Entity or Connection whose animations will be updated.
+        bounce: If True, each cycle reverses direction.
+        times: ``True`` = loop forever, ``int >= 2`` = loop N times.
+
+    Raises:
+        ValueError: If *times* is ``False``, 0, 1, or any negative integer —
+            these values do not actually loop.
+        ValueError: If there are no animations to loop (nothing to apply to).
+    """
+    # bool is a subclass of int in Python, so exclude booleans from the
+    # int-range check to avoid `True <= 1` being True (True == 1).
+    if times is False or (not isinstance(times, bool) and isinstance(times, int) and times <= 1):
+        raise ValueError(
+            f"loop(times={times!r}) doesn't actually loop. "
+            "Use times=True for infinite or times=N where N >= 2."
+        )
+    if not target._animations:
+        raise ValueError(
+            "No animations to loop. Call animate_* methods before .loop()."
+        )
+    for anim in target._animations:
+        anim.bounce = bounce
+        anim.repeat = times
+
+
 def add_fade(
     target: Entity | Connection,
     to: float,
@@ -51,15 +90,15 @@ def add_fade(
     duration: float = 1.0,
     delay: float = 0.0,
     easing: EasingLike = "linear",
+    hold: bool = True,
     repeat: RepeatLike = False,
     bounce: bool = False,
-    hold: bool = True,
 ) -> None:
     """Build and append a fade (opacity) animation."""
     delay = consume_chain_delay(target, delay)
     target._animations.append(build_fade(
-        target, to, duration=duration, delay=delay, easing=easing,
-        repeat=repeat, bounce=bounce, hold=hold,
+        target, to, duration=duration, delay=delay, easing=easing, hold=hold,
+        repeat=repeat, bounce=bounce,
     ))
 
 
@@ -69,16 +108,16 @@ def add_draw(
     duration: float = 1.0,
     delay: float = 0.0,
     easing: EasingLike = "ease-in-out",
-    repeat: RepeatLike = False,
-    bounce: bool = False,
     hold: bool = True,
     reverse: bool = False,
+    repeat: RepeatLike = False,
+    bounce: bool = False,
 ) -> None:
     """Build and append a draw (stroke reveal) animation."""
     delay = consume_chain_delay(target, delay)
     target._animations.append(build_draw(
-        duration=duration, delay=delay, easing=easing,
-        repeat=repeat, bounce=bounce, hold=hold, reverse=reverse,
+        duration=duration, delay=delay, easing=easing, hold=hold, reverse=reverse,
+        repeat=repeat, bounce=bounce,
     ))
 
 
@@ -91,16 +130,16 @@ def add_generic_animate(
     duration: float = 1.0,
     delay: float = 0.0,
     easing: EasingLike = "linear",
+    hold: bool = True,
     repeat: RepeatLike = False,
     bounce: bool = False,
-    hold: bool = True,
 ) -> None:
     """Build and append a generic property animation."""
     delay = consume_chain_delay(target, delay)
     target._animations.append(build_animate(
         target, prop, to=to, keyframes=keyframes,
-        duration=duration, delay=delay, easing=easing,
-        repeat=repeat, bounce=bounce, hold=hold,
+        duration=duration, delay=delay, easing=easing, hold=hold,
+        repeat=repeat, bounce=bounce,
     ))
 
 

@@ -2,7 +2,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="440" height="440" viewBox="0 0 440 440">
   <rect width="100%" height="100%" fill="#050510" />
   <polygon points="209.906,220.475 211.968,226.408 218.249,226.536 213.243,230.331 215.062,236.344 209.906,232.756 204.749,236.344 206.568,230.331 201.563,226.536 207.843,226.408" fill="#eea92b" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 209.906 229.247;360 209.906 229.247" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="221.693,191.969 223.749,197.884 230.01,198.012 225.02,201.795 226.833,207.789 221.693,204.212 216.553,207.789 218.366,201.795 213.376,198.012 219.637,197.884" fill="#eea62b" opacity="0">
@@ -18,7 +18,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.08s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="211.294,243.748 213.324,249.588 219.506,249.714 214.579,253.45 216.37,259.368 211.294,255.837 206.218,259.368 208.009,253.45 203.082,249.714 209.264,249.588" fill="#ee972b" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.1s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.1s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 211.294 252.383;360 211.294 252.383" keyTimes="0;1" dur="12.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="203.307,179.249 205.331,185.071 211.493,185.197 206.582,188.921 208.367,194.82 203.307,191.3 198.248,194.82 200.033,188.921 195.121,185.197 201.283,185.071" fill="#ee942b" opacity="0">
@@ -34,7 +34,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.18s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="233.586,254.825 235.584,260.573 241.668,260.697 236.819,264.373 238.581,270.197 233.586,266.722 228.592,270.197 230.354,264.373 225.505,260.697 231.589,260.573" fill="#ee852b" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.2s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.2s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 233.586 263.323;360 233.586 263.323" keyTimes="0;1" dur="10.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="178.971,187.75 180.962,193.479 187.026,193.603 182.193,197.267 183.95,203.073 178.971,199.608 173.992,203.073 175.749,197.267 170.916,193.603 176.98,193.479" fill="#ee822b" opacity="0">
@@ -50,7 +50,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.28s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="261.869,246.932 263.834,252.586 269.819,252.708 265.049,256.325 266.782,262.055 261.869,258.636 256.955,262.055 258.688,256.325 253.918,252.708 259.903,252.586" fill="#ee742b" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.3s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.3s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 261.869 255.292;360 261.869 255.292" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="163.604,213.996 165.564,219.632 171.529,219.753 166.774,223.358 168.502,229.069 163.604,225.661 158.707,229.069 160.435,223.358 155.68,219.753 161.645,219.632" fill="#ee702b" opacity="0">
@@ -66,7 +66,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.38s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="282.173,220.148 284.106,225.71 289.993,225.83 285.301,229.387 287.006,235.023 282.173,231.66 277.34,235.023 279.045,229.387 274.353,225.83 280.239,225.71" fill="#ee622b" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.4s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.4s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 282.173 228.371;360 282.173 228.371" keyTimes="0;1" dur="12.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="167.289,248.473 169.216,254.016 175.083,254.135 170.407,257.68 172.106,263.297 167.289,259.946 162.473,263.297 164.172,257.68 159.496,254.135 165.363,254.016" fill="#ee5e2b" opacity="0">
@@ -82,7 +82,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.48s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="283.37,182.645 285.271,188.113 291.059,188.231 286.446,191.729 288.122,197.271 283.37,193.964 278.618,197.271 280.294,191.729 275.681,188.231 281.469,188.113" fill="#ee502b" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.5s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.5s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 283.37 190.73;360 283.37 190.73" keyTimes="0;1" dur="10.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="192.531,277.558 194.425,283.008 200.194,283.125 195.596,286.611 197.267,292.134 192.531,288.838 187.795,292.134 189.466,286.611 184.868,283.125 190.637,283.008" fill="#ee4c2b" opacity="0">
@@ -98,7 +98,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.58s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="261.231,147.947 263.1,153.322 268.79,153.438 264.254,156.877 265.902,162.324 261.231,159.073 256.56,162.324 258.208,156.877 253.673,153.438 259.362,153.322" fill="#ee3e2b" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.6s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.6s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 261.231 155.894;360 261.231 155.894" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="233.106,288.403 234.969,293.76 240.639,293.875 236.119,297.302 237.762,302.73 233.106,299.491 228.451,302.73 230.093,297.302 225.574,293.875 231.244,293.76" fill="#ee3a2b" opacity="0">
@@ -114,7 +114,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.68s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="220.413,130.054 222.249,135.336 227.841,135.45 223.384,138.829 225.003,144.182 220.413,140.988 215.822,144.182 217.442,138.829 212.985,135.45 218.577,135.336" fill="#ee2c2b" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.7000000000000001s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.7000000000000001s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 220.413 137.864;360 220.413 137.864" keyTimes="0;1" dur="12.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="275.939,273.901 277.769,279.165 283.34,279.278 278.899,282.645 280.513,287.979 275.939,284.796 271.364,287.979 272.978,282.645 268.537,279.278 274.109,279.165" fill="#ee2b2d" opacity="0">
@@ -130,7 +130,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.78s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="173.326,138.131 175.13,143.32 180.623,143.432 176.245,146.752 177.836,152.01 173.326,148.872 168.817,152.01 170.408,146.752 166.029,143.432 171.522,143.32" fill="#ee2b3b" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.8s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.8s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 173.326 145.803;360 173.326 145.803" keyTimes="0;1" dur="10.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="305.56,235.819 307.357,240.99 312.83,241.102 308.468,244.409 310.053,249.649 305.56,246.522 301.066,249.649 302.651,244.409 298.289,241.102 303.762,240.99" fill="#ee2b3f" opacity="0">
@@ -146,7 +146,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.88s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="136.106,172.686 137.877,177.783 143.272,177.893 138.972,181.153 140.534,186.317 136.106,183.235 131.677,186.317 133.239,181.153 128.939,177.893 134.334,177.783" fill="#ee2b4d" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.9s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.9s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 136.106 180.221;360 136.106 180.221" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="309.691,184.859 311.456,189.937 316.831,190.046 312.547,193.294 314.103,198.44 309.691,195.369 305.278,198.44 306.835,193.294 302.551,190.046 307.926,189.937" fill="#ee2b51" opacity="0">
@@ -162,7 +162,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="0.98s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="122.985,224.673 124.724,229.676 130.02,229.784 125.799,232.985 127.333,238.055 122.985,235.029 118.637,238.055 120.171,232.985 115.949,229.784 121.246,229.676" fill="#ee2b5f" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.0s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.0s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 122.985 232.07;360 122.985 232.07" keyTimes="0;1" dur="12.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="284.001,137.471 285.734,142.456 291.011,142.564 286.805,145.752 288.333,150.804 284.001,147.789 279.669,150.804 281.198,145.752 276.992,142.564 282.269,142.456" fill="#ee2b63" opacity="0">
@@ -178,7 +178,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.08s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="141.011,277.974 142.718,282.884 147.916,282.99 143.773,286.131 145.279,291.107 141.011,288.138 136.744,291.107 138.249,286.131 134.107,282.99 139.304,282.884" fill="#ee2b71" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.1s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.1s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 141.011 285.234;360 141.011 285.234" keyTimes="0;1" dur="10.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="234.306,110.408 236.006,115.3 241.184,115.406 237.057,118.535 238.557,123.492 234.306,120.534 230.054,123.492 231.554,118.535 227.427,115.406 232.605,115.3" fill="#ee2b75" opacity="0">
@@ -194,7 +194,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.18s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="186.981,314.571 188.656,319.388 193.755,319.492 189.691,322.573 191.168,327.455 186.981,324.542 182.795,327.455 184.272,322.573 180.208,319.492 185.307,319.388" fill="#ee2b83" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.2s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.2s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 186.981 321.693;360 186.981 321.693" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="175.293,114.822 176.961,119.621 182.04,119.724 177.992,122.794 179.463,127.657 175.293,124.755 171.122,127.657 172.593,122.794 168.545,119.724 173.624,119.621" fill="#ee2b86" opacity="0">
@@ -210,7 +210,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.28s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="247.793,320.701 249.436,325.425 254.436,325.527 250.451,328.549 251.899,333.337 247.793,330.48 243.688,333.337 245.136,328.549 241.15,325.527 246.151,325.425" fill="#ee2b95" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.3s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.3s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 247.793 327.686;360 247.793 327.686" keyTimes="0;1" dur="12.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="126.062,151.954 127.698,156.66 132.679,156.762 128.709,159.772 130.151,164.541 126.062,161.695 121.972,164.541 123.415,159.772 119.445,156.762 124.426,156.66" fill="#ee2b98" opacity="0">
@@ -226,7 +226,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.3800000000000001s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="304.269,291.921 305.879,296.553 310.781,296.653 306.874,299.615 308.293,304.309 304.269,301.508 300.244,304.309 301.664,299.615 297.756,296.653 302.659,296.553" fill="#ee2ba7" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.4000000000000001s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.4000000000000001s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 304.269 298.769;360 304.269 298.769" keyTimes="0;1" dur="10.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="103.846,212.012 105.449,216.625 110.332,216.725 106.44,219.675 107.855,224.35 103.846,221.56 99.8372,224.35 101.251,219.675 97.3597,216.725 102.242,216.625" fill="#ee2baa" opacity="0">
@@ -242,7 +242,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.48s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="337.303,235.26 338.881,239.798 343.685,239.896 339.856,242.799 341.247,247.398 337.303,244.654 333.359,247.398 334.751,242.799 330.922,239.896 335.726,239.798" fill="#ee2bb8" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.5s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.5s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 337.303 241.97;360 337.303 241.97" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="117.999,276.768 119.57,281.288 124.354,281.386 120.541,284.277 121.927,288.857 117.999,286.124 114.071,288.857 115.457,284.277 111.644,281.386 116.428,281.288" fill="#ee2bbc" opacity="0">
@@ -258,7 +258,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.58s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="334.354,167.569 335.899,172.014 340.605,172.11 336.854,174.954 338.217,179.459 334.354,176.77 330.49,179.459 331.853,174.954 328.103,172.11 332.808,172.014" fill="#ee2bca" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.6s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.6s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 334.354 174.141;360 334.354 174.141" keyTimes="0;1" dur="12.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="166.327,325.198 167.866,329.625 172.552,329.72 168.817,332.552 170.175,337.038 166.327,334.361 162.48,337.038 163.838,332.552 160.103,329.72 164.789,329.625" fill="#ee2bce" opacity="0">
@@ -274,7 +274,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.68s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="294.06,110.454 295.573,114.806 300.18,114.9 296.508,117.684 297.843,122.095 294.06,119.463 290.278,122.095 291.612,117.684 287.94,114.9 292.547,114.806" fill="#ee2bdc" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.7s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.7s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 294.06 116.889;360 294.06 116.889" keyTimes="0;1" dur="10.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="235.128,340.381 236.634,344.715 241.222,344.809 237.565,347.581 238.894,351.972 235.128,349.352 231.361,351.972 232.69,347.581 229.034,344.809 233.621,344.715" fill="#ee2be0" opacity="0">
@@ -290,7 +290,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.78s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="227.353,83.3194 228.834,87.5789 233.343,87.6708 229.749,90.3953 231.055,94.7116 227.353,92.1359 223.652,94.7116 224.958,90.3953 221.364,87.6708 225.873,87.5789" fill="#ed2bee" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.8s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.8s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 227.353 89.6169;360 227.353 89.6169" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="303.103,315.392 304.577,319.633 309.066,319.724 305.488,322.437 306.788,326.735 303.103,324.17 299.417,326.735 300.718,322.437 297.14,319.724 301.629,319.633" fill="#ea2bee" opacity="0">
@@ -306,7 +306,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.8800000000000001s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="154.498,96.7915 155.946,100.958 160.357,101.048 156.841,103.713 158.119,107.935 154.498,105.416 150.877,107.935 152.155,103.713 148.639,101.048 153.05,100.958" fill="#dc2bee" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.9000000000000001s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.9000000000000001s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 154.498 102.952;360 154.498 102.952" keyTimes="0;1" dur="12.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="348.026,256.148 349.468,260.296 353.858,260.386 350.359,263.039 351.63,267.242 348.026,264.734 344.421,267.242 345.693,263.039 342.193,260.386 346.584,260.296" fill="#d82bee" opacity="0">
@@ -322,7 +322,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="1.98s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="98.8742,148.736 100.29,152.81 104.602,152.898 101.165,155.503 102.414,159.631 98.8742,157.168 95.3343,159.631 96.5831,155.503 93.1465,152.898 97.4582,152.81" fill="#ca2bee" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.0s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.0s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 98.8742 154.759;360 98.8742 154.759" keyTimes="0;1" dur="10.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="354.043,180.127 355.453,184.182 359.745,184.269 356.324,186.863 357.567,190.972 354.043,188.52 350.519,190.972 351.762,186.863 348.342,184.269 352.634,184.182" fill="#c62bee" opacity="0">
@@ -338,7 +338,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.08s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="79.427,224.32 80.8106,228.3 85.0239,228.386 81.6658,230.932 82.8861,234.966 79.427,232.559 75.9679,234.966 77.1882,230.932 73.83,228.386 78.0433,228.3" fill="#b82bee" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.1s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.1s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 79.427 230.205;360 79.427 230.205" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="317.217,111.18 318.594,115.142 322.788,115.228 319.445,117.762 320.66,121.777 317.217,119.381 313.774,121.777 314.988,117.762 311.646,115.228 315.84,115.142" fill="#b42bee" opacity="0">
@@ -354,7 +354,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.18s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="104.229,300.27 105.58,304.157 109.695,304.241 106.415,306.727 107.607,310.667 104.229,308.316 100.85,310.667 102.042,306.727 98.7625,304.241 102.877,304.157" fill="#a62bee" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.2s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.2s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 104.229 306.017;360 104.229 306.017" keyTimes="0;1" dur="12.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="247.386,72.0149 248.73,75.8838 252.826,75.9673 249.562,78.4419 250.748,82.3625 247.386,80.0229 244.024,82.3625 245.21,78.4419 241.946,75.9673 246.041,75.8838" fill="#a22bee" opacity="0">
@@ -370,7 +370,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.2800000000000002s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="167.335,352.105 168.654,355.899 172.67,355.981 169.469,358.408 170.632,362.253 167.335,359.959 164.037,362.253 165.201,358.408 161.999,355.981 166.016,355.899" fill="#942bee" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.3000000000000003s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.3000000000000003s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 167.335 357.715;360 167.335 357.715" keyTimes="0;1" dur="10.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="165.576,76.7061 166.889,80.4821 170.886,80.5635 167.7,82.9787 168.858,86.805 165.576,84.5216 162.295,86.805 163.453,82.9787 160.267,80.5635 164.264,80.4821" fill="#902bee" opacity="0">
@@ -386,7 +386,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.38s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="250.104,362.073 251.391,365.775 255.309,365.855 252.186,368.222 253.321,371.973 250.104,369.735 246.888,371.973 248.022,368.222 244.9,365.855 248.818,365.775" fill="#822bee" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.4s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.4s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 250.104 367.546;360 250.104 367.546" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="97.6342,125.729 98.9144,129.412 102.813,129.492 99.7056,131.847 100.835,135.579 97.6342,133.352 94.4337,135.579 95.5628,131.847 92.4557,129.492 96.354,129.412" fill="#7f2bee" opacity="0">
@@ -402,7 +402,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.48s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="326.729,325.217 327.984,328.826 331.803,328.904 328.759,331.212 329.865,334.869 326.729,332.686 323.594,334.869 324.7,331.212 321.656,328.904 325.475,328.826" fill="#702bee" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.5s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.5s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 326.729 330.552;360 326.729 330.552" keyTimes="0;1" dur="12.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="66.0166,205.231 67.2644,208.821 71.0643,208.899 68.0357,211.195 69.1362,214.833 66.0166,212.662 62.8969,214.833 63.9975,211.195 60.9688,208.899 64.7687,208.821" fill="#6d2bee" opacity="0">
@@ -418,7 +418,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.58s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="372.325,251.507 373.547,255.023 377.268,255.099 374.302,257.347 375.38,260.91 372.325,258.784 369.27,260.91 370.347,257.347 367.381,255.099 371.103,255.023" fill="#5e2bee" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.6s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.6s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 372.325 256.705;360 372.325 256.705" keyTimes="0;1" dur="10.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="82.3641,290.947 83.5797,294.444 87.2811,294.519 84.3309,296.756 85.403,300.3 82.3641,298.185 79.3253,300.3 80.3974,296.756 77.4472,294.519 81.1486,294.444" fill="#5b2bee" opacity="0">
@@ -434,7 +434,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.68s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="371.029,163.196 372.218,166.619 375.841,166.692 372.953,168.881 374.003,172.35 371.029,170.28 368.054,172.35 369.104,168.881 366.216,166.692 369.839,166.619" fill="#4d2bee" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.7s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.7s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 371.029 168.256;360 371.029 168.256" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="143.308,355.654 144.491,359.058 148.094,359.132 145.222,361.309 146.266,364.758 143.308,362.7 140.35,364.758 141.393,361.309 138.522,359.132 142.125,359.058" fill="#492bee" opacity="0">
@@ -450,7 +450,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.7800000000000002s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="321.477,88.0871 322.634,91.4167 326.158,91.4885 323.349,93.6181 324.37,96.992 321.477,94.9786 318.583,96.992 319.604,93.6181 316.795,91.4885 320.319,91.4167" fill="#3b2bee" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.8000000000000003s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.8000000000000003s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 321.477 93.0096;360 321.477 93.0096" keyTimes="0;1" dur="12.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="230.993,377.864 232.144,381.175 235.649,381.247 232.855,383.364 233.87,386.72 230.993,384.717 228.116,386.72 229.131,383.364 226.338,381.247 229.842,381.175" fill="#372bee" opacity="0">
@@ -466,7 +466,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.88s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="237.773,50.7606 238.898,53.9972 242.323,54.067 239.593,56.1371 240.585,59.4168 237.773,57.4596 234.96,59.4168 235.952,56.1371 233.222,54.067 236.648,53.9972" fill="#2b2dee" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.9s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.9s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 237.773 55.5456;360 237.773 55.5456" keyTimes="0;1" dur="10.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="318.317,348.967 319.435,352.185 322.841,352.255 320.127,354.313 321.113,357.574 318.317,355.628 315.52,357.574 316.507,354.313 313.792,352.255 317.198,352.185" fill="#2b30ee" opacity="0">
@@ -482,7 +482,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="2.98s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="145.487,64.5347 146.58,67.6783 149.907,67.7461 147.255,69.7567 148.219,72.9421 145.487,71.0412 142.756,72.9421 143.719,69.7567 141.067,67.7461 144.395,67.6783" fill="#2b3fee" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.0s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.0s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 145.487 69.1822;360 145.487 69.1822" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="377.337,276.458 378.424,279.583 381.731,279.65 379.095,281.649 380.053,284.815 377.337,282.926 374.622,284.815 375.58,281.649 372.943,279.65 376.251,279.583" fill="#2b42ee" opacity="0">
@@ -498,7 +498,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.08s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="73.8216,126.794 74.882,129.844 78.1109,129.91 75.5373,131.861 76.4725,134.952 73.8216,133.108 71.1707,134.952 72.1059,131.861 69.5323,129.91 72.7612,129.844" fill="#2b50ee" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.1s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.1s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 73.8216 131.304;360 73.8216 131.304" keyTimes="0;1" dur="12.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="388.238,182.071 389.292,185.103 392.501,185.169 389.943,187.108 390.872,190.18 388.238,188.347 385.603,190.18 386.532,187.108 383.975,185.169 387.184,185.103" fill="#2b54ee" opacity="0">
@@ -514,7 +514,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.18s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="46.3375,219.302 47.3655,222.259 50.496,222.323 48.0009,224.215 48.9076,227.212 46.3375,225.423 43.7674,227.212 44.6741,224.215 42.179,222.323 45.3094,222.259" fill="#2b62ee" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.2s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.2s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 46.3375 223.674;360 46.3375 223.674" keyTimes="0;1" dur="10.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="345.961,95.2669 346.983,98.2058 350.094,98.2692 347.614,100.149 348.515,103.127 345.961,101.35 343.407,103.127 344.308,100.149 341.829,98.2692 344.94,98.2058" fill="#2b66ee" opacity="0">
@@ -530,7 +530,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.2800000000000002s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="73.2138,313.556 74.2095,316.42 77.2415,316.482 74.8249,318.314 75.7031,321.217 73.2138,319.485 70.7245,321.217 71.6027,318.314 69.1861,316.482 72.2181,316.42" fill="#2b74ee" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.3000000000000003s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.3000000000000003s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 73.2138 317.791;360 73.2138 317.791" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="262.307,44.0172 263.296,46.8631 266.308,46.9245 263.907,48.7448 264.78,51.6286 262.307,49.9077 259.833,51.6286 260.706,48.7448 258.305,46.9245 261.317,46.8631" fill="#2b78ee" opacity="0">
@@ -546,7 +546,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.38s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="147.565,379.608 148.529,382.379 151.462,382.439 149.124,384.212 149.974,387.02 147.565,385.344 145.157,387.02 146.006,384.212 143.668,382.439 146.602,382.379" fill="#2b86ee" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.4s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.4s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 147.565 383.705;360 147.565 383.705" keyTimes="0;1" dur="12.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="162.664,45.7943 163.621,48.5472 166.534,48.6066 164.212,50.3673 165.056,53.157 162.664,51.4923 160.271,53.157 161.115,50.3673 158.793,48.6066 161.707,48.5472" fill="#2b8aee" opacity="0">
@@ -562,7 +562,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.48s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="247.132,395.615 248.064,398.293 250.899,398.351 248.639,400.064 249.46,402.778 247.132,401.159 244.805,402.778 245.626,400.064 243.366,398.351 246.201,398.293" fill="#2b98ee" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.5s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.5s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 247.132 399.575;360 247.132 399.575" keyTimes="0;1" dur="10.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="78.292,101.658 79.2166,104.318 82.032,104.375 79.788,106.077 80.6035,108.772 78.292,107.164 75.9805,108.772 76.796,106.077 74.552,104.375 77.3674,104.318" fill="#2b9cee" opacity="0">
@@ -578,7 +578,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.58s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="340.955,355.066 341.854,357.652 344.591,357.707 342.41,359.361 343.202,361.981 340.955,360.418 338.709,361.981 339.501,359.361 337.32,357.707 340.057,357.652" fill="#2baaee" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.6s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.6s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 340.955 358.889;360 340.955 358.889" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="36.4885,195.439 37.3808,198.006 40.0978,198.062 37.9322,199.703 38.7192,202.304 36.4885,200.752 34.2579,202.304 35.0448,199.703 32.8793,198.062 35.5963,198.006" fill="#2badee" opacity="0">
@@ -594,7 +594,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.68s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="399.024,269.303 399.89,271.796 402.528,271.85 400.426,273.444 401.19,275.97 399.024,274.462 396.858,275.97 397.622,273.444 395.519,271.85 398.157,271.796" fill="#2bbcee" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.7s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.7s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 399.024 272.988;360 399.024 272.988" keyTimes="0;1" dur="12.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="51.7494,298.418 52.6094,300.892 55.2279,300.946 53.1408,302.528 53.8992,305.035 51.7494,303.539 49.5996,305.035 50.358,302.528 48.2709,300.946 50.8895,300.892" fill="#2bbfee" opacity="0">
@@ -610,7 +610,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.7800000000000002s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="401.89,164.392 402.724,166.792 405.264,166.844 403.24,168.378 403.975,170.81 401.89,169.359 399.805,170.81 400.541,168.378 398.516,166.844 401.056,166.792" fill="#2bceee" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.8000000000000003s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.8000000000000003s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 401.89 167.94;360 401.89 167.94" keyTimes="0;1" dur="10.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="120.786,378.154 121.614,380.535 124.134,380.586 122.126,382.109 122.855,384.521 120.786,383.082 118.717,384.521 119.447,382.109 117.439,380.586 119.959,380.535" fill="#2bd1ee" opacity="0">
@@ -626,7 +626,7 @@
   <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.88s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
 </polygon>
   <polygon points="347.164,73.2003 347.966,75.5068 350.407,75.5565 348.461,77.0318 349.169,79.369 347.164,77.9743 345.16,79.369 345.867,77.0318 343.921,75.5565 346.362,75.5068" fill="#2bdfee" opacity="0">
-  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.9s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" />
+  <animate attributeName="opacity" values="0;0.9" keyTimes="0;1" dur="0.5s" begin="3.9s" calcMode="spline" keySplines="0.0 0.0 0.58 1.0" fill="freeze" repeatCount="indefinite" />
   <animateTransform attributeName="transform" values="0 347.164 76.6103;360 347.164 76.6103" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
 </polygon>
   <polygon points="223.099,408.735 223.894,411.023 226.315,411.072 224.385,412.536 225.087,414.854 223.099,413.471 221.11,414.854 221.812,412.536 219.882,411.072 222.303,411.023" fill="#2be3ee" opacity="0">

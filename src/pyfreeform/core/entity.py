@@ -11,6 +11,7 @@ from ..animation.builders import build_follow, build_move, build_scale, build_sp
 from ..animation.shared import (
     add_generic_animate,
     apply_chain,
+    apply_loop,
     clear_all_animations,
     consume_chain_delay,
 )
@@ -823,6 +824,9 @@ class Entity(ABC):
 
             dot.animate_fade(to=0.0, duration=1.0).then().animate_spin(360, duration=1.0)
             dot.animate_fade(to=0.0, duration=1.0).then(0.5).animate_spin(360, duration=1.0)
+            # Bounce the whole chain with .loop():
+            dot.animate_fade(to=0.3, duration=1.5).then().animate_spin(360, duration=2.0)
+            dot.loop(bounce=True)
         """
         apply_chain(self, gap)
         return self
@@ -838,9 +842,9 @@ class Entity(ABC):
         duration: float = 1.0,
         delay: float = 0.0,
         easing: EasingLike = "ease-in-out",
+        hold: bool = True,
         repeat: RepeatLike = False,
         bounce: bool = False,
-        hold: bool = True,
     ) -> Entity:
         """Animate position using relative coordinates.
 
@@ -857,9 +861,10 @@ class Entity(ABC):
             duration: Duration in seconds.
             delay: Seconds before animation starts.
             easing: Speed curve (default "ease-in-out" for natural motion).
-            repeat: False=once, True=forever, int=N times.
-            bounce: Alternate direction each cycle.
             hold: Hold final value after completion.
+            repeat: ``False`` = play once (default), ``True`` = loop forever,
+                ``int >= 2`` = loop N times.
+            bounce: If ``True``, alternate direction each cycle.
 
         Returns:
             Self, for method chaining.
@@ -869,7 +874,7 @@ class Entity(ABC):
         """
         delay = consume_chain_delay(self, delay)
         self._animations.extend(build_move(self, to, by=by, duration=duration,
-            delay=delay, easing=easing, repeat=repeat, bounce=bounce, hold=hold))
+            delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce))
         return self
 
     def animate_spin(
@@ -879,9 +884,9 @@ class Entity(ABC):
         duration: float = 1.0,
         delay: float = 0.0,
         easing: EasingLike = "linear",
+        hold: bool = True,
         repeat: RepeatLike = False,
         bounce: bool = False,
-        hold: bool = True,
     ) -> Entity:
         """Animate rotation.
 
@@ -890,16 +895,17 @@ class Entity(ABC):
             duration: Duration in seconds.
             delay: Seconds before animation starts.
             easing: Speed curve (default "linear" for constant rotation).
-            repeat: False=once, True=forever, int=N times.
-            bounce: Alternate direction each cycle.
             hold: Hold final value after completion.
+            repeat: ``False`` = play once (default), ``True`` = loop forever,
+                ``int >= 2`` = loop N times.
+            bounce: If ``True``, alternate direction each cycle.
 
         Returns:
             Self, for method chaining.
         """
         delay = consume_chain_delay(self, delay)
         self._animations.append(build_spin(self, angle, duration=duration,
-            delay=delay, easing=easing, repeat=repeat, bounce=bounce, hold=hold))
+            delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce))
         return self
 
     def animate_scale(
@@ -909,9 +915,9 @@ class Entity(ABC):
         duration: float = 1.0,
         delay: float = 0.0,
         easing: EasingLike = "ease-in-out",
+        hold: bool = True,
         repeat: RepeatLike = False,
         bounce: bool = False,
-        hold: bool = True,
     ) -> Entity:
         """Animate scale factor.
 
@@ -920,16 +926,17 @@ class Entity(ABC):
             duration: Duration in seconds.
             delay: Seconds before animation starts.
             easing: Speed curve (default "ease-in-out").
-            repeat: False=once, True=forever, int=N times.
-            bounce: Alternate direction each cycle.
             hold: Hold final value after completion.
+            repeat: ``False`` = play once (default), ``True`` = loop forever,
+                ``int >= 2`` = loop N times.
+            bounce: If ``True``, alternate direction each cycle.
 
         Returns:
             Self, for method chaining.
         """
         delay = consume_chain_delay(self, delay)
         self._animations.append(build_scale(self, to, duration=duration,
-            delay=delay, easing=easing, repeat=repeat, bounce=bounce, hold=hold))
+            delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce))
         return self
 
     def animate_follow(
@@ -939,10 +946,10 @@ class Entity(ABC):
         duration: float = 1.0,
         delay: float = 0.0,
         easing: EasingLike = "linear",
-        repeat: RepeatLike = False,
-        bounce: bool = False,
         hold: bool = True,
         rotate: bool | float = False,
+        repeat: RepeatLike = False,
+        bounce: bool = False,
     ) -> Entity:
         """Animate along a path.
 
@@ -951,19 +958,20 @@ class Entity(ABC):
             duration: Duration in seconds.
             delay: Seconds before animation starts.
             easing: Speed curve.
-            repeat: False=once, True=forever, int=N times.
-            bounce: Alternate direction each cycle.
             hold: Hold final value after completion.
             rotate: True for auto-rotation along tangent,
                     float for fixed angle.
+            repeat: ``False`` = play once (default), ``True`` = loop forever,
+                ``int >= 2`` = loop N times.
+            bounce: If ``True``, alternate direction each cycle.
 
         Returns:
             Self, for method chaining.
         """
         delay = consume_chain_delay(self, delay)
         self._animations.append(build_follow(path, duration=duration,
-            delay=delay, easing=easing, repeat=repeat, bounce=bounce,
-            hold=hold, rotate=rotate))
+            delay=delay, easing=easing, hold=hold, rotate=rotate,
+            repeat=repeat, bounce=bounce))
         return self
 
     def animate(
@@ -975,9 +983,9 @@ class Entity(ABC):
         duration: float = 1.0,
         delay: float = 0.0,
         easing: EasingLike = "linear",
+        hold: bool = True,
         repeat: RepeatLike = False,
         bounce: bool = False,
-        hold: bool = True,
     ) -> Entity:
         """Animate any property.
 
@@ -996,9 +1004,10 @@ class Entity(ABC):
                 when keyframes is a list.
             delay: Seconds before animation starts.
             easing: Speed curve.
-            repeat: False=once, True=forever, int=N times.
-            bounce: Alternate direction each cycle.
             hold: Hold final value after completion.
+            repeat: ``False`` = play once (default), ``True`` = loop forever,
+                ``int >= 2`` = loop N times.
+            bounce: If ``True``, alternate direction each cycle.
 
         Returns:
             Self, for method chaining.
@@ -1007,9 +1016,46 @@ class Entity(ABC):
             ValueError: If neither ``to`` nor ``keyframes`` is provided.
         """
         add_generic_animate(self, prop, to=to, keyframes=keyframes,
-            duration=duration, delay=delay, easing=easing,
-            repeat=repeat, bounce=bounce, hold=hold)
+            duration=duration, delay=delay, easing=easing, hold=hold,
+            repeat=repeat, bounce=bounce)
         return self
+
+    def loop(self, *, bounce: bool = False, times: RepeatLike = True) -> None:
+        """Loop all animations on this entity.
+
+        Terminal method — returns ``None``. Call this as the last step
+        after building your animation (or chain), *not* in the middle.
+
+        Stamps ``bounce`` and ``repeat`` onto every animation currently
+        on the entity, so it works identically for a single animation
+        and for a multi-step ``.then()`` chain.
+
+        Args:
+            bounce: If ``True``, alternate direction each cycle
+                (forward → backward → forward ...). Default ``False``.
+            times: ``True`` = loop forever (default); ``int >= 2`` = loop
+                exactly N times. Values of ``False``, ``0``, or ``1``
+                raise ``ValueError`` because they don't actually loop.
+
+        Raises:
+            ValueError: If *times* does not represent a real loop
+                (``False``, ``0``, ``1``, or any negative integer).
+            ValueError: If no animations have been added yet.
+
+        Note:
+            For bounced finite loops (``bounce=True, times=N``), the
+            value held after completion depends on parity: *odd N* freezes
+            at the **end** value, *even N* freezes at the **start** value
+            (the last bounce cycle reverses back). Only relevant when
+            ``hold=True`` (the ``animate_*`` default).
+
+        Example::
+
+            dot.animate_fade(to=0.0, duration=1.0).loop(bounce=True)
+            dot.animate_scale(to=2.0, duration=1.5).loop(times=4)
+            dot.animate_fade(to=0.3).then().animate_spin(360).loop(bounce=True)
+        """
+        apply_loop(self, bounce=bounce, times=times)
 
     def clear_animations(self) -> Entity:
         """Remove all animations from this entity.

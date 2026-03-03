@@ -148,7 +148,8 @@ class TestBuilders:
 
     def test_build_spin(self):
         dot = Dot(0, 0)
-        anim = build_spin(dot, angle=360, duration=3.0, repeat=True)
+        anim = build_spin(dot, angle=360, duration=3.0)
+        anim.repeat = True
         assert isinstance(anim, PropertyAnimation)
         assert anim.prop == "rotation"
         assert anim.repeat is True
@@ -203,7 +204,8 @@ class TestEntityAnimationAPI:
 
     def test_spin(self):
         rect = Rect(0, 0, 100, 100)
-        rect.animate_spin(360, duration=2.0, repeat=True)
+        rect.animate_spin(360, duration=2.0)
+        rect.loop()
         assert len(rect.animations) == 1
         assert rect.animations[0].prop == "rotation"
 
@@ -394,7 +396,8 @@ class TestSMILRenderer:
 
     def test_spin_produces_animate_transform(self):
         rect = Rect(0, 0, 100, 100)
-        rect.animate_spin(360, duration=3.0, repeat=True)
+        rect.animate_spin(360, duration=3.0)
+        rect.loop()
         svg = SMILRenderer().render_entity(rect)
         assert "animateTransform" in svg
         assert 'type="rotate"' in svg
@@ -487,14 +490,18 @@ class TestThen:
 
     def test_repeat_finite(self):
         dot = Dot(0, 0)
-        dot.animate_fade(to=0.0, duration=1.0, repeat=3).then().animate_spin(360, duration=1.0)
+        dot.animate_fade(to=0.0, duration=1.0)
+        dot.loop(times=3)
+        dot.then().animate_spin(360, duration=1.0)
         spin_anim = dot.animations[1]
         # repeat=3 means 3 cycles × 1.0s = 3.0s total
         assert spin_anim.delay == pytest.approx(3.0)
 
     def test_repeat_infinite(self):
         dot = Dot(0, 0)
-        dot.animate_fade(to=0.0, duration=1.0, repeat=True).then().animate_spin(360, duration=1.0)
+        dot.animate_fade(to=0.0, duration=1.0)
+        dot.loop()
+        dot.then().animate_spin(360, duration=1.0)
         spin_anim = dot.animations[1]
         # repeat=True: use single cycle duration (pragmatic fallback)
         assert spin_anim.delay == pytest.approx(1.0)
@@ -656,7 +663,8 @@ class TestScale:
 
     def test_scale_pulse(self):
         dot = Dot(0, 0)
-        dot.animate_scale(to=1.5, bounce=True, repeat=True, duration=0.8)
+        dot.animate_scale(to=1.5, duration=0.8)
+        dot.loop(bounce=True)
         anim = dot.animations[0]
         assert anim.bounce is True
         assert anim.repeat is True
@@ -695,22 +703,24 @@ class TestBounceSMIL:
     def test_property_bounce_values_mirrored(self):
         """bounce=True mirrors values: A;B → A;B;A."""
         dot = Dot(10, 20, radius=5, color="red")
-        dot.animate_radius(to=10, duration=1.0, bounce=True, repeat=True)
+        dot.animate_radius(to=10, duration=1.0)
+        dot.loop(bounce=True)
         svg = SMILRenderer().render_entity(dot)
         assert 'values="5;10;5"' in svg
 
     def test_property_bounce_keytimes(self):
         """bounce=True produces keyTimes 0;0.5;1."""
         dot = Dot(10, 20, radius=5, color="red")
-        dot.animate_radius(to=10, duration=1.0, bounce=True, repeat=True)
+        dot.animate_radius(to=10, duration=1.0)
+        dot.loop(bounce=True)
         svg = SMILRenderer().render_entity(dot)
         assert 'keyTimes="0;0.5;1"' in svg
 
     def test_property_bounce_doubled_splines(self):
         """bounce=True doubles keySplines for 2 segments."""
         dot = Dot(10, 20, radius=5, color="red")
-        dot.animate_radius(to=10, duration=1.0, bounce=True, repeat=True,
-                     easing="ease-in-out")
+        dot.animate_radius(to=10, duration=1.0, easing="ease-in-out")
+        dot.loop(bounce=True)
         svg = SMILRenderer().render_entity(dot)
         # 2 segments (3 values) → 2 keySplines
         assert 'keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0"' in svg
@@ -718,7 +728,8 @@ class TestBounceSMIL:
     def test_property_no_bounce_unchanged(self):
         """Without bounce, values stay as-is."""
         dot = Dot(10, 20, radius=5, color="red")
-        dot.animate_radius(to=10, duration=1.0, repeat=True)
+        dot.animate_radius(to=10, duration=1.0)
+        dot.loop()
         svg = SMILRenderer().render_entity(dot)
         assert 'values="5;10"' in svg
         assert 'keyTimes="0;1"' in svg
@@ -728,7 +739,8 @@ class TestBounceSMIL:
         from pyfreeform.paths import Wave
         dot = Dot(10, 20, radius=5, color="red")
         wave = Wave(start=(0, 0), end=(100, 0), amplitude=30, frequency=2)
-        dot.animate_follow(wave, duration=2.0, bounce=True, repeat=True)
+        dot.animate_follow(wave, duration=2.0)
+        dot.loop(bounce=True)
         svg = SMILRenderer().render_entity(dot)
         assert 'keyPoints="0;1;0"' in svg
         assert 'keyTimes="0;0.5;1"' in svg
@@ -738,7 +750,8 @@ class TestBounceSMIL:
         from pyfreeform.paths import Wave
         dot = Dot(10, 20, radius=5, color="red")
         wave = Wave(start=(0, 0), end=(100, 0), amplitude=30, frequency=2)
-        dot.animate_follow(wave, duration=2.0, repeat=True)
+        dot.animate_follow(wave, duration=2.0)
+        dot.loop()
         svg = SMILRenderer().render_entity(dot)
         assert "keyPoints" not in svg
 
@@ -747,8 +760,8 @@ class TestBounceSMIL:
         from pyfreeform.paths import Wave
         dot = Dot(10, 20, radius=5, color="red")
         wave = Wave(start=(0, 0), end=(100, 0), amplitude=30, frequency=2)
-        dot.animate_follow(wave, duration=2.0, bounce=True, repeat=True,
-                   easing="ease-in-out")
+        dot.animate_follow(wave, duration=2.0, easing="ease-in-out")
+        dot.loop(bounce=True)
         svg = SMILRenderer().render_entity(dot)
         assert 'keySplines="0.42 0.0 0.58 1.0;0.42 0.0 0.58 1.0"' in svg
 
@@ -757,8 +770,8 @@ class TestBounceSMIL:
         from pyfreeform.paths import Wave
         dot = Dot(10, 20, radius=5, color="red")
         wave = Wave(start=(0, 0), end=(100, 0), amplitude=30, frequency=2)
-        dot.animate_follow(wave, duration=2.0, bounce=True, repeat=True,
-                   easing="linear")
+        dot.animate_follow(wave, duration=2.0, easing="linear")
+        dot.loop(bounce=True)
         svg = SMILRenderer().render_entity(dot)
         assert 'calcMode="linear"' in svg
         assert "keySplines" not in svg
@@ -770,7 +783,8 @@ class TestBounceSMIL:
         path = Path(wave, width=2, color="red")
         scene = Scene(200, 200)
         scene.place(path)
-        path.animate_draw(duration=2.0, bounce=True, repeat=True)
+        path.animate_draw(duration=2.0)
+        path.loop(bounce=True)
         svg = SMILRenderer().render_entity(path)
         # Normalized to [0, 1] via pathLength="1"
         assert 'values="1;0;1"' in svg
@@ -779,7 +793,8 @@ class TestBounceSMIL:
     def test_rotation_bounce(self):
         """bounce=True on spin mirrors rotation values."""
         dot = Dot(10, 20, radius=5, color="red")
-        dot.animate_spin(90, duration=1.0, bounce=True, repeat=True)
+        dot.animate_spin(90, duration=1.0)
+        dot.loop(bounce=True)
         svg = SMILRenderer().render_entity(dot)
         assert "animateTransform" in svg
         # Should have 3 values for rotation (forward;peak;back)
@@ -788,7 +803,8 @@ class TestBounceSMIL:
     def test_scale_bounce(self):
         """bounce=True on scale mirrors scale values."""
         dot = Dot(10, 20, radius=5, color="red")
-        dot.animate_scale(to=2.0, duration=1.0, bounce=True, repeat=True)
+        dot.animate_scale(to=2.0, duration=1.0)
+        dot.loop(bounce=True)
         svg = SMILRenderer().render_entity(dot)
         assert "animateTransform" in svg
         assert 'values="1;2;1"' in svg
@@ -797,8 +813,8 @@ class TestBounceSMIL:
     def test_multi_keyframe_bounce(self):
         """Bounce with 3+ keyframes mirrors correctly."""
         dot = Dot(10, 20, radius=5, color="red")
-        dot.animate_radius(keyframes={0: 5, 0.5: 10, 1.0: 15},
-                    bounce=True, repeat=True)
+        dot.animate_radius(keyframes={0: 5, 0.5: 10, 1.0: 15})
+        dot.loop(bounce=True)
         svg = SMILRenderer().render_entity(dot)
         # 5;10;15 → 5;10;15;10;5 with 5 keyTimes
         assert 'values="5;10;15;10;5"' in svg
@@ -985,9 +1001,12 @@ class TestReactivePolygonAnimation:
         scene.add(a, at=(0.0, 0.0))
         scene.add(b, at=(1.0, 0.0))
         scene.add(c, at=(0.5, 1.0))
-        a.animate_move(to=(0.5, 0.5), duration=2.0, bounce=True, repeat=True)
-        b.animate_move(to=(0.5, 0.5), duration=2.0, bounce=True, repeat=True)
-        c.animate_move(to=(0.5, 0.5), duration=2.0, bounce=True, repeat=True)
+        a.animate_move(to=(0.5, 0.5), duration=2.0)
+        a.loop(bounce=True)
+        b.animate_move(to=(0.5, 0.5), duration=2.0)
+        b.loop(bounce=True)
+        c.animate_move(to=(0.5, 0.5), duration=2.0)
+        c.loop(bounce=True)
         poly = Polygon([a, b, c], fill="red")
         scene.place(poly)
         svg = SMILRenderer().render_entity(poly)
@@ -1173,8 +1192,9 @@ class TestFillLayerOptimization:
         poly = Polygon([(0, 0), (100, 0), (50, 80)], fill="white")
         poly.animate_fill(
             keyframes={0: "white", 1: "blue"},
-            delay=0.5, repeat=True, easing="ease-in-out",
+            delay=0.5, easing="ease-in-out",
         )
+        poly.loop()
         svg = SMILRenderer().render_entity(poly)
         assert 'begin="0.5s"' in svg
         assert 'repeatCount="indefinite"' in svg
@@ -1486,7 +1506,256 @@ class TestFillLayerBatching:
         p1 = Polygon([(0, 0), (50, 0), (25, 40)], fill="white")
         p2 = Polygon([(60, 0), (110, 0), (85, 40)], fill="white")
         for p in (p1, p2):
-            p.animate_fill(keyframes={0: "white", 1: "blue", 2: "white"}, bounce=True)
+            p.animate_fill(keyframes={0: "white", 1: "blue", 2: "white"})
+            p.loop(bounce=True)
             scene.place(p)
         svg = scene.to_svg()
         assert svg.count('attributeName="opacity"') == 1
+
+
+# ======================================================================
+# .loop() — Looping API
+# ======================================================================
+
+
+class TestLoop:
+    def test_loop_stamps_all_animations(self):
+        """loop() sets bounce and repeat on every animation in the entity."""
+        dot = Dot(0, 0)
+        dot.animate_fade(to=0.3, duration=1.0)
+        dot.animate_spin(360, duration=2.0)
+        dot.loop(bounce=True)
+        for anim in dot.animations:
+            assert anim.bounce is True
+            assert anim.repeat is True
+
+    def test_loop_returns_none(self):
+        """animate_fade().loop() returns None, not the entity."""
+        dot = Dot(0, 0)
+        result = dot.animate_fade(to=0.3).loop()
+        assert result is None
+
+    def test_loop_on_chain(self):
+        """loop() after animate + .then() + animate stamps all animations."""
+        dot = Dot(0, 0)
+        dot.animate_fade(to=0.0, duration=1.0).then().animate_spin(360, duration=1.0)
+        dot.loop(bounce=True)
+        assert len(dot.animations) == 2
+        for anim in dot.animations:
+            assert anim.bounce is True
+
+    def test_loop_defaults(self):
+        """loop() with no args sets bounce=False and repeat=True."""
+        dot = Dot(0, 0)
+        dot.animate_fade(to=0.0, duration=1.0)
+        dot.loop()
+        anim = dot.animations[0]
+        assert anim.bounce is False
+        assert anim.repeat is True
+
+    def test_loop_times(self):
+        """loop(times=3) sets repeat=3 on all animations."""
+        dot = Dot(0, 0)
+        dot.animate_fade(to=0.0, duration=1.0)
+        dot.animate_spin(360, duration=2.0)
+        dot.loop(times=3)
+        for anim in dot.animations:
+            assert anim.repeat == 3
+
+    def test_loop_on_connection(self):
+        """Connection.loop() works identically to entity loop()."""
+        d1 = Dot(0, 0)
+        d2 = Dot(100, 100)
+        conn = Connection(d1, d2)
+        conn.animate_fade(to=0.0, duration=1.0)
+        conn.animate_draw(duration=1.5)
+        conn.loop(bounce=True)
+        for anim in conn.animations:
+            assert anim.bounce is True
+            assert anim.repeat is True
+
+    def test_loop_invalid_times_false(self):
+        """loop(times=False) raises ValueError."""
+        dot = Dot(0, 0)
+        dot.animate_fade(to=0.0, duration=1.0)
+        with pytest.raises(ValueError):
+            dot.loop(times=False)
+
+    def test_loop_invalid_times_zero(self):
+        """loop(times=0) raises ValueError."""
+        dot = Dot(0, 0)
+        dot.animate_fade(to=0.0, duration=1.0)
+        with pytest.raises(ValueError):
+            dot.loop(times=0)
+
+    def test_loop_invalid_times_one(self):
+        """loop(times=1) raises ValueError."""
+        dot = Dot(0, 0)
+        dot.animate_fade(to=0.0, duration=1.0)
+        with pytest.raises(ValueError):
+            dot.loop(times=1)
+
+    def test_loop_invalid_times_negative(self):
+        """loop(times=-1) raises ValueError."""
+        dot = Dot(0, 0)
+        dot.animate_fade(to=0.0, duration=1.0)
+        with pytest.raises(ValueError):
+            dot.loop(times=-1)
+
+    def test_loop_no_animations(self):
+        """loop() with no animations added raises ValueError."""
+        dot = Dot(0, 0)
+        with pytest.raises(ValueError):
+            dot.loop()
+
+
+# ======================================================================
+# Per-animation repeat= / bounce= inline params
+# ======================================================================
+
+
+class TestPerAnimationRepeat:
+    """Inline repeat=/bounce= on animate_* methods (industry-standard pattern)."""
+
+    def test_per_anim_default_no_repeat(self):
+        """Default animate_* leaves repeat=False, bounce=False."""
+        dot = Dot(0, 0)
+        dot.animate_radius(to=10, duration=1.0)
+        anim = dot.animations[0]
+        assert anim.repeat is False
+        assert anim.bounce is False
+
+    def test_per_anim_repeat_only_that_anim(self):
+        """animate_radius(repeat=True) only affects that animation, not a subsequent one."""
+        dot = Dot(0, 0)
+        dot.animate_radius(to=10, duration=1.0, repeat=True)
+        dot.animate_color(to="blue", duration=1.0)
+        assert dot.animations[0].repeat is True
+        assert dot.animations[1].repeat is False
+
+    def test_per_anim_bounce(self):
+        """repeat=True, bounce=True sets both on just that animation."""
+        dot = Dot(0, 0)
+        dot.animate_radius(to=10, duration=1.2, repeat=True, bounce=True)
+        anim = dot.animations[0]
+        assert anim.repeat is True
+        assert anim.bounce is True
+
+    def test_per_anim_finite(self):
+        """repeat=3 sets repeat=3 on just that animation."""
+        dot = Dot(0, 0)
+        dot.animate_radius(to=10, duration=1.0, repeat=3)
+        anim = dot.animations[0]
+        assert anim.repeat == 3
+        assert anim.bounce is False
+
+    def test_per_anim_bounce_without_repeat_ignored(self):
+        """bounce=True with default repeat=False leaves bounce=False on the model."""
+        dot = Dot(0, 0)
+        dot.animate_radius(to=10, duration=1.0, bounce=True)
+        # bounce=True silently ignored when repeat=False
+        anim = dot.animations[0]
+        assert anim.bounce is True   # stored but won't fire (repeat=False stops it)
+        assert anim.repeat is False
+
+    def test_per_anim_move_stamps_both_axes(self):
+        """animate_move(repeat=True) sets repeat=True on both at_rx and at_ry."""
+        from pyfreeform import Scene
+        scene = Scene(200, 200)
+        dot = Dot(0, 0)
+        scene.add(dot, at=(0.5, 0.5))
+        dot.animate_move(to=(0.8, 0.5), duration=1.0, repeat=True, bounce=True)
+        assert len(dot.animations) == 2
+        for anim in dot.animations:
+            assert anim.repeat is True
+            assert anim.bounce is True
+
+    def test_per_anim_connection_draw(self):
+        """conn.animate_draw(repeat=True, bounce=True) works inline."""
+        d1 = Dot(0, 0)
+        d2 = Dot(100, 100)
+        conn = Connection(d1, d2)
+        conn.animate_draw(duration=1.5, repeat=True, bounce=True)
+        anim = conn.animations[0]
+        assert anim.repeat is True
+        assert anim.bounce is True
+
+    def test_mixed_spin_once_color_loops(self):
+        """Spin plays once; color loops independently. entity.loop() not called."""
+        dot = Dot(0, 0)
+        dot.animate_spin(360, duration=2.0)                       # plays once
+        dot.animate_color(to="blue", duration=1.0, repeat=True)   # loops forever
+        spin = dot.animations[0]
+        color = dot.animations[1]
+        assert spin.repeat is False
+        assert color.repeat is True
+
+    def test_entity_loop_overrides_inline(self):
+        """entity.loop() after inline repeat=True overwrites with its own settings."""
+        dot = Dot(0, 0)
+        dot.animate_radius(to=35, duration=1.2, repeat=True, bounce=True)
+        dot.loop()  # bounce=False, times=True — overwrites
+        anim = dot.animations[0]
+        assert anim.repeat is True   # still loops (True from loop())
+        assert anim.bounce is False  # overwritten to False
+
+    def test_per_anim_spin(self):
+        """animate_spin(repeat=True) sets repeat on spin animation."""
+        dot = Dot(0, 0)
+        dot.animate_spin(360, duration=2.0, repeat=True)
+        anim = dot.animations[0]
+        assert anim.prop == "rotation"
+        assert anim.repeat is True
+
+    def test_per_anim_scale(self):
+        """animate_scale(repeat=True, bounce=True) sets both inline."""
+        dot = Dot(0, 0)
+        dot.animate_scale(to=2.0, duration=1.0, repeat=True, bounce=True)
+        anim = dot.animations[0]
+        assert anim.prop == "scale_factor"
+        assert anim.repeat is True
+        assert anim.bounce is True
+
+    def test_per_anim_follow(self):
+        """animate_follow(repeat=True) sets repeat on MotionAnimation."""
+        from pyfreeform.paths import Wave
+        dot = Dot(0, 0)
+        wave = Wave(start=(0, 0), end=(100, 0), amplitude=30, frequency=2)
+        dot.animate_follow(wave, duration=2.0, repeat=True, bounce=True)
+        anim = dot.animations[0]
+        assert anim.repeat is True
+        assert anim.bounce is True
+
+    def test_per_anim_draw_line(self):
+        """Line.animate_draw(repeat=True) sets repeat on DrawAnimation."""
+        line = Line(0, 0, 100, 100)
+        line.animate_draw(duration=1.0, repeat=True, bounce=True)
+        anim = line.animations[0]
+        assert anim.repeat is True
+        assert anim.bounce is True
+
+    def test_per_anim_draw_path(self):
+        """Path.animate_draw(repeat=True) sets repeat on DrawAnimation."""
+        from pyfreeform.paths import Wave
+        wave = Wave(start=(0, 0), end=(100, 0), amplitude=30, frequency=2)
+        scene = Scene(200, 200)
+        path = Path(wave, width=2, color="red")
+        scene.place(path)
+        path.animate_draw(duration=1.0, repeat=True, bounce=True)
+        anim = path.animations[0]
+        assert anim.repeat is True
+        assert anim.bounce is True
+
+    def test_per_anim_smil_produces_repeat_indefinite(self):
+        """Inline repeat=True renders to repeatCount='indefinite' in SMIL."""
+        dot = Dot(10, 20, radius=5, color="red")
+        dot.animate_radius(to=10, duration=1.0, repeat=True)
+        svg = SMILRenderer().render_entity(dot)
+        assert 'repeatCount="indefinite"' in svg
+
+    def test_per_anim_finite_smil_repeat_count(self):
+        """Inline repeat=3 renders to repeatCount='3' in SMIL."""
+        dot = Dot(10, 20, radius=5, color="red")
+        dot.animate_radius(to=10, duration=1.0, repeat=3)
+        svg = SMILRenderer().render_entity(dot)
+        assert 'repeatCount="3"' in svg

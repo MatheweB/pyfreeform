@@ -30,9 +30,9 @@ def build_fade(
     duration: float = 1.0,
     delay: float = 0.0,
     easing: EasingLike = "linear",
+    hold: bool = True,
     repeat: RepeatLike = False,
     bounce: bool = False,
-    hold: bool = True,
 ) -> PropertyAnimation:
     """Build an opacity animation."""
     return PropertyAnimation(
@@ -43,9 +43,9 @@ def build_fade(
         ],
         easing=coerce_easing(easing),
         hold=hold,
+        delay=delay,
         repeat=repeat,
         bounce=bounce,
-        delay=delay,
     )
 
 
@@ -57,9 +57,9 @@ def build_move(
     duration: float = 1.0,
     delay: float = 0.0,
     easing: EasingLike = "ease-in-out",
+    hold: bool = True,
     repeat: RepeatLike = False,
     bounce: bool = False,
-    hold: bool = True,
 ) -> list[PropertyAnimation]:
     """Build position animations (one per axis).
 
@@ -99,18 +99,18 @@ def build_move(
             keyframes=[Keyframe(0.0, current_at.rx), Keyframe(duration, target.rx)],
             easing=coerce_easing(easing),
             hold=hold,
+            delay=delay,
             repeat=repeat,
             bounce=bounce,
-            delay=delay,
         ),
         PropertyAnimation(
             prop="at_ry",
             keyframes=[Keyframe(0.0, current_at.ry), Keyframe(duration, target.ry)],
             easing=coerce_easing(easing),
             hold=hold,
+            delay=delay,
             repeat=repeat,
             bounce=bounce,
-            delay=delay,
         ),
     ]
 
@@ -122,9 +122,9 @@ def build_spin(
     duration: float = 1.0,
     delay: float = 0.0,
     easing: EasingLike = "linear",
+    hold: bool = True,
     repeat: RepeatLike = False,
     bounce: bool = False,
-    hold: bool = True,
 ) -> PropertyAnimation:
     """Build a rotation animation."""
     return PropertyAnimation(
@@ -135,9 +135,9 @@ def build_spin(
         ],
         easing=coerce_easing(easing),
         hold=hold,
+        delay=delay,
         repeat=repeat,
         bounce=bounce,
-        delay=delay,
     )
 
 
@@ -147,10 +147,10 @@ def build_follow(
     duration: float = 1.0,
     delay: float = 0.0,
     easing: EasingLike = "linear",
-    repeat: RepeatLike = False,
-    bounce: bool = False,
     hold: bool = True,
     rotate: bool | float = False,
+    repeat: RepeatLike = False,
+    bounce: bool = False,
 ) -> MotionAnimation:
     """Build a motion-along-path animation."""
     return MotionAnimation(
@@ -158,10 +158,10 @@ def build_follow(
         duration=duration,
         easing=coerce_easing(easing),
         hold=hold,
-        repeat=repeat,
-        bounce=bounce,
         delay=delay,
         rotate=rotate,
+        repeat=repeat,
+        bounce=bounce,
     )
 
 
@@ -170,20 +170,20 @@ def build_draw(
     duration: float = 1.0,
     delay: float = 0.0,
     easing: EasingLike = "ease-in-out",
-    repeat: RepeatLike = False,
-    bounce: bool = False,
     hold: bool = True,
     reverse: bool = False,
+    repeat: RepeatLike = False,
+    bounce: bool = False,
 ) -> DrawAnimation:
     """Build a draw (stroke reveal) animation."""
     return DrawAnimation(
         duration=duration,
         easing=coerce_easing(easing),
         hold=hold,
-        repeat=repeat,
-        bounce=bounce,
         delay=delay,
         reverse=reverse,
+        repeat=repeat,
+        bounce=bounce,
     )
 
 
@@ -196,9 +196,9 @@ def build_animate(
     duration: float = 1.0,
     delay: float = 0.0,
     easing: EasingLike = "linear",
+    hold: bool = True,
     repeat: RepeatLike = False,
     bounce: bool = False,
-    hold: bool = True,
 ) -> PropertyAnimation:
     """Build a generic property animation.
 
@@ -218,8 +218,6 @@ def build_animate(
             keyframes is a list (ignored if keyframes is a dict).
         delay: Seconds before animation starts.
         easing: Speed curve.
-        repeat: False=once, True=forever, int=N times.
-        bounce: Alternate direction each cycle.
         hold: Hold final value after completion.
 
     Raises:
@@ -248,9 +246,9 @@ def build_animate(
         keyframes=kf_list,
         easing=coerce_easing(easing),
         hold=hold,
+        delay=delay,
         repeat=repeat,
         bounce=bounce,
-        delay=delay,
     )
 
 
@@ -261,9 +259,9 @@ def build_scale(
     duration: float = 1.0,
     delay: float = 0.0,
     easing: EasingLike = "ease-in-out",
+    hold: bool = True,
     repeat: RepeatLike = False,
     bounce: bool = False,
-    hold: bool = True,
 ) -> PropertyAnimation:
     """Build a scale animation."""
     return PropertyAnimation(
@@ -274,9 +272,9 @@ def build_scale(
         ],
         easing=coerce_easing(easing),
         hold=hold,
+        delay=delay,
         repeat=repeat,
         bounce=bounce,
-        delay=delay,
     )
 
 

@@ -40,13 +40,13 @@ def _color_anim(prop: str) -> Any:
         duration: float = 1.0,
         delay: float = 0.0,
         easing: EasingLike = "linear",
+        hold: bool = True,
         repeat: RepeatLike = False,
         bounce: bool = False,
-        hold: bool = True,
     ) -> Any:
         return self.animate(prop, to=to, keyframes=keyframes,
                             duration=duration, delay=delay, easing=easing,
-                            repeat=repeat, bounce=bounce, hold=hold)
+                            hold=hold, repeat=repeat, bounce=bounce)
 
     method.__name__ = f"animate_{prop}"
     method.__qualname__ = f"animate_{prop}"
@@ -59,9 +59,10 @@ def _color_anim(prop: str) -> Any:
         "    duration: Duration in seconds (simple mode, or list keyframes).\n"
         "    delay: Seconds before animation starts.\n"
         "    easing: Speed curve.\n"
-        "    repeat: False=once, True=forever, int=N times.\n"
-        "    bounce: Alternate direction each cycle.\n"
-        "    hold: Hold final value after completion.\n\n"
+        "    hold: Hold final value after completion.\n"
+        "    repeat: ``False`` = play once (default), ``True`` = loop forever,\n"
+        "        ``int >= 2`` = loop N times.\n"
+        "    bounce: If ``True``, alternate direction each cycle.\n\n"
         "Returns:\n"
         "    Self, for method chaining."
     )
@@ -84,13 +85,13 @@ def _numeric_anim(prop: str, label: str | None = None) -> Any:
         duration: float = 1.0,
         delay: float = 0.0,
         easing: EasingLike = "linear",
+        hold: bool = True,
         repeat: RepeatLike = False,
         bounce: bool = False,
-        hold: bool = True,
     ) -> Any:
         return self.animate(prop, to=to, keyframes=keyframes,
                             duration=duration, delay=delay, easing=easing,
-                            repeat=repeat, bounce=bounce, hold=hold)
+                            hold=hold, repeat=repeat, bounce=bounce)
 
     method.__name__ = f"animate_{display}"
     method.__qualname__ = f"animate_{display}"
@@ -103,9 +104,10 @@ def _numeric_anim(prop: str, label: str | None = None) -> Any:
         "    duration: Duration in seconds (simple mode, or list keyframes).\n"
         "    delay: Seconds before animation starts.\n"
         "    easing: Speed curve.\n"
-        "    repeat: False=once, True=forever, int=N times.\n"
-        "    bounce: Alternate direction each cycle.\n"
-        "    hold: Hold final value after completion.\n\n"
+        "    hold: Hold final value after completion.\n"
+        "    repeat: ``False`` = play once (default), ``True`` = loop forever,\n"
+        "        ``int >= 2`` = loop N times.\n"
+        "    bounce: If ``True``, alternate direction each cycle.\n\n"
         "Returns:\n"
         "    Self, for method chaining."
     )

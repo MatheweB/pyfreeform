@@ -170,7 +170,7 @@ draw((W / 2, margin), (margin, H - margin), (W - margin, H - margin), 0)
 </figure>
 
 !!! tip "The math"
-    The **Sierpinski triangle** is formed by recursively subdividing each triangle into three smaller copies, leaving the center empty. At depth *n* it contains 3^n^ triangles. Its fractal dimension is log(3)/log(2) &asymp; 1.585 — more than a line, less than a plane.
+    The **Sierpinski triangle** is formed by recursively subdividing each triangle into three smaller copies, leaving the center empty. At depth *n* it contains 3<sup>n</sup> triangles. Its fractal dimension is log(3)/log(2) &asymp; 1.585 — more than a line, less than a plane.
 
 ---
 

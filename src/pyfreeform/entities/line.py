@@ -319,10 +319,10 @@ class Line(EndpointEntity):
         duration: float = 1.0,
         delay: float = 0.0,
         easing: EasingLike = "ease-in-out",
-        repeat: RepeatLike = False,
-        bounce: bool = False,
         hold: bool = True,
         reverse: bool = False,
+        repeat: RepeatLike = False,
+        bounce: bool = False,
     ) -> Line:
         """Animate the line drawing itself from start to end.
 
@@ -332,16 +332,17 @@ class Line(EndpointEntity):
             duration: Animation duration in seconds.
             delay: Seconds to wait before starting.
             easing: Easing function name or (x1,y1,x2,y2) tuple.
-            repeat: False=once, True=forever, int=N times.
-            bounce: Alternate direction each cycle.
             hold: Hold final value after animation ends.
             reverse: Draw from end to start instead.
+            repeat: ``False`` = play once (default), ``True`` = loop forever,
+                ``int >= 2`` = loop N times.
+            bounce: If ``True``, alternate direction each cycle.
 
         Returns:
             self, for method chaining.
         """
         add_draw(self, duration=duration, delay=delay, easing=easing,
-            repeat=repeat, bounce=bounce, hold=hold, reverse=reverse)
+            hold=hold, reverse=reverse, repeat=repeat, bounce=bounce)
         return self
 
     def to_svg(self) -> str:

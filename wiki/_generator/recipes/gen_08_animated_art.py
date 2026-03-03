@@ -16,88 +16,87 @@ from wiki._generator import save
 
 
 def generate():
-    _generate_koch_snowflake()
+    _generate_mandelbrot()
     _generate_lissajous_trace()
     _generate_spiral_galaxy()
     _generate_breathing_mandala()
     _generate_sierpinski_triangle()
 
 
-# ── 1. Koch Snowflake — animated fractal construction ─────────────────
+# ── 1. Mandelbrot Set — animated fractal reveal ──────────────────────
 
 
-def _generate_koch_snowflake(depth=4):
-    """Build a Koch snowflake iteration by iteration, each depth drawn in sequence.
+def _generate_mandelbrot(max_iter=50):
+    """Reveal the Mandelbrot set iteration by iteration, then dissolve back.
 
-    All geometry uses relative coords (0–1) within a single cell.
+    Each cell maps to a point on the complex plane. Cells are colored by
+    escape iteration and fade in band-by-band — low iterations first,
+    high iterations (near the boundary) last. The whole sequence then
+    bounces in reverse and loops forever.
     """
-    scene = Scene.with_grid(cols=1, rows=1, cell_size=420, background="#0a0a1a")
-    cell = scene.grid[0][0]
+    cols, rows = 100, 100
+    scene = Scene.with_grid(
+        cols=cols, rows=rows, cell_size=4, background="#0a0a1a",
+    )
 
-    # Equilateral triangle vertices in relative coords (0–1)
-    cx, cy = 0.5, 0.5
-    r = 0.38
+    # Map grid to complex plane: x ∈ [-2, 0.5], y ∈ [-1.25, 1.25]
+    x_min, x_max = -2.0, 0.5
+    y_min, y_max = -1.25, 1.25
 
-    v = []
-    for i in range(3):
-        angle = math.radians(-90 + i * 120)
-        v.append((cx + r * math.cos(angle), cy + r * math.sin(angle)))
+    # (fill_entity, appear_delay) tuples grouped by escape iteration
+    by_iter: dict[int, list] = {}
 
-    def koch_points(p1, p2, d):
-        """Recursively subdivide a segment into Koch curve points."""
-        if d == 0:
-            return [p1]
-        x1, y1 = p1
-        x2, y2 = p2
-        dx, dy = (x2 - x1) / 3, (y2 - y1) / 3
-        a = (x1 + dx, y1 + dy)
-        b = (x1 + 2 * dx, y1 + 2 * dy)
-        peak = (
-            (a[0] + b[0]) / 2 + math.sqrt(3) / 2 * (a[1] - b[1]),
-            (a[1] + b[1]) / 2 + math.sqrt(3) / 2 * (b[0] - a[0]),
-        )
-        return (
-            koch_points(p1, a, d - 1)
-            + koch_points(a, peak, d - 1)
-            + koch_points(peak, b, d - 1)
-            + koch_points(b, p2, d - 1)
-        )
+    for row in range(rows):
+        for col in range(cols):
+            cell = scene.grid[row][col]
 
-    total_delay = 0.0
-    colors = ["#ff6b6b", "#ffd93d", "#6bcb77", "#4d96ff", "#9b59b6"]
+            # Cell center → complex coordinate
+            cx = x_min + (col + 0.5) / cols * (x_max - x_min)
+            cy = y_min + (row + 0.5) / rows * (y_max - y_min)
+            c = complex(cx, cy)
 
-    for d in range(1, depth + 1):
-        points = []
-        for i in range(3):
-            points.extend(koch_points(v[i], v[(i + 1) % 3], d))
-        points.append(points[0])  # close the loop
+            # Iterate z = z² + c
+            z = 0 + 0j
+            escape = max_iter
+            for i in range(max_iter):
+                z = z * z + c
+                if z.real * z.real + z.imag * z.imag > 4:
+                    escape = i
+                    break
 
-        color = colors[d % len(colors)]
-        alpha = 0.3 + 0.7 * (d / depth)
+            if escape == max_iter:
+                # Inside the set — subtle dark fill
+                cell.add_fill(color="#0c0c2a")
+                continue
 
-        # Draw consecutive point pairs — higher segment limit for accuracy
-        step = max(1, len(points) // 250)
-        segments = []
-        for j in range(0, len(points) - 1, step):
-            end_idx = min(j + step, len(points) - 1)
-            line = cell.add_line(
-                start=points[j], end=points[end_idx],
-                width=1.5, color=color, opacity=0.0,
+            # Smooth HSL gradient: warm (low iter) → cool (near boundary)
+            t = escape / max_iter
+            hue_val = (240 + t * 300) % 360
+            lightness = 0.35 + 0.3 * t
+            color = hsl(hue_val, 0.85, lightness)
+            fill = cell.add_fill(color=color, opacity=0.0)
+            by_iter.setdefault(escape, []).append(fill)
+
+    # Compute per-band appear delays
+    delay = 0.0
+    band_delays: list[tuple[float, list]] = []
+    for i in sorted(by_iter):
+        band_delays.append((delay, by_iter[i]))
+        delay += 0.06
+
+    # Total forward time + brief hold before bounce
+    forward_time = delay + 0.5
+
+    # Keyframe animation: build up → hold → bounce back → loop
+    for appear, fills in band_delays:
+        for fill in fills:
+            fill.animate_fade(
+                keyframes={0: 0, appear: 0, appear + 0.4: 1.0,
+                           forward_time: 1.0},
             )
-            segments.append(line)
+            fill.loop(bounce=True)
 
-        # Each depth layer reveals sequentially
-        dur = 1.5
-        per_seg = dur / max(len(segments), 1)
-        for k, seg in enumerate(segments):
-            seg.animate_fade(
-                to=alpha, duration=0.3,
-                delay=total_delay + k * per_seg,
-                easing="ease-out", hold=True,
-            )
-        total_delay += dur + 0.3
-
-    save(scene, "recipes/anim-koch.svg")
+    save(scene, "recipes/anim-mandelbrot.svg")
 
 
 # ── 2. Lissajous Harmonograph — dot tracing a curve ──────────────────
@@ -128,13 +127,14 @@ def _generate_lissajous_trace():
     start_rx, start_ry = start.x / w, start.y / h
 
     tracer = cell.add_dot(at=(start_rx, start_ry), radius=0.015, color="coral")
-    tracer.animate_follow(liss, duration=6.0, easing="linear", repeat=True)
+    tracer.animate_follow(liss, duration=6.0, easing="linear")
+    tracer.loop()
 
     # Glow dot that pulses
     glow = cell.add_dot(at=(start_rx, start_ry), radius=0.008, color="white")
-    glow.animate_follow(liss, duration=6.0, easing="linear", repeat=True)
-    glow.animate_radius(to=8, duration=0.8, easing="ease-in-out",
-                 bounce=True, repeat=True)
+    glow.animate_follow(liss, duration=6.0, easing="linear")
+    glow.animate_radius(to=8, duration=0.8, easing="ease-in-out")
+    glow.loop(bounce=True)
 
     save(scene, "recipes/anim-lissajous.svg")
 
@@ -182,8 +182,9 @@ def _generate_spiral_galaxy(n_stars=200):
     # A few spinning "arms" via subtle rotation on outer stars
     for i, dot in enumerate(stars):
         if i % 5 == 0:
-            dot.animate_spin(360, duration=8.0 + (i % 3) * 2, repeat=True,
+            dot.animate_spin(360, duration=8.0 + (i % 3) * 2,
                      easing="linear")
+            dot.loop()
 
     save(scene, "recipes/anim-galaxy.svg")
 
@@ -224,7 +225,7 @@ def _generate_breathing_mandala():
             dot.animate_radius(
                 to=10, duration=2.0,
                 delay=per_dot_delay,
-                easing="ease-in-out", bounce=True, repeat=True,
+                easing="ease-in-out",
             )
             # Alternate dots also pulse opacity
             if j % 2 == 0:
@@ -232,14 +233,14 @@ def _generate_breathing_mandala():
                     to=0.3, duration=2.0,
                     delay=per_dot_delay,
                     easing="ease-in-out",
-                    bounce=True, repeat=True,
                 )
+            dot.loop(bounce=True)
 
     # Center jewel
     center = cell.add_dot(at=(0.5, 0.5), radius=0.02, color="white")
-    center.animate_radius(to=16, duration=1.5, easing="ease-in-out",
-                   bounce=True, repeat=True)
-    center.animate_spin(360, duration=6.0, repeat=True, easing="linear")
+    center.animate_radius(to=16, duration=1.5, easing="ease-in-out")
+    center.animate_spin(360, duration=6.0, easing="linear")
+    center.loop(bounce=True)
 
     save(scene, "recipes/anim-mandala.svg")
 
@@ -318,8 +319,8 @@ def _generate_sierpinski_triangle(max_depth=5):
         entity.animate_fade(
             keyframes={0: 0, appear: 0, appear + dur: target,
                        forward_time: target},
-            bounce=True, repeat=True,
         )
+        entity.loop(bounce=True)
 
     save(scene, "recipes/anim-sierpinski.svg")
 

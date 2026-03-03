@@ -12,10 +12,11 @@ Animate opacity with `.animate_fade()`. Pass the target opacity and a duration:
 ```python
 dot = cell.add_dot(at="center", radius=0.2, color="coral")
 
-dot.animate_fade(to=0.0, duration=3.0, easing="ease-in-out", bounce=True, repeat=True)
+dot.animate_fade(to=0.0, duration=3.0, easing="ease-in-out")
+dot.loop(bounce=True)
 ```
 
-The dot pulses — fading to invisible and back again. `bounce=True` reverses each cycle, and `repeat=True` loops forever.
+The dot pulses — fading to invisible and back again. `.loop(bounce=True)` reverses each cycle and loops forever.
 
 <figure markdown>
 ![Fade animation](../_images/guide/anim-fade.svg){ width="240" }
@@ -32,15 +33,16 @@ Rotate an entity with `.animate_spin()`:
 rect = cell.add_rect(at="center", width=0.38, height=0.38,
                      fill="dodgerblue", stroke="white", stroke_width=2)
 
-rect.animate_spin(360, duration=2.5, repeat=True, easing="linear")
+rect.animate_spin(360, duration=2.5, easing="linear")
+rect.loop()
 ```
 
 <figure markdown>
 ![Spin animation](../_images/guide/anim-spin.svg){ width="240" }
-<figcaption>A rectangle spinning continuously — `repeat=True` makes it loop forever.</figcaption>
+<figcaption>A rectangle spinning continuously — `.loop()` makes it spin forever.</figcaption>
 </figure>
 
-The first argument is the total rotation angle in degrees. Use `repeat=True` for continuous spinning.
+The first argument is the total rotation angle in degrees. Call `.loop()` for continuous spinning.
 
 
 ## Scale
@@ -50,12 +52,13 @@ Animate an entity's scale with `.animate_scale()`:
 ```python
 dot = cell.add_dot(at="center", radius=0.08, color="tomato")
 
-dot.animate_scale(to=2.0, duration=2.0, easing="ease-in-out", bounce=True, repeat=True)
+dot.animate_scale(to=2.0, duration=2.0, easing="ease-in-out")
+dot.loop(bounce=True)
 ```
 
 <figure markdown>
 ![Scale animation](../_images/guide/anim-scale.svg){ width="240" }
-<figcaption>A dot pulsing between normal size and 2&times; — `bounce=True` reverses each cycle.</figcaption>
+<figcaption>A dot pulsing between normal size and 2&times; — `.loop(bounce=True)` reverses each cycle.</figcaption>
 </figure>
 
 `.animate_scale(to=)` animates the scale factor over time. This is the animated counterpart to `.scale()` — just as `.animate_spin()` is to `.rotate()`.
@@ -72,10 +75,11 @@ wave_shape = Wave(start=(w * 0.08, h * 0.4), end=(w * 0.92, h * 0.4),
                   amplitude=h * 0.28, frequency=3)
 path = cell.add_path(wave_shape, width=3, color="limegreen")
 
-path.animate_draw(duration=2.5, easing="ease-in-out", bounce=True, repeat=True)
+path.animate_draw(duration=2.5, easing="ease-in-out")
+path.loop(bounce=True)
 ```
 
-The wave draws itself left to right, then un-draws back — `bounce=True` reverses the stroke reveal each cycle.
+The wave draws itself left to right, then un-draws back — `.loop(bounce=True)` reverses the stroke reveal each cycle.
 
 <figure markdown>
 ![Draw animation](../_images/guide/anim-draw.svg){ width="360" }
@@ -89,7 +93,8 @@ d1 = cell.add_dot(at=(0.1, 0.42), radius=0.04, color="white")
 d2 = cell.add_dot(at=(0.9, 0.42), radius=0.04, color="white")
 
 conn = d1.connect(d2, curvature=0.4, color="skyblue", width=2)
-conn.animate_draw(duration=2.0, easing="ease-in-out", bounce=True, repeat=True)
+conn.animate_draw(duration=2.0, easing="ease-in-out")
+conn.loop(bounce=True)
 ```
 
 <figure markdown>
@@ -158,9 +163,9 @@ Every animation method accepts these parameters:
 | `duration` | `float` | `1.0` | Duration in seconds |
 | `delay` | `float` | `0.0` | Wait this many seconds before starting |
 | `easing` | `str \| tuple \| Easing` | `"linear"` | Speed curve (see above) |
-| `repeat` | `bool \| int` | `False` | `True` = loop forever, `int` = loop N times |
-| `bounce` | `bool` | `False` | Alternate direction each cycle |
 | `hold` | `bool` | `True` | Hold final value after animation ends |
+
+To loop or bounce, call `.loop()` after setting up animations — see [Looping](#looping) below.
 
 ---
 
@@ -172,11 +177,12 @@ All animation methods return `self`, so you can chain them:
 rect = cell.add_rect(at="center", width=0.35, height=0.35,
                      fill="mediumpurple", stroke="white", stroke_width=1)
 
-rect.animate_fade(to=0.3, duration=2.0, easing="ease-in-out",
-          bounce=True, repeat=True).animate_spin(360, duration=3.0, repeat=True)
+rect.animate_fade(to=0.3, duration=2.0, easing="ease-in-out") \
+    .animate_spin(360, duration=3.0) \
+    .loop(bounce=True)
 ```
 
-This applies both a fade and a spin to the same entity — they play simultaneously. The rect pulses between 30% and full opacity while spinning continuously.
+This applies both a fade and a spin to the same entity — they play simultaneously. The rect pulses between 30% and full opacity while spinning, bouncing forever.
 
 
 <figure markdown>
@@ -201,6 +207,15 @@ The rect fades to 30% opacity over 1.5 seconds, then spins a full turn. The spin
 <figcaption>Fade to ghostly, then spin — two steps playing one after the other.</figcaption>
 </figure>
 
+To bounce and repeat an entire sequential chain, add `.loop()` at the end — it applies to all steps:
+
+```python
+rect.animate_fade(to=0.3, duration=1.5, easing="ease-in-out") \
+    .then() \
+    .animate_spin(360, duration=2.0, easing="ease-in-out") \
+    .loop(bounce=True)
+```
+
 Add a gap between animations:
 
 ```python
@@ -219,6 +234,61 @@ dot.animate_fade(to=0.5, duration=1.0).then().animate_spin(360, duration=2.0).th
 ```python
 conn.animate_draw(duration=1.5).then().animate_fade(to=0.0, duration=0.5)
 ```
+
+## Looping
+
+There are two ways to loop animations in PyFreeform: **per-animation** (inline at creation time) and **chain-level** (via `.loop()`). They serve different use cases and work together.
+
+### Per-Animation Looping
+
+Pass `repeat=` and `bounce=` directly to any `animate_*` call. This controls only that one animation, leaving others unaffected:
+
+```python
+dot.animate_spin(360, duration=2.0)                                # plays once
+dot.animate_color(to="blue", duration=1.0, repeat=True)            # loops forever
+dot.animate_radius(to=35, duration=1.2, repeat=True, bounce=True)  # bounces forever
+```
+
+Here, spin plays once and stops, while `color` and `radius` loop independently. This is the standard pattern from GSAP, anime.js, Framer Motion, and CSS animations.
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `repeat` | `bool \| int` | `False` | `False` = play once, `True` = loop forever, `int ≥ 2` = N cycles |
+| `bounce` | `bool` | `False` | Alternate direction each cycle |
+
+### Chain-Level Looping with `.loop()`
+
+Call `.loop()` after building your animation(s) to loop **all** animations on the entity at call time. It is a *terminal method* — it returns `None`.
+
+```python
+dot.animate_fade(to=0.0, duration=1.5, easing="ease-in-out")
+dot.loop()                  # loop forever
+dot.loop(bounce=True)       # loop, reversing direction each cycle
+dot.loop(times=3)           # loop exactly 3 times, then stop
+```
+
+`.loop()` is especially useful for `.then()` chains — it applies the same loop settings to all steps at once:
+
+```python
+cell.add_dot(at="center", radius=0.15, color="coral") \
+    .animate_fade(to=0.0, duration=1.5) \
+    .loop(bounce=True)
+
+rect.animate_fade(to=0.3, duration=1.5).then().animate_spin(360, duration=2.0).loop(bounce=True)
+```
+
+### `.loop()` parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `bounce` | `bool` | `False` | Alternate direction each cycle (forward → backward → forward…) |
+| `times` | `bool \| int` | `True` | `True` = infinite, `int ≥ 2` = loop N times |
+
+!!! note "Parity note for `bounce=True, times=N`"
+    When bouncing finitely, the final resting value depends on parity: odd N freezes at the *end* value, even N freezes at the *start* value (the last bounce cycle reverses back).
+
+!!! warning "`.loop()` overrides inline `repeat=`"
+    If you call `.loop()` after setting `repeat=True` on individual animations, `.loop()` wins — it stamps its own `bounce` and `times` onto **all** animations on the entity. Use one or the other, not both.
 
 ## Stagger
 
@@ -239,10 +309,12 @@ stagger(*dots, offset=0.3, each=lambda d: d.animate_fade(to=0.0, duration=1.5))
 <figcaption>Six dots fading out one by one — each starts 0.3 seconds after the last.</figcaption>
 </figure>
 
-The `each` callback applies animation(s) to each entity, and `stagger` offsets the timing by `offset` seconds per entity. You can apply multiple animations at once:
+The `each` callback applies animation(s) to each entity, and `stagger` offsets the timing by `offset` seconds per entity. You can apply multiple animations and `.loop()` inside the callback:
 
 ```python
 stagger(*dots, offset=0.15, each=lambda d: d.animate_fade(to=0.0).animate_spin(360))
+stagger(*dots, offset=0.3,
+        each=lambda d: d.animate_fade(to=0.0, duration=1.5).loop(bounce=True))
 ```
 
 ## Move
@@ -274,10 +346,10 @@ poly = Polygon([p1, p2, p3, p4], fill="mediumpurple", stroke="white",
 scene.place(poly)
 
 # Move dots inward — polygon follows automatically
-p1.animate_move(to=(0.2, 0.28), duration=2.0, bounce=True, repeat=True, easing="ease-in-out")
-p2.animate_move(to=(0.16, 0.58), duration=2.0, bounce=True, repeat=True, easing="ease-in-out")
-p3.animate_move(to=(0.48, 0.58), duration=2.0, bounce=True, repeat=True, easing="ease-in-out")
-p4.animate_move(to=(0.52, 0.28), duration=2.0, bounce=True, repeat=True, easing="ease-in-out")
+p1.animate_move(to=(0.2, 0.28), duration=2.0, easing="ease-in-out").loop(bounce=True)
+p2.animate_move(to=(0.16, 0.58), duration=2.0, easing="ease-in-out").loop(bounce=True)
+p3.animate_move(to=(0.48, 0.58), duration=2.0, easing="ease-in-out").loop(bounce=True)
+p4.animate_move(to=(0.52, 0.28), duration=2.0, easing="ease-in-out").loop(bounce=True)
 ```
 
 The polygon's shape animates to follow its vertices — no extra code needed.
@@ -289,7 +361,7 @@ d1 = cell.add_dot(at=(0.62, 0.2), radius=0.03, color="coral")
 d2 = cell.add_dot(at=(0.92, 0.7), radius=0.03, color="gold")
 conn = d1.connect(d2, color="skyblue", width=2)
 
-d1.animate_move(to=(0.75, 0.7), duration=2.5, bounce=True, repeat=True, easing="ease-in-out")
+d1.animate_move(to=(0.75, 0.7), duration=2.5, easing="ease-in-out").loop(bounce=True)
 # conn follows d1 automatically — both straight lines and curves
 ```
 
@@ -299,7 +371,7 @@ d1.animate_move(to=(0.75, 0.7), duration=2.5, bounce=True, repeat=True, easing="
 </figure>
 
 !!! tip "Mixed timing"
-    Vertices and endpoints can have different durations, easings, delays, and even different repeat/bounce settings — each vertex follows its own timing schedule. When timings differ, PyFreeform resamples all animations onto a unified timeline so the shape morphs smoothly.
+    Vertices and endpoints can have different durations, easings, delays, and even different `.loop()` settings — each vertex follows its own timing schedule. When timings differ, PyFreeform resamples all animations onto a unified timeline so the shape morphs smoothly.
 
 ---
 
@@ -310,19 +382,21 @@ Every animatable property has its own method on the relevant entity type — IDE
 ```python
 dot = cell.add_dot(at="center", radius=0.06, color="coral")
 
-dot.animate_radius(to=35, duration=1.2, easing="ease-in-out", repeat=True, bounce=True)
+dot.animate_radius(to=35, duration=1.2, easing="ease-in-out")
+dot.loop(bounce=True)
 ```
 
 <figure markdown>
 ![Typed animate](../_images/guide/anim-animate.svg){ width="240" }
-<figcaption>A dot pulsing in size — `bounce=True` reverses each cycle.</figcaption>
+<figcaption>A dot pulsing in size — `.loop(bounce=True)` reverses each cycle.</figcaption>
 </figure>
 
 More examples:
 
 ```python
 rect.animate_fill(to="coral", duration=2.0)         # color transition
-rect.animate_width(keyframes={0: 100, 1: 200, 2: 100}, repeat=True)  # multi-step
+rect.animate_width(keyframes={0: 100, 1: 200, 2: 100})
+rect.loop()                                          # loop the keyframe sequence
 ```
 
 The `keyframes` dict maps times (seconds) to property values at those times.
@@ -330,7 +404,8 @@ The `keyframes` dict maps times (seconds) to property values at those times.
 You can also pass a list — values are distributed evenly over the duration:
 
 ```python
-rect.animate_fill(keyframes=["coral", "dodgerblue", "coral"], duration=3.0, repeat=True)
+rect.animate_fill(keyframes=["coral", "dodgerblue", "coral"], duration=3.0)
+rect.loop()
 # equivalent to keyframes={0: "coral", 1.5: "dodgerblue", 3.0: "coral"}
 ```
 

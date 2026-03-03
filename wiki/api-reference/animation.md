@@ -48,6 +48,11 @@ All entities inherit these methods from the base `Entity` class. Each returns `s
       heading_level: 4
       show_root_full_path: false
 
+::: pyfreeform.core.entity.Entity.loop
+    options:
+      heading_level: 4
+      show_root_full_path: false
+
 ::: pyfreeform.core.entity.Entity.clear_animations
     options:
       heading_level: 4
@@ -131,6 +136,11 @@ Connections support a subset of animation methods:
       heading_level: 3
       show_root_full_path: false
 
+::: pyfreeform.core.connection.Connection.loop
+    options:
+      heading_level: 3
+      show_root_full_path: false
+
 ::: pyfreeform.core.connection.Connection.clear_animations
     options:
       heading_level: 3
@@ -150,6 +160,9 @@ Connections support a subset of animation methods:
 ## Animation Data Model
 
 These classes live in `pyfreeform.animation` and represent animation data. You rarely need to create them directly — the entity methods do it for you. They're useful for inspection and custom renderers.
+
+!!! note "bounce / repeat fields"
+    The `bounce` and `repeat` fields on animation model classes are **storage** — they are stamped by `.loop()`, not passed directly to `animate_*` methods.
 
 ::: pyfreeform.animation.models.Easing
     options:
