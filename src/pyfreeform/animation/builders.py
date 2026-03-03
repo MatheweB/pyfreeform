@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import TYPE_CHECKING
 
-from ..core.relcoord import RelCoord
+from ..core.relcoord import RelCoord, RelCoordLike
 from .models import (
     DrawAnimation,
     EasingLike,
@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from ..core.connection import Connection
     from ..core.entity import Entity
     from ..core.pathable import Pathable
-    from ..core.relcoord import RelCoordLike
+    pass
 
 
 def build_fade(
@@ -125,8 +125,22 @@ def build_spin(
     hold: bool = True,
     repeat: RepeatLike = False,
     bounce: bool = False,
+    pivot: RelCoordLike | None = None,
 ) -> PropertyAnimation:
-    """Build a rotation animation."""
+    """Build a rotation animation.
+
+    Args:
+        entity: The entity being animated (used to read initial rotation).
+        angle: Total rotation in degrees.
+        duration: Duration in seconds.
+        delay: Seconds before animation starts.
+        easing: Speed curve.
+        hold: Hold final value after animation ends.
+        repeat: False=once, True=forever, int=N times.
+        bounce: Alternate direction each cycle.
+        pivot: Custom rotation center as surface-relative ``(rx, ry)``.
+            ``None`` = entity's natural ``rotation_center``.
+    """
     return PropertyAnimation(
         prop="rotation",
         keyframes=[
@@ -138,6 +152,7 @@ def build_spin(
         delay=delay,
         repeat=repeat,
         bounce=bounce,
+        pivot=RelCoord.coerce(pivot) if pivot is not None else None,
     )
 
 
@@ -262,8 +277,22 @@ def build_scale(
     hold: bool = True,
     repeat: RepeatLike = False,
     bounce: bool = False,
+    pivot: RelCoordLike | None = None,
 ) -> PropertyAnimation:
-    """Build a scale animation."""
+    """Build a scale animation.
+
+    Args:
+        entity: The entity being animated (used to read initial scale).
+        to: Target scale factor.
+        duration: Duration in seconds.
+        delay: Seconds before animation starts.
+        easing: Speed curve.
+        hold: Hold final value after animation ends.
+        repeat: False=once, True=forever, int=N times.
+        bounce: Alternate direction each cycle.
+        pivot: Custom scale origin as surface-relative ``(rx, ry)``.
+            ``None`` = entity's natural ``rotation_center``.
+    """
     return PropertyAnimation(
         prop="scale_factor",
         keyframes=[
@@ -275,6 +304,7 @@ def build_scale(
         delay=delay,
         repeat=repeat,
         bounce=bounce,
+        pivot=RelCoord.coerce(pivot) if pivot is not None else None,
     )
 
 

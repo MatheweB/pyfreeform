@@ -230,6 +230,27 @@ def generate():
 
     save(scene, "guide/anim-showcase.svg")
 
+    # --- 13. Pivot: solar system orbit ---
+    scene = Scene.with_grid(cols=1, rows=1, cell_width=240, cell_height=180,
+                            background="#0a0a1a")
+    cell = scene.grid[0][0]
+    sun_rx, sun_ry = 0.5, 0.45
+
+    # Sun
+    cell.add_dot(at=(sun_rx, sun_ry), radius=0.09, color="gold")
+
+    # Planets at different orbital radii and speeds
+    cell.add_dot(at=(sun_rx + 0.18, sun_ry), radius=0.03, color="coral") \
+        .animate_spin(360, duration=3.0, pivot=(sun_rx, sun_ry), repeat=True)
+    cell.add_dot(at=(sun_rx + 0.27, sun_ry), radius=0.025, color="skyblue") \
+        .animate_spin(360, duration=5.0, pivot=(sun_rx, sun_ry), repeat=True)
+    cell.add_dot(at=(sun_rx + 0.38, sun_ry), radius=0.02, color="limegreen") \
+        .animate_spin(360, duration=8.0, pivot=(sun_rx, sun_ry), repeat=True)
+
+    cell.add_text(".animate_spin(360, pivot=(0.5, 0.45))", at=(0.5, 0.92),
+                  font_size=0.065, color="gray")
+    save(scene, "guide/anim-pivot.svg")
+
 
 if __name__ == "__main__":
     generate()

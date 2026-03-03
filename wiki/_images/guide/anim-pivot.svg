@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="180" viewBox="0 0 240 180">
+  <rect width="100%" height="100%" fill="#0a0a1a" />
+  <circle cx="120" cy="81" r="16.2" fill="gold" />
+  <circle cx="163.2" cy="81" r="5.4" fill="coral">
+  <animateTransform attributeName="transform" values="0 120 81;360 120 81" keyTimes="0;1" dur="3.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
+</circle>
+  <circle cx="184.8" cy="81" r="4.5" fill="skyblue">
+  <animateTransform attributeName="transform" values="0 120 81;360 120 81" keyTimes="0;1" dur="5.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
+</circle>
+  <circle cx="211.2" cy="81" r="3.6" fill="limegreen">
+  <animateTransform attributeName="transform" values="0 120 81;360 120 81" keyTimes="0;1" dur="8.0s" fill="freeze" repeatCount="indefinite" type="rotate" additive="sum" />
+</circle>
+  <text x="120" y="165.6" font-size="11.7" font-family="sans-serif" font-style="normal" font-weight="normal" fill="gray" text-anchor="middle" dominant-baseline="middle">.animate_spin(360, pivot=(0.5, 0.45))</text>
+</svg>

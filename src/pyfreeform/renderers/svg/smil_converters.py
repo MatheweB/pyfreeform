@@ -19,6 +19,7 @@ from ...animation.models import (
     PropertyAnimation,
 )
 from ...color import Color
+from ...core.coord import Coord
 from ...core.svg_utils import svg_num
 from .smil_elements import (
     build_animate_element,
@@ -30,6 +31,18 @@ from .smil_elements import (
 if TYPE_CHECKING:
     from ...core.connection import Connection
     from ...core.entity import Entity
+
+
+def _resolve_pivot(anim: PropertyAnimation, entity: Entity) -> Coord:
+    """Resolve animation pivot to absolute coords.
+
+    Uses the animation's custom pivot (surface-relative) if set,
+    otherwise falls back to the entity's natural rotation_center.
+    """
+    if anim.pivot is not None and entity._surface is not None:
+        s = entity._surface
+        return Coord(s.x + anim.pivot.rx * s.width, s.y + anim.pivot.ry * s.height)
+    return entity.rotation_center
 
 
 # ======================================================================
@@ -275,7 +288,7 @@ def render_property_smil(anim: PropertyAnimation, entity: Entity) -> list[str]:
 
 def _render_rotation_smil(anim: PropertyAnimation, entity: Entity) -> str:
     """Render rotation as ``<animateTransform type="rotate">``."""
-    center = entity.rotation_center
+    center = _resolve_pivot(anim, entity)
     cx, cy = svg_num(center.x), svg_num(center.y)
     return build_animate_element(
         **_transform_common(anim),
@@ -291,7 +304,7 @@ def _render_scale_smil(anim: PropertyAnimation, entity: Entity) -> list[str]:
     synchronized elements for the classic
     ``translate(cx,cy) scale(s) translate(-cx,-cy)`` pattern.
     """
-    center = entity.rotation_center
+    center = _resolve_pivot(anim, entity)
     cx, cy = svg_num(center.x), svg_num(center.y)
     ncx, ncy = svg_num(-center.x), svg_num(-center.y)
     n = len(anim.keyframes)

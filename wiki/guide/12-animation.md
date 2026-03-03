@@ -437,6 +437,53 @@ scene.render(SMILRenderer())
 
 ---
 
+## Transform Origin
+
+By default, `animate_spin` and `animate_scale` pivot around the entity's natural center (Rect center, Polygon centroid, etc.). The `pivot=` parameter lets you specify any other point as the rotation/scale origin, expressed as surface-relative fractions — the same coordinate system as `at=`.
+
+**Orbit:** placing planets that revolve around a sun:
+
+```python
+sun_rx, sun_ry = 0.5, 0.45
+cell.add_dot(at=(sun_rx, sun_ry), radius=0.09, color="gold")
+
+cell.add_dot(at=(sun_rx + 0.18, sun_ry), radius=0.03, color="coral") \
+    .animate_spin(360, duration=3.0, pivot=(sun_rx, sun_ry), repeat=True)
+cell.add_dot(at=(sun_rx + 0.27, sun_ry), radius=0.025, color="skyblue") \
+    .animate_spin(360, duration=5.0, pivot=(sun_rx, sun_ry), repeat=True)
+cell.add_dot(at=(sun_rx + 0.38, sun_ry), radius=0.02, color="limegreen") \
+    .animate_spin(360, duration=8.0, pivot=(sun_rx, sun_ry), repeat=True)
+```
+
+<figure markdown>
+![Pivot](../_images/guide/anim-pivot.svg){ width="240" }
+<figcaption>Three planets orbiting a sun — each uses <code>pivot=(0.5, 0.45)</code>, the sun's surface-relative position.</figcaption>
+</figure>
+
+**Clock hand:** a line spinning from its own start point:
+
+```python
+# Line placed at start=(0.3, 0.5) — reuse the same coords as pivot
+line = cell.add_line(start=(0.3, 0.5), end=(0.7, 0.5), width=3, color="white")
+line.animate_spin(360, duration=5.0, pivot=(0.3, 0.5), repeat=True)
+```
+
+**Scale from a corner** instead of the center:
+
+```python
+rect = cell.add_rect(at=(0.5, 0.5), width=0.4, height=0.4, fill="mediumpurple")
+rect.animate_scale(2.0, duration=1.5, pivot=(0.3, 0.3), bounce=True, repeat=True)
+```
+
+!!! warning "SVG limitation: pivot does not follow a moving element"
+    The pivot coordinates are baked into the SVG as fixed world-space values at render time.
+    If the entity is *also* animated with `animate_move` or `animate_follow`, the pivot will
+    stay pinned to its original location as the element moves away — this is a fundamental
+    constraint of SVG SMIL (and CSS transforms). The same limitation exists in anime.js and GSAP.
+    `pivot=` works correctly for **stationary elements**.
+
+---
+
 ## Showcase
 
 Here's what happens when you combine multiple animation types in one scene — spinning, fading, pulsing, and self-drawing all playing together:

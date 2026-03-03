@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, ClassVar
 
 from ..color import Color
+from ..core.relcoord import RelCoord
 
 if TYPE_CHECKING:
     from ..core.pathable import Pathable
@@ -190,6 +191,8 @@ class PropertyAnimation:
         repeat: False=once, True=forever, int=N times.
         bounce: If True, alternate direction each cycle.
         delay: Seconds before animation starts.
+        pivot: Custom transform origin for rotation/scale animations.
+            Surface-relative ``RelCoord``. ``None`` = use entity's natural center.
     """
 
     prop: str
@@ -199,6 +202,7 @@ class PropertyAnimation:
     repeat: RepeatLike = False
     bounce: bool = False
     delay: float = 0.0
+    pivot: RelCoord | None = None
 
     @property
     def duration(self) -> float:

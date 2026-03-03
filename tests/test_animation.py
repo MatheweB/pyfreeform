@@ -6,6 +6,7 @@ import pytest
 
 from pyfreeform import Curve, Dot, Easing, Ellipse, Line, Polygon, Rect, Scene, Path, Text, Connection, stagger
 from pyfreeform.core.coord import Coord
+from pyfreeform.core.svg_utils import svg_num
 from pyfreeform.entities.point import Point
 from pyfreeform.animation.models import (
     DrawAnimation,
@@ -1759,3 +1760,67 @@ class TestPerAnimationRepeat:
         dot.animate_radius(to=10, duration=1.0, repeat=3)
         svg = SMILRenderer().render_entity(dot)
         assert 'repeatCount="3"' in svg
+
+
+# ======================================================================
+# Transform Pivot
+# ======================================================================
+
+class TestTransformPivot:
+    """Tests for animate_spin / animate_scale pivot= parameter."""
+
+    def _cell_dot(self):
+        """A Dot placed in a 200×100 cell, so pivot fractions are predictable."""
+        scene = Scene.with_grid(cols=1, rows=1, cell_width=200, cell_height=100)
+        return scene.grid[0][0].add_dot(at=(0.5, 0.5), radius=0.05, color="red")
+
+    def test_spin_default_no_pivot(self):
+        """No pivot arg → anim.pivot is None."""
+        dot = Dot(50, 50, radius=5, color="red")
+        dot.animate_spin(360, duration=1.0)
+        assert dot.animations[0].pivot is None
+
+    def test_spin_pivot_stored_as_relcoord(self):
+        """pivot=(0.3, 0.5) is stored as RelCoord(0.3, 0.5)."""
+        from pyfreeform.core.relcoord import RelCoord
+        dot = self._cell_dot()
+        dot.animate_spin(360, duration=1.0, pivot=(0.3, 0.5))
+        assert dot.animations[0].pivot == RelCoord(0.3, 0.5)
+
+    def test_pivot_tuple_coerced(self):
+        """Plain tuple is auto-coerced to RelCoord."""
+        from pyfreeform.core.relcoord import RelCoord
+        dot = self._cell_dot()
+        dot.animate_spin(360, duration=1.0, pivot=(0.1, 0.8))
+        assert isinstance(dot.animations[0].pivot, RelCoord)
+
+    def test_no_pivot_falls_back_to_rotation_center(self):
+        """No pivot → SVG values use entity.rotation_center coords."""
+        dot = self._cell_dot()
+        dot.animate_spin(360, duration=1.0)
+        svg = SMILRenderer().render_entity(dot)
+        center = dot.rotation_center
+        assert f"{svg_num(center.x)} {svg_num(center.y)}" in svg
+
+    def test_spin_pivot_in_svg(self):
+        """Custom pivot resolves to surface-relative pixel coords in SVG values."""
+        scene = Scene.with_grid(cols=1, rows=1, cell_width=200, cell_height=100)
+        cell = scene.grid[0][0]
+        dot = cell.add_dot(at=(0.7, 0.5), radius=0.05, color="red")
+        # pivot at surface center: (cell.x + 0.5*200, cell.y + 0.5*100)
+        dot.animate_spin(360, duration=1.0, pivot=(0.5, 0.5))
+        svg = SMILRenderer().render_entity(dot)
+        expected_cx = cell.x + 0.5 * cell.width
+        expected_cy = cell.y + 0.5 * cell.height
+        assert f"{svg_num(expected_cx)} {svg_num(expected_cy)}" in svg
+
+    def test_scale_pivot_in_svg(self):
+        """Custom pivot is used in scale translate+scale+translate values."""
+        scene = Scene.with_grid(cols=1, rows=1, cell_width=200, cell_height=100)
+        cell = scene.grid[0][0]
+        dot = cell.add_dot(at=(0.5, 0.5), radius=0.05, color="red")
+        dot.animate_scale(2.0, duration=1.0, pivot=(0.0, 0.0))
+        svg = SMILRenderer().render_entity(dot)
+        expected_cx = cell.x + 0.0 * cell.width
+        expected_cy = cell.y + 0.0 * cell.height
+        assert f"{svg_num(expected_cx)} {svg_num(expected_cy)}" in svg

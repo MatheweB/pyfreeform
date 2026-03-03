@@ -887,6 +887,7 @@ class Entity(ABC):
         hold: bool = True,
         repeat: RepeatLike = False,
         bounce: bool = False,
+        pivot: RelCoordLike | None = None,
     ) -> Entity:
         """Animate rotation.
 
@@ -899,13 +900,18 @@ class Entity(ABC):
             repeat: ``False`` = play once (default), ``True`` = loop forever,
                 ``int >= 2`` = loop N times.
             bounce: If ``True``, alternate direction each cycle.
+            pivot: Custom rotation center as ``(rx, ry)`` surface-relative fractions.
+                Defaults to the entity's natural ``rotation_center``.
+                Useful for orbits (``pivot=sun_pos``) or spinning from an end point.
+                Does **not** follow the entity if it is also being moved.
 
         Returns:
             Self, for method chaining.
         """
         delay = consume_chain_delay(self, delay)
         self._animations.append(build_spin(self, angle, duration=duration,
-            delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce))
+            delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce,
+            pivot=pivot))
         return self
 
     def animate_scale(
@@ -918,6 +924,7 @@ class Entity(ABC):
         hold: bool = True,
         repeat: RepeatLike = False,
         bounce: bool = False,
+        pivot: RelCoordLike | None = None,
     ) -> Entity:
         """Animate scale factor.
 
@@ -930,13 +937,17 @@ class Entity(ABC):
             repeat: ``False`` = play once (default), ``True`` = loop forever,
                 ``int >= 2`` = loop N times.
             bounce: If ``True``, alternate direction each cycle.
+            pivot: Custom scale origin as ``(rx, ry)`` surface-relative fractions.
+                Defaults to the entity's natural ``rotation_center``.
+                Does **not** follow the entity if it is also being moved.
 
         Returns:
             Self, for method chaining.
         """
         delay = consume_chain_delay(self, delay)
         self._animations.append(build_scale(self, to, duration=duration,
-            delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce))
+            delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce,
+            pivot=pivot))
         return self
 
     def animate_follow(
