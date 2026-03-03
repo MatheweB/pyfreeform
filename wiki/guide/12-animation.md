@@ -197,12 +197,16 @@ dot.animate_move(to=(0.85, 0.5), duration=2.0, easing="ease-in-out") \
    .loop(bounce=True)
 ```
 
-Now the dot slides to its destination fully visible, *then* fades where it landed. `.loop()` at the end applies to every step in the chain at once.
+Now the dot slides to its destination fully visible, *then* fades where it landed. `.loop(bounce=True)` treats the **whole sequence as a single unit** — forward (slide → fade), then backward (re-appear → slide back), then forward again.
 
 <figure markdown>
 ![Then chaining](../_images/guide/anim-then.svg){ width="320" }
-<figcaption>A dot sliding to the right, then fading out — two distinct steps, one after the other.</figcaption>
+<figcaption>A dot sliding right then fading out, then rewinding in reverse — the whole 4-step sequence loops as one unit.</figcaption>
 </figure>
+
+!!! tip "Chain bounce vs. per-animation bounce"
+    Without `.then()`, `loop(bounce=True)` bounces each animation *independently*. With `.then()`, it bounces the *whole sequence* as one unit — the difference is what counts as "one cycle": a single animation, or the entire sequence.
+    Compare the two examples above: in the simultaneous version both animations restart together every 2 s; in the sequential version the whole 8 s journey (slide → fade → re-appear → slide back) forms one cycle.
 
 Add a gap between animations:
 
@@ -255,13 +259,14 @@ dot.loop(bounce=True)       # loop, reversing direction each cycle
 dot.loop(times=3)           # loop exactly 3 times, then stop
 ```
 
-`.loop()` is especially useful for `.then()` chains — it applies the same loop settings to all steps at once:
+`.loop()` is especially useful for `.then()` chains — it applies the same loop settings to all steps and makes the whole sequence loop as a unit:
 
 ```python
 cell.add_dot(at="center", radius=0.15, color="coral") \
     .animate_fade(to=0.0, duration=1.5) \
     .loop(bounce=True)
 
+# The fade → spin sequence loops as one unit (bounce reverses the whole chain)
 rect.animate_fade(to=0.3, duration=1.5).then().animate_spin(360, duration=2.0).loop(bounce=True)
 ```
 

@@ -285,7 +285,11 @@ class MotionAnimation:
         bounce: If True, alternate direction each cycle.
         delay: Seconds before animation starts.
         rotate: True for auto-rotation along tangent, float for fixed angle.
+        reverse: If True, traverse the path backwards (end → start instead of
+            start → end).  Used internally by the chain renderer to produce the
+            backward pass of a bounced ``.then()`` chain.
         chain_id: Shared ID for all animations in one ``.then()`` sequence.
+            ``None`` = independent animation (default behaviour).
         chain_seq: Position within the chain (0, 1, 2, …).
     """
 

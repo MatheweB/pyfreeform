@@ -132,9 +132,8 @@ def _generate_lissajous_trace():
 
     # Glow dot that pulses
     glow = cell.add_dot(at=(start_rx, start_ry), radius=0.008, color="white")
-    glow.animate_follow(liss, duration=6.0, easing="linear")
-    glow.animate_radius(to=8, duration=0.8, easing="ease-in-out")
-    glow.loop(bounce=True)
+    glow.animate_follow(liss, duration=6.0, easing="linear", repeat=True)
+    glow.animate_radius(to=8, duration=0.8, easing="ease-in-out", bounce=True, repeat=True)
 
     save(scene, "recipes/anim-lissajous.svg")
 
