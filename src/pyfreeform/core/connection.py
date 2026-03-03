@@ -492,7 +492,18 @@ class Connection:
         """Loop all animations on this connection.
 
         Terminal method — returns ``None``. Call this as the last step
-        after building your animation or chain.
+        after building your animation chain, *not* in the middle.
+
+        Stamps ``bounce`` and ``repeat`` onto **every** animation on the
+        connection. Its primary use case is finishing a ``.then()`` chain::
+
+            conn.animate_fade(to=0.2).then().animate_draw(duration=1.5).loop()
+
+        For a single animation, prefer inline ``repeat=``/``bounce=``
+        parameters instead::
+
+            # Preferred:
+            conn.animate_draw(duration=2.0, repeat=True, bounce=True)
 
         Args:
             bounce: If ``True``, alternate direction each cycle. Default ``False``.
@@ -501,11 +512,6 @@ class Connection:
         Raises:
             ValueError: If *times* does not represent a real loop.
             ValueError: If no animations have been added yet.
-
-        Example::
-
-            conn.animate_draw(duration=2.0).loop(bounce=True)
-            conn.animate_fade(to=0.2).then().animate_draw(duration=1.5).loop()
         """
         apply_loop(self, bounce=bounce, times=times)
 

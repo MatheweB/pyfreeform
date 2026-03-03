@@ -1047,11 +1047,32 @@ class Entity(ABC):
         """Loop all animations on this entity.
 
         Terminal method — returns ``None``. Call this as the last step
-        after building your animation (or chain), *not* in the middle.
+        after building your animation chain, *not* in the middle.
 
-        Stamps ``bounce`` and ``repeat`` onto every animation currently
-        on the entity, so it works identically for a single animation
-        and for a multi-step ``.then()`` chain.
+        Stamps ``bounce`` and ``repeat`` onto **every** animation currently
+        on the entity. Its primary use case is finishing a ``.then()`` chain
+        so the whole sequence repeats as one unit::
+
+            # Natural fit — the chain [move → fade] loops together:
+            dot.animate_move(...).then().animate_fade(...).loop(bounce=True)
+
+        For a single animation, prefer passing ``repeat=`` and ``bounce=``
+        directly to the ``animate_*`` call — it is self-contained and
+        impossible to accidentally apply to the wrong animation::
+
+            # Preferred:
+            dot.animate_fade(to=0.0, duration=1.0, repeat=True, bounce=True)
+
+            # Works but unnecessary indirection:
+            dot.animate_fade(to=0.0, duration=1.0).loop(bounce=True)
+
+        .. warning::
+            If an entity has **multiple animations with different desired
+            settings**, use per-animation ``repeat=``/``bounce=`` rather
+            than ``.loop()``. Because ``.loop()`` stamps every animation
+            on the entity, it can silently apply ``bounce`` to an animation
+            you didn't intend — for example, reversing an ``animate_follow``
+            while only meaning to bounce an ``animate_radius``.
 
         Args:
             bounce: If ``True``, alternate direction each cycle
@@ -1071,12 +1092,6 @@ class Entity(ABC):
             at the **end** value, *even N* freezes at the **start** value
             (the last bounce cycle reverses back). Only relevant when
             ``hold=True`` (the ``animate_*`` default).
-
-        Example::
-
-            dot.animate_fade(to=0.0, duration=1.0).loop(bounce=True)
-            dot.animate_scale(to=2.0, duration=1.5).loop(times=4)
-            dot.animate_fade(to=0.3).then().animate_spin(360).loop(bounce=True)
         """
         apply_loop(self, bounce=bounce, times=times)
 

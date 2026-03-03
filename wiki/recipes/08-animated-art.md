@@ -83,30 +83,28 @@ A dot traces a Lissajous curve in real time while the path draws itself behind i
 
 ```python
 import math
-from pyfreeform import Scene, Dot, Path
+from pyfreeform import Scene
 from pyfreeform.paths import Lissajous
 
-scene = Scene(400, 400, background="#0a0a1a")
-cx, cy = 200, 200
+scene = Scene.with_grid(cols=1, rows=1, cell_size=400, background="#0a0a1a")
+cell = scene.grid[0][0]
 
-liss = Lissajous(center=(cx, cy), a=5, b=4, delta=math.pi / 2, size=150)
+liss = Lissajous(center=(0.5, 0.5), a=5, b=4, delta=math.pi / 2, size=0.38)
 
-# The curve draws itself
-path = Path(liss, width=2, color="mediumpurple", opacity=0.7)
-scene.place(path)
+# The curve draws itself (relative=True scales 0–1 coords to pixels)
+path = cell.add_path(liss, relative=True, width=2, color="mediumpurple", opacity=0.7)
 path.animate_draw(duration=6.0, easing="linear")
 
-# A dot follows the same curve
+# liss.point_at(0.0) is already in relative (0–1) space
 start = liss.point_at(0.0)
-tracer = Dot(start.x, start.y, radius=6, color="coral")
-scene.place(tracer)
-tracer.animate_follow(liss, duration=6.0, easing="linear")
-tracer.loop()
 
-# Glowing center on the tracer — pulse radius, not scale
-glow = Dot(start.x, start.y, radius=3, color="white")
-scene.place(glow)
-glow.animate_follow(liss, duration=6.0, easing="linear", repeat=True)
+# A dot follows the same curve
+tracer = cell.add_dot(at=(start.x, start.y), radius=0.015, color="coral")
+tracer.animate_follow(path, duration=6.0, easing="linear", repeat=True)
+
+# Glowing center — pulse radius only
+glow = cell.add_dot(at=(start.x, start.y), radius=0.008, color="white")
+glow.animate_follow(path, duration=6.0, easing="linear", repeat=True)
 glow.animate_radius(to=8, duration=0.8, easing="ease-in-out", bounce=True, repeat=True)
 ```
 
@@ -200,18 +198,16 @@ for ring_idx in range(n_rings):
 
         per_dot_delay = phase_delay + j * 0.05
         dot.animate_radius(to=10, duration=2.0, delay=per_dot_delay,
-                           easing="ease-in-out")
+                           easing="ease-in-out", bounce=True, repeat=True)
         if j % 2 == 0:
             dot.animate_fade(to=0.3, duration=2.0, delay=per_dot_delay,
-                             easing="ease-in-out")
-        dot.loop(bounce=True)
+                             easing="ease-in-out", bounce=True, repeat=True)
 
 # Center jewel
 center = Dot(cx, cy, radius=8, color="white")
 scene.place(center)
-center.animate_radius(to=16, duration=1.5, easing="ease-in-out")
-center.animate_spin(360, duration=6.0, easing="linear")
-center.loop(bounce=True)
+center.animate_radius(to=16, duration=1.5, easing="ease-in-out", bounce=True, repeat=True)
+center.animate_spin(360, duration=6.0, easing="linear", bounce=True, repeat=True)
 ```
 
 <figure markdown>
@@ -274,8 +270,8 @@ forward_time = total_delay + 0.5
 for entity, appear, target, dur in elements:
     entity.animate_fade(
         keyframes={0: 0, appear: 0, appear + dur: target, forward_time: target},
+        repeat=True, bounce=True,
     )
-    entity.loop(bounce=True)
 ```
 
 <figure markdown>

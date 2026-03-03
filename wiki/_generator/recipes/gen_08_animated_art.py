@@ -93,8 +93,8 @@ def _generate_mandelbrot(max_iter=50):
             fill.animate_fade(
                 keyframes={0: 0, appear: 0, appear + 0.4: 1.0,
                            forward_time: 1.0},
+                repeat=True, bounce=True,
             )
-            fill.loop(bounce=True)
 
     save(scene, "recipes/anim-mandelbrot.svg")
 
@@ -103,36 +103,25 @@ def _generate_mandelbrot(max_iter=50):
 
 
 def _generate_lissajous_trace():
-    """A dot follows a Lissajous curve while the path draws itself behind it.
-
-    Uses cell pixel dimensions for the Pathable (required by add_path/follow),
-    but all entities are placed via cell add_* methods.
-    """
+    """A dot follows a Lissajous curve while the path draws itself behind it."""
     scene = Scene.with_grid(cols=1, rows=1, cell_size=400, background="#0a0a1a")
     cell = scene.grid[0][0]
-    w, h = cell.width, cell.height
-    cx_px, cy_px = cell.center
 
-    liss = Lissajous(
-        center=(cx_px, cy_px), a=5, b=4,
-        delta=math.pi / 2, size=w * 0.38,
-    )
+    liss = Lissajous(center=(0.5, 0.5), a=5, b=4, delta=math.pi / 2, size=0.38)
 
-    # The drawn path
-    path = cell.add_path(liss, width=2, color="mediumpurple", opacity=0.7)
+    # The drawn path (relative=True scales the 0–1 coords to pixels)
+    path = cell.add_path(liss, relative=True, width=2, color="mediumpurple", opacity=0.7)
     path.animate_draw(duration=6.0, easing="linear")
 
-    # Place tracer dot at the Lissajous starting position
+    # liss.point_at(0.0) is already in relative (0–1) space
     start = liss.point_at(0.0)
-    start_rx, start_ry = start.x / w, start.y / h
 
-    tracer = cell.add_dot(at=(start_rx, start_ry), radius=0.015, color="coral")
-    tracer.animate_follow(liss, duration=6.0, easing="linear")
-    tracer.loop()
+    tracer = cell.add_dot(at=(start.x, start.y), radius=0.015, color="coral")
+    tracer.animate_follow(path, duration=6.0, easing="linear", repeat=True)
 
     # Glow dot that pulses
-    glow = cell.add_dot(at=(start_rx, start_ry), radius=0.008, color="white")
-    glow.animate_follow(liss, duration=6.0, easing="linear", repeat=True)
+    glow = cell.add_dot(at=(start.x, start.y), radius=0.008, color="white")
+    glow.animate_follow(path, duration=6.0, easing="linear", repeat=True)
     glow.animate_radius(to=8, duration=0.8, easing="ease-in-out", bounce=True, repeat=True)
 
     save(scene, "recipes/anim-lissajous.svg")
@@ -181,8 +170,7 @@ def _generate_spiral_galaxy(n_stars=200):
     for i, dot in enumerate(stars):
         if i % 5 == 0:
             dot.animate_spin(360, duration=8.0 + (i % 3) * 2,
-                     easing="linear")
-            dot.loop()
+                             easing="linear", repeat=True)
 
     save(scene, "recipes/anim-galaxy.svg")
 
@@ -209,36 +197,23 @@ def _generate_breathing_mandala():
         color = ring_colors[ring_idx]
         phase_delay = ring_idx * 0.3
 
-        ring_dots = []
         for j in range(n):
             angle = 2 * math.pi * j / n + ring_idx * 0.15
             rx = 0.5 + r * math.cos(angle)
             ry = 0.5 + r * math.sin(angle)
             dot = cell.add_dot(at=(rx, ry), radius=0.01, color=color)
-            ring_dots.append(dot)
 
-        # Pulse: animate radius in/out with bounce
-        for j, dot in enumerate(ring_dots):
             per_dot_delay = phase_delay + j * 0.05
-            dot.animate_radius(
-                to=10, duration=2.0,
-                delay=per_dot_delay,
-                easing="ease-in-out",
-            )
-            # Alternate dots also pulse opacity
+            dot.animate_radius(to=10, duration=2.0, delay=per_dot_delay,
+                               easing="ease-in-out", bounce=True, repeat=True)
             if j % 2 == 0:
-                dot.animate_fade(
-                    to=0.3, duration=2.0,
-                    delay=per_dot_delay,
-                    easing="ease-in-out",
-                )
-            dot.loop(bounce=True)
+                dot.animate_fade(to=0.3, duration=2.0, delay=per_dot_delay,
+                                 easing="ease-in-out", bounce=True, repeat=True)
 
     # Center jewel
     center = cell.add_dot(at=(0.5, 0.5), radius=0.02, color="white")
-    center.animate_radius(to=16, duration=1.5, easing="ease-in-out")
-    center.animate_spin(360, duration=6.0, easing="linear")
-    center.loop(bounce=True)
+    center.animate_radius(to=16, duration=1.5, easing="ease-in-out", bounce=True, repeat=True)
+    center.animate_spin(360, duration=6.0, easing="linear", bounce=True, repeat=True)
 
     save(scene, "recipes/anim-mandala.svg")
 
@@ -275,9 +250,9 @@ def _generate_sierpinski_triangle(max_depth=5):
     )
     elements.append((outer, 0.0, 0.85, 0.6))
 
-    # Step 2: collect holes by depth
+    # Steps 2+3: collect holes and create polygons depth by depth
     corners = [(top, bl, br)]
-    holes_by_depth: dict[int, list[tuple]] = {}
+    total_delay = 0.8  # after outer triangle fades in
 
     for d in range(1, max_depth + 1):
         holes = []
@@ -290,16 +265,9 @@ def _generate_sierpinski_triangle(max_depth=5):
             next_corners.extend([
                 (v0, m01, m02), (m01, v1, m12), (m02, m12, v2),
             ])
-        holes_by_depth[d] = holes
         corners = next_corners
 
-    # Step 3: create hole polygons with staggered appear times
-    total_delay = 0.8  # after outer triangle fades in
-
-    for d in range(1, max_depth + 1):
-        holes = holes_by_depth[d]
         per_hole = min(0.04, 1.2 / max(len(holes), 1))
-
         for k, (h0, h1, h2) in enumerate(holes):
             hole = cell.add_polygon(
                 [h0, h1, h2], fill=bg, stroke=bg,
@@ -317,8 +285,8 @@ def _generate_sierpinski_triangle(max_depth=5):
         entity.animate_fade(
             keyframes={0: 0, appear: 0, appear + dur: target,
                        forward_time: target},
+            repeat=True, bounce=True,
         )
-        entity.loop(bounce=True)
 
     save(scene, "recipes/anim-sierpinski.svg")
 
