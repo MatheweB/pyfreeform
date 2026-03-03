@@ -20,7 +20,6 @@ if TYPE_CHECKING:
     from ..core.connection import Connection
     from ..core.entity import Entity
     from ..core.pathable import Pathable
-    pass
 
 
 def build_fade(

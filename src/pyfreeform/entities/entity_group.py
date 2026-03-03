@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import math
 
 from ..core.coord import Coord, CoordLike
@@ -117,8 +118,6 @@ class EntityGroup(Entity):
             cell.add(group)
             ```
         """
-        import copy
-
         resolved = []
         for e in entities:
             # Memo trick: reuse the same surface object so deepcopy doesn't

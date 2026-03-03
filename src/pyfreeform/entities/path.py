@@ -8,10 +8,10 @@ from typing import TYPE_CHECKING
 from ..animation import typed_methods
 from ..animation.shared import add_draw
 from ..color import Color
-from ..core.bezier import eval_cubic, eval_cubic_derivative, fit_cubic_beziers
+from ..core.bezier import bezier_segment_index, eval_cubic, eval_cubic_derivative, fit_cubic_beziers
 from ..core.coord import Coord
 from ..core.entity import Entity
-from ..config.caps import CapName, collect_markers
+from ..config.caps import CapName, collect_markers, resolve_cap
 from ..core.svg_utils import svg_num
 from ..gradient import Gradient
 from ..paths import Lissajous, Spiral, Wave, Zigzag
@@ -242,12 +242,7 @@ class Path(Entity):
             seg = self._bezier_segments[-1]
             return self._to_world_space(seg[3])
 
-        segment_t = t * n
-        idx = int(segment_t)
-        if idx >= n:
-            idx = n - 1
-        local_t = segment_t - idx
-
+        idx, local_t = bezier_segment_index(t, n)
         return self._to_world_space(eval_cubic(*self._bezier_segments[idx], local_t))
 
     def angle_at(self, t: float) -> float:
@@ -272,11 +267,7 @@ class Path(Entity):
             seg = self._bezier_segments[-1]
             dx, dy = eval_cubic_derivative(*seg, 1.0)
         else:
-            segment_t = t * n
-            idx = int(segment_t)
-            if idx >= n:
-                idx = n - 1
-            local_t = segment_t - idx
+            idx, local_t = bezier_segment_index(t, n)
             seg = self._bezier_segments[idx]
             dx, dy = eval_cubic_derivative(*seg, local_t)
 
@@ -552,12 +543,12 @@ class Path(Entity):
     @property
     def effective_start_cap(self) -> str:
         """Resolved cap for the start end."""
-        return self.start_cap if self.start_cap is not None else self.cap
+        return resolve_cap(self.cap, self.start_cap)
 
     @property
     def effective_end_cap(self) -> str:
         """Resolved cap for the end end."""
-        return self.end_cap if self.end_cap is not None else self.cap
+        return resolve_cap(self.cap, self.end_cap)
 
     def get_required_markers(self) -> list[tuple[str, str]]:
         """Collect SVG marker definitions needed by this path's caps."""

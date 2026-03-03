@@ -18,6 +18,25 @@ if TYPE_CHECKING:
     from .pathable import Pathable
 
 
+def bezier_segment_index(t: float, n: int) -> tuple[int, float]:
+    """Return (segment_index, local_t) for a global parameter across n segments.
+
+    Splits [0, 1) into n equal intervals. Caller must handle the t >= 1 edge
+    case before calling (typically by returning the last segment's endpoint).
+
+    Args:
+        t: Global parameter in [0, 1).
+        n: Number of segments (> 0).
+
+    Returns:
+        ``(idx, local_t)`` where ``idx`` is the segment index in ``[0, n-1]``
+        and ``local_t`` is the parameter within that segment.
+    """
+    segment_t = t * n
+    idx = min(int(segment_t), n - 1)
+    return idx, segment_t - idx
+
+
 def sample_arc_length(
     point_at_fn: Callable[[float], Coord], samples: int = 200
 ) -> float:

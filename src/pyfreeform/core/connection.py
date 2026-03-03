@@ -14,11 +14,11 @@ from ..animation.shared import (
     clear_all_animations,
 )
 from ..color import Color, ColorLike, apply_brightness
-from ..config.caps import CapName, collect_markers
+from ..config.caps import CapName, collect_markers, resolve_cap
 from ..config.styles import PathStyle
 from ..gradient import Gradient, PaintLike
 from ..renderers import SMILRenderer
-from .bezier import curvature_control_point, eval_cubic, quadratic_to_cubic
+from .bezier import bezier_segment_index, curvature_control_point, eval_cubic, quadratic_to_cubic
 from .coord import Coord
 from .positions import AnchorSpec
 from .svg_utils import svg_num
@@ -260,12 +260,12 @@ class Connection:
     @property
     def effective_start_cap(self) -> str:
         """Resolved cap for the start end."""
-        return self.start_cap if self.start_cap is not None else self.cap
+        return resolve_cap(self.cap, self.start_cap)
 
     @property
     def effective_end_cap(self) -> str:
         """Resolved cap for the end end."""
-        return self.end_cap if self.end_cap is not None else self.cap
+        return resolve_cap(self.cap, self.end_cap)
 
     def get_required_markers(self) -> list[tuple[str, str]]:
         """Collect SVG marker definitions needed by this connection's caps."""
@@ -344,11 +344,7 @@ class Connection:
         if t >= 1.0:
             p = self._shape_beziers[-1][3]
         else:
-            segment_t = t * n
-            idx = int(segment_t)
-            if idx >= n:
-                idx = n - 1
-            local_t = segment_t - idx
+            idx, local_t = bezier_segment_index(t, n)
             p = eval_cubic(*self._shape_beziers[idx], local_t)
 
         xform = self._compute_transform()

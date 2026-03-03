@@ -6,7 +6,7 @@ from abc import abstractmethod
 
 from ..animation import typed_methods
 from ..color import Color, apply_brightness
-from ..config.caps import CapName, collect_markers
+from ..config.caps import CapName, collect_markers, resolve_cap
 from ..core.coord import Coord
 from ..core.entity import Entity
 from ..core.relcoord import RelCoord
@@ -115,12 +115,12 @@ class EndpointEntity(Entity):
     @property
     def effective_start_cap(self) -> str:
         """Resolved cap for the start end."""
-        return self.start_cap if self.start_cap is not None else self.cap
+        return resolve_cap(self.cap, self.start_cap)
 
     @property
     def effective_end_cap(self) -> str:
         """Resolved cap for the end end."""
-        return self.end_cap if self.end_cap is not None else self.cap
+        return resolve_cap(self.cap, self.end_cap)
 
     def get_required_markers(self) -> list[tuple[str, str]]:
         """Collect SVG marker definitions needed by this entity's caps."""

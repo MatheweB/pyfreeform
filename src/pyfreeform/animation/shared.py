@@ -34,12 +34,12 @@ def apply_chain(target: Entity | Connection, gap: float = 0) -> None:
         return
 
     def _effective_end(anim: Animation) -> float:
-        dur = anim.duration
-        d = anim.delay
-        rep = getattr(anim, "repeat", False)
-        if isinstance(rep, int) and rep > 1:
-            return d + dur * rep
-        return d + dur
+        duration = anim.duration
+        delay = anim.delay
+        repeat = getattr(anim, "repeat", False)
+        if isinstance(repeat, int) and repeat > 1:
+            return delay + duration * repeat
+        return delay + duration
 
     target._chain_delay = max(_effective_end(a) for a in target._animations) + gap
 

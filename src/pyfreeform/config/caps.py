@@ -113,6 +113,11 @@ def register_cap(
     _MARKER_CAPS[name] = _CapEntry(generator, start_generator)
 
 
+def resolve_cap(cap: str, override: str | None) -> str:
+    """Return *override* if set, else the fallback *cap*."""
+    return override if override is not None else cap
+
+
 def is_marker_cap(name: str) -> bool:
     """Check if a cap name requires an SVG marker (vs native stroke-linecap)."""
     return name in _MARKER_CAPS
@@ -163,8 +168,8 @@ def collect_markers(
     Returns:
         List of (marker_id, marker_svg) tuples.
     """
-    effective_sc = start_cap if start_cap is not None else cap
-    effective_ec = end_cap if end_cap is not None else cap
+    effective_sc = resolve_cap(cap, start_cap)
+    effective_ec = resolve_cap(cap, end_cap)
     markers: list[tuple[str, str]] = []
     size = width * DEFAULT_ARROW_SCALE
     for cap_name, for_start in ((effective_sc, True), (effective_ec, False)):
@@ -188,8 +193,8 @@ def svg_cap_and_marker_attrs(
         or "square", and marker_attrs_str contains any marker-start/
         marker-end attributes (or empty string).
     """
-    effective_sc = start_cap if start_cap is not None else cap
-    effective_ec = end_cap if end_cap is not None else cap
+    effective_sc = resolve_cap(cap, start_cap)
+    effective_ec = resolve_cap(cap, end_cap)
     has_marker_start = is_marker_cap(effective_sc)
     has_marker_end = is_marker_cap(effective_ec)
 
