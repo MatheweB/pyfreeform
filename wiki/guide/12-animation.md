@@ -171,50 +171,38 @@ To loop or bounce, call `.loop()` after setting up animations — see [Looping](
 
 ## Method Chaining
 
-All animation methods return `self`, so you can chain them:
+All `animate_*` calls play **simultaneously** by default. Chain as many as you like — they all start at the same moment:
 
 ```python
-rect = cell.add_rect(at="center", width=0.35, height=0.35,
-                     fill="mediumpurple", stroke="white", stroke_width=1)
-
-rect.animate_fade(to=0.3, duration=2.0, easing="ease-in-out") \
-    .animate_spin(360, duration=3.0) \
-    .loop(bounce=True)
+dot.animate_move(to=(0.85, 0.5), duration=2.0, easing="ease-in-out") \
+   .animate_fade(to=0.0, duration=2.0, easing="ease-in-out") \
+   .loop(bounce=True)
 ```
 
-This applies both a fade and a spin to the same entity — they play simultaneously. The rect pulses between 30% and full opacity while spinning, bouncing forever.
-
+The dot slides right *while* fading to invisible — both animations run in parallel.
 
 <figure markdown>
-![Chaining](../_images/guide/anim-chaining.svg){ width="240" }
-<figcaption>A rect pulsing opacity while spinning — both animations play at once.</figcaption>
+![Chaining](../_images/guide/anim-chaining.svg){ width="320" }
+<figcaption>A dot sliding across while fading — move and fade play at the same time.</figcaption>
 </figure>
 
 ## Sequential Chaining
 
-Use `.then()` to start an animation *after* the previous ones finish — no manual delay math:
+Add `.then()` between animations to play them *one after the other*. The same two animations as above, but now sequenced:
 
 ```python
-rect.animate_fade(to=0.3, duration=1.5, easing="ease-in-out") \
-    .then() \
-    .animate_spin(360, duration=2.0, easing="ease-in-out")
+dot.animate_move(to=(0.85, 0.5), duration=2.0, easing="ease-in-out") \
+   .then() \
+   .animate_fade(to=0.0, duration=2.0, easing="ease-in-out") \
+   .loop(bounce=True)
 ```
 
-The rect fades to 30% opacity over 1.5 seconds, then spins a full turn. The spin starts at exactly 1.5 seconds — when the fade ends.
+Now the dot slides to its destination fully visible, *then* fades where it landed. `.loop()` at the end applies to every step in the chain at once.
 
 <figure markdown>
-![Then chaining](../_images/guide/anim-then.svg){ width="300" }
-<figcaption>Fade to ghostly, then spin — two steps playing one after the other.</figcaption>
+![Then chaining](../_images/guide/anim-then.svg){ width="320" }
+<figcaption>A dot sliding to the right, then fading out — two distinct steps, one after the other.</figcaption>
 </figure>
-
-To bounce and repeat an entire sequential chain, add `.loop()` at the end — it applies to all steps:
-
-```python
-rect.animate_fade(to=0.3, duration=1.5, easing="ease-in-out") \
-    .then() \
-    .animate_spin(360, duration=2.0, easing="ease-in-out") \
-    .loop(bounce=True)
-```
 
 Add a gap between animations:
 

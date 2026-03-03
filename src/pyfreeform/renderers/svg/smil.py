@@ -10,11 +10,13 @@ Animation-related logic is split across three supporting modules:
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace as dc_replace
 from typing import TYPE_CHECKING
 
 from ...animation.models import (
+    Animation,
     DrawAnimation,
+    Keyframe,
     MotionAnimation,
     PropertyAnimation,
 )
@@ -108,6 +110,31 @@ def _build_element(
 
 
 # ======================================================================
+# Chain helpers
+# ======================================================================
+
+
+def _reverse_anim(anim: Animation) -> Animation:
+    """Return a copy of *anim* with values reversed for backward pass.
+
+    - ``PropertyAnimation``: same keyframe times, reversed values.
+    - ``DrawAnimation``: swaps ``reverse`` flag (draw ↔ erase).
+    - ``MotionAnimation``: sets ``reverse=True`` (renderer emits keyPoints="1;0").
+    """
+    if isinstance(anim, PropertyAnimation):
+        kfs = anim.keyframes
+        n = len(kfs)
+        # Keep the same normalized times but swap the values end-to-start.
+        new_kfs = [Keyframe(time=kfs[i].time, value=kfs[n - 1 - i].value) for i in range(n)]
+        return dc_replace(anim, keyframes=new_kfs)
+    if isinstance(anim, DrawAnimation):
+        return dc_replace(anim, reverse=not anim.reverse)
+    if isinstance(anim, MotionAnimation):
+        return dc_replace(anim, reverse=True)
+    return anim
+
+
+# ======================================================================
 # SMILRenderer
 # ======================================================================
 
@@ -133,16 +160,170 @@ class SMILRenderer(SVGRenderer):
         Pass *exclude* to skip specific animation indices (e.g. the fill
         animation handled by opacity-layer optimization).
         """
+        anims = [
+            (i, a) for i, a in enumerate(entity._animations)
+            if exclude is None or i not in exclude
+        ]
+
+        # Route chained infinite-loop animations to event-based timing.
+        has_chain = any(getattr(a, "chain_id", None) is not None for _, a in anims)
+        has_inf_loop = any(getattr(a, "repeat", False) is True for _, a in anims)
+        if has_chain and has_inf_loop:
+            return self._render_chained_animations(entity, anims)
+
         result: list[str] = []
-        for i, anim in enumerate(entity._animations):
-            if exclude is not None and i in exclude:
-                continue
+        for _i, anim in anims:
             if isinstance(anim, PropertyAnimation):
                 result.extend(render_property_smil(anim, entity))
             elif isinstance(anim, MotionAnimation):
                 result.append(render_motion_smil(anim))
             elif isinstance(anim, DrawAnimation):
                 result.append(render_draw_smil(anim, entity))
+        return [r for r in result if r]
+
+    def _render_single_chained(
+        self,
+        entity: Entity,
+        anim: Animation,
+        *,
+        element_id: str | None,
+        begin_expr: str,
+    ) -> list[str]:
+        """Render one animation in a chain with event-based timing.
+
+        Strips ``repeat`` and ``bounce`` from the animation — looping is
+        handled by the event-based ``begin=`` chain, not SMIL repeat.
+        """
+        clean = dc_replace(anim, repeat=False, bounce=False)
+        if isinstance(clean, PropertyAnimation):
+            return render_property_smil(clean, entity, element_id=element_id, begin_expr=begin_expr)
+        if isinstance(clean, MotionAnimation):
+            return [render_motion_smil(clean, element_id=element_id, begin_expr=begin_expr)]
+        if isinstance(clean, DrawAnimation):
+            return [render_draw_smil(clean, entity, element_id=element_id, begin_expr=begin_expr)]
+        return []
+
+    def _render_chained_animations(
+        self,
+        entity: Entity,
+        anims_with_index: list[tuple[int, Animation]],
+    ) -> list[str]:
+        """Render a set of chained animations using SMIL event-based timing.
+
+        Chained animations (``chain_id != None``, ``repeat=True``) are
+        rendered as a sequential unit: each step begins when the previous
+        ends, and the whole sequence loops via a reference back to the
+        first step's restart trigger.
+
+        Independent animations (``chain_id=None``) are rendered normally
+        alongside the chain.
+        """
+        # --- Separate chained (grouped by seq) from independent ---
+        chained: dict[int, list[tuple[int, Animation]]] = {}
+        independent: list[tuple[int, Animation]] = []
+
+        for i, anim in anims_with_index:
+            cid = getattr(anim, "chain_id", None)
+            if cid is not None:
+                seq = getattr(anim, "chain_seq", 0)
+                chained.setdefault(seq, []).append((i, anim))
+            else:
+                independent.append((i, anim))
+
+        if not chained:
+            # No chained anims — fall back to standard rendering.
+            result: list[str] = []
+            for _i, anim in independent:
+                if isinstance(anim, PropertyAnimation):
+                    result.extend(render_property_smil(anim, entity))
+                elif isinstance(anim, MotionAnimation):
+                    result.append(render_motion_smil(anim))
+                elif isinstance(anim, DrawAnimation):
+                    result.append(render_draw_smil(anim, entity))
+            return [r for r in result if r]
+
+        sorted_seqs = sorted(chained.keys())
+        has_bounce = any(
+            getattr(anim, "bounce", False)
+            for anims in chained.values()
+            for _, anim in anims
+        )
+
+        # Get chain ID from any chained animation.
+        cid = next(
+            anim.chain_id
+            for anims in chained.values()
+            for _, anim in anims
+            if anim.chain_id is not None
+        )
+
+        result = []
+
+        if not has_bounce:
+            # --- Sequential loop: A → B → C → (restart) → A → B → C → … ---
+            # seq 0  begins at "0s" and restarts when the last seq's anchor ends.
+            last_seq = sorted_seqs[-1]
+            last_anchor = f"ch{cid}s{last_seq}i0"
+
+            for seq_idx, seq in enumerate(sorted_seqs):
+                if seq_idx == 0:
+                    begin_expr = f"0s; {last_anchor}.end"
+                else:
+                    prev_seq = sorted_seqs[seq_idx - 1]
+                    begin_expr = f"ch{cid}s{prev_seq}i0.end"
+
+                for j, (_idx, anim) in enumerate(chained[seq]):
+                    element_id = f"ch{cid}s{seq}i{j}" if j == 0 else None
+                    result.extend(self._render_single_chained(
+                        entity, anim, element_id=element_id, begin_expr=begin_expr,
+                    ))
+
+        else:
+            # --- Bounce: forward pass then backward pass ---
+            # Cycle: seq0f → seq1f → … → seqNf → seqNb → … → seq0b → (restart)
+            # seq0f restarts after seq0b ends.
+            seq0_bwd_anchor = f"ch{cid}s{sorted_seqs[0]}b0"
+
+            # Forward pass (seq 0 → 1 → … → N)
+            for seq_idx, seq in enumerate(sorted_seqs):
+                if seq_idx == 0:
+                    begin_expr = f"0s; {seq0_bwd_anchor}.end"
+                else:
+                    prev_seq = sorted_seqs[seq_idx - 1]
+                    begin_expr = f"ch{cid}s{prev_seq}f0.end"
+
+                for j, (_idx, anim) in enumerate(chained[seq]):
+                    element_id = f"ch{cid}s{seq}f{j}" if j == 0 else None
+                    result.extend(self._render_single_chained(
+                        entity, anim, element_id=element_id, begin_expr=begin_expr,
+                    ))
+
+            # Backward pass (seq N → … → 0, reversed values)
+            for seq_idx in range(len(sorted_seqs) - 1, -1, -1):
+                seq = sorted_seqs[seq_idx]
+                if seq_idx == len(sorted_seqs) - 1:
+                    # Backward starts after the last forward step.
+                    begin_expr = f"ch{cid}s{sorted_seqs[-1]}f0.end"
+                else:
+                    next_seq = sorted_seqs[seq_idx + 1]
+                    begin_expr = f"ch{cid}s{next_seq}b0.end"
+
+                for j, (_idx, anim) in enumerate(chained[seq]):
+                    element_id = f"ch{cid}s{seq}b{j}" if j == 0 else None
+                    reversed_anim = _reverse_anim(anim)
+                    result.extend(self._render_single_chained(
+                        entity, reversed_anim, element_id=element_id, begin_expr=begin_expr,
+                    ))
+
+        # --- Independent animations (non-chained): render normally ---
+        for _i, anim in independent:
+            if isinstance(anim, PropertyAnimation):
+                result.extend(render_property_smil(anim, entity))
+            elif isinstance(anim, MotionAnimation):
+                result.append(render_motion_smil(anim))
+            elif isinstance(anim, DrawAnimation):
+                result.append(render_draw_smil(anim, entity))
+
         return [r for r in result if r]
 
     def _shape_opacity_for_smil(
@@ -680,14 +861,128 @@ class SMILRenderer(SVGRenderer):
         self, conn: Connection, *, exclude: set[int] | None = None,
     ) -> list[str]:
         """Render all animations on a connection to SMIL element strings."""
+        anims = [
+            (i, a) for i, a in enumerate(conn._animations)
+            if exclude is None or i not in exclude
+        ]
+
+        # Route chained infinite-loop animations to event-based timing.
+        has_chain = any(getattr(a, "chain_id", None) is not None for _, a in anims)
+        has_inf_loop = any(getattr(a, "repeat", False) is True for _, a in anims)
+        if has_chain and has_inf_loop:
+            return self._render_chained_connection_anims(conn, anims)
+
         result: list[str] = []
-        for i, anim in enumerate(conn._animations):
-            if exclude is not None and i in exclude:
-                continue
+        for _i, anim in anims:
             if isinstance(anim, PropertyAnimation):
                 result.append(render_connection_prop_smil(anim, conn))
             elif isinstance(anim, DrawAnimation):
                 result.append(render_draw_smil(anim, conn))
+        return [r for r in result if r]
+
+    def _render_single_chained_conn(
+        self,
+        conn: Connection,
+        anim: Animation,
+        *,
+        element_id: str | None,
+        begin_expr: str,
+    ) -> list[str]:
+        """Render one connection animation in a chain with event-based timing."""
+        clean = dc_replace(anim, repeat=False, bounce=False)
+        if isinstance(clean, PropertyAnimation):
+            return [render_connection_prop_smil(clean, conn, element_id=element_id, begin_expr=begin_expr)]
+        if isinstance(clean, DrawAnimation):
+            return [render_draw_smil(clean, conn, element_id=element_id, begin_expr=begin_expr)]
+        return []
+
+    def _render_chained_connection_anims(
+        self,
+        conn: Connection,
+        anims_with_index: list[tuple[int, Animation]],
+    ) -> list[str]:
+        """Chain-aware rendering for Connection animations."""
+        chained: dict[int, list[tuple[int, Animation]]] = {}
+        independent: list[tuple[int, Animation]] = []
+
+        for i, anim in anims_with_index:
+            cid = getattr(anim, "chain_id", None)
+            if cid is not None:
+                seq = getattr(anim, "chain_seq", 0)
+                chained.setdefault(seq, []).append((i, anim))
+            else:
+                independent.append((i, anim))
+
+        if not chained:
+            result: list[str] = []
+            for _i, anim in independent:
+                if isinstance(anim, PropertyAnimation):
+                    result.append(render_connection_prop_smil(anim, conn))
+                elif isinstance(anim, DrawAnimation):
+                    result.append(render_draw_smil(anim, conn))
+            return [r for r in result if r]
+
+        sorted_seqs = sorted(chained.keys())
+        has_bounce = any(
+            getattr(anim, "bounce", False)
+            for anims in chained.values()
+            for _, anim in anims
+        )
+        cid = next(
+            anim.chain_id
+            for anims in chained.values()
+            for _, anim in anims
+            if anim.chain_id is not None
+        )
+
+        result = []
+
+        if not has_bounce:
+            last_anchor = f"ch{cid}s{sorted_seqs[-1]}i0"
+            for seq_idx, seq in enumerate(sorted_seqs):
+                if seq_idx == 0:
+                    begin_expr = f"0s; {last_anchor}.end"
+                else:
+                    prev_seq = sorted_seqs[seq_idx - 1]
+                    begin_expr = f"ch{cid}s{prev_seq}i0.end"
+                for j, (_idx, anim) in enumerate(chained[seq]):
+                    element_id = f"ch{cid}s{seq}i{j}" if j == 0 else None
+                    result.extend(self._render_single_chained_conn(
+                        conn, anim, element_id=element_id, begin_expr=begin_expr,
+                    ))
+        else:
+            seq0_bwd_anchor = f"ch{cid}s{sorted_seqs[0]}b0"
+            for seq_idx, seq in enumerate(sorted_seqs):
+                if seq_idx == 0:
+                    begin_expr = f"0s; {seq0_bwd_anchor}.end"
+                else:
+                    prev_seq = sorted_seqs[seq_idx - 1]
+                    begin_expr = f"ch{cid}s{prev_seq}f0.end"
+                for j, (_idx, anim) in enumerate(chained[seq]):
+                    element_id = f"ch{cid}s{seq}f{j}" if j == 0 else None
+                    result.extend(self._render_single_chained_conn(
+                        conn, anim, element_id=element_id, begin_expr=begin_expr,
+                    ))
+            for seq_idx in range(len(sorted_seqs) - 1, -1, -1):
+                seq = sorted_seqs[seq_idx]
+                if seq_idx == len(sorted_seqs) - 1:
+                    begin_expr = f"ch{cid}s{sorted_seqs[-1]}f0.end"
+                else:
+                    next_seq = sorted_seqs[seq_idx + 1]
+                    begin_expr = f"ch{cid}s{next_seq}b0.end"
+                for j, (_idx, anim) in enumerate(chained[seq]):
+                    element_id = f"ch{cid}s{seq}b{j}" if j == 0 else None
+                    reversed_anim = _reverse_anim(anim)
+                    result.extend(self._render_single_chained_conn(
+                        conn, reversed_anim, element_id=element_id, begin_expr=begin_expr,
+                    ))
+
+        for _i, anim in independent:
+            if isinstance(anim, PropertyAnimation):
+                result.append(render_connection_prop_smil(anim, conn))
+            elif isinstance(anim, DrawAnimation):
+                result.append(render_draw_smil(anim, conn))
+
         return [r for r in result if r]
 
     def render_connection(self, conn: Connection) -> str:

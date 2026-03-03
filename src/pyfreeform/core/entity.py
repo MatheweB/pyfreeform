@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Any, Literal
 
 from ..animation.builders import build_follow, build_move, build_scale, build_spin
 from ..animation.shared import (
+    _tag_with_chain,
     add_generic_animate,
     apply_chain,
     apply_loop,
@@ -86,6 +87,8 @@ class Entity(ABC):
         # Animations (renderer-agnostic data)
         self._animations: list = []
         self._chain_delay: float = 0.0
+        self._chain_id: int | None = None
+        self._chain_next_seq: int = 0
 
     @property
     def z_index(self) -> int:
@@ -873,8 +876,11 @@ class Entity(ABC):
             ValueError: If both *to* and *by* are given, or neither.
         """
         delay = consume_chain_delay(self, delay)
-        self._animations.extend(build_move(self, to, by=by, duration=duration,
-            delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce))
+        new_anims = build_move(self, to, by=by, duration=duration,
+            delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce)
+        for anim in new_anims:
+            _tag_with_chain(self, anim)
+        self._animations.extend(new_anims)
         return self
 
     def animate_spin(
@@ -909,9 +915,11 @@ class Entity(ABC):
             Self, for method chaining.
         """
         delay = consume_chain_delay(self, delay)
-        self._animations.append(build_spin(self, angle, duration=duration,
+        anim = build_spin(self, angle, duration=duration,
             delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce,
-            pivot=pivot))
+            pivot=pivot)
+        _tag_with_chain(self, anim)
+        self._animations.append(anim)
         return self
 
     def animate_scale(
@@ -945,9 +953,11 @@ class Entity(ABC):
             Self, for method chaining.
         """
         delay = consume_chain_delay(self, delay)
-        self._animations.append(build_scale(self, to, duration=duration,
+        anim = build_scale(self, to, duration=duration,
             delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce,
-            pivot=pivot))
+            pivot=pivot)
+        _tag_with_chain(self, anim)
+        self._animations.append(anim)
         return self
 
     def animate_follow(
@@ -980,9 +990,11 @@ class Entity(ABC):
             Self, for method chaining.
         """
         delay = consume_chain_delay(self, delay)
-        self._animations.append(build_follow(path, duration=duration,
+        anim = build_follow(path, duration=duration,
             delay=delay, easing=easing, hold=hold, rotate=rotate,
-            repeat=repeat, bounce=bounce))
+            repeat=repeat, bounce=bounce)
+        _tag_with_chain(self, anim)
+        self._animations.append(anim)
         return self
 
     def animate(

@@ -264,16 +264,19 @@ def _transform_common(anim: PropertyAnimation) -> dict:
 # ======================================================================
 
 
-def render_property_smil(anim: PropertyAnimation, entity: Entity) -> list[str]:
+def render_property_smil(
+    anim: PropertyAnimation, entity: Entity, *,
+    element_id: str | None = None, begin_expr: str | None = None,
+) -> list[str]:
     """Render a PropertyAnimation as one or more SMIL elements."""
     entity_type = type(entity).__name__
 
     if anim.prop == "rotation":
-        return [_render_rotation_smil(anim, entity)]
+        return [_render_rotation_smil(anim, entity, element_id=element_id, begin_expr=begin_expr)]
     if anim.prop in ("scale", "scale_factor"):
-        return _render_scale_smil(anim, entity)
+        return _render_scale_smil(anim, entity, element_id=element_id, begin_expr=begin_expr)
     if anim.prop in ("at_rx", "at_ry"):
-        return [_render_position_smil(anim, entity)]
+        return [_render_position_smil(anim, entity, element_id=element_id, begin_expr=begin_expr)]
 
     svg_attr = _resolve_svg_attr(entity_type, anim.prop) or anim.prop
     return [build_animate_element(
@@ -283,10 +286,14 @@ def render_property_smil(anim: PropertyAnimation, entity: Entity) -> list[str]:
         duration=anim.duration, delay=anim.delay,
         easing=anim.easing, bounce=anim.bounce,
         hold=anim.hold, repeat=anim.repeat,
+        element_id=element_id, begin_expr=begin_expr,
     )]
 
 
-def _render_rotation_smil(anim: PropertyAnimation, entity: Entity) -> str:
+def _render_rotation_smil(
+    anim: PropertyAnimation, entity: Entity, *,
+    element_id: str | None = None, begin_expr: str | None = None,
+) -> str:
     """Render rotation as ``<animateTransform type="rotate">``."""
     center = _resolve_pivot(anim, entity)
     cx, cy = svg_num(center.x), svg_num(center.y)
@@ -294,10 +301,14 @@ def _render_rotation_smil(anim: PropertyAnimation, entity: Entity) -> str:
         **_transform_common(anim),
         values=[f"{svg_num(kf.value)} {cx} {cy}" for kf in anim.keyframes],
         extra_attrs=' type="rotate" additive="sum"',
+        element_id=element_id, begin_expr=begin_expr,
     )
 
 
-def _render_scale_smil(anim: PropertyAnimation, entity: Entity) -> list[str]:
+def _render_scale_smil(
+    anim: PropertyAnimation, entity: Entity, *,
+    element_id: str | None = None, begin_expr: str | None = None,
+) -> list[str]:
     """Scale around entity center via translate + scale + translate.
 
     SVG SMIL ``type="scale"`` scales from (0, 0). We emit three
@@ -309,23 +320,31 @@ def _render_scale_smil(anim: PropertyAnimation, entity: Entity) -> list[str]:
     ncx, ncy = svg_num(-center.x), svg_num(-center.y)
     n = len(anim.keyframes)
     common = _transform_common(anim)
+    # Only the first element gets the element_id (used as anchor for chain references).
+    # All three share begin_expr so they start simultaneously.
     return [
         build_animate_element(
             **common, values=[f"{cx} {cy}"] * n,
             extra_attrs=' type="translate" additive="sum"',
+            element_id=element_id, begin_expr=begin_expr,
         ),
         build_animate_element(
             **common, values=[svg_num(kf.value) for kf in anim.keyframes],
             extra_attrs=' type="scale" additive="sum"',
+            begin_expr=begin_expr,
         ),
         build_animate_element(
             **common, values=[f"{ncx} {ncy}"] * n,
             extra_attrs=' type="translate" additive="sum"',
+            begin_expr=begin_expr,
         ),
     ]
 
 
-def _render_position_smil(anim: PropertyAnimation, entity: Entity) -> str:
+def _render_position_smil(
+    anim: PropertyAnimation, entity: Entity, *,
+    element_id: str | None = None, begin_expr: str | None = None,
+) -> str:
     """Render a relative position animation as ``<animate>`` on cx/cy or x/y."""
     entity_type = type(entity).__name__
     is_x = anim.prop == "at_rx"
@@ -349,6 +368,7 @@ def _render_position_smil(anim: PropertyAnimation, entity: Entity) -> str:
         duration=anim.duration, delay=anim.delay,
         easing=anim.easing, bounce=anim.bounce,
         hold=anim.hold, repeat=anim.repeat,
+        element_id=element_id, begin_expr=begin_expr,
     )
 
 
@@ -389,7 +409,10 @@ def _translate_path_d(path_d: str, dx: float, dy: float) -> str:
     return "".join(result)
 
 
-def render_motion_smil(anim: MotionAnimation) -> str:
+def render_motion_smil(
+    anim: MotionAnimation, *,
+    element_id: str | None = None, begin_expr: str | None = None,
+) -> str:
     """Render a MotionAnimation as ``<animateMotion>``.
 
     The path is translated so it starts at the origin (0, 0) because
@@ -409,12 +432,26 @@ def render_motion_smil(anim: MotionAnimation) -> str:
     elif isinstance(anim.rotate, int | float) and anim.rotate:
         rotate_attr = f' rotate="{svg_num(anim.rotate)}"'
 
-    parts = [f'<animateMotion dur="{anim.duration}s"']
+    parts = ['<animateMotion']
+    if element_id:
+        parts.append(f' id="{element_id}"')
+    parts.append(f' dur="{anim.duration}s"')
 
-    if anim.delay > 0:
+    if begin_expr is not None:
+        parts.append(f' begin="{begin_expr}"')
+    elif anim.delay > 0:
         parts.append(f' begin="{anim.delay}s"')
 
-    if anim.bounce:
+    # reverse=True: traverse path backwards via keyPoints
+    if getattr(anim, "reverse", False):
+        parts.append(' keyPoints="1;0"')
+        parts.append(' keyTimes="0;1"')
+        spline = f"{anim.easing.x1} {anim.easing.y1} {anim.easing.x2} {anim.easing.y2}"
+        if anim.easing == Easing.LINEAR:
+            parts.append(' calcMode="linear"')
+        else:
+            parts.append(f' calcMode="spline" keySplines="{spline}"')
+    elif anim.bounce:
         parts.append(' keyPoints="0;1;0"')
         parts.append(' keyTimes="0;0.5;1"')
         if anim.easing == Easing.LINEAR:
@@ -439,7 +476,10 @@ def render_motion_smil(anim: MotionAnimation) -> str:
 # ======================================================================
 
 
-def render_draw_smil(anim: DrawAnimation, entity: Entity | Connection) -> str:
+def render_draw_smil(
+    anim: DrawAnimation, entity: Entity | Connection, *,
+    element_id: str | None = None, begin_expr: str | None = None,
+) -> str:
     """Render a DrawAnimation as stroke-dashoffset ``<animate>``.
 
     Uses ``pathLength="1"`` on the parent element so dash values are
@@ -461,13 +501,19 @@ def render_draw_smil(anim: DrawAnimation, entity: Entity | Connection) -> str:
             duration=anim.duration, delay=anim.delay,
             easing=anim.easing, bounce=False,  # bounce already manual
             hold=anim.hold, repeat=anim.repeat,
+            element_id=element_id, begin_expr=begin_expr,
         )
 
     # Non-bounce uses from/to instead of values (simpler SVG output)
-    parts = ['<animate attributeName="stroke-dashoffset"']
+    parts = ['<animate']
+    if element_id:
+        parts.append(f' id="{element_id}"')
+    parts.append(' attributeName="stroke-dashoffset"')
     parts.append(f' from="{from_val}" to="{to_val}"')
     parts.append(f' dur="{anim.duration}s"')
-    if anim.delay > 0:
+    if begin_expr is not None:
+        parts.append(f' begin="{begin_expr}"')
+    elif anim.delay > 0:
         parts.append(f' begin="{anim.delay}s"')
     parts.append(smil_easing_n(anim.easing, 1))
     if anim.hold:
@@ -482,7 +528,10 @@ def render_draw_smil(anim: DrawAnimation, entity: Entity | Connection) -> str:
 # ======================================================================
 
 
-def render_connection_prop_smil(anim: PropertyAnimation, conn: Connection) -> str:
+def render_connection_prop_smil(
+    anim: PropertyAnimation, conn: Connection, *,
+    element_id: str | None = None, begin_expr: str | None = None,
+) -> str:
     """Render a property animation for a Connection."""
     svg_attr_map = {"opacity": "opacity", "color": "stroke", "width": "stroke-width"}
     svg_attr = svg_attr_map.get(anim.prop, anim.prop)
@@ -494,4 +543,5 @@ def render_connection_prop_smil(anim: PropertyAnimation, conn: Connection) -> st
         duration=anim.duration, delay=anim.delay,
         easing=anim.easing, bounce=anim.bounce,
         hold=anim.hold, repeat=anim.repeat,
+        element_id=element_id, begin_expr=begin_expr,
     )

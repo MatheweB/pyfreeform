@@ -175,6 +175,8 @@ class Connection:
         # Animation data (renderer-agnostic)
         self._animations: list = []
         self._chain_delay: float = 0.0
+        self._chain_id: int | None = None
+        self._chain_next_seq: int = 0
 
         # Register with both entities
         start.add_connection(self)

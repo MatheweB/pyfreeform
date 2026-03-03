@@ -193,6 +193,9 @@ class PropertyAnimation:
         delay: Seconds before animation starts.
         pivot: Custom transform origin for rotation/scale animations.
             Surface-relative ``RelCoord``. ``None`` = use entity's natural center.
+        chain_id: Shared ID for all animations in one ``.then()`` sequence.
+            ``None`` = independent animation (default behaviour).
+        chain_seq: Position within the chain (0, 1, 2, …).
     """
 
     prop: str
@@ -203,6 +206,8 @@ class PropertyAnimation:
     bounce: bool = False
     delay: float = 0.0
     pivot: RelCoord | None = None
+    chain_id: int | None = None
+    chain_seq: int = 0
 
     @property
     def duration(self) -> float:
@@ -280,6 +285,8 @@ class MotionAnimation:
         bounce: If True, alternate direction each cycle.
         delay: Seconds before animation starts.
         rotate: True for auto-rotation along tangent, float for fixed angle.
+        chain_id: Shared ID for all animations in one ``.then()`` sequence.
+        chain_seq: Position within the chain (0, 1, 2, …).
     """
 
     path: Pathable
@@ -290,6 +297,9 @@ class MotionAnimation:
     bounce: bool = False
     delay: float = 0.0
     rotate: bool | float = False
+    reverse: bool = False
+    chain_id: int | None = None
+    chain_seq: int = 0
 
     def evaluate(self, t: float) -> tuple[float, float]:
         """Compute the (x, y) position at time *t*.
@@ -335,6 +345,8 @@ class DrawAnimation:
         bounce: If True, alternate draw/erase each cycle.
         delay: Seconds before animation starts.
         reverse: If True, draw from end to start.
+        chain_id: Shared ID for all animations in one ``.then()`` sequence.
+        chain_seq: Position within the chain (0, 1, 2, …).
     """
 
     duration: float
@@ -344,6 +356,8 @@ class DrawAnimation:
     bounce: bool = False
     delay: float = 0.0
     reverse: bool = False
+    chain_id: int | None = None
+    chain_seq: int = 0
 
     def evaluate(self, t: float) -> float:
         """Compute the draw progress (0.0 = hidden, 1.0 = fully drawn).

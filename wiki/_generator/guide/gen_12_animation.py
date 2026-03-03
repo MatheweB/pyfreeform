@@ -65,17 +65,16 @@ def generate():
                   font_size=0.045, color="#555")
     save(scene, "guide/anim-easing.svg")
 
-    # --- 5. Chaining: rect that fades AND spins simultaneously ---
-    scene = Scene.with_grid(cols=1, rows=1, cell_width=240, cell_height=160,
+    # --- 5. Chaining: dot that moves AND fades at the same time ---
+    scene = Scene.with_grid(cols=1, rows=1, cell_width=320, cell_height=160,
                             background="#1a1a2e")
     cell = scene.grid[0][0]
-    cell.add_rect(at=(0.5, 0.43), width=0.35, height=0.35,
-                  fill="mediumpurple", stroke="white", stroke_width=1) \
-        .animate_fade(to=0.3, duration=2.0, easing="ease-in-out") \
-        .animate_spin(360, duration=3.0) \
+    cell.add_dot(at=(0.15, 0.43), radius=0.12, color="mediumpurple") \
+        .animate_move(to=(0.85, 0.43), duration=2.0, easing="ease-in-out") \
+        .animate_fade(to=0.0, duration=2.0, easing="ease-in-out") \
         .loop(bounce=True)
-    cell.add_text(".animate_fade(...).animate_spin(360)", at=(0.5, 0.88),
-                  font_size=0.065, color="gray")
+    cell.add_text("animate_move + animate_fade — simultaneously", at=(0.5, 0.88),
+                  font_size=0.058, color="gray")
     save(scene, "guide/anim-chaining.svg")
 
     # --- 6. Connection draw: curve drawing between dots ---
@@ -113,17 +112,17 @@ def generate():
                   font_size=0.065, color="gray")
     save(scene, "guide/anim-scale.svg")
 
-    # --- 9. Then: sequential fade → spin ---
-    scene = Scene.with_grid(cols=1, rows=1, cell_width=300, cell_height=160,
+    # --- 9. Then: same move + fade but now sequenced with .then() ---
+    scene = Scene.with_grid(cols=1, rows=1, cell_width=320, cell_height=160,
                             background="#1a1a2e")
     cell = scene.grid[0][0]
-    cell.add_rect(at=(0.5, 0.43), width=0.33, height=0.33,
-                  fill="gold", stroke="white", stroke_width=1) \
-        .animate_fade(to=0.3, duration=1.5, easing="ease-in-out") \
+    cell.add_dot(at=(0.15, 0.43), radius=0.12, color="gold") \
+        .animate_move(to=(0.85, 0.43), duration=2.0, easing="ease-in-out") \
         .then() \
-        .animate_spin(360, duration=2.0, easing="ease-in-out")
-    cell.add_text(".animate_fade(...).then().animate_spin(360)", at=(0.5, 0.88),
-                  font_size=0.06, color="gray")
+        .animate_fade(to=0.0, duration=2.0, easing="ease-in-out") \
+        .loop(bounce=True)
+    cell.add_text("animate_move .then() animate_fade — one after the other", at=(0.5, 0.88),
+                  font_size=0.052, color="gray")
     save(scene, "guide/anim-then.svg")
 
     # --- 10. Stagger: row of dots pulsing ---

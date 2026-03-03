@@ -88,6 +88,8 @@ def build_animate_element(
     hold: bool = True,
     repeat: RepeatLike = False,
     extra_attrs: str = "",
+    element_id: str | None = None,
+    begin_expr: str | None = None,
 ) -> str:
     """Build a single SMIL ``<animate>`` or ``<animateTransform>`` element.
 
@@ -109,6 +111,11 @@ def build_animate_element(
         repeat: False=once, True=forever, int=N times.
         extra_attrs: Additional attributes to include (e.g.
             ``' type="rotate" additive="sum"'``).
+        element_id: If set, emit ``id="{element_id}"`` on the element.
+            Used by chain-aware SMIL rendering for event-based timing.
+        begin_expr: If set, use ``begin="{begin_expr}"`` instead of the
+            delay-based ``begin="{delay}s"``.  Used by chain-aware SMIL
+            rendering (e.g. ``"ch1s0i0.end"`` or ``"0s; ch1s1i0.end"``).
 
     Returns:
         Complete SMIL element string.
@@ -118,12 +125,17 @@ def build_animate_element(
 
     n_segments = max(1, len(values) - 1)
 
-    parts = [f'<{tag} attributeName="{attribute_name}"']
+    parts = [f'<{tag}']
+    if element_id:
+        parts.append(f' id="{element_id}"')
+    parts.append(f' attributeName="{attribute_name}"')
     parts.append(f' values="{";".join(values)}"')
     parts.append(f' keyTimes="{";".join(svg_num(t) for t in key_times)}"')
     parts.append(f' dur="{duration}s"')
 
-    if delay > 0:
+    if begin_expr is not None:
+        parts.append(f' begin="{begin_expr}"')
+    elif delay > 0:
         parts.append(f' begin="{delay}s"')
 
     if easing is None:

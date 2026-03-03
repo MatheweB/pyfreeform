@@ -7,6 +7,7 @@ with correct return types and docstrings.
 
 from __future__ import annotations
 
+import itertools
 from typing import TYPE_CHECKING
 
 from .builders import build_animate, build_draw, build_fade
@@ -16,6 +17,9 @@ if TYPE_CHECKING:
     from ..core.connection import Connection
     from ..core.entity import Entity
 
+# Monotonically increasing counter — each .then() call gets a unique chain ID.
+_chain_id_seq = itertools.count(1)
+
 
 def consume_chain_delay(target: Entity | Connection, delay: float) -> float:
     """Add accumulated chain delay to explicit delay, then reset."""
@@ -24,11 +28,22 @@ def consume_chain_delay(target: Entity | Connection, delay: float) -> float:
     return result
 
 
+def _tag_with_chain(target: Entity | Connection, anim: Animation) -> None:
+    """If target is in a chain context, tag anim with chain_id and chain_seq."""
+    if target._chain_id is not None:
+        anim.chain_id = target._chain_id
+        anim.chain_seq = target._chain_next_seq
+
+
 def apply_chain(target: Entity | Connection, gap: float = 0) -> None:
     """Set chain delay from current animations' end times.
 
     Computes when all current animations end and stores that time
     (plus gap) as the chain delay for the next animation.
+
+    Also assigns a shared ``chain_id`` to all existing animations (seq 0)
+    and advances ``_chain_next_seq`` so subsequent animations are tagged
+    as later steps in the sequential unit.
     """
     if not target._animations:
         return
@@ -42,6 +57,17 @@ def apply_chain(target: Entity | Connection, gap: float = 0) -> None:
         return delay + duration
 
     target._chain_delay = max(_effective_end(a) for a in target._animations) + gap
+
+    # Tag existing animations as chain seq=0 on first .then() call
+    if target._chain_id is None:
+        target._chain_id = next(_chain_id_seq)
+        for anim in target._animations:
+            anim.chain_id = target._chain_id
+            anim.chain_seq = 0
+        target._chain_next_seq = 1
+    else:
+        # Subsequent .then() calls — advance the seq counter for next batch
+        target._chain_next_seq += 1
 
 
 def apply_loop(
@@ -96,10 +122,12 @@ def add_fade(
 ) -> None:
     """Build and append a fade (opacity) animation."""
     delay = consume_chain_delay(target, delay)
-    target._animations.append(build_fade(
+    anim = build_fade(
         target, to, duration=duration, delay=delay, easing=easing, hold=hold,
         repeat=repeat, bounce=bounce,
-    ))
+    )
+    _tag_with_chain(target, anim)
+    target._animations.append(anim)
 
 
 def add_draw(
@@ -115,10 +143,12 @@ def add_draw(
 ) -> None:
     """Build and append a draw (stroke reveal) animation."""
     delay = consume_chain_delay(target, delay)
-    target._animations.append(build_draw(
+    anim = build_draw(
         duration=duration, delay=delay, easing=easing, hold=hold, reverse=reverse,
         repeat=repeat, bounce=bounce,
-    ))
+    )
+    _tag_with_chain(target, anim)
+    target._animations.append(anim)
 
 
 def add_generic_animate(
@@ -136,14 +166,18 @@ def add_generic_animate(
 ) -> None:
     """Build and append a generic property animation."""
     delay = consume_chain_delay(target, delay)
-    target._animations.append(build_animate(
+    anim = build_animate(
         target, prop, to=to, keyframes=keyframes,
         duration=duration, delay=delay, easing=easing, hold=hold,
         repeat=repeat, bounce=bounce,
-    ))
+    )
+    _tag_with_chain(target, anim)
+    target._animations.append(anim)
 
 
 def clear_all_animations(target: Entity | Connection) -> None:
-    """Remove all animations and reset chain delay."""
+    """Remove all animations and reset chain delay and chain state."""
     target._animations.clear()
     target._chain_delay = 0.0
+    target._chain_id = None
+    target._chain_next_seq = 0

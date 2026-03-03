@@ -1824,3 +1824,209 @@ class TestTransformPivot:
         expected_cx = cell.x + 0.0 * cell.width
         expected_cy = cell.y + 0.0 * cell.height
         assert f"{svg_num(expected_cx)} {svg_num(expected_cy)}" in svg
+
+# ======================================================================
+# Chain loop — event-based SMIL timing
+# ======================================================================
+
+
+class TestChainLoop:
+    """Test that .then() + .loop() produces SMIL event-based timing.
+
+    The key invariant: when a chain has repeat=True (infinite loop), each
+    animation step must carry an ``id=`` attribute and a ``begin=`` expression
+    that references the previous/next step — not an absolute delay.
+    """
+
+    def _dot(self) -> Dot:
+        """Return a bare Dot (not in a surface) for quick tests."""
+        return Dot(50, 50, radius=5, color="coral")
+
+    # ------------------------------------------------------------------
+    # Data-model: chain_id / chain_seq tagging
+    # ------------------------------------------------------------------
+
+    def test_then_tags_chain_id(self):
+        """All animations share a chain_id after .then() + loop()."""
+        dot = self._dot()
+        dot.animate_fade(to=0.0, duration=2.0).then().animate_fade(to=1.0, duration=2.0).loop()
+        anims = dot.animations
+        assert len(anims) == 2
+        assert anims[0].chain_id is not None
+        assert anims[0].chain_id == anims[1].chain_id
+
+    def test_then_assigns_chain_seq(self):
+        """First group gets seq=0, second gets seq=1."""
+        dot = self._dot()
+        dot.animate_fade(to=0.0, duration=2.0).then().animate_fade(to=1.0, duration=2.0).loop()
+        anims = dot.animations
+        assert anims[0].chain_seq == 0
+        assert anims[1].chain_seq == 1
+
+    def test_simultaneous_no_chain_id(self):
+        """Simultaneous animations (no .then()) have chain_id=None."""
+        dot = self._dot()
+        dot.animate_fade(to=0.0, duration=2.0).animate_fade(to=1.0, duration=2.0).loop()
+        for anim in dot.animations:
+            assert anim.chain_id is None
+
+    def test_clear_resets_chain_state(self):
+        """clear_animations() resets chain_id and chain_next_seq."""
+        dot = self._dot()
+        dot.animate_fade(to=0.0).then().animate_fade(to=1.0).loop()
+        dot.clear_animations()
+        assert dot._chain_id is None
+        assert dot._chain_next_seq == 0
+
+    def test_multi_step_chain_seqs(self):
+        """Three steps A.then().B.then().C get seq 0, 1, 2."""
+        dot = self._dot()
+        (dot.animate_fade(to=0.0, duration=1.0)
+             .then()
+             .animate_fade(to=0.5, duration=1.0)
+             .then()
+             .animate_fade(to=1.0, duration=1.0)
+             .loop())
+        anims = dot.animations
+        assert [a.chain_seq for a in anims] == [0, 1, 2]
+
+    def test_simultaneous_plus_then_seq(self):
+        """animate_A + animate_B .then() animate_C → seqs [0, 0, 1]."""
+        dot = self._dot()
+        (dot.animate_fade(to=0.0, duration=1.0)
+             .animate_spin(360, duration=1.0)
+             .then()
+             .animate_fade(to=1.0, duration=1.0)
+             .loop())
+        anims = dot.animations
+        seqs = [a.chain_seq for a in anims]
+        assert seqs[0] == 0  # fade seq 0
+        # spin uses animate_spin → PropertyAnimation
+        assert seqs[1] == 0  # spin seq 0
+        assert seqs[2] == 1  # final fade seq 1
+
+    # ------------------------------------------------------------------
+    # SMIL output: sequential loop (no bounce)
+    # ------------------------------------------------------------------
+
+    def test_sequential_loop_uses_id_and_begin(self):
+        """loop() on a chain must emit id= and begin= event expressions."""
+        dot = self._dot()
+        dot.animate_fade(to=0.0, duration=2.0).then().animate_fade(to=1.0, duration=2.0).loop()
+        svg = SMILRenderer().render_entity(dot)
+        # Must have SMIL element IDs
+        assert 'id="ch' in svg
+        # Must reference .end (event-based), not just absolute delay
+        assert ".end" in svg
+
+    def test_sequential_loop_no_repeat_count(self):
+        """Chain loop must NOT emit repeatCount=indefinite on sub-animations."""
+        dot = self._dot()
+        dot.animate_fade(to=0.0, duration=2.0).then().animate_fade(to=1.0, duration=2.0).loop()
+        svg = SMILRenderer().render_entity(dot)
+        assert "repeatCount" not in svg
+
+    def test_sequential_loop_seq0_begin(self):
+        """Seq-0 animation must start at 0s and restart after last seq ends."""
+        dot = self._dot()
+        dot.animate_fade(to=0.0, duration=2.0).then().animate_fade(to=1.0, duration=2.0).loop()
+        svg = SMILRenderer().render_entity(dot)
+        # Seq-0 begin must contain "0s" (initial start)
+        assert "0s" in svg
+        # And reference the last seq's anchor end
+        assert "s1i0.end" in svg  # ch{cid}s1i0.end triggers restart of s0
+
+    def test_sequential_loop_seq1_begin(self):
+        """Seq-1 animation must begin when seq-0's anchor ends."""
+        dot = self._dot()
+        dot.animate_fade(to=0.0, duration=2.0).then().animate_fade(to=1.0, duration=2.0).loop()
+        svg = SMILRenderer().render_entity(dot)
+        # Seq-1 begins after seq-0's anchor
+        assert "s0i0.end" in svg
+
+    # ------------------------------------------------------------------
+    # SMIL output: bounce loop
+    # ------------------------------------------------------------------
+
+    def test_bounce_loop_emits_forward_and_backward(self):
+        """loop(bounce=True) must emit both 'f' (forward) and 'b' (backward) elements."""
+        dot = self._dot()
+        dot.animate_fade(to=0.0, duration=2.0).then().animate_fade(to=1.0, duration=2.0).loop(bounce=True)
+        svg = SMILRenderer().render_entity(dot)
+        assert "f0" in svg   # forward pass element id
+        assert "b0" in svg   # backward pass element id
+
+    def test_bounce_loop_backward_reverses_values(self):
+        """Backward pass of a fade must have reversed from/to values."""
+        dot = self._dot()
+        dot.animate_fade(to=0.0, duration=2.0).then().animate_fade(to=1.0, duration=2.0).loop(bounce=True)
+        svg = SMILRenderer().render_entity(dot)
+        # Forward: opacity goes 1→0 and 0→1
+        # Backward: opacity goes 1→0 and 0→1 (reversed)
+        # Both directions must appear
+        assert "1;0" in svg
+        assert "0;1" in svg
+
+    def test_bounce_loop_no_repeat_count(self):
+        """Bounce chain loop must NOT emit repeatCount."""
+        dot = self._dot()
+        dot.animate_fade(to=0.0, duration=2.0).then().animate_fade(to=1.0, duration=2.0).loop(bounce=True)
+        svg = SMILRenderer().render_entity(dot)
+        assert "repeatCount" not in svg
+
+    def test_bounce_seq0_restarts_after_backward_seq0(self):
+        """Seq-0 forward must restart after seq-0 backward (full cycle)."""
+        dot = self._dot()
+        dot.animate_fade(to=0.0, duration=2.0).then().animate_fade(to=1.0, duration=2.0).loop(bounce=True)
+        svg = SMILRenderer().render_entity(dot)
+        # seq0 forward references seq0 backward end for restart
+        assert "s0b0.end" in svg
+
+    # ------------------------------------------------------------------
+    # Simultaneous animations still use old path (regression guard)
+    # ------------------------------------------------------------------
+
+    def test_simultaneous_loop_still_uses_repeat_count(self):
+        """Non-chained loop() must still emit repeatCount=indefinite."""
+        dot = self._dot()
+        dot.animate_fade(to=0.0, duration=2.0).loop()
+        svg = SMILRenderer().render_entity(dot)
+        assert 'repeatCount="indefinite"' in svg
+        assert "id=" not in svg
+
+    def test_simultaneous_bounce_loop_still_works(self):
+        """Non-chained bounce still uses baked values (no event ids)."""
+        dot = self._dot()
+        dot.animate_fade(to=0.0, duration=2.0).loop(bounce=True)
+        svg = SMILRenderer().render_entity(dot)
+        assert 'repeatCount="indefinite"' in svg
+        # Bounce baked: values contain the intermediate (midpoint) value
+        assert "values=" in svg
+
+    # ------------------------------------------------------------------
+    # animate_move (produces two PropertyAnimations at same seq)
+    # ------------------------------------------------------------------
+
+    def test_move_then_fade_chain(self):
+        """animate_move + .then() + animate_fade uses event-based timing."""
+        scene = Scene.with_grid(cols=1, rows=1, cell_width=200, cell_height=100)
+        cell = scene.grid[0][0]
+        dot = cell.add_dot(at=(0.15, 0.5), radius=0.05, color="gold")
+        dot.animate_move(to=(0.85, 0.5), duration=2.0).then().animate_fade(to=0.0, duration=2.0).loop(bounce=True)
+        svg = SMILRenderer().render_entity(dot)
+        assert "id=" in svg
+        assert ".end" in svg
+        assert "repeatCount" not in svg
+
+    def test_move_anims_share_seq(self):
+        """animate_move emits two at_rx/at_ry animations both at seq=0."""
+        scene = Scene.with_grid(cols=1, rows=1, cell_width=200, cell_height=100)
+        cell = scene.grid[0][0]
+        dot = cell.add_dot(at=(0.15, 0.5), radius=0.05, color="gold")
+        dot.animate_move(to=(0.85, 0.5), duration=2.0).then().animate_fade(to=0.0, duration=2.0).loop()
+        anims = dot.animations
+        # First two are at_rx, at_ry (both seq=0); third is opacity (seq=1)
+        move_anims = [a for a in anims if a.prop in ("at_rx", "at_ry")]
+        assert all(a.chain_seq == 0 for a in move_anims)
+        fade_anims = [a for a in anims if a.prop == "opacity"]
+        assert all(a.chain_seq == 1 for a in fade_anims)
