@@ -17,6 +17,7 @@ pyfreeform/
     tangent.py      # Tangent angle utilities for pathables
     bezier.py       # Parametric curve math (arc length, Bézier fitting, curvature)
     svg_utils.py    # SVG attribute helpers (opacity, fill/stroke, XML escaping)
+    protocols.py    # Animatable protocol -- renderer interface for entity inspection
 
   entities/       # Concrete entity implementations
     dot.py          # Dot (circle)

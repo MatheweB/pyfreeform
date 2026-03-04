@@ -235,3 +235,25 @@ Rotates the entity's position around an external origin point. Used by `rotate(a
 
 Scales the entity's distance from an external origin point. Used by `scale(factor, origin=...)`.
 
+---
+
+## Renderer Protocol (`core/protocols.py`)
+
+Rather than working against the full `Entity` surface, the renderer declares exactly what it needs via `Animatable` — a `@runtime_checkable` structural protocol in `core/protocols.py`:
+
+```python
+@runtime_checkable
+class Animatable(Protocol):
+    _animations: list
+    def surface_position_at(self, rx: float, ry: float) -> tuple[float, float]: ...
+    @property
+    def position(self) -> Coord: ...
+    def anchor(self, spec: AnchorSpec = "center") -> Coord: ...
+```
+
+This makes the renderer's dependency on entities explicit and minimal: the four members above are precisely what animation synthesis needs. Every concrete `Entity` subclass satisfies the protocol automatically — no registration required. `Surface` objects do not (they have no `_animations`), so `isinstance(obj, Animatable)` is the clean runtime check for distinguishing entity endpoints from surface endpoints in connections.
+
+### `entity.surface_position_at(rx, ry) -> tuple[float, float]`
+
+Converts surface-relative coordinates (fractions 0.0–1.0) to absolute pixel coordinates using the entity's containing surface. Returns `(rx, ry)` unchanged if the entity has no surface. Declared on the protocol so renderers can resolve binding positions without accessing `_surface` directly.
+
