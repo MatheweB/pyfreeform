@@ -887,7 +887,7 @@ class Entity(ABC):
             easing: Speed curve (default "ease-in-out" for natural motion).
             hold: Hold final value after completion.
             repeat: ``False`` = play once (default), ``True`` = loop forever,
-                ``int >= 2`` = loop N times.
+                ``int`` = play N times.
             bounce: If ``True``, alternate direction each cycle.
 
         Returns:
@@ -934,7 +934,7 @@ class Entity(ABC):
             easing: Speed curve (default "linear" for constant rotation).
             hold: Hold final value after completion.
             repeat: ``False`` = play once (default), ``True`` = loop forever,
-                ``int >= 2`` = loop N times.
+                ``int`` = play N times.
             bounce: If ``True``, alternate direction each cycle.
             pivot: Custom rotation center as ``(rx, ry)`` surface-relative fractions.
                 Defaults to the entity's natural ``rotation_center``.
@@ -981,7 +981,7 @@ class Entity(ABC):
             easing: Speed curve (default "ease-in-out").
             hold: Hold final value after completion.
             repeat: ``False`` = play once (default), ``True`` = loop forever,
-                ``int >= 2`` = loop N times.
+                ``int`` = play N times.
             bounce: If ``True``, alternate direction each cycle.
             pivot: Custom scale origin as ``(rx, ry)`` surface-relative fractions.
                 Defaults to the entity's natural ``rotation_center``.
@@ -1029,7 +1029,7 @@ class Entity(ABC):
             rotate: True for auto-rotation along tangent,
                     float for fixed angle.
             repeat: ``False`` = play once (default), ``True`` = loop forever,
-                ``int >= 2`` = loop N times.
+                ``int`` = play N times.
             bounce: If ``True``, alternate direction each cycle.
 
         Returns:
@@ -1082,7 +1082,7 @@ class Entity(ABC):
             easing: Speed curve.
             hold: Hold final value after completion.
             repeat: ``False`` = play once (default), ``True`` = loop forever,
-                ``int >= 2`` = loop N times.
+                ``int`` = play N times.
             bounce: If ``True``, alternate direction each cycle.
 
         Returns:
@@ -1139,13 +1139,10 @@ class Entity(ABC):
         Args:
             bounce: If ``True``, alternate direction each cycle
                 (forward → backward → forward ...). Default ``False``.
-            times: ``True`` = loop forever (default); ``int >= 2`` = loop
-                exactly N times. Values of ``False``, ``0``, or ``1``
-                raise ``ValueError`` because they don't actually loop.
+            times: ``True`` = loop forever (default); ``int`` = play N times.
 
         Raises:
-            ValueError: If *times* does not represent a real loop
-                (``False``, ``0``, ``1``, or any negative integer).
+            ValueError: If *times* is ``False`` or a negative integer.
             ValueError: If no animations have been added yet.
 
         Note:

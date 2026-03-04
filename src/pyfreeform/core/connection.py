@@ -467,7 +467,23 @@ class Connection:
         repeat: RepeatLike = False,
         bounce: bool = False,
     ) -> Connection:
-        """Animate the connection drawing itself."""
+        """Animate the connection drawing itself.
+
+        The stroke progressively reveals as if being drawn by a pen.
+
+        Args:
+            duration: Duration in seconds.
+            delay: Seconds before animation starts.
+            easing: Speed curve (default "ease-in-out").
+            hold: Hold final value after completion.
+            reverse: If ``True``, draw from end to start.
+            repeat: ``False`` = play once, ``True`` = loop forever,
+                ``int`` = play N times.
+            bounce: If ``True``, alternate direction each cycle.
+
+        Returns:
+            Self, for method chaining.
+        """
         add_draw(
             self,
             duration=duration,
@@ -527,10 +543,10 @@ class Connection:
 
         Args:
             bounce: If ``True``, alternate direction each cycle. Default ``False``.
-            times: ``True`` = loop forever (default); ``int >= 2`` = loop N times.
+            times: ``True`` = loop forever (default); ``int`` = play N times.
 
         Raises:
-            ValueError: If *times* does not represent a real loop.
+            ValueError: If *times* is ``False`` or a negative integer.
             ValueError: If no animations have been added yet.
         """
         apply_loop(self, bounce=bounce, times=times)

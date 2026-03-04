@@ -86,19 +86,16 @@ def apply_loop(
     Args:
         target: Entity or Connection whose animations will be updated.
         bounce: If True, each cycle reverses direction.
-        times: ``True`` = loop forever, ``int >= 2`` = loop N times.
+        times: ``True`` = loop forever, ``int`` = play N times.
 
     Raises:
-        ValueError: If *times* is ``False``, 0, 1, or any negative integer —
-            these values do not actually loop.
+        ValueError: If *times* is ``False`` or a negative integer.
         ValueError: If there are no animations to loop (nothing to apply to).
     """
-    # bool is a subclass of int in Python, so exclude booleans from the
-    # int-range check to avoid `True <= 1` being True (True == 1).
-    if times is False or (not isinstance(times, bool) and isinstance(times, int) and times <= 1):
+    if times is False or (not isinstance(times, bool) and isinstance(times, int) and times < 0):
         raise ValueError(
-            f"loop(times={times!r}) doesn't actually loop. "
-            "Use times=True for infinite or times=N where N >= 2."
+            f"loop(times={times!r}) is not valid. "
+            "Use times=True for infinite or times=N where N >= 1."
         )
     if not target._animations:
         raise ValueError("No animations to loop. Call animate_* methods before .loop().")

@@ -245,7 +245,7 @@ Here, spin plays once and stops, while `color` and `radius` loop independently. 
 
 | Parameter | Type | Default | Description |
 |---|---|---|---|
-| `repeat` | `bool \| int` | `False` | `False` = play once, `True` = loop forever, `int ≥ 2` = N cycles |
+| `repeat` | `bool \| int` | `False` | `False` = play once, `True` = loop forever, `int` = play N times |
 | `bounce` | `bool` | `False` | Alternate direction each cycle |
 
 ### Chain-Level Looping with `.loop()`
@@ -275,7 +275,7 @@ rect.animate_fade(to=0.3, duration=1.5).then().animate_spin(360, duration=2.0).l
 | Parameter | Type | Default | Description |
 |---|---|---|---|
 | `bounce` | `bool` | `False` | Alternate direction each cycle (forward → backward → forward…) |
-| `times` | `bool \| int` | `True` | `True` = infinite, `int ≥ 2` = loop N times |
+| `times` | `bool \| int` | `True` | `True` = infinite, `int` = play N times |
 
 !!! note "Parity note for `bounce=True, times=N`"
     When bouncing finitely, the final resting value depends on parity: odd N freezes at the *end* value, even N freezes at the *start* value (the last bounce cycle reverses back).

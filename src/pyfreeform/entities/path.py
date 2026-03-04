@@ -582,7 +582,7 @@ class Path(Entity):
             hold: Hold final value after animation ends.
             reverse: Draw from end to start instead.
             repeat: ``False`` = play once (default), ``True`` = loop forever,
-                ``int >= 2`` = loop N times.
+                ``int`` = play N times.
             bounce: If ``True``, alternate direction each cycle.
 
         Returns:

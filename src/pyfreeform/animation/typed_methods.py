@@ -1,9 +1,8 @@
-"""Factory-generated typed animation methods.
+"""Typed animation methods for entity/connection subclasses.
 
-Provides reusable method objects for entity/connection subclasses to assign
-as class attributes.  Each entity picks only the methods that match its
-constructor parameters — users get IDE autocomplete and can't accidentally
-animate a property that doesn't exist on their entity type.
+Each entity picks only the methods that match its constructor parameters —
+users get IDE autocomplete and can't accidentally animate a property that
+doesn't exist on their entity type.
 
 Usage in an entity module::
 
@@ -18,7 +17,6 @@ Usage in an entity module::
 
 from __future__ import annotations
 
-from collections.abc import Callable
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -28,130 +26,465 @@ if TYPE_CHECKING:
 
 
 # ======================================================================
-# Factory helpers
+# Color animation methods
 # ======================================================================
 
 
-def _color_anim(prop: str) -> Callable[..., Entity]:
-    """Create a typed color animation method for *prop*."""
+def animate_fill(
+    self,
+    to: ColorLike | None = None,
+    *,
+    keyframes: dict[float, ColorLike] | list[ColorLike] | None = None,
+    duration: float = 1.0,
+    delay: float = 0.0,
+    easing: EasingLike = "linear",
+    hold: bool = True,
+    repeat: RepeatLike = False,
+    bounce: bool = False,
+) -> Entity:
+    """Animate the ``fill`` color.
 
-    def method(
-        self,
-        to: ColorLike | None = None,
-        *,
-        keyframes: dict[float, ColorLike] | list[ColorLike] | None = None,
-        duration: float = 1.0,
-        delay: float = 0.0,
-        easing: EasingLike = "linear",
-        hold: bool = True,
-        repeat: RepeatLike = False,
-        bounce: bool = False,
-    ) -> Entity:
-        return self.animate(
-            prop,
-            to=to,
-            keyframes=keyframes,
-            duration=duration,
-            delay=delay,
-            easing=easing,
-            hold=hold,
-            repeat=repeat,
-            bounce=bounce,
-        )
+    Args:
+        to: Target color (name, hex, or RGB tuple).
+        keyframes: Dict of {time_seconds: color} or list of colors
+            (evenly spaced over duration) for multi-step animation.
+        duration: Duration in seconds.
+        delay: Seconds before animation starts.
+        easing: Speed curve.
+        hold: Hold final value after completion.
+        repeat: ``False`` = play once, ``True`` = loop forever,
+            ``int`` = play N times.
+        bounce: If ``True``, alternate direction each cycle.
 
-    method.__name__ = f"animate_{prop}"
-    method.__qualname__ = f"animate_{prop}"
-    method.__doc__ = (
-        f"Animate the ``{prop}`` color.\n\n"
-        "Args:\n"
-        "    to: Target color (name, hex, or RGB tuple).\n"
-        "    keyframes: Dict of {time_seconds: color} or list of colors\n"
-        "        (evenly spaced over duration) for multi-step animation.\n"
-        "    duration: Duration in seconds (simple mode, or list keyframes).\n"
-        "    delay: Seconds before animation starts.\n"
-        "    easing: Speed curve.\n"
-        "    hold: Hold final value after completion.\n"
-        "    repeat: ``False`` = play once (default), ``True`` = loop forever,\n"
-        "        ``int >= 2`` = loop N times.\n"
-        "    bounce: If ``True``, alternate direction each cycle.\n\n"
-        "Returns:\n"
-        "    Self, for method chaining."
-    )
-    return method
-
-
-def _numeric_anim(prop: str, label: str | None = None) -> Callable[..., Entity]:
-    """Create a typed numeric animation method for *prop*.
-
-    *label* overrides the documented property name (e.g. ``"opacity"``
-    is documented as ``"fade"`` when used for ``animate_fade``).
+    Returns:
+        Self, for method chaining.
     """
-    display = label or prop
-
-    def method(
-        self,
-        to: float | None = None,
-        *,
-        keyframes: dict[float, float] | list[float] | None = None,
-        duration: float = 1.0,
-        delay: float = 0.0,
-        easing: EasingLike = "linear",
-        hold: bool = True,
-        repeat: RepeatLike = False,
-        bounce: bool = False,
-    ) -> Entity:
-        return self.animate(
-            prop,
-            to=to,
-            keyframes=keyframes,
-            duration=duration,
-            delay=delay,
-            easing=easing,
-            hold=hold,
-            repeat=repeat,
-            bounce=bounce,
-        )
-
-    method.__name__ = f"animate_{display}"
-    method.__qualname__ = f"animate_{display}"
-    method.__doc__ = (
-        f"Animate the ``{prop}`` property.\n\n"
-        "Args:\n"
-        "    to: Target value.\n"
-        "    keyframes: Dict of {time_seconds: value} or list of values\n"
-        "        (evenly spaced over duration) for multi-step animation.\n"
-        "    duration: Duration in seconds (simple mode, or list keyframes).\n"
-        "    delay: Seconds before animation starts.\n"
-        "    easing: Speed curve.\n"
-        "    hold: Hold final value after completion.\n"
-        "    repeat: ``False`` = play once (default), ``True`` = loop forever,\n"
-        "        ``int >= 2`` = loop N times.\n"
-        "    bounce: If ``True``, alternate direction each cycle.\n\n"
-        "Returns:\n"
-        "    Self, for method chaining."
+    return self.animate(
+        "fill", to=to, keyframes=keyframes, duration=duration,
+        delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce,
     )
-    return method
+
+
+def animate_color(
+    self,
+    to: ColorLike | None = None,
+    *,
+    keyframes: dict[float, ColorLike] | list[ColorLike] | None = None,
+    duration: float = 1.0,
+    delay: float = 0.0,
+    easing: EasingLike = "linear",
+    hold: bool = True,
+    repeat: RepeatLike = False,
+    bounce: bool = False,
+) -> Entity:
+    """Animate the ``color`` property.
+
+    Args:
+        to: Target color (name, hex, or RGB tuple).
+        keyframes: Dict of {time_seconds: color} or list of colors
+            (evenly spaced over duration) for multi-step animation.
+        duration: Duration in seconds.
+        delay: Seconds before animation starts.
+        easing: Speed curve.
+        hold: Hold final value after completion.
+        repeat: ``False`` = play once, ``True`` = loop forever,
+            ``int`` = play N times.
+        bounce: If ``True``, alternate direction each cycle.
+
+    Returns:
+        Self, for method chaining.
+    """
+    return self.animate(
+        "color", to=to, keyframes=keyframes, duration=duration,
+        delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce,
+    )
+
+
+def animate_stroke(
+    self,
+    to: ColorLike | None = None,
+    *,
+    keyframes: dict[float, ColorLike] | list[ColorLike] | None = None,
+    duration: float = 1.0,
+    delay: float = 0.0,
+    easing: EasingLike = "linear",
+    hold: bool = True,
+    repeat: RepeatLike = False,
+    bounce: bool = False,
+) -> Entity:
+    """Animate the ``stroke`` color.
+
+    Args:
+        to: Target color (name, hex, or RGB tuple).
+        keyframes: Dict of {time_seconds: color} or list of colors
+            (evenly spaced over duration) for multi-step animation.
+        duration: Duration in seconds.
+        delay: Seconds before animation starts.
+        easing: Speed curve.
+        hold: Hold final value after completion.
+        repeat: ``False`` = play once, ``True`` = loop forever,
+            ``int`` = play N times.
+        bounce: If ``True``, alternate direction each cycle.
+
+    Returns:
+        Self, for method chaining.
+    """
+    return self.animate(
+        "stroke", to=to, keyframes=keyframes, duration=duration,
+        delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce,
+    )
 
 
 # ======================================================================
-# Pre-built color animation methods
+# Numeric animation methods
 # ======================================================================
 
-animate_fill = _color_anim("fill")
-animate_color = _color_anim("color")
-animate_stroke = _color_anim("stroke")
 
-# ======================================================================
-# Pre-built numeric animation methods
-# ======================================================================
+def animate_fade(
+    self,
+    to: float | None = None,
+    *,
+    keyframes: dict[float, float] | list[float] | None = None,
+    duration: float = 1.0,
+    delay: float = 0.0,
+    easing: EasingLike = "linear",
+    hold: bool = True,
+    repeat: RepeatLike = False,
+    bounce: bool = False,
+) -> Entity:
+    """Animate the ``opacity`` property.
 
-animate_fade = _numeric_anim("opacity", label="fade")
-animate_radius = _numeric_anim("r", label="radius")
-animate_width = _numeric_anim("width")
-animate_height = _numeric_anim("height")
-animate_stroke_width = _numeric_anim("stroke_width")
-animate_rx = _numeric_anim("rx")
-animate_ry = _numeric_anim("ry")
-animate_font_size = _numeric_anim("font_size")
-animate_fill_opacity = _numeric_anim("fill_opacity")
-animate_stroke_opacity = _numeric_anim("stroke_opacity")
+    Args:
+        to: Target opacity value.
+        keyframes: Dict of {time_seconds: value} or list of values
+            (evenly spaced over duration) for multi-step animation.
+        duration: Duration in seconds.
+        delay: Seconds before animation starts.
+        easing: Speed curve.
+        hold: Hold final value after completion.
+        repeat: ``False`` = play once, ``True`` = loop forever,
+            ``int`` = play N times.
+        bounce: If ``True``, alternate direction each cycle.
+
+    Returns:
+        Self, for method chaining.
+    """
+    return self.animate(
+        "opacity", to=to, keyframes=keyframes, duration=duration,
+        delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce,
+    )
+
+
+def animate_radius(
+    self,
+    to: float | None = None,
+    *,
+    keyframes: dict[float, float] | list[float] | None = None,
+    duration: float = 1.0,
+    delay: float = 0.0,
+    easing: EasingLike = "linear",
+    hold: bool = True,
+    repeat: RepeatLike = False,
+    bounce: bool = False,
+) -> Entity:
+    """Animate the ``r`` (radius) property.
+
+    Args:
+        to: Target radius value.
+        keyframes: Dict of {time_seconds: value} or list of values
+            (evenly spaced over duration) for multi-step animation.
+        duration: Duration in seconds.
+        delay: Seconds before animation starts.
+        easing: Speed curve.
+        hold: Hold final value after completion.
+        repeat: ``False`` = play once, ``True`` = loop forever,
+            ``int`` = play N times.
+        bounce: If ``True``, alternate direction each cycle.
+
+    Returns:
+        Self, for method chaining.
+    """
+    return self.animate(
+        "r", to=to, keyframes=keyframes, duration=duration,
+        delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce,
+    )
+
+
+def animate_width(
+    self,
+    to: float | None = None,
+    *,
+    keyframes: dict[float, float] | list[float] | None = None,
+    duration: float = 1.0,
+    delay: float = 0.0,
+    easing: EasingLike = "linear",
+    hold: bool = True,
+    repeat: RepeatLike = False,
+    bounce: bool = False,
+) -> Entity:
+    """Animate the ``width`` property.
+
+    Args:
+        to: Target width value.
+        keyframes: Dict of {time_seconds: value} or list of values
+            (evenly spaced over duration) for multi-step animation.
+        duration: Duration in seconds.
+        delay: Seconds before animation starts.
+        easing: Speed curve.
+        hold: Hold final value after completion.
+        repeat: ``False`` = play once, ``True`` = loop forever,
+            ``int`` = play N times.
+        bounce: If ``True``, alternate direction each cycle.
+
+    Returns:
+        Self, for method chaining.
+    """
+    return self.animate(
+        "width", to=to, keyframes=keyframes, duration=duration,
+        delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce,
+    )
+
+
+def animate_height(
+    self,
+    to: float | None = None,
+    *,
+    keyframes: dict[float, float] | list[float] | None = None,
+    duration: float = 1.0,
+    delay: float = 0.0,
+    easing: EasingLike = "linear",
+    hold: bool = True,
+    repeat: RepeatLike = False,
+    bounce: bool = False,
+) -> Entity:
+    """Animate the ``height`` property.
+
+    Args:
+        to: Target height value.
+        keyframes: Dict of {time_seconds: value} or list of values
+            (evenly spaced over duration) for multi-step animation.
+        duration: Duration in seconds.
+        delay: Seconds before animation starts.
+        easing: Speed curve.
+        hold: Hold final value after completion.
+        repeat: ``False`` = play once, ``True`` = loop forever,
+            ``int`` = play N times.
+        bounce: If ``True``, alternate direction each cycle.
+
+    Returns:
+        Self, for method chaining.
+    """
+    return self.animate(
+        "height", to=to, keyframes=keyframes, duration=duration,
+        delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce,
+    )
+
+
+def animate_stroke_width(
+    self,
+    to: float | None = None,
+    *,
+    keyframes: dict[float, float] | list[float] | None = None,
+    duration: float = 1.0,
+    delay: float = 0.0,
+    easing: EasingLike = "linear",
+    hold: bool = True,
+    repeat: RepeatLike = False,
+    bounce: bool = False,
+) -> Entity:
+    """Animate the ``stroke_width`` property.
+
+    Args:
+        to: Target stroke width value.
+        keyframes: Dict of {time_seconds: value} or list of values
+            (evenly spaced over duration) for multi-step animation.
+        duration: Duration in seconds.
+        delay: Seconds before animation starts.
+        easing: Speed curve.
+        hold: Hold final value after completion.
+        repeat: ``False`` = play once, ``True`` = loop forever,
+            ``int`` = play N times.
+        bounce: If ``True``, alternate direction each cycle.
+
+    Returns:
+        Self, for method chaining.
+    """
+    return self.animate(
+        "stroke_width", to=to, keyframes=keyframes, duration=duration,
+        delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce,
+    )
+
+
+def animate_rx(
+    self,
+    to: float | None = None,
+    *,
+    keyframes: dict[float, float] | list[float] | None = None,
+    duration: float = 1.0,
+    delay: float = 0.0,
+    easing: EasingLike = "linear",
+    hold: bool = True,
+    repeat: RepeatLike = False,
+    bounce: bool = False,
+) -> Entity:
+    """Animate the ``rx`` (horizontal radius) property.
+
+    Args:
+        to: Target rx value.
+        keyframes: Dict of {time_seconds: value} or list of values
+            (evenly spaced over duration) for multi-step animation.
+        duration: Duration in seconds.
+        delay: Seconds before animation starts.
+        easing: Speed curve.
+        hold: Hold final value after completion.
+        repeat: ``False`` = play once, ``True`` = loop forever,
+            ``int`` = play N times.
+        bounce: If ``True``, alternate direction each cycle.
+
+    Returns:
+        Self, for method chaining.
+    """
+    return self.animate(
+        "rx", to=to, keyframes=keyframes, duration=duration,
+        delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce,
+    )
+
+
+def animate_ry(
+    self,
+    to: float | None = None,
+    *,
+    keyframes: dict[float, float] | list[float] | None = None,
+    duration: float = 1.0,
+    delay: float = 0.0,
+    easing: EasingLike = "linear",
+    hold: bool = True,
+    repeat: RepeatLike = False,
+    bounce: bool = False,
+) -> Entity:
+    """Animate the ``ry`` (vertical radius) property.
+
+    Args:
+        to: Target ry value.
+        keyframes: Dict of {time_seconds: value} or list of values
+            (evenly spaced over duration) for multi-step animation.
+        duration: Duration in seconds.
+        delay: Seconds before animation starts.
+        easing: Speed curve.
+        hold: Hold final value after completion.
+        repeat: ``False`` = play once, ``True`` = loop forever,
+            ``int`` = play N times.
+        bounce: If ``True``, alternate direction each cycle.
+
+    Returns:
+        Self, for method chaining.
+    """
+    return self.animate(
+        "ry", to=to, keyframes=keyframes, duration=duration,
+        delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce,
+    )
+
+
+def animate_font_size(
+    self,
+    to: float | None = None,
+    *,
+    keyframes: dict[float, float] | list[float] | None = None,
+    duration: float = 1.0,
+    delay: float = 0.0,
+    easing: EasingLike = "linear",
+    hold: bool = True,
+    repeat: RepeatLike = False,
+    bounce: bool = False,
+) -> Entity:
+    """Animate the ``font_size`` property.
+
+    Args:
+        to: Target font size value.
+        keyframes: Dict of {time_seconds: value} or list of values
+            (evenly spaced over duration) for multi-step animation.
+        duration: Duration in seconds.
+        delay: Seconds before animation starts.
+        easing: Speed curve.
+        hold: Hold final value after completion.
+        repeat: ``False`` = play once, ``True`` = loop forever,
+            ``int`` = play N times.
+        bounce: If ``True``, alternate direction each cycle.
+
+    Returns:
+        Self, for method chaining.
+    """
+    return self.animate(
+        "font_size", to=to, keyframes=keyframes, duration=duration,
+        delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce,
+    )
+
+
+def animate_fill_opacity(
+    self,
+    to: float | None = None,
+    *,
+    keyframes: dict[float, float] | list[float] | None = None,
+    duration: float = 1.0,
+    delay: float = 0.0,
+    easing: EasingLike = "linear",
+    hold: bool = True,
+    repeat: RepeatLike = False,
+    bounce: bool = False,
+) -> Entity:
+    """Animate the ``fill_opacity`` property.
+
+    Args:
+        to: Target fill opacity value.
+        keyframes: Dict of {time_seconds: value} or list of values
+            (evenly spaced over duration) for multi-step animation.
+        duration: Duration in seconds.
+        delay: Seconds before animation starts.
+        easing: Speed curve.
+        hold: Hold final value after completion.
+        repeat: ``False`` = play once, ``True`` = loop forever,
+            ``int`` = play N times.
+        bounce: If ``True``, alternate direction each cycle.
+
+    Returns:
+        Self, for method chaining.
+    """
+    return self.animate(
+        "fill_opacity", to=to, keyframes=keyframes, duration=duration,
+        delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce,
+    )
+
+
+def animate_stroke_opacity(
+    self,
+    to: float | None = None,
+    *,
+    keyframes: dict[float, float] | list[float] | None = None,
+    duration: float = 1.0,
+    delay: float = 0.0,
+    easing: EasingLike = "linear",
+    hold: bool = True,
+    repeat: RepeatLike = False,
+    bounce: bool = False,
+) -> Entity:
+    """Animate the ``stroke_opacity`` property.
+
+    Args:
+        to: Target stroke opacity value.
+        keyframes: Dict of {time_seconds: value} or list of values
+            (evenly spaced over duration) for multi-step animation.
+        duration: Duration in seconds.
+        delay: Seconds before animation starts.
+        easing: Speed curve.
+        hold: Hold final value after completion.
+        repeat: ``False`` = play once, ``True`` = loop forever,
+            ``int`` = play N times.
+        bounce: If ``True``, alternate direction each cycle.
+
+    Returns:
+        Self, for method chaining.
+    """
+    return self.animate(
+        "stroke_opacity", to=to, keyframes=keyframes, duration=duration,
+        delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce,
+    )

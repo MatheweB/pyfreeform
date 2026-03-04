@@ -1607,19 +1607,19 @@ class TestLoop:
         with pytest.raises(ValueError):
             dot.loop(times=False)
 
-    def test_loop_invalid_times_zero(self):
-        """loop(times=0) raises ValueError."""
+    def test_loop_times_zero(self):
+        """loop(times=0) is accepted (play zero times = no-op)."""
         dot = Dot(0, 0)
         dot.animate_fade(to=0.0, duration=1.0)
-        with pytest.raises(ValueError):
-            dot.loop(times=0)
+        dot.loop(times=0)
+        assert dot._animations[0].repeat == 0
 
-    def test_loop_invalid_times_one(self):
-        """loop(times=1) raises ValueError."""
+    def test_loop_times_one(self):
+        """loop(times=1) is accepted (play once)."""
         dot = Dot(0, 0)
         dot.animate_fade(to=0.0, duration=1.0)
-        with pytest.raises(ValueError):
-            dot.loop(times=1)
+        dot.loop(times=1)
+        assert dot._animations[0].repeat == 1
 
     def test_loop_invalid_times_negative(self):
         """loop(times=-1) raises ValueError."""
