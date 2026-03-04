@@ -46,9 +46,7 @@ class _ScaledPathable:
     fractions instead of absolute pixel coordinates.
     """
 
-    def __init__(
-        self, pathable: Pathable, sx: float, sy: float, sw: float, sh: float
-    ) -> None:
+    def __init__(self, pathable: Pathable, sx: float, sy: float, sw: float, sh: float) -> None:
         self._p = pathable
         self._sx = sx
         self._sy = sy
@@ -56,8 +54,8 @@ class _ScaledPathable:
         self._sh = sh
 
     @property
-    def is_closed(self) -> bool:
-        return self._p.is_closed
+    def closed(self) -> bool:
+        return isinstance(self._p, FullPathable) and self._p.closed
 
     def point_at(self, t: float) -> Coord:
         p = self._p.point_at(t)
@@ -231,9 +229,7 @@ class Surface:
         """
         if isinstance(spec, str):
             if spec not in NAMED_POSITIONS:
-                raise ValueError(
-                    f"Unknown anchor '{spec}'. Available: {self.anchor_names}"
-                )
+                raise ValueError(f"Unknown anchor '{spec}'. Available: {self.anchor_names}")
             rc = NAMED_POSITIONS[spec]
         else:
             rc = RelCoord.coerce(spec)
@@ -499,7 +495,11 @@ class Surface:
                 stroke_brightness = style.stroke_brightness
         if fill_brightness is not None and fill is not None and not isinstance(fill, Gradient):
             fill = apply_brightness(fill, fill_brightness)
-        if stroke_brightness is not None and stroke is not None and not isinstance(stroke, Gradient):
+        if (
+            stroke_brightness is not None
+            and stroke is not None
+            and not isinstance(stroke, Gradient)
+        ):
             stroke = apply_brightness(stroke, stroke_brightness)
         return fill, stroke, stroke_width, z_index, opacity, fill_opacity, stroke_opacity
 
@@ -553,15 +553,17 @@ class Surface:
             ```
         """
 
-
         color, z_index, opacity = self._unpack_fill_style(
-            style, color, z_index, opacity, color_brightness,
+            style,
+            color,
+            z_index,
+            opacity,
+            color_brightness,
         )
 
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
         ref_min = min(ref_w, ref_h)
         pixel_radius = radius * ref_min if ref_min > 0 else radius
-
 
         if along is not None:
             position, _ = self._resolve_along(along, t, False, 0, along_offset=along_offset)
@@ -573,7 +575,12 @@ class Surface:
                 z_index=z_index,
                 opacity=opacity,
             )
-            dot.binding = Binding(along=along, t=t if t is not None else 0.5, along_offset=along_offset, reference=within)
+            dot.binding = Binding(
+                along=along,
+                t=t if t is not None else 0.5,
+                along_offset=along_offset,
+                reference=within,
+            )
         else:
             position, at_rc = self._resolve_at(at, ref_x, ref_y, ref_w, ref_h)
             dot = Dot(
@@ -647,9 +654,16 @@ class Surface:
             ```
         """
 
-
         width, color, z_index, cap, start_cap, end_cap, opacity = self._unpack_path_style(
-            style, width, color, z_index, cap, start_cap, end_cap, opacity, color_brightness,
+            style,
+            width,
+            color,
+            z_index,
+            cap,
+            start_cap,
+            end_cap,
+            opacity,
+            color_brightness,
         )
 
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
@@ -671,7 +685,6 @@ class Surface:
             end_cap=end_cap,
             opacity=opacity,
         )
-
 
         positioned_along = False
         if along is not None:
@@ -832,9 +845,16 @@ class Surface:
             ```
         """
 
-
         width, color, z_index, cap, start_cap, end_cap, opacity = self._unpack_path_style(
-            style, width, color, z_index, cap, start_cap, end_cap, opacity, color_brightness,
+            style,
+            width,
+            color,
+            z_index,
+            cap,
+            start_cap,
+            end_cap,
+            opacity,
+            color_brightness,
         )
 
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
@@ -857,7 +877,6 @@ class Surface:
             end_cap=end_cap,
             opacity=opacity,
         )
-
 
         positioned_along = False
         if along is not None:
@@ -960,7 +979,15 @@ class Surface:
             pathable = _ScaledPathable(pathable, self.x, self.y, self.width, self.height)
 
         width, color, z_index, cap, start_cap, end_cap, opacity = self._unpack_path_style(
-            style, width, color, z_index, cap, start_cap, end_cap, opacity, None,
+            style,
+            width,
+            color,
+            z_index,
+            cap,
+            start_cap,
+            end_cap,
+            opacity,
+            None,
         )
 
         path = Path(
@@ -1043,20 +1070,28 @@ class Surface:
             ```
         """
 
-
         fill, stroke, stroke_width, z_index, opacity, fill_opacity, stroke_opacity = (
             self._unpack_shape_style(
-                style, fill, stroke, stroke_width, z_index, opacity,
-                fill_opacity, stroke_opacity, fill_brightness, stroke_brightness,
+                style,
+                fill,
+                stroke,
+                stroke_width,
+                z_index,
+                opacity,
+                fill_opacity,
+                stroke_opacity,
+                fill_brightness,
+                stroke_brightness,
             )
         )
 
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
 
-
         at_coord: RelCoord | None = None
         if along is not None:
-            position, rotation = self._resolve_along(along, t, align, rotation, along_offset=along_offset)
+            position, rotation = self._resolve_along(
+                along, t, align, rotation, along_offset=along_offset
+            )
         else:
             position, at_coord = self._resolve_at(at, ref_x, ref_y, ref_w, ref_h)
 
@@ -1083,7 +1118,12 @@ class Surface:
         )
 
         if along is not None:
-            ellipse.binding = Binding(along=along, t=t if t is not None else 0.5, along_offset=along_offset, reference=within)
+            ellipse.binding = Binding(
+                along=along,
+                t=t if t is not None else 0.5,
+                along_offset=along_offset,
+                reference=within,
+            )
         else:
             ellipse.binding = Binding(at=at_coord, reference=within)
 
@@ -1152,11 +1192,18 @@ class Surface:
             ```
         """
 
-
         fill, stroke, stroke_width, z_index, opacity, fill_opacity, stroke_opacity = (
             self._unpack_shape_style(
-                style, fill, stroke, stroke_width, z_index, opacity,
-                fill_opacity, stroke_opacity, fill_brightness, stroke_brightness,
+                style,
+                fill,
+                stroke,
+                stroke_width,
+                z_index,
+                opacity,
+                fill_opacity,
+                stroke_opacity,
+                fill_brightness,
+                stroke_brightness,
             )
         )
 
@@ -1177,7 +1224,9 @@ class Surface:
 
         positioned_along = False
         if along is not None:
-            target, effective_rotation = self._resolve_along(along, t, align, rotation, along_offset=along_offset)
+            target, effective_rotation = self._resolve_along(
+                along, t, align, rotation, along_offset=along_offset
+            )
             center = polygon.position
             dx, dy = target.x - center.x, target.y - center.y
             shifted_verts = [Coord(v.x + dx, v.y + dy) for v in absolute_vertices]
@@ -1287,7 +1336,6 @@ class Surface:
             ```
         """
 
-
         if style:
             color = style.color
             font_family = style.font_family
@@ -1313,10 +1361,14 @@ class Surface:
 
         at_coord: RelCoord | None = None
         if along is not None and t is not None:
-            position, rotation = self._resolve_along(along, t, align, rotation, along_offset=along_offset)
+            position, rotation = self._resolve_along(
+                along, t, align, rotation, along_offset=along_offset
+            )
         elif along is not None:
             # TextPath warp mode — position at path midpoint (used as fallback)
-            position, rotation = self._resolve_along(along, 0.5, align, rotation, along_offset=along_offset)
+            position, rotation = self._resolve_along(
+                along, 0.5, align, rotation, along_offset=along_offset
+            )
         else:
             position, at_coord = self._resolve_at(at, ref_x, ref_y, ref_w, ref_h)
 
@@ -1479,19 +1531,27 @@ class Surface:
             ```
         """
 
-
         fill, stroke, stroke_width, z_index, opacity, fill_opacity, stroke_opacity = (
             self._unpack_shape_style(
-                style, fill, stroke, stroke_width, z_index, opacity,
-                fill_opacity, stroke_opacity, fill_brightness, stroke_brightness,
+                style,
+                fill,
+                stroke,
+                stroke_width,
+                z_index,
+                opacity,
+                fill_opacity,
+                stroke_opacity,
+                fill_brightness,
+                stroke_brightness,
             )
         )
-
 
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
 
         if along is not None:
-            center_pos, rotation = self._resolve_along(along, t, align, rotation, along_offset=along_offset)
+            center_pos, rotation = self._resolve_along(
+                along, t, align, rotation, along_offset=along_offset
+            )
             center_rx, center_ry = 0.5, 0.5
         else:
             center_pos, at_rc = self._resolve_at(at, ref_x, ref_y, ref_w, ref_h)
@@ -1563,9 +1623,12 @@ class Surface:
             ```
         """
 
-
         color, z_index, opacity = self._unpack_fill_style(
-            style, color, z_index, opacity, color_brightness,
+            style,
+            color,
+            z_index,
+            opacity,
+            color_brightness,
         )
 
         rect = Rect(
@@ -1610,7 +1673,6 @@ class Surface:
             cell.add_border(color=palette.grid)
             ```
         """
-
 
         if style:
             color = style.color
@@ -1679,14 +1741,17 @@ class Surface:
             ```
         """
 
-
-
         ref_x, ref_y, ref_w, ref_h = self._get_ref_frame(within)
 
         if along is not None:
             position, _ = self._resolve_along(along, t, False, 0, along_offset=along_offset)
             point = Point(position.x, position.y, z_index=z_index)
-            point.binding = Binding(along=along, t=t if t is not None else 0.5, along_offset=along_offset, reference=within)
+            point.binding = Binding(
+                along=along,
+                t=t if t is not None else 0.5,
+                along_offset=along_offset,
+                reference=within,
+            )
         else:
             position, at_rc = self._resolve_at(at, ref_x, ref_y, ref_w, ref_h)
             point = Point(position.x, position.y, z_index=z_index)

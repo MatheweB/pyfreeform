@@ -35,7 +35,8 @@ def smil_repeat(repeat: RepeatLike) -> str:
 
 
 def apply_bounce(
-    values: list[str], key_times: list[float],
+    values: list[str],
+    key_times: list[float],
 ) -> tuple[list[str], list[float]]:
     """Mirror values and key-times for bounce (forward then backward).
 
@@ -51,10 +52,7 @@ def apply_bounce(
 
     # Backward half: reverse values (skip last) and remap times
     backward_vals = values[-2::-1]
-    backward_kt = [
-        0.5 + (1.0 - key_times[i]) * 0.5
-        for i in range(n - 2, -1, -1)
-    ]
+    backward_kt = [0.5 + (1.0 - key_times[i]) * 0.5 for i in range(n - 2, -1, -1)]
 
     return values + backward_vals, forward_kt + backward_kt
 
@@ -129,7 +127,7 @@ def build_animate_element(
     )
     n_segments = max(1, len(values) - 1)
 
-    parts = [f'<{tag}']
+    parts = [f"<{tag}"]
     if element_id:
         parts.append(f' id="{element_id}"')
     parts.append(f' attributeName="{attribute_name}"')

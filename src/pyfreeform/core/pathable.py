@@ -69,8 +69,13 @@ class FullPathable(Pathable, Protocol):
 
     All built-in path entities (Line, Curve, Ellipse, Path) implement this.
     Use ``isinstance(obj, FullPathable)`` instead of ``hasattr`` checks
-    for ``angle_at``, ``arc_length``, or ``to_svg_path_d``.
+    for ``angle_at``, ``arc_length``, ``to_svg_path_d``, or ``closed``.
     """
+
+    @property
+    def closed(self) -> bool:
+        """Whether the path is closed (start == end)."""
+        ...
 
     def angle_at(self, t: float) -> float:
         """Tangent angle in degrees at parameter *t*."""

@@ -330,9 +330,7 @@ class TestSvgOutput:
     def test_many_unique_gradients(self):
         scene = Scene(500, 100)
         for i in range(50):
-            g = LinearGradient(
-                f"hsl({i * 7}, 80%, 50%)", f"hsl({i * 7 + 180}, 80%, 50%)"
-            )
+            g = LinearGradient(f"hsl({i * 7}, 80%, 50%)", f"hsl({i * 7 + 180}, 80%, 50%)")
             scene.add_rect(fill=g, width=0.018, height=0.8, at=(0.01 + i * 0.02, 0.5))
         svg = scene.to_svg()
         assert svg.count("<linearGradient") == 50

@@ -19,7 +19,7 @@ from .models import (
 if TYPE_CHECKING:
     from ..core.connection import Connection
     from ..core.entity import Entity
-    from ..core.pathable import Pathable
+    from ..core.pathable import FullPathable
 
 
 def build_fade(
@@ -79,18 +79,17 @@ def build_move(
     """
     if to is not None and by is not None:
         raise ValueError("Cannot specify both 'to' and 'by'")
-    if to is None and by is None:
-        raise ValueError("Must specify either 'to' or 'by'")
 
     current_at = entity.at
     if current_at is None:
         current_at = RelCoord(0.5, 0.5)
 
-    if by is not None:
-        delta = RelCoord.coerce(by)
-        target = current_at + delta
-    else:
+    if to is not None:
         target = RelCoord.coerce(to)
+    elif by is not None:
+        target = current_at + RelCoord.coerce(by)
+    else:
+        raise ValueError("Must specify either 'to' or 'by'")
 
     return [
         PropertyAnimation(
@@ -156,7 +155,7 @@ def build_spin(
 
 
 def build_follow(
-    path: Pathable,
+    path: FullPathable,
     *,
     duration: float = 1.0,
     delay: float = 0.0,
@@ -206,7 +205,9 @@ def build_animate(
     prop: str,
     *,
     to: float | int | str | tuple[float, ...] | None = None,
-    keyframes: dict[float, float | int | str | tuple[float, ...]] | list[float | int | str | tuple[float, ...]] | None = None,
+    keyframes: dict[float, float | int | str | tuple[float, ...]]
+    | list[float | int | str | tuple[float, ...]]
+    | None = None,
     duration: float = 1.0,
     delay: float = 0.0,
     easing: EasingLike = "linear",
@@ -339,7 +340,8 @@ def stagger(
 
 
 def _get_current_value(
-    entity: Entity | Connection, prop: str,
+    entity: Entity | Connection,
+    prop: str,
 ) -> float | int | str:
     """Read the current value of a property from an entity.
 

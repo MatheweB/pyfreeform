@@ -18,7 +18,6 @@ def svg_num(v: float) -> str:
     return text
 
 
-
 def xml_escape(text: str) -> str:
     """Escape special XML characters for safe embedding in SVG."""
     return (
@@ -37,9 +36,7 @@ def opacity_attr(opacity: float) -> str:
     return ""
 
 
-def fill_stroke_attrs(
-    fill: str | None, stroke: str | None, stroke_width: float | None
-) -> str:
+def fill_stroke_attrs(fill: str | None, stroke: str | None, stroke_width: float | None) -> str:
     """Build SVG fill/stroke attribute string for shape elements."""
     parts: list[str] = []
     if fill:
@@ -51,9 +48,7 @@ def fill_stroke_attrs(
     return "".join(parts)
 
 
-def stroke_attrs(
-    color: str, width: float, svg_cap: str, marker_attrs: str = ""
-) -> str:
+def stroke_attrs(color: str, width: float, svg_cap: str, marker_attrs: str = "") -> str:
     """Build SVG stroke attribute string for stroked paths (lines, curves)."""
     return (
         f' stroke="{color}" stroke-width="{svg_num(width)}" '

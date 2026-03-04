@@ -91,9 +91,7 @@ class SVGRenderer(Renderer):
                     f'fill="{scene.background}" />'
                 )
             else:
-                lines.append(
-                    f'  <rect width="100%" height="100%" fill="{scene.background}" />'
-                )
+                lines.append(f'  <rect width="100%" height="100%" fill="{scene.background}" />')
 
         return lines
 
@@ -106,12 +104,8 @@ class SVGRenderer(Renderer):
 
         # Collect all renderables with z_index
         renderables: list[tuple[int, str]] = []
-        renderables.extend(
-            (c.z_index, self.render_connection(c)) for c in all_connections
-        )
-        renderables.extend(
-            (e.z_index, self.render_entity(e)) for e in all_entities
-        )
+        renderables.extend((c.z_index, self.render_connection(c)) for c in all_connections)
+        renderables.extend((e.z_index, self.render_entity(e)) for e in all_entities)
 
         # Sort by z_index (stable sort preserves add-order for ties)
         renderables.sort(key=lambda x: x[0])
@@ -130,37 +124,21 @@ class SVGRenderer(Renderer):
     def _collect_markers(
         self, entities: list[Entity], connections: list[Connection]
     ) -> dict[str, str]:
-        markers = {
-            mid: svg
-            for entity in entities
-            for mid, svg in entity.get_required_markers()
-        }
-        markers |= {
-            mid: svg
-            for conn in connections
-            for mid, svg in conn.get_required_markers()
-        }
+        markers = {mid: svg for entity in entities for mid, svg in entity.get_required_markers()}
+        markers |= {mid: svg for conn in connections for mid, svg in conn.get_required_markers()}
         return markers
 
     def _collect_path_defs(self, entities: list[Entity]) -> dict[str, str]:
-        return {
-            pid: svg
-            for entity in entities
-            for pid, svg in entity.get_required_paths()
-        }
+        return {pid: svg for entity in entities for pid, svg in entity.get_required_paths()}
 
     def _collect_gradients(
         self, entities: list[Entity], connections: list[Connection]
     ) -> dict[str, str]:
         gradients = {
-            gid: svg
-            for entity in entities
-            for gid, svg in entity.get_required_gradients()
+            gid: svg for entity in entities for gid, svg in entity.get_required_gradients()
         }
         gradients |= {
-            gid: svg
-            for conn in connections
-            for gid, svg in conn.get_required_gradients()
+            gid: svg for conn in connections for gid, svg in conn.get_required_gradients()
         }
         return gradients
 
@@ -233,9 +211,7 @@ class SVGRenderer(Renderer):
 
     def render_polygon(self, polygon: Polygon) -> str:
         """Render Polygon as SVG ``<polygon>``."""
-        points_str = " ".join(
-            f"{svg_num(v.x)},{svg_num(v.y)}" for v in polygon.vertices
-        )
+        points_str = " ".join(f"{svg_num(v.x)},{svg_num(v.y)}" for v in polygon.vertices)
         return (
             f'<polygon points="{points_str}"'
             f"{fill_stroke_attrs(polygon.fill, polygon.stroke, polygon.stroke_width)}"
@@ -269,16 +245,10 @@ class SVGRenderer(Renderer):
         escaped = xml_escape(text.content)
 
         offset = info["start_offset"]
-        offset_attr = (
-            f' startOffset="{offset}"' if offset not in ("0%", "0.0%") else ""
-        )
+        offset_attr = f' startOffset="{offset}"' if offset not in ("0%", "0.0%") else ""
 
         text_len = info.get("text_length")
-        textlen_attr = (
-            f' textLength="{text_len:.1f}" lengthAdjust="spacing"'
-            if text_len
-            else ""
-        )
+        textlen_attr = f' textLength="{text_len:.1f}" lengthAdjust="spacing"' if text_len else ""
 
         return (
             f'<text font-size="{svg_num(text.font_size)}" '
@@ -306,11 +276,7 @@ class SVGRenderer(Renderer):
         )
 
         d_attr = path.to_svg_path_d()
-        fill_attr = (
-            path.fill
-            if path.closed and path._fill is not None
-            else "none"
-        )
+        fill_attr = path.fill if path.closed and path._fill is not None else "none"
 
         return (
             f'<path d="{d_attr}" fill="{fill_attr}"'
@@ -377,6 +343,7 @@ class SVGRenderer(Renderer):
 # ======================================================================
 # Shared helper: SVG transform attribute
 # ======================================================================
+
 
 def _build_svg_transform(entity: Entity) -> str:
     """Build SVG ``transform`` attribute string for rotation/scale.

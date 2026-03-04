@@ -191,9 +191,15 @@ class TestBackwardCompat:
         """All 9 named positions work on entities and surfaces."""
         rect = Rect(0, 0, 100, 100)
         names = [
-            "center", "top_left", "top_right",
-            "bottom_left", "bottom_right",
-            "top", "bottom", "left", "right",
+            "center",
+            "top_left",
+            "top_right",
+            "bottom_left",
+            "bottom_right",
+            "top",
+            "bottom",
+            "left",
+            "right",
         ]
         for name in names:
             result = rect.anchor(name)

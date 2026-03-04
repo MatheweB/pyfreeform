@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+from collections.abc import Iterator
 
 from ..animation import typed_methods
 from ..color import Color, apply_brightness
@@ -10,7 +11,7 @@ from ..core.coord import Coord, CoordLike
 from ..core.entity import Entity
 from ..core.bezier import sample_arc_length
 from ..core.svg_utils import svg_num
-from ..gradient import Gradient
+from ..gradient import Gradient, PaintLike
 from ..renderers import SMILRenderer
 
 
@@ -75,8 +76,8 @@ class Ellipse(Entity):
         rx: float = 10,
         ry: float = 10,
         rotation: float = 0,
-        fill: str | tuple[int, int, int] | None = DEFAULT_FILL,
-        stroke: str | tuple[int, int, int] | None = DEFAULT_STROKE,
+        fill: PaintLike | None = DEFAULT_FILL,
+        stroke: PaintLike | None = DEFAULT_STROKE,
         stroke_width: float = DEFAULT_STROKE_WIDTH,
         z_index: int = 0,
         opacity: float = 1.0,
@@ -117,10 +118,20 @@ class Ellipse(Entity):
 
         if fill_brightness is not None and fill is not None and not isinstance(fill, Gradient):
             fill = apply_brightness(fill, fill_brightness)
-        if stroke_brightness is not None and stroke is not None and not isinstance(stroke, Gradient):
+        if (
+            stroke_brightness is not None
+            and stroke is not None
+            and not isinstance(stroke, Gradient)
+        ):
             stroke = apply_brightness(stroke, stroke_brightness)
-        self._fill = fill if isinstance(fill, Gradient) else (Color(fill) if fill is not None else None)
-        self._stroke = stroke if isinstance(stroke, Gradient) else (Color(stroke) if stroke is not None else None)
+        self._fill = (
+            fill if isinstance(fill, Gradient) else (Color(fill) if fill is not None else None)
+        )
+        self._stroke = (
+            stroke
+            if isinstance(stroke, Gradient)
+            else (Color(stroke) if stroke is not None else None)
+        )
 
     @property
     def relative_rx(self) -> float | None:
@@ -147,8 +158,8 @@ class Ellipse(Entity):
         rx: float = 10,
         ry: float = 10,
         rotation: float = 0,
-        fill: str | tuple[int, int, int] | None = DEFAULT_FILL,
-        stroke: str | tuple[int, int, int] | None = DEFAULT_STROKE,
+        fill: PaintLike | None = DEFAULT_FILL,
+        stroke: PaintLike | None = DEFAULT_STROKE,
         stroke_width: float = DEFAULT_STROKE_WIDTH,
         z_index: int = 0,
         opacity: float = 1.0,
@@ -267,7 +278,7 @@ class Ellipse(Entity):
         else:
             self._stroke = Color(value) if value is not None else None
 
-    def _iter_paints(self):
+    def _iter_paints(self) -> Iterator[Color | Gradient]:
         if self._fill is not None:
             yield self._fill
         if self._stroke is not None:
@@ -315,6 +326,11 @@ class Ellipse(Entity):
         # Convert t (0-1) to angle in radians
         angle_rad = t * 2 * math.pi
         return self._point_at_angle_rad(angle_rad)
+
+    @property
+    def closed(self) -> bool:
+        """Ellipses are always closed loops."""
+        return True
 
     def arc_length(self, segments: int = 100) -> float:
         """

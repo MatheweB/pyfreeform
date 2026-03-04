@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+from collections.abc import Iterator
 from typing import TYPE_CHECKING
 
 from ..animation import typed_methods
@@ -10,7 +11,7 @@ from ..color import Color, apply_brightness
 from ..core.coord import Coord, CoordLike
 from ..core.relcoord import RelCoord
 from ..core.entity import Entity
-from ..gradient import Gradient
+from ..gradient import Gradient, PaintLike
 from ..renderers import SMILRenderer
 
 if TYPE_CHECKING:
@@ -63,6 +64,10 @@ class Polygon(Entity):
         ```
     """
 
+    DEFAULT_FILL = "black"
+    DEFAULT_STROKE = None
+    DEFAULT_STROKE_WIDTH = 1
+
     # -- typed animation methods (factory-generated) --
     animate_fill = typed_methods.animate_fill
     animate_stroke = typed_methods.animate_stroke
@@ -73,9 +78,9 @@ class Polygon(Entity):
     def __init__(
         self,
         vertices: Sequence[VertexInput],
-        fill: str | tuple[int, int, int] | None = "black",
-        stroke: str | tuple[int, int, int] | None = None,
-        stroke_width: float = 1,
+        fill: PaintLike | None = DEFAULT_FILL,
+        stroke: PaintLike | None = DEFAULT_STROKE,
+        stroke_width: float = DEFAULT_STROKE_WIDTH,
         z_index: int = 0,
         opacity: float = 1.0,
         fill_opacity: float | None = None,
@@ -127,10 +132,16 @@ class Polygon(Entity):
 
         if fill_brightness is not None and fill is not None and not isinstance(fill, Gradient):
             fill = apply_brightness(fill, fill_brightness)
-        if stroke_brightness is not None and stroke is not None and not isinstance(stroke, Gradient):
+        if (
+            stroke_brightness is not None
+            and stroke is not None
+            and not isinstance(stroke, Gradient)
+        ):
             stroke = apply_brightness(stroke, stroke_brightness)
         self._fill = fill if isinstance(fill, Gradient) else (Color(fill) if fill else None)
-        self._stroke = stroke if isinstance(stroke, Gradient) else (Color(stroke) if stroke else None)
+        self._stroke = (
+            stroke if isinstance(stroke, Gradient) else (Color(stroke) if stroke else None)
+        )
         self.stroke_width = float(stroke_width)
         self.opacity = float(opacity)
         self.fill_opacity = fill_opacity
@@ -221,7 +232,7 @@ class Polygon(Entity):
         else:
             self._stroke = Color(value) if value else None
 
-    def _iter_paints(self):
+    def _iter_paints(self) -> Iterator[Color | Gradient]:
         if self._fill is not None:
             yield self._fill
         if self._stroke is not None:
@@ -270,8 +281,7 @@ class Polygon(Entity):
                 drx = dx / ref_w if ref_w > 0 else 0
                 dry = dy / ref_h if ref_h > 0 else 0
                 self._relative_vertices = [
-                    RelCoord(v.rx + drx, v.ry + dry)
-                    for v in self._relative_vertices
+                    RelCoord(v.rx + drx, v.ry + dry) for v in self._relative_vertices
                 ]
                 return self
         # Pixel mode: shift vertex specs directly

@@ -10,6 +10,7 @@ from ..core.bezier import curvature_control_point, quadratic_to_cubic, sample_ar
 from ..core.coord import Coord, CoordLike
 from ..config.caps import CapName
 from ..core.svg_utils import svg_num
+from ..gradient import PaintLike
 from ..renderers import SMILRenderer
 from .endpoint_entity import EndpointEntity
 
@@ -65,7 +66,7 @@ class Curve(EndpointEntity):
         y2: float = 0,
         curvature: float = 0.5,
         width: float = DEFAULT_WIDTH,
-        color: str | tuple[int, int, int] = DEFAULT_COLOR,
+        color: PaintLike = DEFAULT_COLOR,
         z_index: int = 0,
         cap: CapName = DEFAULT_CAP,
         start_cap: CapName | None = None,
@@ -96,10 +97,16 @@ class Curve(EndpointEntity):
             color_brightness: Brightness multiplier 0.0 (black) to 1.0 (unchanged).
         """
         super().__init__(
-            x1, y1, z_index,
-            width=width, color=color, cap=cap,
-            start_cap=start_cap, end_cap=end_cap,
-            opacity=opacity, color_brightness=color_brightness,
+            x1,
+            y1,
+            z_index,
+            width=width,
+            color=color,
+            cap=cap,
+            start_cap=start_cap,
+            end_cap=end_cap,
+            opacity=opacity,
+            color_brightness=color_brightness,
         )
         self._end = Coord(x2, y2)
         self._curvature = float(curvature)
@@ -112,7 +119,7 @@ class Curve(EndpointEntity):
         end: CoordLike,
         curvature: float = 0.5,
         width: float = DEFAULT_WIDTH,
-        color: str | tuple[int, int, int] = DEFAULT_COLOR,
+        color: PaintLike = DEFAULT_COLOR,
         z_index: int = 0,
         cap: CapName = DEFAULT_CAP,
         start_cap: CapName | None = None,
@@ -244,6 +251,11 @@ class Curve(EndpointEntity):
         y = mt2 * p0.y + 2 * mt * t * p1.y + t2 * p2.y
 
         return self._to_world_space(Coord(x, y))
+
+    @property
+    def closed(self) -> bool:
+        """Bezier curves are never closed."""
+        return False
 
     def arc_length(self, segments: int = 100) -> float:
         """
@@ -424,8 +436,16 @@ class Curve(EndpointEntity):
         Returns:
             self, for method chaining.
         """
-        add_draw(self, duration=duration, delay=delay, easing=easing,
-            hold=hold, reverse=reverse, repeat=repeat, bounce=bounce)
+        add_draw(
+            self,
+            duration=duration,
+            delay=delay,
+            easing=easing,
+            hold=hold,
+            reverse=reverse,
+            repeat=repeat,
+            bounce=bounce,
+        )
         return self
 
     def to_svg(self) -> str:

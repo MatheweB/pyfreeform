@@ -13,16 +13,16 @@ from typing import TYPE_CHECKING
 
 from ...animation.models import Easing, PropertyAnimation, _apply_repeat, _interpolate
 from ...core.coord import Coord
+from ...core.protocols import Animatable
 from ...core.svg_utils import svg_num
 from .smil_elements import build_animate_element
 
 if TYPE_CHECKING:
     from ...core.connection import Connection
-    from ...core.entity import Entity
     from ...entities.polygon import Polygon
 
-    # A vertex/endpoint spec: raw Coord, Entity, or (Entity, anchor_name) tuple.
-    VertexSpec = Coord | Entity | tuple[Entity, str]
+    # A vertex/endpoint spec: raw Coord, Animatable entity, or (entity, anchor_name) tuple.
+    VertexSpec = Coord | Animatable | tuple[Animatable, str]
 
 
 # ======================================================================
@@ -81,19 +81,19 @@ def fast_evaluate(anim: PropertyAnimation, t: float, table: list[float]) -> floa
     if t < 0:
         return kfs[0].value
 
-    t = _apply_repeat(t, dur, anim.repeat, anim.bounce)
-    if t is None:
+    effective_t = _apply_repeat(t, dur, anim.repeat, anim.bounce)
+    if effective_t is None:
         return kfs[-1].value if anim.hold else kfs[0].value
 
     base_time = kfs[0].time
     for i in range(n_kf - 1):
         kf0 = kfs[i]
         kf1 = kfs[i + 1]
-        if t <= kf1.time - base_time:
+        if effective_t <= kf1.time - base_time:
             seg_dur = kf1.time - kf0.time
             if seg_dur <= 0:
                 return kf1.value
-            local_t = (t - (kf0.time - base_time)) / seg_dur
+            local_t = (effective_t - (kf0.time - base_time)) / seg_dur
             eased_t = _easing_lookup(table, local_t)
             return _interpolate(kf0.value, kf1.value, eased_t)
 
@@ -106,7 +106,7 @@ def fast_evaluate(anim: PropertyAnimation, t: float, table: list[float]) -> floa
 
 
 def extract_position_anims(
-    entity: Entity,
+    entity: Animatable,
 ) -> tuple[PropertyAnimation, PropertyAnimation] | None:
     """Extract the first (at_rx, at_ry) animation pair from an entity.
 
@@ -126,16 +126,12 @@ def extract_position_anims(
 
 
 def resolve_abs_position(
-    entity: Entity, rx: float, ry: float,
+    entity: Animatable,
+    rx: float,
+    ry: float,
 ) -> tuple[float, float]:
     """Convert relative (rx, ry) to absolute pixels using entity's surface."""
-    surface = entity._surface
-    if surface is None:
-        return (rx, ry)
-    return (
-        surface._x + rx * surface._width,
-        surface._y + ry * surface._height,
-    )
+    return entity.surface_position_at(rx, ry)
 
 
 # ======================================================================
@@ -210,9 +206,7 @@ def compute_cycle_duration(
         return (max(a.delay + a.duration for a in anims), False)
 
     # Effective period per animation: 2*dur if bouncing, dur otherwise
-    periods = [
-        a.duration * (2 if a.bounce else 1) for a in anims if a.duration > 0
-    ]
+    periods = [a.duration * (2 if a.bounce else 1) for a in anims if a.duration > 0]
     if not periods:
         return (1.0, True)
 
@@ -257,21 +251,27 @@ def _resolve_vertex(
 
 
 def resolve_vertex_at_keyframe(
-    spec: VertexSpec, pair: AnimPair | None, keyframe_index: int,
+    spec: VertexSpec,
+    pair: AnimPair | None,
+    keyframe_index: int,
 ) -> Coord:
     """Resolve a vertex spec to absolute Coord at a specific keyframe index."""
     return _resolve_vertex(spec, pair, lambda a: a.keyframes[keyframe_index].value)
 
 
 def resolve_vertex_at_time(
-    spec: VertexSpec, pair: AnimPair | None, t: float,
+    spec: VertexSpec,
+    pair: AnimPair | None,
+    t: float,
 ) -> Coord:
     """Resolve a vertex spec to absolute Coord at a given time (with easing)."""
     return _resolve_vertex(spec, pair, lambda a: a.evaluate(t))
 
 
 def resolve_vertex_at_time_fast(
-    spec: VertexSpec, pair: AnimPair | None, t: float,
+    spec: VertexSpec,
+    pair: AnimPair | None,
+    t: float,
     table: list[float],
 ) -> Coord:
     """Like ``resolve_vertex_at_time`` but uses a pre-computed easing table."""
@@ -302,11 +302,14 @@ def build_reactive_animate(
 
     return build_animate_element(
         attribute_name=svg_attr,
-        values=val_list, key_times=kt_list,
+        values=val_list,
+        key_times=kt_list,
         duration=template.duration,
         delay=delay if delay is not None else template.delay,
-        easing=template.easing, bounce=template.bounce,
-        hold=template.hold, repeat=template.repeat,
+        easing=template.easing,
+        bounce=template.bounce,
+        hold=template.hold,
+        repeat=template.repeat,
     )
 
 
@@ -321,10 +324,13 @@ def build_resampled_animate(
     """Build an ``<animate>`` from pre-eased sample values (calcMode="linear")."""
     return build_animate_element(
         attribute_name=svg_attr,
-        values=val_list, key_times=key_times,
-        duration=duration, delay=delay,
+        values=val_list,
+        key_times=key_times,
+        duration=duration,
+        delay=delay,
         easing=None,  # pre-baked
-        hold=True, repeat=repeat,
+        hold=True,
+        repeat=repeat,
     )
 
 
@@ -336,17 +342,11 @@ def build_resampled_animate(
 def connection_path_d_at(conn: Connection, start: Coord, end: Coord) -> str:
     """Compute connection SVG path ``d`` for arbitrary start/end points."""
     if conn._shape_kind == "line":
-        return (
-            f"M {svg_num(start.x)} {svg_num(start.y)}"
-            f" L {svg_num(end.x)} {svg_num(end.y)}"
-        )
+        return f"M {svg_num(start.x)} {svg_num(start.y)} L {svg_num(end.x)} {svg_num(end.y)}"
 
     ss, se = conn._source_start, conn._source_end
     if ss is None or se is None:
-        return (
-            f"M {svg_num(start.x)} {svg_num(start.y)}"
-            f" L {svg_num(end.x)} {svg_num(end.y)}"
-        )
+        return f"M {svg_num(start.x)} {svg_num(start.y)} L {svg_num(end.x)} {svg_num(end.y)}"
 
     src_dx, src_dy = se.x - ss.x, se.y - ss.y
     src_len = math.hypot(src_dx, src_dy)
@@ -396,7 +396,7 @@ def reactive_polygon_anims(polygon: Polygon) -> list[str]:
     all_rx_anims: list[PropertyAnimation] = []
 
     for spec in polygon._vertex_specs:
-        entity: Entity | None = None
+        entity: Animatable | None = None
         if isinstance(spec, Coord):
             pass  # static vertex, no entity
         elif isinstance(spec, tuple):
@@ -437,9 +437,14 @@ def reactive_polygon_anims(polygon: Polygon) -> list[str]:
                 c = resolve_vertex_at_keyframe(spec, pair, k)
                 pts.append(f"{svg_num(c.x)},{svg_num(c.y)}")
             val_list.append(" ".join(pts))
-        return [build_reactive_animate(
-            "points", val_list, template, delay=avg_delay,
-        )]
+        return [
+            build_reactive_animate(
+                "points",
+                val_list,
+                template,
+                delay=avg_delay,
+            )
+        ]
 
     # Slow path: mixed timing — resample all animations onto a unified timeline.
     # Each vertex's easing/bounce/repeat is baked into the sampled values.
@@ -466,8 +471,7 @@ def reactive_polygon_anims(polygon: Polygon) -> list[str]:
             pts.append(f"{svg_num(c.x)},{svg_num(c.y)}")
         val_list_r.append(" ".join(pts))
 
-    return [build_resampled_animate("points", val_list_r, key_times,
-                                    cycle, 0.0, all_repeat)]
+    return [build_resampled_animate("points", val_list_r, key_times, cycle, 0.0, all_repeat)]
 
 
 # ======================================================================
@@ -480,8 +484,11 @@ def reactive_connection_anims(conn: Connection) -> list[str]:
 
     Pure function — dispatches to line or path helpers below.
     """
-    start_pair = extract_position_anims(conn._start) if hasattr(conn._start, '_animations') else None
-    end_pair = extract_position_anims(conn._end) if hasattr(conn._end, '_animations') else None
+    start_entity: Animatable | None = conn._start if isinstance(conn._start, Animatable) else None
+    end_entity: Animatable | None = conn._end if isinstance(conn._end, Animatable) else None
+
+    start_pair = extract_position_anims(start_entity) if start_entity is not None else None
+    end_pair = extract_position_anims(end_entity) if end_entity is not None else None
 
     if start_pair is None and end_pair is None:
         return []
@@ -502,8 +509,12 @@ def reactive_connection_anims(conn: Connection) -> list[str]:
     if template is not None:
         n_kf = len(template.keyframes)
         if conn._shape_kind == "line":
-            return _reactive_line_anims(conn, start_pair, end_pair, template, n_kf)
-        return _reactive_path_anims(conn, start_pair, end_pair, template, n_kf)
+            return _reactive_line_anims(
+                conn, start_entity, end_entity, start_pair, end_pair, template, n_kf
+            )
+        return _reactive_path_anims(
+            conn, start_entity, end_entity, start_pair, end_pair, template, n_kf
+        )
 
     # Slow path: mixed timing — resample onto unified timeline
     all_anims: list[PropertyAnimation] = []
@@ -517,11 +528,25 @@ def reactive_connection_anims(conn: Connection) -> list[str]:
 
     if conn._shape_kind == "line":
         return _reactive_line_anims_resampled(
-            conn, start_pair, end_pair, cycle, n_samples, all_repeat,
+            conn,
+            start_entity,
+            end_entity,
+            start_pair,
+            end_pair,
+            cycle,
+            n_samples,
+            all_repeat,
             easing_table,
         )
     return _reactive_path_anims_resampled(
-        conn, start_pair, end_pair, cycle, n_samples, all_repeat,
+        conn,
+        start_entity,
+        end_entity,
+        start_pair,
+        end_pair,
+        cycle,
+        n_samples,
+        all_repeat,
         easing_table,
     )
 
@@ -531,26 +556,29 @@ def reactive_connection_anims(conn: Connection) -> list[str]:
 
 def _reactive_line_anims(
     conn: Connection,
+    start_entity: Animatable | None,
+    end_entity: Animatable | None,
     start_pair: AnimPair | None,
     end_pair: AnimPair | None,
-    template: PropertyAnimation, n_kf: int,
+    template: PropertyAnimation,
+    n_kf: int,
 ) -> list[str]:
     """Synthesize x1/y1/x2/y2 animations for a straight-line connection."""
     result: list[str] = []
 
-    if start_pair:
+    if start_pair and start_entity is not None:
         x1_vals, y1_vals = [], []
         for k in range(n_kf):
-            c = resolve_vertex_at_keyframe(conn._start, start_pair, k)
+            c = resolve_vertex_at_keyframe(start_entity, start_pair, k)
             x1_vals.append(svg_num(c.x))
             y1_vals.append(svg_num(c.y))
         result.append(build_reactive_animate("x1", x1_vals, template))
         result.append(build_reactive_animate("y1", y1_vals, template))
 
-    if end_pair:
+    if end_pair and end_entity is not None:
         x2_vals, y2_vals = [], []
         for k in range(n_kf):
-            c = resolve_vertex_at_keyframe(conn._end, end_pair, k)
+            c = resolve_vertex_at_keyframe(end_entity, end_pair, k)
             x2_vals.append(svg_num(c.x))
             y2_vals.append(svg_num(c.y))
         result.append(build_reactive_animate("x2", x2_vals, template))
@@ -561,15 +589,26 @@ def _reactive_line_anims(
 
 def _reactive_path_anims(
     conn: Connection,
+    start_entity: Animatable | None,
+    end_entity: Animatable | None,
     start_pair: AnimPair | None,
     end_pair: AnimPair | None,
-    template: PropertyAnimation, n_kf: int,
+    template: PropertyAnimation,
+    n_kf: int,
 ) -> list[str]:
     """Synthesize ``d`` animation for a curved/path connection."""
     d_vals: list[str] = []
     for k in range(n_kf):
-        start_k = resolve_vertex_at_keyframe(conn._start, start_pair, k) if start_pair else conn.start_point
-        end_k = resolve_vertex_at_keyframe(conn._end, end_pair, k) if end_pair else conn.end_point
+        start_k = (
+            resolve_vertex_at_keyframe(start_entity, start_pair, k)
+            if start_pair and start_entity is not None
+            else conn.start_point
+        )
+        end_k = (
+            resolve_vertex_at_keyframe(end_entity, end_pair, k)
+            if end_pair and end_entity is not None
+            else conn.end_point
+        )
         d_vals.append(connection_path_d_at(conn, start_k, end_k))
 
     return [build_reactive_animate("d", d_vals, template)]
@@ -580,9 +619,13 @@ def _reactive_path_anims(
 
 def _reactive_line_anims_resampled(
     conn: Connection,
+    start_entity: Animatable | None,
+    end_entity: Animatable | None,
     start_pair: AnimPair | None,
     end_pair: AnimPair | None,
-    cycle: float, n_samples: int, all_repeat: bool,
+    cycle: float,
+    n_samples: int,
+    all_repeat: bool,
     easing_table: list[float],
 ) -> list[str]:
     """Resampled x1/y1/x2/y2 animations for mixed-timing line connections."""
@@ -597,8 +640,16 @@ def _reactive_line_anims_resampled(
         t = i * cycle / (n_samples - 1) if n_samples > 1 else 0.0
         key_times.append(t / cycle if cycle > 0 else 0.0)
 
-        sp = resolve_vertex_at_time_fast(conn._start, start_pair, t, easing_table) if start_pair else conn.start_point
-        ep = resolve_vertex_at_time_fast(conn._end, end_pair, t, easing_table) if end_pair else conn.end_point
+        sp = (
+            resolve_vertex_at_time_fast(start_entity, start_pair, t, easing_table)
+            if start_pair and start_entity is not None
+            else conn.start_point
+        )
+        ep = (
+            resolve_vertex_at_time_fast(end_entity, end_pair, t, easing_table)
+            if end_pair and end_entity is not None
+            else conn.end_point
+        )
 
         if start_pair:
             x1_vals.append(svg_num(sp.x))
@@ -619,9 +670,13 @@ def _reactive_line_anims_resampled(
 
 def _reactive_path_anims_resampled(
     conn: Connection,
+    start_entity: Animatable | None,
+    end_entity: Animatable | None,
     start_pair: AnimPair | None,
     end_pair: AnimPair | None,
-    cycle: float, n_samples: int, all_repeat: bool,
+    cycle: float,
+    n_samples: int,
+    all_repeat: bool,
     easing_table: list[float],
 ) -> list[str]:
     """Resampled ``d`` animation for mixed-timing curved connections."""
@@ -632,8 +687,16 @@ def _reactive_path_anims_resampled(
         t = i * cycle / (n_samples - 1) if n_samples > 1 else 0.0
         key_times.append(t / cycle if cycle > 0 else 0.0)
 
-        sp = resolve_vertex_at_time_fast(conn._start, start_pair, t, easing_table) if start_pair else conn.start_point
-        ep = resolve_vertex_at_time_fast(conn._end, end_pair, t, easing_table) if end_pair else conn.end_point
+        sp = (
+            resolve_vertex_at_time_fast(start_entity, start_pair, t, easing_table)
+            if start_pair and start_entity is not None
+            else conn.start_point
+        )
+        ep = (
+            resolve_vertex_at_time_fast(end_entity, end_pair, t, easing_table)
+            if end_pair and end_entity is not None
+            else conn.end_point
+        )
         d_vals.append(connection_path_d_at(conn, sp, ep))
 
     return [build_resampled_animate("d", d_vals, key_times, cycle, 0.0, all_repeat)]

@@ -37,9 +37,7 @@ def bezier_segment_index(t: float, n: int) -> tuple[int, float]:
     return idx, segment_t - idx
 
 
-def sample_arc_length(
-    point_at_fn: Callable[[float], Coord], samples: int = 200
-) -> float:
+def sample_arc_length(point_at_fn: Callable[[float], Coord], samples: int = 200) -> float:
     """Approximate arc length by summing chord lengths over point_at samples."""
     total = 0.0
     prev = point_at_fn(0.0)
@@ -187,9 +185,7 @@ def clamp_control_points(
     return cp1, cp2
 
 
-def curvature_control_point(
-    start: Coord, end: Coord, curvature: float
-) -> Coord:
+def curvature_control_point(start: Coord, end: Coord, curvature: float) -> Coord:
     """
     Compute a quadratic Bézier control point from a curvature value.
 
@@ -225,9 +221,7 @@ def curvature_control_point(
     return Coord(mid_x + perp_x * offset, mid_y + perp_y * offset)
 
 
-def quadratic_to_cubic(
-    p0: Coord, control: Coord, p2: Coord
-) -> tuple[Coord, Coord, Coord, Coord]:
+def quadratic_to_cubic(p0: Coord, control: Coord, p2: Coord) -> tuple[Coord, Coord, Coord, Coord]:
     """
     Exact degree elevation: quadratic Bézier → cubic Bézier.
 

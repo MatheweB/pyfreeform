@@ -101,9 +101,7 @@ def apply_loop(
             "Use times=True for infinite or times=N where N >= 2."
         )
     if not target._animations:
-        raise ValueError(
-            "No animations to loop. Call animate_* methods before .loop()."
-        )
+        raise ValueError("No animations to loop. Call animate_* methods before .loop().")
     for anim in target._animations:
         anim.bounce = bounce
         anim.repeat = times
@@ -123,8 +121,14 @@ def add_fade(
     """Build and append a fade (opacity) animation."""
     delay = consume_chain_delay(target, delay)
     anim = build_fade(
-        target, to, duration=duration, delay=delay, easing=easing, hold=hold,
-        repeat=repeat, bounce=bounce,
+        target,
+        to,
+        duration=duration,
+        delay=delay,
+        easing=easing,
+        hold=hold,
+        repeat=repeat,
+        bounce=bounce,
     )
     _tag_with_chain(target, anim)
     target._animations.append(anim)
@@ -144,8 +148,13 @@ def add_draw(
     """Build and append a draw (stroke reveal) animation."""
     delay = consume_chain_delay(target, delay)
     anim = build_draw(
-        duration=duration, delay=delay, easing=easing, hold=hold, reverse=reverse,
-        repeat=repeat, bounce=bounce,
+        duration=duration,
+        delay=delay,
+        easing=easing,
+        hold=hold,
+        reverse=reverse,
+        repeat=repeat,
+        bounce=bounce,
     )
     _tag_with_chain(target, anim)
     target._animations.append(anim)
@@ -156,7 +165,9 @@ def add_generic_animate(
     prop: str,
     *,
     to: float | int | str | tuple[float, ...] | None = None,
-    keyframes: dict[float, float | int | str | tuple[float, ...]] | list[float | int | str | tuple[float, ...]] | None = None,
+    keyframes: dict[float, float | int | str | tuple[float, ...]]
+    | list[float | int | str | tuple[float, ...]]
+    | None = None,
     duration: float = 1.0,
     delay: float = 0.0,
     easing: EasingLike = "linear",
@@ -167,9 +178,16 @@ def add_generic_animate(
     """Build and append a generic property animation."""
     delay = consume_chain_delay(target, delay)
     anim = build_animate(
-        target, prop, to=to, keyframes=keyframes,
-        duration=duration, delay=delay, easing=easing, hold=hold,
-        repeat=repeat, bounce=bounce,
+        target,
+        prop,
+        to=to,
+        keyframes=keyframes,
+        duration=duration,
+        delay=delay,
+        easing=easing,
+        hold=hold,
+        repeat=repeat,
+        bounce=bounce,
     )
     _tag_with_chain(target, anim)
     target._animations.append(anim)

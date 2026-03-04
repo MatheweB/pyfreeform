@@ -393,11 +393,11 @@ scene.add_text(
 
 Some pathables are **closed loops** — `point_at(0)` and `point_at(1)` return the same point. The built-in `Lissajous` shape is closed; `Wave`, `Spiral`, and `Zigzag` are open.
 
-PathShape subclasses expose this via the `is_closed` property:
+PathShape subclasses expose this via the `closed` property:
 
 ```python
-Path.Lissajous().is_closed   # True
-Path.Wave().is_closed         # False
+Path.Lissajous().closed   # True
+Path.Wave().closed         # False
 ```
 
 Closed paths cannot be used directly as connection shapes (the zero-length chord breaks the affine transform). Use `start_t`/`end_t` to take an arc:
@@ -427,6 +427,6 @@ dot_a.connect(dot_b, path=ellipse_arc)
 | `angle_at(t) -> float` | No | Exact tangent for `align=True` (fallback: numeric diff) |
 | `arc_length() -> float` | No | Auto font sizing for textPath mode |
 | `to_svg_path_d() -> str` | No | textPath warping (`add_text(along=...)` without `t`) |
-| `is_closed -> bool` | No | Indicates closed loop; affects `to_svg_path_d()` output |
+| `closed -> bool` | No | Indicates closed loop; affects `to_svg_path_d()` output |
 
 The minimum viable pathable is a class with a single `point_at(t)` method. Everything else is optional and adds capabilities incrementally.

@@ -9,12 +9,13 @@ from ..color import Color
 from ..core.relcoord import RelCoord
 
 if TYPE_CHECKING:
-    from ..core.pathable import Pathable
+    from ..core.pathable import FullPathable
 
 
 # ---------------------------------------------------------------------------
 # Easing
 # ---------------------------------------------------------------------------
+
 
 @dataclass(frozen=True, slots=True)
 class Easing:
@@ -129,8 +130,7 @@ def coerce_easing(value: EasingLike) -> Easing:
         name = value.strip().lower()
         if name not in _EASING_NAMES:
             raise ValueError(
-                f"Unknown easing '{value}'. "
-                f"Available: {', '.join(sorted(_EASING_NAMES))}"
+                f"Unknown easing '{value}'. Available: {', '.join(sorted(_EASING_NAMES))}"
             )
         return _EASING_NAMES[name]
     if isinstance(value, tuple):
@@ -157,6 +157,7 @@ RepeatLike = bool | int
 # Keyframe
 # ---------------------------------------------------------------------------
 
+
 @dataclass(slots=True)
 class Keyframe:
     """A single value at a point in time.
@@ -173,6 +174,7 @@ class Keyframe:
 # ---------------------------------------------------------------------------
 # PropertyAnimation
 # ---------------------------------------------------------------------------
+
 
 @dataclass(slots=True)
 class PropertyAnimation:
@@ -243,8 +245,8 @@ class PropertyAnimation:
             return self.keyframes[0].value
 
         # Handle repeat and bounce
-        t = _apply_repeat(t, dur, self.repeat, self.bounce)
-        if t is None:
+        effective_t = _apply_repeat(t, dur, self.repeat, self.bounce)
+        if effective_t is None:
             # Past the end, no repeat
             return self.keyframes[-1].value if self.hold else self.keyframes[0].value
 
@@ -255,11 +257,11 @@ class PropertyAnimation:
         for i in range(len(self.keyframes) - 1):
             kf0 = self.keyframes[i]
             kf1 = self.keyframes[i + 1]
-            if t <= kf1.time - base_time:
+            if effective_t <= kf1.time - base_time:
                 seg_dur = kf1.time - kf0.time
                 if seg_dur <= 0:
                     return kf1.value
-                local_t = (t - (kf0.time - base_time)) / seg_dur
+                local_t = (effective_t - (kf0.time - base_time)) / seg_dur
                 eased_t = self.easing.evaluate(local_t)
                 return _interpolate(kf0.value, kf1.value, eased_t)
 
@@ -269,6 +271,7 @@ class PropertyAnimation:
 # ---------------------------------------------------------------------------
 # MotionAnimation
 # ---------------------------------------------------------------------------
+
 
 @dataclass(slots=True)
 class MotionAnimation:
@@ -295,7 +298,7 @@ class MotionAnimation:
         chain_seq: Position within the chain (0, 1, 2, …).
     """
 
-    path: Pathable
+    path: FullPathable
     duration: float
     easing: Easing = field(default_factory=lambda: Easing.LINEAR)
     hold: bool = True
@@ -338,6 +341,7 @@ class MotionAnimation:
 # ---------------------------------------------------------------------------
 # DrawAnimation
 # ---------------------------------------------------------------------------
+
 
 @dataclass(slots=True)
 class DrawAnimation:
@@ -445,10 +449,7 @@ def _interpolate(a: Any, b: Any, t: float) -> Any:
         return a + (b - a) * t
 
     if isinstance(a, tuple) and isinstance(b, tuple):
-        return tuple(
-            a_i + (b_i - a_i) * t
-            for a_i, b_i in zip(a, b, strict=True)
-        )
+        return tuple(a_i + (b_i - a_i) * t for a_i, b_i in zip(a, b, strict=True))
 
     if isinstance(a, str) and isinstance(b, str):
         return _interpolate_color(a, b, t)

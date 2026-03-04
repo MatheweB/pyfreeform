@@ -355,8 +355,12 @@ class Cell(Surface):
         image = self._grid.source_image
         if image is None:
             raise ValueError("Grid was not created from an image — no source image to sample")
-        px = int(min(max(0, (self._col + rx) * image.width / self._grid.num_columns), image.width - 1))
-        py = int(min(max(0, (self._row + ry) * image.height / self._grid.num_rows), image.height - 1))
+        px = int(
+            min(max(0, (self._col + rx) * image.width / self._grid.num_columns), image.width - 1)
+        )
+        py = int(
+            min(max(0, (self._row + ry) * image.height / self._grid.num_rows), image.height - 1)
+        )
         return image.rgb_at(px, py)
 
     def sample_brightness(self, rx: float = 0.5, ry: float = 0.5) -> float:

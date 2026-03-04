@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+from collections.abc import Iterator
 from typing import TYPE_CHECKING
 
 from ..animation import typed_methods
@@ -13,7 +14,7 @@ from ..core.coord import Coord
 from ..core.entity import Entity
 from ..config.caps import CapName, collect_markers, resolve_cap
 from ..core.svg_utils import svg_num
-from ..gradient import Gradient
+from ..gradient import Gradient, PaintLike
 from ..paths import Lissajous, Spiral, Wave, Zigzag
 from ..renderers import SMILRenderer
 
@@ -96,8 +97,8 @@ class Path(Entity):
         start_t: float = 0.0,
         end_t: float = 1.0,
         width: float = DEFAULT_WIDTH,
-        color: str | tuple[int, int, int] = DEFAULT_COLOR,
-        fill: str | tuple[int, int, int] | None = None,
+        color: PaintLike = DEFAULT_COLOR,
+        fill: PaintLike | None = None,
         z_index: int = 0,
         cap: CapName = DEFAULT_CAP,
         start_cap: CapName | None = None,
@@ -141,7 +142,9 @@ class Path(Entity):
         self.segments = segments
         self.width = float(width)
         self._color = color if isinstance(color, Gradient) else Color(color)
-        self._fill = fill if isinstance(fill, Gradient) else (Color(fill) if fill is not None else None)
+        self._fill = (
+            fill if isinstance(fill, Gradient) else (Color(fill) if fill is not None else None)
+        )
         self.cap = cap
         self.start_cap = start_cap
         self.end_cap = end_cap
@@ -187,7 +190,7 @@ class Path(Entity):
         else:
             self._fill = Color(value) if value is not None else None
 
-    def _iter_paints(self):
+    def _iter_paints(self) -> Iterator[Color | Gradient]:
         yield self._color
         if self._fill is not None:
             yield self._fill
@@ -314,7 +317,9 @@ class Path(Entity):
         parts = [f"M {svg_num(p0.x)} {svg_num(p0.y)}"]
 
         for _, cp1, cp2, p3 in self._bezier_segments:
-            parts.append(f" C {svg_num(cp1.x)} {svg_num(cp1.y)} {svg_num(cp2.x)} {svg_num(cp2.y)} {svg_num(p3.x)} {svg_num(p3.y)}")
+            parts.append(
+                f" C {svg_num(cp1.x)} {svg_num(cp1.y)} {svg_num(cp2.x)} {svg_num(cp2.y)} {svg_num(p3.x)} {svg_num(p3.y)}"
+            )
 
         if self._closed:
             parts.append(" Z")
@@ -583,8 +588,16 @@ class Path(Entity):
         Returns:
             self, for method chaining.
         """
-        add_draw(self, duration=duration, delay=delay, easing=easing,
-            hold=hold, reverse=reverse, repeat=repeat, bounce=bounce)
+        add_draw(
+            self,
+            duration=duration,
+            delay=delay,
+            easing=easing,
+            hold=hold,
+            reverse=reverse,
+            repeat=repeat,
+            bounce=bounce,
+        )
         return self
 
     def to_svg(self) -> str:

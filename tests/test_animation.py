@@ -4,7 +4,20 @@ from __future__ import annotations
 
 import pytest
 
-from pyfreeform import Curve, Dot, Easing, Ellipse, Line, Polygon, Rect, Scene, Path, Text, Connection, stagger
+from pyfreeform import (
+    Curve,
+    Dot,
+    Easing,
+    Ellipse,
+    Line,
+    Polygon,
+    Rect,
+    Scene,
+    Path,
+    Text,
+    Connection,
+    stagger,
+)
 from pyfreeform.core.coord import Coord
 from pyfreeform.core.svg_utils import svg_num
 from pyfreeform.entities.point import Point
@@ -359,13 +372,13 @@ class TestSVGRenderer:
         assert 'cx="10"' in svg
         assert 'cy="20"' in svg
         assert 'r="5"' in svg
-        assert 'fill="red"' in svg or "fill=\"#" in svg
+        assert 'fill="red"' in svg or 'fill="#' in svg
 
     def test_render_rect(self):
         rect = Rect(10, 20, 100, 50, fill="blue")
         renderer = SVGRenderer()
         svg = renderer.render_entity(rect)
-        assert '<rect' in svg
+        assert "<rect" in svg
         assert 'width="100"' in svg
         assert 'height="50"' in svg
 
@@ -373,7 +386,7 @@ class TestSVGRenderer:
         line = Line(0, 0, 100, 100, width=2, color="green")
         renderer = SVGRenderer()
         svg = renderer.render_entity(line)
-        assert '<line' in svg
+        assert "<line" in svg
         assert 'x1="0"' in svg
         assert 'y1="0"' in svg
 
@@ -509,11 +522,13 @@ class TestThen:
 
     def test_multi_then(self):
         dot = Dot(0, 0)
-        dot.animate_fade(to=0.0, duration=1.0).then().animate_spin(360, duration=2.0).then().animate_fade(to=1.0, duration=0.5)
+        dot.animate_fade(to=0.0, duration=1.0).then().animate_spin(
+            360, duration=2.0
+        ).then().animate_fade(to=1.0, duration=0.5)
         anims = dot.animations
-        assert anims[0].delay == pytest.approx(0.0)   # fade
-        assert anims[1].delay == pytest.approx(1.0)   # spin
-        assert anims[2].delay == pytest.approx(3.0)   # fade back (1.0 + 2.0)
+        assert anims[0].delay == pytest.approx(0.0)  # fade
+        assert anims[1].delay == pytest.approx(1.0)  # spin
+        assert anims[2].delay == pytest.approx(3.0)  # fade back (1.0 + 2.0)
 
     def test_with_explicit_delay(self):
         dot = Dot(0, 0)
@@ -738,6 +753,7 @@ class TestBounceSMIL:
     def test_motion_bounce_keypoints(self):
         """bounce=True on follow() adds keyPoints='0;1;0'."""
         from pyfreeform.paths import Wave
+
         dot = Dot(10, 20, radius=5, color="red")
         wave = Wave(start=(0, 0), end=(100, 0), amplitude=30, frequency=2)
         dot.animate_follow(wave, duration=2.0)
@@ -749,6 +765,7 @@ class TestBounceSMIL:
     def test_motion_no_bounce_no_keypoints(self):
         """Without bounce, no keyPoints on animateMotion."""
         from pyfreeform.paths import Wave
+
         dot = Dot(10, 20, radius=5, color="red")
         wave = Wave(start=(0, 0), end=(100, 0), amplitude=30, frequency=2)
         dot.animate_follow(wave, duration=2.0)
@@ -759,6 +776,7 @@ class TestBounceSMIL:
     def test_motion_bounce_eased(self):
         """bounce + easing produces 2 keySplines on animateMotion."""
         from pyfreeform.paths import Wave
+
         dot = Dot(10, 20, radius=5, color="red")
         wave = Wave(start=(0, 0), end=(100, 0), amplitude=30, frequency=2)
         dot.animate_follow(wave, duration=2.0, easing="ease-in-out")
@@ -769,6 +787,7 @@ class TestBounceSMIL:
     def test_motion_bounce_linear_uses_linear_calcmode(self):
         """bounce + linear easing uses calcMode='linear'."""
         from pyfreeform.paths import Wave
+
         dot = Dot(10, 20, radius=5, color="red")
         wave = Wave(start=(0, 0), end=(100, 0), amplitude=30, frequency=2)
         dot.animate_follow(wave, duration=2.0, easing="linear")
@@ -780,6 +799,7 @@ class TestBounceSMIL:
     def test_draw_bounce_values(self):
         """bounce=True on draw() produces normalized forward-then-reverse dashoffset."""
         from pyfreeform.paths import Wave
+
         wave = Wave(start=(0, 0), end=(100, 0), amplitude=30, frequency=2)
         path = Path(wave, width=2, color="red")
         scene = Scene(200, 200)
@@ -1171,7 +1191,8 @@ class TestFillLayerOptimization:
         pt = scene.add_point(at=(0.1, 0.1))
         pt.animate_move(to=(0.5, 0.5), duration=2.0)
         poly = Polygon(
-            [pt, Coord(100, 100), Coord(0, 100)], fill="white",
+            [pt, Coord(100, 100), Coord(0, 100)],
+            fill="white",
         )
         poly.animate_fill(keyframes={0: "white", 1: "blue", 2: "white"})
         scene.place(poly)
@@ -1193,7 +1214,8 @@ class TestFillLayerOptimization:
         poly = Polygon([(0, 0), (100, 0), (50, 80)], fill="white")
         poly.animate_fill(
             keyframes={0: "white", 1: "blue"},
-            delay=0.5, easing="ease-in-out",
+            delay=0.5,
+            easing="ease-in-out",
         )
         poly.loop()
         svg = SMILRenderer().render_entity(poly)
@@ -1205,7 +1227,9 @@ class TestFillLayerOptimization:
         """Overlay polygon should not carry the stroke."""
         poly = Polygon(
             [(0, 0), (100, 0), (50, 80)],
-            fill="white", stroke="red", stroke_width=2,
+            fill="white",
+            stroke="red",
+            stroke_width=2,
         )
         poly.animate_fill(keyframes={0: "white", 1: "blue"})
         svg = SMILRenderer().render_entity(poly)
@@ -1345,6 +1369,7 @@ class TestFillLayerOptimization:
     def test_curve_stroke_optimization(self):
         """Curve stroke color animation gets optimized."""
         from pyfreeform import Curve
+
         curve = Curve(0, 0, 100, 100, curvature=0.3, width=2, color="#ff0000")
         curve.animate_color(keyframes={0: "#ff0000", 1: "#00ff00", 2: "#ff0000"})
         svg = SMILRenderer().render_entity(curve)
@@ -1656,12 +1681,13 @@ class TestPerAnimationRepeat:
         dot.animate_radius(to=10, duration=1.0, bounce=True)
         # bounce=True silently ignored when repeat=False
         anim = dot.animations[0]
-        assert anim.bounce is True   # stored but won't fire (repeat=False stops it)
+        assert anim.bounce is True  # stored but won't fire (repeat=False stops it)
         assert anim.repeat is False
 
     def test_per_anim_move_stamps_both_axes(self):
         """animate_move(repeat=True) sets repeat=True on both at_rx and at_ry."""
         from pyfreeform import Scene
+
         scene = Scene(200, 200)
         dot = Dot(0, 0)
         scene.add(dot, at=(0.5, 0.5))
@@ -1684,8 +1710,8 @@ class TestPerAnimationRepeat:
     def test_mixed_spin_once_color_loops(self):
         """Spin plays once; color loops independently. entity.loop() not called."""
         dot = Dot(0, 0)
-        dot.animate_spin(360, duration=2.0)                       # plays once
-        dot.animate_color(to="blue", duration=1.0, repeat=True)   # loops forever
+        dot.animate_spin(360, duration=2.0)  # plays once
+        dot.animate_color(to="blue", duration=1.0, repeat=True)  # loops forever
         spin = dot.animations[0]
         color = dot.animations[1]
         assert spin.repeat is False
@@ -1697,7 +1723,7 @@ class TestPerAnimationRepeat:
         dot.animate_radius(to=35, duration=1.2, repeat=True, bounce=True)
         dot.loop()  # bounce=False, times=True — overwrites
         anim = dot.animations[0]
-        assert anim.repeat is True   # still loops (True from loop())
+        assert anim.repeat is True  # still loops (True from loop())
         assert anim.bounce is False  # overwritten to False
 
     def test_per_anim_spin(self):
@@ -1720,6 +1746,7 @@ class TestPerAnimationRepeat:
     def test_per_anim_follow(self):
         """animate_follow(repeat=True) sets repeat on MotionAnimation."""
         from pyfreeform.paths import Wave
+
         dot = Dot(0, 0)
         wave = Wave(start=(0, 0), end=(100, 0), amplitude=30, frequency=2)
         dot.animate_follow(wave, duration=2.0, repeat=True, bounce=True)
@@ -1738,6 +1765,7 @@ class TestPerAnimationRepeat:
     def test_per_anim_draw_path(self):
         """Path.animate_draw(repeat=True) sets repeat on DrawAnimation."""
         from pyfreeform.paths import Wave
+
         wave = Wave(start=(0, 0), end=(100, 0), amplitude=30, frequency=2)
         scene = Scene(200, 200)
         path = Path(wave, width=2, color="red")
@@ -1766,6 +1794,7 @@ class TestPerAnimationRepeat:
 # Transform Pivot
 # ======================================================================
 
+
 class TestTransformPivot:
     """Tests for animate_spin / animate_scale pivot= parameter."""
 
@@ -1783,6 +1812,7 @@ class TestTransformPivot:
     def test_spin_pivot_stored_as_relcoord(self):
         """pivot=(0.3, 0.5) is stored as RelCoord(0.3, 0.5)."""
         from pyfreeform.core.relcoord import RelCoord
+
         dot = self._cell_dot()
         dot.animate_spin(360, duration=1.0, pivot=(0.3, 0.5))
         assert dot.animations[0].pivot == RelCoord(0.3, 0.5)
@@ -1790,6 +1820,7 @@ class TestTransformPivot:
     def test_pivot_tuple_coerced(self):
         """Plain tuple is auto-coerced to RelCoord."""
         from pyfreeform.core.relcoord import RelCoord
+
         dot = self._cell_dot()
         dot.animate_spin(360, duration=1.0, pivot=(0.1, 0.8))
         assert isinstance(dot.animations[0].pivot, RelCoord)
@@ -1824,6 +1855,7 @@ class TestTransformPivot:
         expected_cx = cell.x + 0.0 * cell.width
         expected_cy = cell.y + 0.0 * cell.height
         assert f"{svg_num(expected_cx)} {svg_num(expected_cy)}" in svg
+
 
 # ======================================================================
 # Chain loop — event-based SMIL timing
@@ -1881,23 +1913,27 @@ class TestChainLoop:
     def test_multi_step_chain_seqs(self):
         """Three steps A.then().B.then().C get seq 0, 1, 2."""
         dot = self._dot()
-        (dot.animate_fade(to=0.0, duration=1.0)
-             .then()
-             .animate_fade(to=0.5, duration=1.0)
-             .then()
-             .animate_fade(to=1.0, duration=1.0)
-             .loop())
+        (
+            dot.animate_fade(to=0.0, duration=1.0)
+            .then()
+            .animate_fade(to=0.5, duration=1.0)
+            .then()
+            .animate_fade(to=1.0, duration=1.0)
+            .loop()
+        )
         anims = dot.animations
         assert [a.chain_seq for a in anims] == [0, 1, 2]
 
     def test_simultaneous_plus_then_seq(self):
         """animate_A + animate_B .then() animate_C → seqs [0, 0, 1]."""
         dot = self._dot()
-        (dot.animate_fade(to=0.0, duration=1.0)
-             .animate_spin(360, duration=1.0)
-             .then()
-             .animate_fade(to=1.0, duration=1.0)
-             .loop())
+        (
+            dot.animate_fade(to=0.0, duration=1.0)
+            .animate_spin(360, duration=1.0)
+            .then()
+            .animate_fade(to=1.0, duration=1.0)
+            .loop()
+        )
         anims = dot.animations
         seqs = [a.chain_seq for a in anims]
         assert seqs[0] == 0  # fade seq 0
@@ -1951,15 +1987,19 @@ class TestChainLoop:
     def test_bounce_loop_emits_forward_and_backward(self):
         """loop(bounce=True) must emit both 'f' (forward) and 'b' (backward) elements."""
         dot = self._dot()
-        dot.animate_fade(to=0.0, duration=2.0).then().animate_fade(to=1.0, duration=2.0).loop(bounce=True)
+        dot.animate_fade(to=0.0, duration=2.0).then().animate_fade(to=1.0, duration=2.0).loop(
+            bounce=True
+        )
         svg = SMILRenderer().render_entity(dot)
-        assert "f0" in svg   # forward pass element id
-        assert "b0" in svg   # backward pass element id
+        assert "f0" in svg  # forward pass element id
+        assert "b0" in svg  # backward pass element id
 
     def test_bounce_loop_backward_reverses_values(self):
         """Backward pass of a fade must have reversed from/to values."""
         dot = self._dot()
-        dot.animate_fade(to=0.0, duration=2.0).then().animate_fade(to=1.0, duration=2.0).loop(bounce=True)
+        dot.animate_fade(to=0.0, duration=2.0).then().animate_fade(to=1.0, duration=2.0).loop(
+            bounce=True
+        )
         svg = SMILRenderer().render_entity(dot)
         # Forward: opacity goes 1→0 and 0→1
         # Backward: opacity goes 1→0 and 0→1 (reversed)
@@ -1970,14 +2010,18 @@ class TestChainLoop:
     def test_bounce_loop_no_repeat_count(self):
         """Bounce chain loop must NOT emit repeatCount."""
         dot = self._dot()
-        dot.animate_fade(to=0.0, duration=2.0).then().animate_fade(to=1.0, duration=2.0).loop(bounce=True)
+        dot.animate_fade(to=0.0, duration=2.0).then().animate_fade(to=1.0, duration=2.0).loop(
+            bounce=True
+        )
         svg = SMILRenderer().render_entity(dot)
         assert "repeatCount" not in svg
 
     def test_bounce_seq0_restarts_after_backward_seq0(self):
         """Seq-0 forward must restart after seq-0 backward (full cycle)."""
         dot = self._dot()
-        dot.animate_fade(to=0.0, duration=2.0).then().animate_fade(to=1.0, duration=2.0).loop(bounce=True)
+        dot.animate_fade(to=0.0, duration=2.0).then().animate_fade(to=1.0, duration=2.0).loop(
+            bounce=True
+        )
         svg = SMILRenderer().render_entity(dot)
         # seq0 forward references seq0 backward end for restart
         assert "s0b0.end" in svg
@@ -2012,7 +2056,9 @@ class TestChainLoop:
         scene = Scene.with_grid(cols=1, rows=1, cell_width=200, cell_height=100)
         cell = scene.grid[0][0]
         dot = cell.add_dot(at=(0.15, 0.5), radius=0.05, color="gold")
-        dot.animate_move(to=(0.85, 0.5), duration=2.0).then().animate_fade(to=0.0, duration=2.0).loop(bounce=True)
+        dot.animate_move(to=(0.85, 0.5), duration=2.0).then().animate_fade(
+            to=0.0, duration=2.0
+        ).loop(bounce=True)
         svg = SMILRenderer().render_entity(dot)
         assert "id=" in svg
         assert ".end" in svg
@@ -2023,7 +2069,9 @@ class TestChainLoop:
         scene = Scene.with_grid(cols=1, rows=1, cell_width=200, cell_height=100)
         cell = scene.grid[0][0]
         dot = cell.add_dot(at=(0.15, 0.5), radius=0.05, color="gold")
-        dot.animate_move(to=(0.85, 0.5), duration=2.0).then().animate_fade(to=0.0, duration=2.0).loop()
+        dot.animate_move(to=(0.85, 0.5), duration=2.0).then().animate_fade(
+            to=0.0, duration=2.0
+        ).loop()
         anims = dot.animations
         # First two are at_rx, at_ry (both seq=0); third is opacity (seq=1)
         move_anims = [a for a in anims if a.prop in ("at_rx", "at_ry")]

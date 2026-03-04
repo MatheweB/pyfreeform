@@ -14,6 +14,7 @@ from pyfreeform.layout import between, align, distribute, stack
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _scene_with_cell(cell_size=100):
     """Create a 1x1 scene for simple layout tests."""
     scene = Scene.with_grid(cols=1, rows=1, cell_size=cell_size)
@@ -30,6 +31,7 @@ def _merged_cell(cols=4, rows=1, cell_size=100):
 # ---------------------------------------------------------------------------
 # TestRelativeAnchor
 # ---------------------------------------------------------------------------
+
 
 class TestRelativeAnchor:
     def test_rect_center(self):
@@ -79,6 +81,7 @@ class TestRelativeAnchor:
 # TestRelativeBounds
 # ---------------------------------------------------------------------------
 
+
 class TestRelativeBounds:
     def test_rect_bounds(self):
         """Rect relative bounds match expected fractions."""
@@ -113,6 +116,7 @@ class TestRelativeBounds:
 # ---------------------------------------------------------------------------
 # TestBetween
 # ---------------------------------------------------------------------------
+
 
 class TestBetween:
     def test_midpoint_of_two_entities(self):
@@ -160,6 +164,7 @@ class TestBetween:
 # ---------------------------------------------------------------------------
 # TestAlign
 # ---------------------------------------------------------------------------
+
 
 class TestAlign:
     def test_center_y(self):
@@ -238,6 +243,7 @@ class TestAlign:
 # TestDistribute
 # ---------------------------------------------------------------------------
 
+
 class TestDistribute:
     def test_even_spacing_x(self):
         """Distribute 3 rects evenly along x — edge-aware."""
@@ -278,8 +284,8 @@ class TestDistribute:
         distribute(r1, r2, axis="x", start=0.1, end=0.9)
         r1_rb = r1.relative_bounds()
         r2_rb = r2.relative_bounds()
-        assert abs(r1_rb[0] - 0.1) < 0.01   # left edge at start
-        assert abs(r2_rb[2] - 0.9) < 0.01   # right edge at end
+        assert abs(r1_rb[0] - 0.1) < 0.01  # left edge at start
+        assert abs(r2_rb[2] - 0.9) < 0.01  # right edge at end
 
     def test_preserves_cross_axis(self):
         """Cross-axis at value is preserved."""
@@ -299,8 +305,8 @@ class TestDistribute:
         # r1 top edge at 0.2, r2 bottom edge at 0.8
         rb1 = r1.relative_bounds()
         rb2 = r2.relative_bounds()
-        assert abs(rb1[1] - 0.2) < 0.01   # top edge at start
-        assert abs(rb2[3] - 0.8) < 0.01   # bottom edge at end
+        assert abs(rb1[1] - 0.2) < 0.01  # top edge at start
+        assert abs(rb2[3] - 0.8) < 0.01  # bottom edge at end
         # x values preserved (use relative_anchor for center check)
         assert abs(r1.relative_anchor("center").rx - 0.5) < 0.01
         assert abs(r2.relative_anchor("center").rx - 0.5) < 0.01
@@ -322,14 +328,15 @@ class TestDistribute:
         # r1 comes first → left edge at 0.0
         rb1 = r1.relative_bounds()
         rb2 = r2.relative_bounds()
-        assert abs(rb1[0] - 0.0) < 0.01   # r1 at start
-        assert abs(rb2[2] - 1.0) < 0.01   # r2 at end
+        assert abs(rb1[0] - 0.0) < 0.01  # r1 at start
+        assert abs(rb2[2] - 1.0) < 0.01  # r2 at end
         assert result[0] is r1
 
 
 # ---------------------------------------------------------------------------
 # TestStack
 # ---------------------------------------------------------------------------
+
 
 class TestStack:
     def test_stack_below(self):

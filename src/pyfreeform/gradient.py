@@ -106,8 +106,7 @@ class Gradient(ABC):
     ) -> None:
         if spread_method not in ("pad", "reflect", "repeat"):
             raise ValueError(
-                f"spread_method must be 'pad', 'reflect', or 'repeat', "
-                f"got {spread_method!r}"
+                f"spread_method must be 'pad', 'reflect', or 'repeat', got {spread_method!r}"
             )
         if gradient_units not in ("objectBoundingBox", "userSpaceOnUse"):
             raise ValueError(
@@ -221,9 +220,7 @@ class LinearGradient(Gradient):
         coords = (x1, y1, x2, y2)
         if any(c is not None for c in coords):
             if any(c is None for c in coords):
-                raise ValueError(
-                    "Provide all of x1, y1, x2, y2 or none of them"
-                )
+                raise ValueError("Provide all of x1, y1, x2, y2 or none of them")
             self._x1 = float(x1)  # type: ignore[arg-type]
             self._y1 = float(y1)  # type: ignore[arg-type]
             self._x2 = float(x2)  # type: ignore[arg-type]
@@ -254,9 +251,7 @@ class LinearGradient(Gradient):
         )
 
     def _id_seed(self) -> str:
-        stops = "|".join(
-            f"{s.color}@{s.offset}:{s.opacity}" for s in self._stops
-        )
+        stops = "|".join(f"{s.color}@{s.offset}:{s.opacity}" for s in self._stops)
         return (
             f"linear:{self._x1},{self._y1},{self._x2},{self._y2}"
             f"|{self._spread_method}|{self._gradient_units}|{stops}"
@@ -337,9 +332,7 @@ class RadialGradient(Gradient):
         return "".join(parts)
 
     def _id_seed(self) -> str:
-        stops = "|".join(
-            f"{s.color}@{s.offset}:{s.opacity}" for s in self._stops
-        )
+        stops = "|".join(f"{s.color}@{s.offset}:{s.opacity}" for s in self._stops)
         return (
             f"radial:{self._cx},{self._cy},{self._r}"
             f",{self._fx},{self._fy},{self._fr}"

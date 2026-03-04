@@ -18,10 +18,12 @@ Usage in an entity module::
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ..color import ColorLike
+    from ..core.entity import Entity
     from .models import EasingLike, RepeatLike
 
 
@@ -29,7 +31,8 @@ if TYPE_CHECKING:
 # Factory helpers
 # ======================================================================
 
-def _color_anim(prop: str) -> Any:
+
+def _color_anim(prop: str) -> Callable[..., Entity]:
     """Create a typed color animation method for *prop*."""
 
     def method(
@@ -43,10 +46,18 @@ def _color_anim(prop: str) -> Any:
         hold: bool = True,
         repeat: RepeatLike = False,
         bounce: bool = False,
-    ) -> Any:
-        return self.animate(prop, to=to, keyframes=keyframes,
-                            duration=duration, delay=delay, easing=easing,
-                            hold=hold, repeat=repeat, bounce=bounce)
+    ) -> Entity:
+        return self.animate(
+            prop,
+            to=to,
+            keyframes=keyframes,
+            duration=duration,
+            delay=delay,
+            easing=easing,
+            hold=hold,
+            repeat=repeat,
+            bounce=bounce,
+        )
 
     method.__name__ = f"animate_{prop}"
     method.__qualname__ = f"animate_{prop}"
@@ -69,7 +80,7 @@ def _color_anim(prop: str) -> Any:
     return method
 
 
-def _numeric_anim(prop: str, label: str | None = None) -> Any:
+def _numeric_anim(prop: str, label: str | None = None) -> Callable[..., Entity]:
     """Create a typed numeric animation method for *prop*.
 
     *label* overrides the documented property name (e.g. ``"opacity"``
@@ -88,10 +99,18 @@ def _numeric_anim(prop: str, label: str | None = None) -> Any:
         hold: bool = True,
         repeat: RepeatLike = False,
         bounce: bool = False,
-    ) -> Any:
-        return self.animate(prop, to=to, keyframes=keyframes,
-                            duration=duration, delay=delay, easing=easing,
-                            hold=hold, repeat=repeat, bounce=bounce)
+    ) -> Entity:
+        return self.animate(
+            prop,
+            to=to,
+            keyframes=keyframes,
+            duration=duration,
+            delay=delay,
+            easing=easing,
+            hold=hold,
+            repeat=repeat,
+            bounce=bounce,
+        )
 
     method.__name__ = f"animate_{display}"
     method.__qualname__ = f"animate_{display}"

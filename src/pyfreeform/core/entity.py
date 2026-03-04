@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 from abc import ABC, abstractmethod
-from collections.abc import Collection
+from collections.abc import Collection, Iterator
 from typing import TYPE_CHECKING, Any, Literal
 
 from ..animation.builders import build_follow, build_move, build_scale, build_spin
@@ -17,9 +17,8 @@ from ..animation.shared import (
     consume_chain_delay,
 )
 from ..animation import typed_methods
-from ..color import ColorLike
+from ..color import Color, ColorLike
 from ..gradient import Gradient
-from ..renderers import SMILRenderer
 from .binding import Binding
 from .connection import Connection
 from .coord import Coord, CoordLike
@@ -34,7 +33,7 @@ if TYPE_CHECKING:
     from ..config.caps import CapName
     from ..config.styles import PathStyle
     from ..entities.path import Path
-    from .pathable import Pathable
+    from .pathable import FullPathable, Pathable
     from .surface import Surface
 
 
@@ -83,6 +82,9 @@ class Entity(ABC):
         # Non-destructive transforms (accumulated, resolved at render time)
         self._rotation: float = 0.0
         self._scale_factor: float = 1.0
+
+        # Opacity (overridden by subclasses with entity-specific defaults)
+        self.opacity: float = 1.0
 
         # Animations (renderer-agnostic data)
         self._animations: list = []
@@ -274,6 +276,19 @@ class Entity(ABC):
         """Set the containing surface."""
         self._surface = value
 
+    def surface_position_at(self, rx: float, ry: float) -> tuple[float, float]:
+        """Convert surface-relative (rx, ry) to absolute pixel coordinates.
+
+        Uses this entity's containing surface as the reference frame.
+        Returns *(rx, ry)* unchanged if the entity has no surface.
+        """
+        if self._surface is None:
+            return (rx, ry)
+        return (
+            self._surface._x + rx * self._surface._width,
+            self._surface._y + ry * self._surface._height,
+        )
+
     @property
     def connections(self) -> Collection[Connection]:
         """Connections involving this entity (insertion-ordered)."""
@@ -303,7 +318,12 @@ class Entity(ABC):
         for absolute mode.
         """
         if self._along_path is not None:
-            return Binding(along=self._along_path, t=self._along_t, along_offset=self._along_offset, reference=self._reference)
+            return Binding(
+                along=self._along_path,
+                t=self._along_t,
+                along_offset=self._along_offset,
+                reference=self._reference,
+            )
         if self._relative_at is not None:
             return Binding(at=self._relative_at, reference=self._reference)
         return None
@@ -641,7 +661,12 @@ class Entity(ABC):
         """
         return self.anchor(anchor_spec) + Coord(dx, dy)
 
-    def place_beside(self, other: Entity, side: Literal["right", "left", "above", "below"] = "right", gap: float = 0) -> Entity:
+    def place_beside(
+        self,
+        other: Entity,
+        side: Literal["right", "left", "above", "below"] = "right",
+        gap: float = 0,
+    ) -> Entity:
         """
         Position this entity beside another within the same surface.
 
@@ -775,17 +800,13 @@ class Entity(ABC):
         br = self._surface._absolute_to_relative(Coord(max_x, max_y))
         return (tl.rx, tl.ry, br.rx, br.ry)
 
+    @abstractmethod
     def to_svg(self) -> str:
-        """
-        Render this entity to an SVG element string.
+        """Return the SVG element string for this entity (e.g. ``<rect .../>``).
 
-        Delegates to the default renderer (SMILRenderer), which handles
-        both static and animated SVG output.
-
-        Returns:
-            SVG element (e.g., '<circle ... />').
+        Subclasses must render all visual properties and any SMIL animations
+        attached to this entity.
         """
-        return SMILRenderer().render_entity(self)
 
     @abstractmethod
     def bounds(self, *, visual: bool = False) -> tuple[float, float, float, float]:
@@ -876,8 +897,17 @@ class Entity(ABC):
             ValueError: If both *to* and *by* are given, or neither.
         """
         delay = consume_chain_delay(self, delay)
-        new_anims = build_move(self, to, by=by, duration=duration,
-            delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce)
+        new_anims = build_move(
+            self,
+            to,
+            by=by,
+            duration=duration,
+            delay=delay,
+            easing=easing,
+            hold=hold,
+            repeat=repeat,
+            bounce=bounce,
+        )
         for anim in new_anims:
             _tag_with_chain(self, anim)
         self._animations.extend(new_anims)
@@ -915,9 +945,17 @@ class Entity(ABC):
             Self, for method chaining.
         """
         delay = consume_chain_delay(self, delay)
-        anim = build_spin(self, angle, duration=duration,
-            delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce,
-            pivot=pivot)
+        anim = build_spin(
+            self,
+            angle,
+            duration=duration,
+            delay=delay,
+            easing=easing,
+            hold=hold,
+            repeat=repeat,
+            bounce=bounce,
+            pivot=pivot,
+        )
         _tag_with_chain(self, anim)
         self._animations.append(anim)
         return self
@@ -953,16 +991,24 @@ class Entity(ABC):
             Self, for method chaining.
         """
         delay = consume_chain_delay(self, delay)
-        anim = build_scale(self, to, duration=duration,
-            delay=delay, easing=easing, hold=hold, repeat=repeat, bounce=bounce,
-            pivot=pivot)
+        anim = build_scale(
+            self,
+            to,
+            duration=duration,
+            delay=delay,
+            easing=easing,
+            hold=hold,
+            repeat=repeat,
+            bounce=bounce,
+            pivot=pivot,
+        )
         _tag_with_chain(self, anim)
         self._animations.append(anim)
         return self
 
     def animate_follow(
         self,
-        path: Pathable,
+        path: FullPathable,
         *,
         duration: float = 1.0,
         delay: float = 0.0,
@@ -990,9 +1036,16 @@ class Entity(ABC):
             Self, for method chaining.
         """
         delay = consume_chain_delay(self, delay)
-        anim = build_follow(path, duration=duration,
-            delay=delay, easing=easing, hold=hold, rotate=rotate,
-            repeat=repeat, bounce=bounce)
+        anim = build_follow(
+            path,
+            duration=duration,
+            delay=delay,
+            easing=easing,
+            hold=hold,
+            rotate=rotate,
+            repeat=repeat,
+            bounce=bounce,
+        )
         _tag_with_chain(self, anim)
         self._animations.append(anim)
         return self
@@ -1038,9 +1091,18 @@ class Entity(ABC):
         Raises:
             ValueError: If neither ``to`` nor ``keyframes`` is provided.
         """
-        add_generic_animate(self, prop, to=to, keyframes=keyframes,
-            duration=duration, delay=delay, easing=easing, hold=hold,
-            repeat=repeat, bounce=bounce)
+        add_generic_animate(
+            self,
+            prop,
+            to=to,
+            keyframes=keyframes,
+            duration=duration,
+            delay=delay,
+            easing=easing,
+            hold=hold,
+            repeat=repeat,
+            bounce=bounce,
+        )
         return self
 
     def loop(self, *, bounce: bool = False, times: RepeatLike = True) -> None:
@@ -1124,14 +1186,13 @@ class Entity(ABC):
         """
         return []
 
-    def _iter_paints(self):
+    def _iter_paints(self) -> Iterator[Color | Gradient]:
         """Yield all paint objects (``Color`` or ``Gradient``) on this entity.
 
         Override in subclasses that store fill, stroke, or color values.
         Used by :meth:`get_required_gradients` to collect defs.
         """
-        return
-        yield  # pragma: no cover — makes this a generator
+        return iter([])
 
     def get_required_gradients(self) -> list[tuple[str, str]]:
         """Collect SVG gradient definitions needed by this entity.
@@ -1140,9 +1201,7 @@ class Entity(ABC):
             List of (gradient_id, gradient_svg) tuples. Empty by default.
         """
         return [
-            (p.gradient_id, p.to_svg_def())
-            for p in self._iter_paints()
-            if isinstance(p, Gradient)
+            (p.gradient_id, p.to_svg_def()) for p in self._iter_paints() if isinstance(p, Gradient)
         ]
 
     def inner_bounds(self) -> tuple[float, float, float, float]:

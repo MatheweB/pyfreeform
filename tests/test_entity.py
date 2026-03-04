@@ -312,7 +312,8 @@ def test_fit_to_surface_at_rejects_corners_or_edges():
     dot = cell.add_dot(radius=0.1, color="red")
 
     with pytest.raises(ValueError, match="must be inside the bounds"):
-        dot.fit_to_surface(0.8, at="top_left") 
+        dot.fit_to_surface(0.8, at="top_left")
+
 
 def test_fit_to_surface_at_accepts_center():
     """Named positions should be rejected with helpful error."""

@@ -84,11 +84,11 @@ Where `t` ranges from 0.0 (start) to 1.0 (end). This enables the `along`/`t` par
 | `arc_length()` | `add_text(along=)` | Total path length for text sizing |
 | `angle_at(t)` | `get_angle_at()` | Tangent angle for alignment |
 | `to_svg_path_d()` | `add_text(along=)` | SVG path for `<textPath>` warping |
-| `is_closed` | `to_svg_path_d()` | Whether start and end coincide (closed loop) |
+| `closed` | `to_svg_path_d()` | Whether start and end coincide (closed loop) |
 
 ### Built-in Path Shapes
 
-Ready-to-use pathable classes, accessible as nested classes on `Path`. All implement `point_at(t)`, `angle_at(t)`, `arc_length()`, `to_svg_path_d()`, and the `is_closed` property.
+Ready-to-use pathable classes, accessible as nested classes on `Path`. All implement `point_at(t)`, `angle_at(t)`, `arc_length()`, `to_svg_path_d()`, and the `closed` property.
 
 ::: pyfreeform.paths.wave.Wave
     options:

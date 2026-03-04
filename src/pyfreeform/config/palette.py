@@ -180,4 +180,3 @@ class Palette:
             line="#c9b1ff",
             grid="#e8e4e1",
         )
-

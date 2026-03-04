@@ -9,6 +9,7 @@ from ..animation.shared import add_draw
 from ..core.coord import Coord, CoordLike
 from ..config.caps import CapName
 from ..core.svg_utils import svg_num
+from ..gradient import PaintLike
 from ..renderers import SMILRenderer
 from .endpoint_entity import EndpointEntity
 
@@ -54,7 +55,7 @@ class Line(EndpointEntity):
         x2: float = 1,
         y2: float = 0,
         width: float = DEFAULT_WIDTH,
-        color: str | tuple[int, int, int] = DEFAULT_COLOR,
+        color: PaintLike = DEFAULT_COLOR,
         z_index: int = 0,
         cap: CapName = DEFAULT_CAP,
         start_cap: CapName | None = None,
@@ -80,10 +81,16 @@ class Line(EndpointEntity):
             color_brightness: Brightness multiplier 0.0 (black) to 1.0 (unchanged).
         """
         super().__init__(
-            x1, y1, z_index,
-            width=width, color=color, cap=cap,
-            start_cap=start_cap, end_cap=end_cap,
-            opacity=opacity, color_brightness=color_brightness,
+            x1,
+            y1,
+            z_index,
+            width=width,
+            color=color,
+            cap=cap,
+            start_cap=start_cap,
+            end_cap=end_cap,
+            opacity=opacity,
+            color_brightness=color_brightness,
         )
         self._end_offset = Coord(x2 - x1, y2 - y1)
 
@@ -93,7 +100,7 @@ class Line(EndpointEntity):
         start: CoordLike,
         end: CoordLike,
         width: float = DEFAULT_WIDTH,
-        color: str | tuple[int, int, int] = DEFAULT_COLOR,
+        color: PaintLike = DEFAULT_COLOR,
         z_index: int = 0,
         cap: CapName = DEFAULT_CAP,
         start_cap: CapName | None = None,
@@ -122,8 +129,18 @@ class Line(EndpointEntity):
         start = Coord.coerce(start)
         end = Coord.coerce(end)
         return cls(
-            start.x, start.y, end.x, end.y, width, color, z_index, cap, start_cap, end_cap,
-            opacity, color_brightness,
+            start.x,
+            start.y,
+            end.x,
+            end.y,
+            width,
+            color,
+            z_index,
+            cap,
+            start_cap,
+            end_cap,
+            opacity,
+            color_brightness,
         )
 
     @property
@@ -188,6 +205,11 @@ class Line(EndpointEntity):
             Coord at that position along the line.
         """
         return self._to_world_space(self.start.lerp(self.end, t))
+
+    @property
+    def closed(self) -> bool:
+        """Line segments are never closed."""
+        return False
 
     def arc_length(self) -> float:
         """Return the length of the line segment."""
@@ -341,8 +363,16 @@ class Line(EndpointEntity):
         Returns:
             self, for method chaining.
         """
-        add_draw(self, duration=duration, delay=delay, easing=easing,
-            hold=hold, reverse=reverse, repeat=repeat, bounce=bounce)
+        add_draw(
+            self,
+            duration=duration,
+            delay=delay,
+            easing=easing,
+            hold=hold,
+            reverse=reverse,
+            repeat=repeat,
+            bounce=bounce,
+        )
         return self
 
     def to_svg(self) -> str:

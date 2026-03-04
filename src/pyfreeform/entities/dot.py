@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 import math
+from collections.abc import Iterator
 from typing import TYPE_CHECKING
 
 from ..animation import typed_methods
 from ..color import Color, apply_brightness
 from ..core.entity import Entity
-from ..gradient import Gradient
+from ..gradient import Gradient, PaintLike
 from ..renderers import SMILRenderer
 
 if TYPE_CHECKING:
@@ -50,7 +51,7 @@ class Dot(Entity):
         x: float = 0,
         y: float = 0,
         radius: float = DEFAULT_RADIUS,
-        color: str | tuple[int, int, int] = DEFAULT_COLOR,
+        color: PaintLike = DEFAULT_COLOR,
         z_index: int = 0,
         opacity: float = 1.0,
         color_brightness: float | None = None,
@@ -122,7 +123,7 @@ class Dot(Entity):
         else:
             self._color = Color(value)
 
-    def _iter_paints(self):
+    def _iter_paints(self) -> Iterator[Color | Gradient]:
         yield self._color
 
     @property

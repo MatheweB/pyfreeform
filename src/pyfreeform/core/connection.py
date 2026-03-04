@@ -111,9 +111,7 @@ class Connection:
             segments: Number of Bézier segments for path rendering.
         """
         if curvature is not None and path is not None:
-            raise ValueError(
-                "Use 'curvature' for simple arcs or 'path' for custom paths, not both"
-            )
+            raise ValueError("Use 'curvature' for simple arcs or 'path' for custom paths, not both")
 
         self._start = start
         self._end = end
@@ -165,9 +163,7 @@ class Connection:
             # positions at render time (same codepath as path=).
             self._source_start = Coord(0, 0)
             self._source_end = Coord(1, 0)
-            control = curvature_control_point(
-                self._source_start, self._source_end, curvature
-            )
+            control = curvature_control_point(self._source_start, self._source_end, curvature)
             self._shape_beziers = [
                 quadratic_to_cubic(self._source_start, control, self._source_end)
             ]
@@ -385,6 +381,11 @@ class Connection:
             return 0.0
         return math.degrees(math.atan2(dy, dx))
 
+    @property
+    def closed(self) -> bool:
+        """Connections are never closed paths."""
+        return False
+
     def arc_length(self, segments: int = 100) -> float:
         """Approximate the arc length of the connection by sampling.
 
@@ -421,7 +422,9 @@ class Connection:
             tcp1 = self._transform_point(cp1, xform)
             tcp2 = self._transform_point(cp2, xform)
             tp3 = self._transform_point(p3, xform)
-            parts.append(f" C {svg_num(tcp1.x)} {svg_num(tcp1.y)} {svg_num(tcp2.x)} {svg_num(tcp2.y)} {svg_num(tp3.x)} {svg_num(tp3.y)}")
+            parts.append(
+                f" C {svg_num(tcp1.x)} {svg_num(tcp1.y)} {svg_num(tcp2.x)} {svg_num(tcp2.y)} {svg_num(tp3.x)} {svg_num(tp3.y)}"
+            )
         return "".join(parts)
 
     def disconnect(self) -> None:
@@ -465,8 +468,16 @@ class Connection:
         bounce: bool = False,
     ) -> Connection:
         """Animate the connection drawing itself."""
-        add_draw(self, duration=duration, delay=delay, easing=easing,
-            hold=hold, reverse=reverse, repeat=repeat, bounce=bounce)
+        add_draw(
+            self,
+            duration=duration,
+            delay=delay,
+            easing=easing,
+            hold=hold,
+            reverse=reverse,
+            repeat=repeat,
+            bounce=bounce,
+        )
         return self
 
     def animate(
@@ -483,9 +494,18 @@ class Connection:
         bounce: bool = False,
     ) -> Connection:
         """Animate any property."""
-        add_generic_animate(self, prop, to=to, keyframes=keyframes,
-            duration=duration, delay=delay, easing=easing, hold=hold,
-            repeat=repeat, bounce=bounce)
+        add_generic_animate(
+            self,
+            prop,
+            to=to,
+            keyframes=keyframes,
+            duration=duration,
+            delay=delay,
+            easing=easing,
+            hold=hold,
+            repeat=repeat,
+            bounce=bounce,
+        )
         return self
 
     def loop(self, *, bounce: bool = False, times: RepeatLike = True) -> None:

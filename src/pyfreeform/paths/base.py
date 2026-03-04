@@ -10,12 +10,12 @@ class PathShape:
     """Concrete base for built-in path shapes with shared arc_length and SVG rendering.
 
     Subclasses must implement ``point_at(t)`` and ``angle_at(t)``.
-    Override ``is_closed`` to return ``True`` for shapes where
+    Override ``closed`` to return ``True`` for shapes where
     ``point_at(0)`` and ``point_at(1)`` coincide (e.g. Lissajous).
     """
 
     @property
-    def is_closed(self) -> bool:
+    def closed(self) -> bool:
         """Whether point_at(0) and point_at(1) coincide (closed loop)."""
         return False
 
@@ -33,13 +33,13 @@ class PathShape:
 
     def to_svg_path_d(self, segments: int = 64) -> str:
         """SVG path ``d`` attribute using smooth cubic Bezier curves."""
-        beziers = fit_cubic_beziers(self, segments, closed=self.is_closed)
+        beziers = fit_cubic_beziers(self, segments, closed=self.closed)
         if not beziers:
             return ""
         p0 = beziers[0][0]
         parts = [f"M {p0.x} {p0.y}"]
         for _, cp1, cp2, p3 in beziers:
             parts.append(f" C {cp1.x} {cp1.y} {cp2.x} {cp2.y} {p3.x} {p3.y}")
-        if self.is_closed:
+        if self.closed:
             parts.append(" Z")
         return "".join(parts)

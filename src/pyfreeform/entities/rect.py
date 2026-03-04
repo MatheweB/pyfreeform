@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+from collections.abc import Iterator
 
 from ..animation import typed_methods
 from ..color import Color, apply_brightness
@@ -10,7 +11,7 @@ from ..core.coord import Coord, CoordLike
 from ..core.entity import Entity
 from ..core.positions import NAMED_POSITIONS
 from ..core.relcoord import RelCoord
-from ..gradient import Gradient
+from ..gradient import Gradient, PaintLike
 from ..renderers import SMILRenderer
 
 
@@ -60,8 +61,8 @@ class Rect(Entity):
         y: float = 0,
         width: float = 10,
         height: float = 10,
-        fill: str | tuple[int, int, int] | None = DEFAULT_FILL,
-        stroke: str | tuple[int, int, int] | None = None,
+        fill: PaintLike | None = DEFAULT_FILL,
+        stroke: PaintLike | None = None,
         stroke_width: float = 1,
         rotation: float = 0,
         z_index: int = 0,
@@ -98,10 +99,16 @@ class Rect(Entity):
         self.rotation = float(rotation)
         if fill_brightness is not None and fill is not None and not isinstance(fill, Gradient):
             fill = apply_brightness(fill, fill_brightness)
-        if stroke_brightness is not None and stroke is not None and not isinstance(stroke, Gradient):
+        if (
+            stroke_brightness is not None
+            and stroke is not None
+            and not isinstance(stroke, Gradient)
+        ):
             stroke = apply_brightness(stroke, stroke_brightness)
         self._fill = fill if isinstance(fill, Gradient) else (Color(fill) if fill else None)
-        self._stroke = stroke if isinstance(stroke, Gradient) else (Color(stroke) if stroke else None)
+        self._stroke = (
+            stroke if isinstance(stroke, Gradient) else (Color(stroke) if stroke else None)
+        )
         self.stroke_width = float(stroke_width)
         self.opacity = float(opacity)
         self.fill_opacity = fill_opacity
@@ -132,8 +139,8 @@ class Rect(Entity):
         width: float = 10,
         height: float = 10,
         rotation: float = 0,
-        fill: str | tuple[int, int, int] | None = DEFAULT_FILL,
-        stroke: str | tuple[int, int, int] | None = None,
+        fill: PaintLike | None = DEFAULT_FILL,
+        stroke: PaintLike | None = None,
         stroke_width: float = 1,
         z_index: int = 0,
         opacity: float = 1.0,
@@ -268,7 +275,7 @@ class Rect(Entity):
         else:
             self._stroke = Color(value) if value else None
 
-    def _iter_paints(self):
+    def _iter_paints(self) -> Iterator[Color | Gradient]:
         if self._fill is not None:
             yield self._fill
         if self._stroke is not None:

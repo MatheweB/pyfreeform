@@ -29,6 +29,7 @@ from ...core.svg_utils import (
     xml_escape,
 )
 from ...config.caps import svg_cap_and_marker_attrs
+from ...core.pathable import FullPathable
 from .smil_converters import (
     FillLayerOpt,
     _anim_key_times,
@@ -98,14 +99,20 @@ class _PendingOverlay:
 
 
 def _build_element(
-    tag: str, geometry_attrs: str, base_attrs: str,
-    transform: str, anims: list[str], indent: str = "",
+    tag: str,
+    geometry_attrs: str,
+    base_attrs: str,
+    transform: str,
+    anims: list[str],
+    indent: str = "",
 ) -> str:
     """Build an SVG element with optional SMIL animation children."""
     if anims:
         child_indent = indent + "  "
         anim_str = "\n".join(f"{child_indent}{a}" for a in anims)
-        return f"{indent}<{tag}{geometry_attrs}{base_attrs}{transform}>\n{anim_str}\n{indent}</{tag}>"
+        return (
+            f"{indent}<{tag}{geometry_attrs}{base_attrs}{transform}>\n{anim_str}\n{indent}</{tag}>"
+        )
     return f"{indent}<{tag}{geometry_attrs}{base_attrs}{transform} />"
 
 
@@ -174,9 +181,7 @@ def _plan_chain_render(
 
     sorted_seqs = sorted(chained.keys())
     has_bounce = any(
-        getattr(anim, "bounce", False)
-        for anims in chained.values()
-        for _, anim in anims
+        getattr(anim, "bounce", False) for anims in chained.values() for _, anim in anims
     )
     cid = next(
         anim.chain_id
@@ -192,7 +197,8 @@ def _plan_chain_render(
         last_anchor = f"ch{cid}s{sorted_seqs[-1]}i0"
         for seq_idx, seq in enumerate(sorted_seqs):
             begin_expr = (
-                f"0s; {last_anchor}.end" if seq_idx == 0
+                f"0s; {last_anchor}.end"
+                if seq_idx == 0
                 else f"ch{cid}s{sorted_seqs[seq_idx - 1]}i0.end"
             )
             for j, (_idx, anim) in enumerate(chained[seq]):
@@ -205,7 +211,8 @@ def _plan_chain_render(
 
         for seq_idx, seq in enumerate(sorted_seqs):
             begin_expr = (
-                f"0s; {seq0_bwd_anchor}.end" if seq_idx == 0
+                f"0s; {seq0_bwd_anchor}.end"
+                if seq_idx == 0
                 else f"ch{cid}s{sorted_seqs[seq_idx - 1]}f0.end"
             )
             for j, (_idx, anim) in enumerate(chained[seq]):
@@ -215,7 +222,8 @@ def _plan_chain_render(
         for seq_idx in range(len(sorted_seqs) - 1, -1, -1):
             seq = sorted_seqs[seq_idx]
             begin_expr = (
-                f"ch{cid}s{sorted_seqs[-1]}f0.end" if seq_idx == len(sorted_seqs) - 1
+                f"ch{cid}s{sorted_seqs[-1]}f0.end"
+                if seq_idx == len(sorted_seqs) - 1
                 else f"ch{cid}s{sorted_seqs[seq_idx + 1]}b0.end"
             )
             for j, (_idx, anim) in enumerate(chained[seq]):
@@ -244,7 +252,10 @@ class SMILRenderer(SVGRenderer):
     # ------------------------------------------------------------------
 
     def _render_animations(
-        self, entity: Entity, *, exclude: set[int] | None = None,
+        self,
+        entity: Entity,
+        *,
+        exclude: set[int] | None = None,
     ) -> list[str]:
         """Render all animations on an entity to SMIL element strings.
 
@@ -252,8 +263,7 @@ class SMILRenderer(SVGRenderer):
         animation handled by opacity-layer optimization).
         """
         anims = [
-            (i, a) for i, a in enumerate(entity._animations)
-            if exclude is None or i not in exclude
+            (i, a) for i, a in enumerate(entity._animations) if exclude is None or i not in exclude
         ]
 
         # Route chained infinite-loop animations to event-based timing.
@@ -313,9 +323,14 @@ class SMILRenderer(SVGRenderer):
         plan, independent = _plan_chain_render(anims_with_index)
         result: list[str] = []
         for anim, element_id, begin_expr in plan:
-            result.extend(self._render_single_chained(
-                entity, anim, element_id=element_id, begin_expr=begin_expr,
-            ))
+            result.extend(
+                self._render_single_chained(
+                    entity,
+                    anim,
+                    element_id=element_id,
+                    begin_expr=begin_expr,
+                )
+            )
         for _i, anim in independent:
             if isinstance(anim, PropertyAnimation):
                 result.extend(render_property_smil(anim, entity))
@@ -326,7 +341,10 @@ class SMILRenderer(SVGRenderer):
         return [r for r in result if r]
 
     def _shape_opacity_for_smil(
-        self, opacity: float, fill_opacity: float | None, stroke_opacity: float | None,
+        self,
+        opacity: float,
+        fill_opacity: float | None,
+        stroke_opacity: float | None,
         entity: Entity,
     ) -> str:
         """Build opacity attrs for shapes, compatible with SMIL ``opacity`` animations.
@@ -337,8 +355,7 @@ class SMILRenderer(SVGRenderer):
         ``stroke_opacity`` overrides are still emitted independently.
         """
         animates_opacity = any(
-            isinstance(a, PropertyAnimation) and a.prop == "opacity"
-            for a in entity._animations
+            isinstance(a, PropertyAnimation) and a.prop == "opacity" for a in entity._animations
         )
         if animates_opacity:
             parts: list[str] = [opacity_attr(opacity)]
@@ -349,7 +366,7 @@ class SMILRenderer(SVGRenderer):
             return "".join(parts)
         return shape_opacity_attrs(opacity, fill_opacity, stroke_opacity)
 
-    def _has_draw_animation(self, entity: Entity) -> DrawAnimation | None:
+    def _has_draw_animation(self, entity: Entity | Connection) -> DrawAnimation | None:
         """Check if entity has a DrawAnimation."""
         for anim in entity._animations:
             if isinstance(anim, DrawAnimation):
@@ -363,7 +380,7 @@ class SMILRenderer(SVGRenderer):
         ``[0, 1]``, eliminating arc-length precision mismatches between
         Python and the browser (which cause round-cap flash artifacts).
         """
-        length = entity.arc_length() if hasattr(entity, "arc_length") else 0
+        length = entity.arc_length() if isinstance(entity, FullPathable) else 0
         if length <= 0:
             return ""
         draw_anim = self._has_draw_animation(entity)
@@ -377,7 +394,11 @@ class SMILRenderer(SVGRenderer):
     # ------------------------------------------------------------------
 
     def _wrap_element(
-        self, tag: str, attrs: str, entity: Entity, content: str = "",
+        self,
+        tag: str,
+        attrs: str,
+        entity: Entity,
+        content: str = "",
         extra_anims: list[str] | None = None,
     ) -> str:
         """Wrap an SVG element with SMIL animation children.
@@ -432,8 +453,12 @@ class SMILRenderer(SVGRenderer):
                 f"{self._shape_opacity_for_smil(rect.opacity, rect.fill_opacity, rect.stroke_opacity, rect)}"
             )
             return self._render_entity_layered(
-                "rect", geometry, rect, fill_opt,
-                base_attrs, _build_svg_transform(rect),
+                "rect",
+                geometry,
+                rect,
+                fill_opt,
+                base_attrs,
+                _build_svg_transform(rect),
             )
         attrs = (
             f' x="{svg_num(rect.x)}" y="{svg_num(rect.y)}"'
@@ -459,8 +484,12 @@ class SMILRenderer(SVGRenderer):
                 f"{self._shape_opacity_for_smil(ellipse.opacity, ellipse.fill_opacity, ellipse.stroke_opacity, ellipse)}"
             )
             return self._render_entity_layered(
-                "ellipse", geometry, ellipse, fill_opt,
-                base_attrs, _build_svg_transform(ellipse),
+                "ellipse",
+                geometry,
+                ellipse,
+                fill_opt,
+                base_attrs,
+                _build_svg_transform(ellipse),
             )
         attrs = (
             f' cx="{svg_num(ellipse.position.x)}"'
@@ -482,8 +511,7 @@ class SMILRenderer(SVGRenderer):
         )
         draw_extra = self._draw_attrs(line) if self._has_draw_animation(line) else ""
         geometry = (
-            f' x1="{svg_num(s.x)}" y1="{svg_num(s.y)}"'
-            f' x2="{svg_num(e.x)}" y2="{svg_num(e.y)}"'
+            f' x1="{svg_num(s.x)}" y1="{svg_num(s.y)}" x2="{svg_num(e.x)}" y2="{svg_num(e.y)}"'
         )
 
         stroke_opt = extract_fill_layers(line, target_attr="stroke")
@@ -495,12 +523,19 @@ class SMILRenderer(SVGRenderer):
             )
             overlay_extra = f' stroke-width="{svg_num(line.width)}" stroke-linecap="{svg_cap}"'
             base_anims = self._render_animations(
-                line, exclude={stroke_opt.anim_index},
+                line,
+                exclude={stroke_opt.anim_index},
             )
             return self._build_layered_svg(
-                "line", geometry, stroke_opt, base_attrs,
-                _build_svg_transform(line), base_anims,
-                "stroke", overlay_extra, None,
+                "line",
+                geometry,
+                stroke_opt,
+                base_attrs,
+                _build_svg_transform(line),
+                base_anims,
+                "stroke",
+                overlay_extra,
+                None,
             )
 
         attrs = (
@@ -538,12 +573,19 @@ class SMILRenderer(SVGRenderer):
             )
             overlay_extra = f' stroke-width="{svg_num(curve.width)}" stroke-linecap="{svg_cap}"'
             base_anims = self._render_animations(
-                curve, exclude={stroke_opt.anim_index},
+                curve,
+                exclude={stroke_opt.anim_index},
             )
             return self._build_layered_svg(
-                "path", geometry, stroke_opt, base_attrs,
-                _build_svg_transform(curve), base_anims,
-                "stroke", overlay_extra, None,
+                "path",
+                geometry,
+                stroke_opt,
+                base_attrs,
+                _build_svg_transform(curve),
+                base_anims,
+                "stroke",
+                overlay_extra,
+                None,
             )
 
         attrs = (
@@ -564,21 +606,22 @@ class SMILRenderer(SVGRenderer):
         # opacity layers for GPU-accelerated rendering.
         fill_opt = extract_fill_layers(polygon)
         if fill_opt is not None:
-            points_str = " ".join(
-                f"{svg_num(v.x)},{svg_num(v.y)}" for v in polygon.vertices
-            )
+            points_str = " ".join(f"{svg_num(v.x)},{svg_num(v.y)}" for v in polygon.vertices)
             base_attrs = (
                 f"{fill_stroke_attrs(fill_opt.base_color, polygon.stroke, polygon.stroke_width)}"
                 f"{self._shape_opacity_for_smil(polygon.opacity, polygon.fill_opacity, polygon.stroke_opacity, polygon)}"
             )
             return self._render_entity_layered(
-                "polygon", f' points="{points_str}"', polygon, fill_opt,
-                base_attrs, _build_svg_transform(polygon), reactive,
+                "polygon",
+                f' points="{points_str}"',
+                polygon,
+                fill_opt,
+                base_attrs,
+                _build_svg_transform(polygon),
+                reactive,
             )
 
-        points_str = " ".join(
-            f"{svg_num(v.x)},{svg_num(v.y)}" for v in polygon.vertices
-        )
+        points_str = " ".join(f"{svg_num(v.x)},{svg_num(v.y)}" for v in polygon.vertices)
         attrs = (
             f' points="{points_str}"'
             f"{fill_stroke_attrs(polygon.fill, polygon.stroke, polygon.stroke_width)}"
@@ -627,21 +670,25 @@ class SMILRenderer(SVGRenderer):
 
             pending: list[_PendingOverlay] = []
             for color, _opacities in fill_opt.overlays:
-                pending.append(_PendingOverlay(
-                    tag=tag,
-                    geometry_attrs=geometry_attrs,
-                    color_attr=overlay_color_attr,
-                    color=color,
-                    extra_attrs=overlay_extra,
-                    transform=transform,
-                    reactive=tuple(reactive) if reactive else (),
-                ))
+                pending.append(
+                    _PendingOverlay(
+                        tag=tag,
+                        geometry_attrs=geometry_attrs,
+                        color_attr=overlay_color_attr,
+                        color=color,
+                        extra_attrs=overlay_extra,
+                        transform=transform,
+                        reactive=tuple(reactive) if reactive else (),
+                    )
+                )
             self._batch_pending[batch_entity_id] = pending
             return base_el
 
         # --- Normal mode: full <g> with base + overlays ---
         key_times = _anim_key_times(fill_opt.anim)
-        base_el = _build_element(tag, geometry_attrs, base_attrs, transform, all_base_anims, indent="  ")
+        base_el = _build_element(
+            tag, geometry_attrs, base_attrs, transform, all_base_anims, indent="  "
+        )
 
         # --- Overlay elements: one per additional color ---
         overlay_els: list[str] = []
@@ -666,9 +713,7 @@ class SMILRenderer(SVGRenderer):
             if reactive:
                 overlay_anims.extend(reactive)
             overlay_anim_str = "\n".join(f"    {a}" for a in overlay_anims)
-            overlay_els.append(
-                f"  <{tag}{overlay_attrs}>\n{overlay_anim_str}\n  </{tag}>"
-            )
+            overlay_els.append(f"  <{tag}{overlay_attrs}>\n{overlay_anim_str}\n  </{tag}>")
 
         return "\n".join(["<g>", base_el, *overlay_els, "</g>"])
 
@@ -684,7 +729,8 @@ class SMILRenderer(SVGRenderer):
     ) -> str:
         """Wrapper around :meth:`_build_layered_svg` for entity fill animations."""
         base_anims = self._render_animations(
-            entity, exclude={fill_opt.anim_index},
+            entity,
+            exclude={fill_opt.anim_index},
         )
         batch_id = (
             id(entity)
@@ -692,8 +738,15 @@ class SMILRenderer(SVGRenderer):
             else None
         )
         return self._build_layered_svg(
-            tag, geometry_attrs, fill_opt, base_attrs, transform,
-            base_anims, "fill", "", reactive,
+            tag,
+            geometry_attrs,
+            fill_opt,
+            base_attrs,
+            transform,
+            base_anims,
+            "fill",
+            "",
+            reactive,
             batch_entity_id=batch_id,
         )
 
@@ -724,25 +777,16 @@ class SMILRenderer(SVGRenderer):
         escaped = xml_escape(text.content)
 
         offset = info["start_offset"]
-        offset_attr = (
-            f' startOffset="{offset}"' if offset not in ("0%", "0.0%") else ""
-        )
+        offset_attr = f' startOffset="{offset}"' if offset not in ("0%", "0.0%") else ""
 
         text_len = info.get("text_length")
-        textlen_attr = (
-            f' textLength="{text_len:.1f}" lengthAdjust="spacing"'
-            if text_len
-            else ""
-        )
+        textlen_attr = f' textLength="{text_len:.1f}" lengthAdjust="spacing"' if text_len else ""
 
         anims = self._render_animations(text)
         anim_str = "\n".join(f"  {a}" for a in anims) if anims else ""
 
         textpath_child = (
-            f'<textPath href="#{info["path_id"]}"'
-            f"{offset_attr}{textlen_attr}>"
-            f"{escaped}"
-            f"</textPath>"
+            f'<textPath href="#{info["path_id"]}"{offset_attr}{textlen_attr}>{escaped}</textPath>'
         )
 
         parts = [
@@ -788,8 +832,12 @@ class SMILRenderer(SVGRenderer):
                 f"{draw_extra}"
             )
             return self._render_entity_layered(
-                "path", f' d="{d_attr}"', path, fill_opt,
-                base_attrs, _build_svg_transform(path),
+                "path",
+                f' d="{d_attr}"',
+                path,
+                fill_opt,
+                base_attrs,
+                _build_svg_transform(path),
             )
 
         stroke_opt = extract_fill_layers(path, target_attr="stroke")
@@ -806,12 +854,19 @@ class SMILRenderer(SVGRenderer):
                 f' stroke-linecap="{svg_cap}" stroke-linejoin="round"'
             )
             base_anims = self._render_animations(
-                path, exclude={stroke_opt.anim_index},
+                path,
+                exclude={stroke_opt.anim_index},
             )
             return self._build_layered_svg(
-                "path", f' d="{d_attr}"', stroke_opt, base_attrs,
-                _build_svg_transform(path), base_anims,
-                "stroke", overlay_extra, None,
+                "path",
+                f' d="{d_attr}"',
+                stroke_opt,
+                base_attrs,
+                _build_svg_transform(path),
+                base_anims,
+                "stroke",
+                overlay_extra,
+                None,
             )
 
         attrs = (
@@ -857,12 +912,14 @@ class SMILRenderer(SVGRenderer):
     # ------------------------------------------------------------------
 
     def _render_connection_anims(
-        self, conn: Connection, *, exclude: set[int] | None = None,
+        self,
+        conn: Connection,
+        *,
+        exclude: set[int] | None = None,
     ) -> list[str]:
         """Render all animations on a connection to SMIL element strings."""
         anims = [
-            (i, a) for i, a in enumerate(conn._animations)
-            if exclude is None or i not in exclude
+            (i, a) for i, a in enumerate(conn._animations) if exclude is None or i not in exclude
         ]
 
         # Route chained infinite-loop animations to event-based timing.
@@ -890,7 +947,11 @@ class SMILRenderer(SVGRenderer):
         """Render one connection animation in a chain with event-based timing."""
         clean = dc_replace(anim, repeat=False, bounce=False)
         if isinstance(clean, PropertyAnimation):
-            return [render_connection_prop_smil(clean, conn, element_id=element_id, begin_expr=begin_expr)]
+            return [
+                render_connection_prop_smil(
+                    clean, conn, element_id=element_id, begin_expr=begin_expr
+                )
+            ]
         if isinstance(clean, DrawAnimation):
             return [render_draw_smil(clean, conn, element_id=element_id, begin_expr=begin_expr)]
         return []
@@ -909,9 +970,14 @@ class SMILRenderer(SVGRenderer):
         plan, independent = _plan_chain_render(anims_with_index)
         result: list[str] = []
         for anim, element_id, begin_expr in plan:
-            result.extend(self._render_single_chained_conn(
-                conn, anim, element_id=element_id, begin_expr=begin_expr,
-            ))
+            result.extend(
+                self._render_single_chained_conn(
+                    conn,
+                    anim,
+                    element_id=element_id,
+                    begin_expr=begin_expr,
+                )
+            )
         for _i, anim in independent:
             if isinstance(anim, PropertyAnimation):
                 result.append(render_connection_prop_smil(anim, conn))
@@ -950,7 +1016,8 @@ class SMILRenderer(SVGRenderer):
         stroke_opt = extract_fill_layers(conn, target_attr="stroke")
         if stroke_opt is not None:
             base_anims = self._render_connection_anims(
-                conn, exclude={stroke_opt.anim_index},
+                conn,
+                exclude={stroke_opt.anim_index},
             )
 
             base_attrs = (
@@ -966,8 +1033,15 @@ class SMILRenderer(SVGRenderer):
                 overlay_extra += ' stroke-linejoin="round"'
 
             return self._build_layered_svg(
-                tag, geometry, stroke_opt, base_attrs, "",
-                base_anims, "stroke", overlay_extra, reactive,
+                tag,
+                geometry,
+                stroke_opt,
+                base_attrs,
+                "",
+                base_anims,
+                "stroke",
+                overlay_extra,
+                reactive,
             )
 
         # Standard (non-optimized) rendering
@@ -1030,15 +1104,11 @@ class SMILRenderer(SVGRenderer):
         children: list[str] = []
         for ov in pending_overlays:
             attrs = (
-                f"{ov.geometry_attrs}"
-                f' {ov.color_attr}="{ov.color}"'
-                f"{ov.extra_attrs}{ov.transform}"
+                f'{ov.geometry_attrs} {ov.color_attr}="{ov.color}"{ov.extra_attrs}{ov.transform}'
             )
             if ov.reactive:
                 reactive_str = "\n".join(f"    {r}" for r in ov.reactive)
-                children.append(
-                    f"  <{ov.tag}{attrs}>\n{reactive_str}\n  </{ov.tag}>"
-                )
+                children.append(f"  <{ov.tag}{attrs}>\n{reactive_str}\n  </{ov.tag}>")
             else:
                 children.append(f"  <{ov.tag}{attrs} />")
 
@@ -1080,9 +1150,7 @@ class SMILRenderer(SVGRenderer):
 
         # Groups with >= 2 members -> batch mode
         batched_ids: set[int] = set()
-        active_batches: dict[
-            tuple, list[tuple[Entity, FillLayerOpt]]
-        ] = {}
+        active_batches: dict[tuple, list[tuple[Entity, FillLayerOpt]]] = {}
         for group_key, members in timing_groups.items():
             if len(members) >= 2:
                 for entity, _opt in members:
@@ -1090,20 +1158,14 @@ class SMILRenderer(SVGRenderer):
                 active_batches[group_key] = members
 
         # Initialize batch state for _build_layered_svg to detect
-        self._batch_pending: dict[int, list[_PendingOverlay]] = {
-            eid: [] for eid in batched_ids
-        }
+        self._batch_pending: dict[int, list[_PendingOverlay]] = {eid: [] for eid in batched_ids}
 
         lines = self._build_svg_header(scene, all_entities, all_connections)
 
         # --- Render entities and connections ---
         renderables: list[tuple[int, str]] = []
-        renderables.extend(
-            (c.z_index, self.render_connection(c)) for c in all_connections
-        )
-        renderables.extend(
-            (e.z_index, self.render_entity(e)) for e in all_entities
-        )
+        renderables.extend((c.z_index, self.render_connection(c)) for c in all_connections)
+        renderables.extend((e.z_index, self.render_entity(e)) for e in all_entities)
 
         # --- Emit batched overlay groups ---
         for group_key, members in active_batches.items():
@@ -1111,9 +1173,7 @@ class SMILRenderer(SVGRenderer):
             template_opt = members[0][1]
             n_overlays = len(template_opt.overlays)
 
-            overlays_by_index: list[list[_PendingOverlay]] = [
-                [] for _ in range(n_overlays)
-            ]
+            overlays_by_index: list[list[_PendingOverlay]] = [[] for _ in range(n_overlays)]
             for entity, _opt in members:
                 pending = self._batch_pending.get(id(entity), [])
                 for i, ov in enumerate(pending):
@@ -1123,7 +1183,9 @@ class SMILRenderer(SVGRenderer):
             for i in range(n_overlays):
                 if overlays_by_index[i]:
                     overlay_svg = self._render_batch_overlay_group(
-                        template_opt, i, overlays_by_index[i],
+                        template_opt,
+                        i,
+                        overlays_by_index[i],
                     )
                     renderables.append((z_idx, overlay_svg))
 

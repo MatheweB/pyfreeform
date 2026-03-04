@@ -1,4 +1,4 @@
-"""Tests for PathShape is_closed and connection_data behavior."""
+"""Tests for PathShape closed and connection_data behavior."""
 
 import math
 import sys
@@ -14,28 +14,28 @@ from pyfreeform.paths import Lissajous, Spiral, Wave, Zigzag
 
 
 # =========================================================================
-# is_closed property
+# closed property
 # =========================================================================
 
 
 def test_wave_is_open():
-    assert Wave().is_closed is False
+    assert Wave().closed is False
 
 
 def test_zigzag_is_open():
-    assert Zigzag().is_closed is False
+    assert Zigzag().closed is False
 
 
 def test_spiral_is_open():
-    assert Spiral().is_closed is False
+    assert Spiral().closed is False
 
 
-def test_lissajous_is_closed():
-    assert Lissajous().is_closed is True
+def test_lissajous_closed():
+    assert Lissajous().closed is True
 
 
 # =========================================================================
-# to_svg_path_d respects is_closed
+# to_svg_path_d respects closed
 # =========================================================================
 
 
@@ -192,10 +192,10 @@ class TestAddPathRelative:
         assert abs(width_spanned - 160.0) < 1.0  # 0.8 * 200 = 160
 
     def test_lissajous_closed_with_relative(self):
-        """Lissajous with relative=True renders without error (is_closed passes through)."""
+        """Lissajous with relative=True renders without error (closed passes through)."""
         scene = self._scene()
         # Should not raise
-        path = scene.add_path(
+        _path = scene.add_path(
             Lissajous(center=(0.5, 0.5), size=0.3),
             relative=True,
             closed=True,

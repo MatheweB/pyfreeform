@@ -12,7 +12,7 @@ class Lissajous(PathShape):
     """
     Lissajous curve: ``x = size * sin(a*t + delta)``, ``y = size * sin(b*t)``.
 
-    A closed curve (``is_closed = True``) when ``a/b`` is rational.
+    A closed curve (``closed = True``) when ``a/b`` is rational.
     Common ratios:
 
     - ``a=3, b=2`` — figure-eight variant
@@ -57,7 +57,7 @@ class Lissajous(PathShape):
         self.size = size
 
     @property
-    def is_closed(self) -> bool:
+    def closed(self) -> bool:
         """Lissajous curves are closed loops."""
         return True
 

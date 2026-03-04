@@ -88,7 +88,7 @@ class TestGetAngleAt:
                 return Point(t * 100, t * 50)
 
         path = CustomPath()
-        angle = get_angle_at(path, 0.5) # pyright: ignore[reportArgumentType]
+        angle = get_angle_at(path, 0.5)  # pyright: ignore[reportArgumentType]
         expected = math.degrees(math.atan2(50, 100))
         assert angle == pytest.approx(expected, abs=0.5)
 
@@ -487,8 +487,7 @@ class TestAlongOffset:
         scene = Scene.with_grid(cols=1, rows=1, cell_size=200)
         cell = scene.grid[0][0]
         line = cell.add_line(start=(0.0, 0.5), end=(1.0, 0.5))
-        t = cell.add_text("label", along=line, t=0.5, along_offset=-0.1,
-                          font_size=0.1, color="red")
+        t = cell.add_text("label", along=line, t=0.5, along_offset=-0.1, font_size=0.1, color="red")
         assert t.position.y == pytest.approx(80, abs=1)
 
     def test_offset_none_is_noop(self):

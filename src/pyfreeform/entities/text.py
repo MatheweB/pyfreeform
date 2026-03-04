@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import functools
+from collections.abc import Iterator
 
 from PIL import ImageFont
 
@@ -11,7 +12,7 @@ from ..color import Color, apply_brightness
 from ..core.relcoord import RelCoordLike
 from ..core.coord import Coord
 from ..core.entity import Entity
-from ..gradient import Gradient
+from ..gradient import Gradient, PaintLike
 from ..renderers import SMILRenderer
 
 # ---------------------------------------------------------------------------
@@ -140,7 +141,7 @@ class Text(Entity):
         y: float = 0,
         content: str = "",
         font_size: float = DEFAULT_FONT_SIZE,
-        color: str | tuple[int, int, int] = DEFAULT_COLOR,
+        color: PaintLike = DEFAULT_COLOR,
         font_family: str = DEFAULT_FONT_FAMILY,
         font_style: str = DEFAULT_FONT_STYLE,
         font_weight: str | int = DEFAULT_FONT_WEIGHT,
@@ -244,7 +245,7 @@ class Text(Entity):
         else:
             self._color = Color(value)
 
-    def _iter_paints(self):
+    def _iter_paints(self) -> Iterator[Color | Gradient]:
         yield self._color
 
     @property

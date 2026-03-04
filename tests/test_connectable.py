@@ -162,6 +162,7 @@ class TestEntityToCell:
 class TestCrossGrid:
     def _two_grid_scene(self):
         from pyfreeform import Grid
+
         scene = Scene(200, 100)
         grid1 = Grid(cols=2, rows=2, cell_size=20, origin=(0, 0))
         grid2 = Grid(cols=2, rows=2, cell_size=20, origin=(100, 0))

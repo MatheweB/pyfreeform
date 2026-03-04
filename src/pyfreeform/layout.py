@@ -34,6 +34,7 @@ Locatable = Entity | Surface | RelCoord | tuple[float, float]
 # Private helpers
 # ---------------------------------------------------------------------------
 
+
 def _to_relcoord(obj: Locatable, anchor: AnchorSpec = "center") -> RelCoord:
     """Extract a RelCoord from an Entity, Surface, RelCoord, or tuple."""
     if isinstance(obj, RelCoord):
@@ -42,9 +43,7 @@ def _to_relcoord(obj: Locatable, anchor: AnchorSpec = "center") -> RelCoord:
         return RelCoord(*obj)
     if isinstance(obj, Entity | Surface):
         return obj.relative_anchor(anchor)
-    raise TypeError(
-        f"Expected Entity, Surface, RelCoord, or tuple, got {type(obj).__name__}"
-    )
+    raise TypeError(f"Expected Entity, Surface, RelCoord, or tuple, got {type(obj).__name__}")
 
 
 def _normalize_entities(args: tuple) -> list[Entity]:
@@ -78,6 +77,7 @@ def _reposition(entity: Entity, delta_rx: float, delta_ry: float) -> None:
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
+
 
 def between(
     a: Locatable,
@@ -149,9 +149,7 @@ def align(
 
     _VALID = {"left", "right", "top", "bottom", "center_x", "center_y"}
     if anchor not in _VALID:
-        raise ValueError(
-            f"Invalid anchor '{anchor}'. Use one of: {sorted(_VALID)}"
-        )
+        raise ValueError(f"Invalid anchor '{anchor}'. Use one of: {sorted(_VALID)}")
 
     if anchor in ("center_x", "center_y"):
         ref_center = ref.relative_anchor("center")
@@ -274,9 +272,7 @@ def stack(
     items = _normalize_entities(entities)
     valid_dirs = {"right", "left", "above", "below"}
     if direction not in valid_dirs:
-        raise ValueError(
-            f"Invalid direction '{direction}'. Use one of: {sorted(valid_dirs)}"
-        )
+        raise ValueError(f"Invalid direction '{direction}'. Use one of: {sorted(valid_dirs)}")
 
     for i in range(1, len(items)):
         prev = items[i - 1]

@@ -8,8 +8,12 @@ from typing import TYPE_CHECKING, Literal, NamedTuple, TypeAlias
 from .cap_shapes import CAPS
 
 CapName: TypeAlias = Literal[
-    "butt", "round", "square",
-    "arrow", "arrow_in", "diamond",
+    "butt",
+    "round",
+    "square",
+    "arrow",
+    "arrow_in",
+    "diamond",
 ]
 
 if TYPE_CHECKING:

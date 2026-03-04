@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod
+from collections.abc import Iterator
 
 from ..animation import typed_methods
 from ..color import Color, apply_brightness
@@ -10,7 +11,7 @@ from ..config.caps import CapName, collect_markers, resolve_cap
 from ..core.coord import Coord
 from ..core.entity import Entity
 from ..core.relcoord import RelCoord
-from ..gradient import Gradient
+from ..gradient import Gradient, PaintLike
 
 
 class EndpointEntity(Entity):
@@ -36,7 +37,7 @@ class EndpointEntity(Entity):
         z_index: int = 0,
         *,
         width: float = 1,
-        color: str | tuple[int, int, int] = "black",
+        color: PaintLike = "black",
         cap: CapName = "round",
         start_cap: CapName | None = None,
         end_cap: CapName | None = None,
@@ -90,7 +91,7 @@ class EndpointEntity(Entity):
         else:
             self._color = Color(value)
 
-    def _iter_paints(self):
+    def _iter_paints(self) -> Iterator[Color | Gradient]:
         yield self._color
 
     # --- Geometry ---

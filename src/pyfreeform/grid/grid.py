@@ -234,9 +234,7 @@ class Grid:
             IndexError: If row is out of bounds.
         """
         if not (0 <= key < self._rows):
-            raise IndexError(
-                f"Row {key} out of bounds for grid with {self._rows} rows"
-            )
+            raise IndexError(f"Row {key} out of bounds for grid with {self._rows} rows")
         return self._cells[key]
 
     def __iter__(self) -> Iterator[Cell]:
@@ -676,7 +674,9 @@ class Grid:
             if predicate(cell):
                 yield cell
 
-    def diagonal(self, direction: Literal["down", "up"] = "down", offset: int = 0) -> Iterator[Cell]:
+    def diagonal(
+        self, direction: Literal["down", "up"] = "down", offset: int = 0
+    ) -> Iterator[Cell]:
         """
         Iterate over cells on a diagonal.
 

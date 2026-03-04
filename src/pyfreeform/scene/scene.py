@@ -378,34 +378,22 @@ class Scene(Surface):
         self, entities: list[Entity], connections: list[Connection]
     ) -> dict[str, str]:
         """Collect unique SVG marker definitions needed by all entities and connections."""
-        markers = {
-            mid: svg
-            for entity in entities
-            for mid, svg in entity.get_required_markers()
-        }
+        markers = {mid: svg for entity in entities for mid, svg in entity.get_required_markers()}
         markers |= {
-            mid: svg
-            for connection in connections
-            for mid, svg in connection.get_required_markers()
+            mid: svg for connection in connections for mid, svg in connection.get_required_markers()
         }
         return markers
 
     def _collect_path_defs(self, entities: list[Entity]) -> dict[str, str]:
         """Collect unique SVG path definitions needed by textPath entities."""
-        return {
-            pid: svg
-            for entity in entities
-            for pid, svg in entity.get_required_paths()
-        }
+        return {pid: svg for entity in entities for pid, svg in entity.get_required_paths()}
 
     def _collect_gradients(
         self, entities: list[Entity], connections: list[Connection]
     ) -> dict[str, str]:
         """Collect unique SVG gradient definitions from all entities and connections."""
         gradients = {
-            gid: svg
-            for entity in entities
-            for gid, svg in entity.get_required_gradients()
+            gid: svg for entity in entities for gid, svg in entity.get_required_gradients()
         }
         gradients |= {
             gid: svg
