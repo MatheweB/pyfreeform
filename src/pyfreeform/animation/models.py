@@ -247,7 +247,10 @@ class PropertyAnimation:
         # Handle repeat and bounce
         effective_t = _apply_repeat(t, dur, self.repeat, self.bounce)
         if effective_t is None:
-            # Past the end, no repeat
+            # A bounced loop returns to the start value; a one-way loop holds
+            # the end value (or returns to the start when hold is False).
+            if self.bounce:
+                return self.keyframes[0].value
             return self.keyframes[-1].value if self.hold else self.keyframes[0].value
 
         # Normalize t to [0, dur]
@@ -326,6 +329,10 @@ class MotionAnimation:
 
         path_t = _apply_repeat(t, self.duration, self.repeat, self.bounce)
         if path_t is None:
+            if self.bounce:
+                # A round trip ends back at the start of the path.
+                pt = self.path.point_at(1.0 if self.reverse else 0.0)
+                return (pt.x, pt.y)
             end = 0.0 if self.reverse else 1.0
             pt = self.path.point_at(end if self.hold else 1.0 - end)
             return (pt.x, pt.y)
@@ -387,7 +394,8 @@ class DrawAnimation:
 
         raw_t = _apply_repeat(t, self.duration, self.repeat, self.bounce)
         if raw_t is None:
-            progress = 1.0 if self.hold else 0.0
+            # A bounced draw returns to the start (undrawn); otherwise hold.
+            progress = 0.0 if self.bounce else (1.0 if self.hold else 0.0)
         else:
             normalized = raw_t / self.duration if self.duration > 0 else 1.0
             progress = self.easing.evaluate(normalized)
@@ -419,21 +427,30 @@ def _apply_repeat(
     if duration <= 0:
         return 0.0
 
-    if repeat is False or repeat == 1:
-        return None if t >= duration else t
+    if bounce:
+        # Bounce is a round trip: one full out-and-back per `duration`, for any
+        # repeat — including a single play. Matches the SMIL renderer (which
+        # mirrors the keyframe values within one duration regardless of repeat),
+        # so `times=N` is N complete round trips that each end where they began
+        # — no parity, same speed as the rendered SVG.
+        if repeat is True:
+            cycles = None  # infinite
+        elif repeat is False:
+            cycles = 1
+        else:
+            cycles = int(repeat)
+        if cycles is not None and t >= duration * cycles:
+            return None
+        local = (t % duration) / duration
+        return duration * (1.0 - abs(2.0 * local - 1.0))
 
-    # Finite repeat: check bounds
+    # One-way (snaps back to the start between repeats).
+    # Note: `repeat is not True` guards the Python gotcha that `True == 1`, which
+    # would otherwise treat an infinite repeat as "play once".
+    if repeat is False or (repeat is not True and repeat == 1):
+        return None if t >= duration else t
     if repeat is not True and t >= duration * int(repeat):
         return None
-
-    # Cycle logic (shared by infinite and finite repeat)
-    cycle = t / duration
-    if bounce:
-        cycle_int = int(cycle)
-        frac = cycle - cycle_int
-        if cycle_int % 2 == 1:
-            return duration * (1.0 - frac)
-        return duration * frac
     return t % duration
 
 

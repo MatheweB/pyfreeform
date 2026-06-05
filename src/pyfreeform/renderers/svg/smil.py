@@ -233,6 +233,61 @@ def _plan_chain_render(
     return plan, independent
 
 
+def _plan_finite_chain_render(
+    anims_with_index: list[tuple[int, Animation]],
+    times: int,
+) -> tuple[list[tuple[Animation, str]], list[tuple[int, Animation]]]:
+    """Plan a chain that loops a **finite** number of times.
+
+    Unlike the infinite plan (which uses event ``.end`` syncbase references that
+    loop forever), a finite chain enumerates absolute start times: each step
+    fires once per pass at ``offset + k*period``. The step's ``offset`` is its
+    already-baked ``delay`` (set by ``.then()``); ``period`` is one full pass.
+
+    Non-bounce: ``period = forward_span`` and steps play in order, N times.
+    Bounce: reuses the infinite plan's forward-then-backward structure
+    (``period = 2*forward_span``), so finite and infinite bounce are identical —
+    forward pass, then the reversed steps, repeated N times.
+
+    Returns ``(plan, independent)`` where *plan* is ``[(anim, begin_expr), …]``
+    with ``begin_expr`` an enumerated ``"t0s; t1s; …"`` list, and *independent*
+    is the non-chained animations to render normally.
+    """
+    chained: dict[int, list[Animation]] = {}
+    independent: list[tuple[int, Animation]] = []
+    for i, anim in anims_with_index:
+        if getattr(anim, "chain_id", None) is not None:
+            chained.setdefault(getattr(anim, "chain_seq", 0), []).append(anim)
+        else:
+            independent.append((i, anim))
+
+    if not chained:
+        return [], independent
+
+    sorted_seqs = sorted(chained)
+    has_bounce = any(getattr(a, "bounce", False) for anims in chained.values() for a in anims)
+    forward_span = max(a.delay + a.duration for anims in chained.values() for a in anims)
+
+    def begins(offset: float, period: float) -> str:
+        return "; ".join(f"{offset + k * period:g}s" for k in range(times))
+
+    plan: list[tuple[Animation, str]] = []
+    if not has_bounce:
+        for seq in sorted_seqs:
+            for anim in chained[seq]:
+                plan.append((anim, begins(anim.delay, forward_span)))
+    else:
+        period = 2 * forward_span
+        for seq in sorted_seqs:  # forward pass
+            for anim in chained[seq]:
+                plan.append((anim, begins(anim.delay, period)))
+        for seq in sorted_seqs:  # backward pass (reversed steps, mirrored in time)
+            for anim in chained[seq]:
+                back_off = 2 * forward_span - anim.delay - anim.duration
+                plan.append((_reverse_anim(anim), begins(back_off, period)))
+    return plan, independent
+
+
 # ======================================================================
 # SMILRenderer
 # ======================================================================
@@ -271,6 +326,22 @@ class SMILRenderer(SVGRenderer):
         has_inf_loop = any(getattr(a, "repeat", False) is True for _, a in anims)
         if has_chain and has_inf_loop:
             return self._render_chained_animations(entity, anims)
+
+        # A chain whose steps ALL share one finite repeat N>1 means "loop the
+        # whole sequence N times" (`…then().…loop(times=N)`). Render it as N
+        # sequential passes. A mixed-repeat chain (`X.loop(N).then().Y()`) or a
+        # plain `.then()` chain falls through to the independent path, which
+        # already plays in order via the baked per-step delays.
+        if has_chain and not has_inf_loop:
+            chain_repeats = {
+                getattr(a, "repeat", False)
+                for _, a in anims
+                if getattr(a, "chain_id", None) is not None
+            }
+            if len(chain_repeats) == 1:
+                n = next(iter(chain_repeats))
+                if isinstance(n, int) and not isinstance(n, bool) and n > 1:
+                    return self._render_finite_chained_animations(entity, anims, n)
 
         result: list[str] = []
         for _i, anim in anims:
@@ -329,6 +400,34 @@ class SMILRenderer(SVGRenderer):
                     anim,
                     element_id=element_id,
                     begin_expr=begin_expr,
+                )
+            )
+        for _i, anim in independent:
+            if isinstance(anim, PropertyAnimation):
+                result.extend(render_property_smil(anim, entity))
+            elif isinstance(anim, MotionAnimation):
+                result.append(render_motion_smil(anim))
+            elif isinstance(anim, DrawAnimation):
+                result.append(render_draw_smil(anim, entity))
+        return [r for r in result if r]
+
+    def _render_finite_chained_animations(
+        self,
+        entity: Entity,
+        anims_with_index: list[tuple[int, Animation]],
+        times: int,
+    ) -> list[str]:
+        """Render a chain that loops a finite *times* as sequential passes.
+
+        Each step is emitted once with an enumerated ``begin`` list so the
+        passes never overlap. See :func:`_plan_finite_chain_render`.
+        """
+        plan, independent = _plan_finite_chain_render(anims_with_index, times)
+        result: list[str] = []
+        for anim, begin_expr in plan:
+            result.extend(
+                self._render_single_chained(
+                    entity, anim, element_id=None, begin_expr=begin_expr
                 )
             )
         for _i, anim in independent:

@@ -277,8 +277,8 @@ rect.animate_fade(to=0.3, duration=1.5).then().animate_spin(360, duration=2.0).l
 | `bounce` | `bool` | `False` | Alternate direction each cycle (forward → backward → forward…) |
 | `times` | `bool \| int` | `True` | `True` = infinite, `int` = play N times |
 
-!!! note "Parity note for `bounce=True, times=N`"
-    When bouncing finitely, the final resting value depends on parity: odd N freezes at the *end* value, even N freezes at the *start* value (the last bounce cycle reverses back).
+!!! note "`bounce=True` is a round trip"
+    `bounce=True` goes out **and back**, so `times=N` plays N complete cycles and always finishes **at the start value** (for any N). To end somewhere else, chain a one-way step — e.g. `…bounce=True).then().animate_fade(to=0)` pulses, then ends faded — or spell it out with `keyframes=`, e.g. `animate("opacity", keyframes=[1, 0, 1, 0])`.
 
 !!! warning "`.loop()` overrides inline `repeat=`"
     If you call `.loop()` after setting `repeat=True` on individual animations, `.loop()` wins — it stamps its own `bounce` and `times` onto **all** animations on the entity. Use one or the other, not both.

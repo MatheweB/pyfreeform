@@ -290,3 +290,33 @@ def test_full_render_with_arrows():
     assert "<marker" in svg
     assert "marker-end" in svg
     assert svg.endswith("</svg>")
+
+
+# ---------------------------------------------------------------------------
+# Gradient-colored caps must produce XML-safe marker ids (regression).
+# ---------------------------------------------------------------------------
+class TestGradientCapMarkerId:
+    def test_marker_id_sanitizes_gradient_paint(self):
+        # A gradient paint resolves to "url(#grad-…)"; the id must not contain
+        # '#', '(' or ')' (which would be invalid SVG and break the reference).
+        mid = make_marker_id("arrow", "url(#grad-abc123)", 6.0)
+        assert not any(ch in mid for ch in "#()")
+        assert mid.startswith("cap-arrow-")
+
+    def test_gradient_arrow_renders_valid_marker(self):
+        import re
+
+        from pyfreeform import Dot, LinearGradient
+
+        grad = LinearGradient("red", "blue")
+        conn = Dot(20, 20, radius=5).connect(
+            Dot(120, 60, radius=5), color=grad, end_cap="arrow", width=4
+        )
+        markers = conn.get_required_markers()
+        assert markers
+        for mid, _svg in markers:
+            assert not any(ch in mid for ch in "#()")
+        # The reference in the connection must agree and be id-safe.
+        svg = conn.to_svg()
+        refs = re.findall(r'marker-end="url\(#([^)]*)\)"', svg)
+        assert refs and not any(ch in refs[0] for ch in "#()")

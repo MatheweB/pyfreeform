@@ -1113,10 +1113,13 @@ class Entity(ABC):
 
         Stamps ``bounce`` and ``repeat`` onto **every** animation currently
         on the entity. Its primary use case is finishing a ``.then()`` chain
-        so the whole sequence repeats as one unit::
+        so the whole sequence repeats as one unit — for both an infinite loop
+        (``times=True``) and a finite ``times=N`` (the steps play in order, N
+        times, without overlapping)::
 
             # Natural fit — the chain [move → fade] loops together:
             dot.animate_move(...).then().animate_fade(...).loop(bounce=True)
+            dot.animate_move(...).then().animate_fade(...).loop(times=3)  # 3x, in order
 
         For a single animation, prefer passing ``repeat=`` and ``bounce=``
         directly to the ``animate_*`` call — it is self-contained and
@@ -1140,17 +1143,20 @@ class Entity(ABC):
             bounce: If ``True``, alternate direction each cycle
                 (forward → backward → forward ...). Default ``False``.
             times: ``True`` = loop forever (default); ``int`` = play N times.
+                On a ``.then()`` chain, ``N`` plays the whole sequence N times
+                in order; bounce alternates the whole sequence forward/backward,
+                identically to the infinite loop.
 
         Raises:
             ValueError: If *times* is ``False`` or a negative integer.
             ValueError: If no animations have been added yet.
 
         Note:
-            For bounced finite loops (``bounce=True, times=N``), the
-            value held after completion depends on parity: *odd N* freezes
-            at the **end** value, *even N* freezes at the **start** value
-            (the last bounce cycle reverses back). Only relevant when
-            ``hold=True`` (the ``animate_*`` default).
+            ``bounce=True`` is a round trip: ``times=N`` plays N complete
+            out-and-back cycles and finishes **at the start value**, for any N.
+            To end somewhere else, use a one-way animation (a plain ``to=``)
+            or spell out the path with ``keyframes=`` — e.g.
+            ``animate("opacity", keyframes=[1, 0, 1, 0])`` ends faded.
         """
         apply_loop(self, bounce=bounce, times=times)
 
@@ -1236,6 +1242,25 @@ class Entity(ABC):
         rx = [x * cos_a - y * sin_a for x, y in corners]
         ry = [x * sin_a + y * cos_a for x, y in corners]
         return (min(rx), min(ry), max(rx), max(ry))
+
+    def _expand_visual(
+        self,
+        bounds: tuple[float, float, float, float],
+        stroke_width: float,
+    ) -> tuple[float, float, float, float]:
+        """Grow a geometric bbox by the half stroke width, scaled by this entity.
+
+        The single source of truth for visual (stroke-inclusive) bounds. The
+        stroke is drawn centered on the edge and scales with the entity, so the
+        overhang is ``stroke_width * scale_factor / 2`` per side. Returns
+        *bounds* unchanged when there is no stroke. ``bounds()`` and
+        ``rotated_bounds()`` both call this so they can't drift apart.
+        """
+        if not stroke_width:
+            return bounds
+        half = stroke_width * self._scale_factor / 2
+        min_x, min_y, max_x, max_y = bounds
+        return (min_x - half, min_y - half, max_x + half, max_y + half)
 
     # --- Rotation algorithms for fitting ---
 

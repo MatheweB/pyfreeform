@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from collections.abc import Sequence
 from typing import TYPE_CHECKING, Literal, NamedTuple, TypeAlias
 
@@ -128,8 +129,13 @@ def is_marker_cap(name: str) -> bool:
 
 
 def make_marker_id(cap_name: str, color: str, size: float, *, for_start: bool = False) -> str:
-    """Generate a deterministic marker ID from cap type, color, and size."""
-    clean = color.lstrip("#").lower()
+    """Generate a deterministic marker ID from cap type, color, and size.
+
+    Keeps only id-safe characters. A gradient paint arrives as ``url(#grad-…)``;
+    without this the id — and the ``url(#…)`` that references it — would contain
+    ``#``, ``(`` and ``)`` and be invalid SVG (the cap would silently not render).
+    """
+    clean = re.sub(r"[^a-z0-9]+", "", color.lower())
     size_str = f"{size:.1f}".replace(".", "_")
     suffix = "-start" if for_start else ""
     return f"cap-{cap_name}-{clean}-{size_str}{suffix}"

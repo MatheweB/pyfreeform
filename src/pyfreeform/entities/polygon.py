@@ -122,6 +122,13 @@ class Polygon(Entity):
                     self._vertex_specs.append((v[0], str(v[1])))
                 else:
                     self._vertex_specs.append(Coord(float(v[0]), float(v[1])))
+            else:
+                # Fail fast instead of silently dropping the vertex (which used
+                # to yield a polygon with fewer sides than the caller passed).
+                raise TypeError(
+                    f"Invalid polygon vertex: {v!r}. Expected (x, y), Coord, "
+                    f"Entity, or (Entity, anchor)."
+                )
 
         # Relative vertices (set by Surface.add_polygon)
         self._relative_vertices: list[RelCoord] | None = None

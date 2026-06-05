@@ -60,23 +60,20 @@ def resize_array(
     Returns:
         Resized numpy array.
     """
-    # Convert to PIL Image for resampling
-    # Normalize to 0-255 range for PIL
     min_val, max_val = arr.min(), arr.max()
-    if max_val > min_val:
-        normalized = ((arr - min_val) / (max_val - min_val) * 255).astype(np.uint8)
-    else:
-        normalized = np.zeros_like(arr, dtype=np.uint8)
+    if max_val <= min_val:
+        # Constant array: there's no range to normalize, and resampling a
+        # constant just returns the same constant. Preserve it directly.
+        # (Previously returned all zeros, which blanked solid-color images and
+        # the constant alpha channel of any fully-opaque image -> cell.alpha 0.)
+        return np.full((height, width), float(min_val), dtype=np.float64)
 
+    # Normalize to 0-255 for PIL, resample, then restore the original range.
+    normalized = ((arr - min_val) / (max_val - min_val) * 255).astype(np.uint8)
     pil_img = PILImage.fromarray(normalized)
     resized_pil = pil_img.resize((width, height), resample=resample)
-
-    # Convert back to original range
     resized = np.array(resized_pil, dtype=np.float64)
-    if max_val > min_val:
-        resized = resized / 255 * (max_val - min_val) + min_val
-
-    return resized
+    return resized / 255 * (max_val - min_val) + min_val
 
 
 def downscale_array(arr: np.ndarray, factor: int) -> np.ndarray:

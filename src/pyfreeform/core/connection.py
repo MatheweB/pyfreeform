@@ -544,6 +544,8 @@ class Connection:
         Args:
             bounce: If ``True``, alternate direction each cycle. Default ``False``.
             times: ``True`` = loop forever (default); ``int`` = play N times.
+                On a ``.then()`` chain, ``N`` plays the whole sequence N times
+                in order (the steps don't overlap).
 
         Raises:
             ValueError: If *times* is ``False`` or a negative integer.

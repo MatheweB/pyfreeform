@@ -329,12 +329,8 @@ class Rect(Entity):
             max_x = max(c.x for c in corners)
             max_y = max(c.y for c in corners)
 
-        if visual and self.stroke_width:
-            half = self.stroke_width * self._scale_factor / 2
-            min_x -= half
-            min_y -= half
-            max_x += half
-            max_y += half
+        if visual:
+            return self._expand_visual((min_x, min_y, max_x, max_y), self.stroke_width)
         return (min_x, min_y, max_x, max_y)
 
     def rotated_bounds(
@@ -358,12 +354,11 @@ class Rect(Entity):
         ry = [c.x * sin_a + c.y * cos_a for c in corners]
         min_x, max_x = min(rx), max(rx)
         min_y, max_y = min(ry), max(ry)
-        if visual and self.stroke_width:
-            half = self.stroke_width / 2
-            min_x -= half
-            min_y -= half
-            max_x += half
-            max_y += half
+        if visual:
+            # Was: stroke_width / 2 (dropped the scale factor, so a scaled
+            # stroked rect under-reported its extent). Now shares _expand_visual
+            # with bounds() so the two can't diverge again.
+            return self._expand_visual((min_x, min_y, max_x, max_y), self.stroke_width)
         return (min_x, min_y, max_x, max_y)
 
     def to_svg(self) -> str:

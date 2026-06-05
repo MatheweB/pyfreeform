@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import colorsys
+import numbers
 from typing import ClassVar
 
 
@@ -72,9 +73,12 @@ class Color:
         if isinstance(value, tuple):
             if len(value) != 3:
                 raise ValueError(f"RGB tuple must have 3 values, got {len(value)}")
-            r, g, b = value
-            if not all(0 <= c <= 255 for c in (r, g, b)):
-                raise ValueError("RGB values must be between 0 and 255")
+            # Accept ints, floats, and numpy scalars (all numbers.Real); round
+            # to the nearest 0-255 int. Previously a float component raised a
+            # cryptic "Unknown format code 'x'" from the :02x formatting.
+            if not all(isinstance(c, numbers.Real) and 0 <= c <= 255 for c in value):
+                raise ValueError(f"RGB values must be numbers in 0-255, got {value!r}")
+            r, g, b = (int(round(c)) for c in value)
             return f"#{r:02x}{g:02x}{b:02x}"
 
         if isinstance(value, str):

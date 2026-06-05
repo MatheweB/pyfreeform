@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import re
+
 import pytest
 
 from pyfreeform import (
@@ -2078,3 +2080,142 @@ class TestChainLoop:
         assert all(a.chain_seq == 0 for a in move_anims)
         fade_anims = [a for a in anims if a.prop == "opacity"]
         assert all(a.chain_seq == 1 for a in fade_anims)
+
+
+class TestInfiniteRepeatEvaluate:
+    """evaluate() must keep cycling for an infinite repeat (regression).
+
+    `True == 1` in Python previously made `repeat=True` look like "play once",
+    freezing the value after one cycle in the evaluate()/reactive path.
+    """
+
+    def _anim(self, **kw):
+        from pyfreeform.animation.models import Keyframe, PropertyAnimation
+
+        return PropertyAnimation("x", [Keyframe(0, 0.0), Keyframe(1.0, 10.0)], **kw)
+
+    def test_infinite_repeat_cycles(self):
+        a = self._anim(repeat=True)
+        assert a.evaluate(0.0) == pytest.approx(0.0)
+        assert a.evaluate(0.5) == pytest.approx(5.0)
+        assert a.evaluate(1.5) == pytest.approx(5.0)  # second cycle, not frozen
+        assert a.evaluate(2.0) == pytest.approx(0.0)  # wraps to start
+        assert a.evaluate(2.5) == pytest.approx(5.0)
+
+    def test_repeat_one_plays_once(self):
+        a = self._anim(repeat=1, hold=True)
+        assert a.evaluate(0.5) == pytest.approx(5.0)
+        assert a.evaluate(1.5) == pytest.approx(10.0)  # held after one play
+        assert a.evaluate(9.0) == pytest.approx(10.0)
+
+    def test_finite_repeat_stops(self):
+        a = self._anim(repeat=2, hold=True)
+        assert a.evaluate(1.5) == pytest.approx(5.0)  # still in 2nd cycle
+        assert a.evaluate(2.0) == pytest.approx(10.0)  # past 2 cycles -> held
+
+
+class TestBounceIsRoundTrip:
+    """bounce = out-and-back, ends at the start value (no parity), any count.
+
+    Matches the SMIL renderer, which mirrors keyframe values within one
+    duration. Previously evaluate() did one-way passes (half speed) and the
+    end value depended on odd/even count.
+    """
+
+    def _anim(self, **kw):
+        from pyfreeform.animation.models import Keyframe, PropertyAnimation
+
+        return PropertyAnimation("x", [Keyframe(0, 0.0), Keyframe(1.0, 10.0)], **kw)
+
+    def test_single_bounce_is_one_round_trip(self):
+        a = self._anim(bounce=True)  # no repeat
+        assert a.evaluate(0.0) == pytest.approx(0.0)
+        assert a.evaluate(0.5) == pytest.approx(10.0)  # peak at the middle
+        assert a.evaluate(1.0) == pytest.approx(0.0)  # back to start within one duration
+
+    def test_ends_at_start_regardless_of_count(self):
+        # No parity: times=2 and times=3 both finish at the start value.
+        assert self._anim(bounce=True, repeat=2).evaluate(2.0) == pytest.approx(0.0)
+        assert self._anim(bounce=True, repeat=3).evaluate(3.0) == pytest.approx(0.0)
+
+    def test_finite_bounce_count_is_round_trips(self):
+        a = self._anim(bounce=True, repeat=2)  # 2 round trips over [0, 2]
+        assert a.evaluate(0.5) == pytest.approx(10.0)  # peak of trip 1
+        assert a.evaluate(1.0) == pytest.approx(0.0)  # back
+        assert a.evaluate(1.5) == pytest.approx(10.0)  # peak of trip 2
+
+
+class TestFiniteChainLoop:
+    """`[A→B].loop(times=N)` runs the whole sequence N times, in order."""
+
+    def _chain_dot(self, *, times, bounce=False):
+        dot = Scene.with_grid(cols=1, rows=1, cell_size=200).grid[0][0].add_dot(
+            at=(0.15, 0.5), radius=0.1
+        )
+        (
+            dot.animate_move(to=(0.85, 0.5), duration=1.0)
+            .then()
+            .animate_fade(to=0.2, duration=1.0)
+            .loop(bounce=bounce, times=times)
+        )
+        return dot
+
+    @staticmethod
+    def _animate_attrs(svg, attr):
+        out = []
+        for tag in re.findall(r"<animate\b[^>]*>", svg):
+            a = dict(re.findall(r'(\w[\w-]*)="([^"]*)"', tag))
+            if a.get("attributeName") == attr:
+                out.append(a)
+        return out
+
+    def test_finite_chain_is_sequential(self):
+        svg = self._chain_dot(times=3).to_svg()
+        cx = self._animate_attrs(svg, "cx")[0]
+        op = self._animate_attrs(svg, "opacity")[0]
+        # move at 0,2,4 and fade at 1,3,5 -> enumerated, never overlapping
+        assert cx["begin"] == "0s; 2s; 4s"
+        assert op["begin"] == "1s; 3s; 5s"
+        assert "repeatCount" not in cx and "repeatCount" not in op
+
+    def test_no_overlap_between_steps(self):
+        svg = self._chain_dot(times=3).to_svg()
+
+        def intervals(attr):
+            a = self._animate_attrs(svg, attr)[0]
+            dur = float(a["dur"].rstrip("s"))
+            return [
+                (float(t.strip().rstrip("s")), float(t.strip().rstrip("s")) + dur)
+                for t in a["begin"].split(";")
+            ]
+
+        move = intervals("cx")
+        fade = intervals("opacity")
+        for ms, me in move:
+            for fs, fe in fade:
+                assert me <= fs or fe <= ms  # disjoint in time
+
+    def test_pattern_A_unchanged(self):
+        # X.loop(times=3).then().Y() still means "X three times, then Y".
+        dot = Scene.with_grid(cols=1, rows=1, cell_size=200).grid[0][0].add_dot(
+            at=(0.15, 0.5), radius=0.1
+        )
+        dot.animate_fade(to=0.2, duration=1.0).loop(times=3)
+        dot.then().animate_move(to=(0.85, 0.5), duration=1.0)
+        svg = dot.to_svg()
+        op = self._animate_attrs(svg, "opacity")[0]
+        cx = self._animate_attrs(svg, "cx")[0]
+        assert op.get("repeatCount") == "3"  # fade repeats in place
+        assert cx["begin"] == "3.0s"  # move starts after the 3 fades
+
+    def test_bounce_finite_is_palindrome(self):
+        svg = self._chain_dot(times=2, bounce=True).to_svg()
+        cx_begins = {a["begin"] for a in self._animate_attrs(svg, "cx")}
+        op_begins = {a["begin"] for a in self._animate_attrs(svg, "opacity")}
+        # forward move 0,4 + reversed move 3,7 ; forward fade 1,5 + reversed fade 2,6
+        assert cx_begins == {"0s; 4s", "3s; 7s"}
+        assert op_begins == {"1s; 5s", "2s; 6s"}
+
+    def test_infinite_chain_still_event_based(self):
+        svg = self._chain_dot(times=True).to_svg()
+        assert ".end" in svg  # syncbase chaining preserved for infinite loops

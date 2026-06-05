@@ -83,6 +83,9 @@ def fast_evaluate(anim: PropertyAnimation, t: float, table: list[float]) -> floa
 
     effective_t = _apply_repeat(t, dur, anim.repeat, anim.bounce)
     if effective_t is None:
+        # A bounced loop returns to the start (mirrors PropertyAnimation.evaluate).
+        if anim.bounce:
+            return kfs[0].value
         return kfs[-1].value if anim.hold else kfs[0].value
 
     base_time = kfs[0].time
