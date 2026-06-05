@@ -30,7 +30,7 @@ for cell in scene.grid:
     cell.add_polygon(
         Polygon.hexagon(size=0.8),
         fill=colors.primary, stroke=colors.secondary, stroke_width=0.5,
-        opacity=0.3 + t * 0.6, rotation=rotation,
+        opacity=0.3 + (nx + ny) / 2 * 0.6, rotation=rotation,
     )
 ```
 
@@ -44,10 +44,16 @@ for cell in scene.grid:
 Sine functions create flowing, rhythmic patterns:
 
 ```python
-wave = math.sin(nx * math.pi * 4 + ny * math.pi * 2)
-size = 0.3 + abs(wave) * 0.5
-fill = colors.primary if wave > 0 else colors.accent
-cell.add_polygon(Polygon.diamond(size=size), fill=fill, rotation=wave * 45)
+for cell in scene.grid:
+    nx, ny = cell.normalized_position
+    wave = math.sin(nx * math.pi * 4 + ny * math.pi * 2)
+    size = 0.3 + abs(wave) * 0.5
+    cell.add_polygon(
+        Polygon.diamond(size=size),
+        fill=colors.primary if wave > 0 else colors.accent,
+        opacity=0.4 + abs(wave) * 0.6,
+        rotation=wave * 45,
+    )
 ```
 
 <figure markdown>
@@ -62,12 +68,11 @@ Use `distance_to()` to create radial patterns:
 ```python
 center = scene.grid[10][10]
 for cell in scene.grid:
-    d = cell.distance_to(center)
-    ring = int((d / max_d) * 8) % 2
+    ring = int(cell.distance_to(center) / 48) % 2   # ~48px-wide rings
     if ring == 0:
         cell.add_polygon(Polygon.hexagon(size=0.7), fill=colors.primary)
     else:
-        cell.add_dot(radius=0.20, color=colors.secondary)
+        cell.add_dot(radius=0.2, color=colors.secondary)
 ```
 
 <figure markdown>

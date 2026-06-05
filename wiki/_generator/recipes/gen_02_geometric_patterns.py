@@ -31,13 +31,12 @@ def generate():
     for cell in scene.grid:
         nx, ny = cell.normalized_position
         rotation = (nx * ny) * 120
-        t = math.sqrt(nx * nx + ny * ny) / 1.414
         cell.add_polygon(
             Polygon.hexagon(size=0.8),
             fill=colors.primary,
             stroke=colors.secondary,
             stroke_width=0.5,
-            opacity=0.3 + t * 0.6,
+            opacity=0.3 + (nx + ny) / 2 * 0.6,
             rotation=rotation,
         )
     save(scene, "recipes/geo-rotating-hex.svg")
@@ -62,19 +61,12 @@ def generate():
     colors = Palette.neon()
     scene = Scene.with_grid(cols=20, rows=20, cell_size=16, background=colors.background)
     center = scene.grid[10][10]
-    max_d = center.distance_to(scene.grid[0][0])
     for cell in scene.grid:
-        d = cell.distance_to(center)
-        t = d / max_d
-        ring = int(t * 8) % 2
+        ring = int(cell.distance_to(center) / 48) % 2  # ~48px-wide rings
         if ring == 0:
-            cell.add_polygon(
-                Polygon.hexagon(size=0.7),
-                fill=colors.primary,
-                opacity=0.4 + (1 - t) * 0.5,
-            )
+            cell.add_polygon(Polygon.hexagon(size=0.7), fill=colors.primary)
         else:
-            cell.add_dot(radius=0.15 + (1 - t) * 0.20, color=colors.secondary, opacity=0.5)
+            cell.add_dot(radius=0.2, color=colors.secondary)
     save(scene, "recipes/geo-concentric.svg")
 
     # --- 5. Star grid with position-driven parameters ---

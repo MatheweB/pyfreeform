@@ -19,24 +19,16 @@ def generate():
     colors = Palette.midnight()
     scene = Scene.with_grid(cols=16, rows=12, cell_size=20, background=colors.background)
 
-    # Layer 0: subtle grid lines
-    for cell in scene.grid:
-        cell.add_border(color=colors.grid, width=0.3, opacity=0.15, z_index=0)
-
-    # Layer 1: faded hexagons
+    # Layers 0-2 in one pass — z_index orders them, so draw order doesn't matter
     for cell in scene.grid:
         nx, ny = cell.normalized_position
-        t = (nx + ny) / 2
+        cell.add_border(color=colors.grid, width=0.3, opacity=0.15, z_index=0)
         cell.add_polygon(
             Polygon.hexagon(size=0.6),
             fill=colors.secondary,
-            opacity=0.1 + t * 0.15,
+            opacity=0.1 + (nx + ny) / 2 * 0.15,
             z_index=1,
         )
-
-    # Layer 2: diagonal lines
-    for cell in scene.grid:
-        nx, ny = cell.normalized_position
         cell.add_diagonal(
             width=0.5 + nx * 1.5,
             color=colors.primary,
@@ -44,7 +36,7 @@ def generate():
             z_index=2,
         )
 
-    # Layer 3: dots at intersections
+    # Layer 3: accent dots on every 3rd cell
     for cell in scene.grid.every(3):
         nx, ny = cell.normalized_position
         cell.add_dot(

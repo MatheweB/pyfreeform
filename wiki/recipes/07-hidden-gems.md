@@ -104,7 +104,7 @@ while pq:
             heapq.heappush(pq, (nd, nb.row, nb.col))
 
 # Color by distance, trace shortest path
-max_dist = max(c.data["dist"] for c in g if c.data["dist"] < float("inf"))
+max_dist = max((c.data["dist"] for c in g if c.data["dist"] < float("inf")), default=1.0)
 for cell in g:
     if cell.data["wall"]:
         cell.add_fill(color="#1a1a2e")

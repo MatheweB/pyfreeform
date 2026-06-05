@@ -10,21 +10,21 @@ Five animations that showcase what's possible when you combine PyFreeform's anim
 The Mandelbrot set revealed iteration by iteration on a 100&times;100 grid. Each cell maps to a point on the complex plane, colored by escape iteration. The set assembles band-by-band, holds, then dissolves in reverse — looping forever:
 
 ```python
-from pyfreeform import Scene, Rect
+from pyfreeform import Scene
 from pyfreeform.color import hsl
 
 cols, rows = 100, 100
-scene = Scene(cols * 4, rows * 4, background="#0a0a1a")
+scene = Scene.with_grid(cols=cols, rows=rows, cell_size=4, background="#0a0a1a")
 max_iter = 50
 
-# Map grid to complex plane: x ∈ [-2, 0.5], y ∈ [-1.25, 1.25]
+# Map the grid to the complex plane: x ∈ [-2, 0.5], y ∈ [-1.25, 1.25]
 x_min, x_max = -2.0, 0.5
 y_min, y_max = -1.25, 1.25
 
 by_iter = {}
-
 for row in range(rows):
     for col in range(cols):
+        cell = scene.grid[row][col]
         cx = x_min + (col + 0.5) / cols * (x_max - x_min)
         cy = y_min + (row + 0.5) / rows * (y_max - y_min)
         c = complex(cx, cy)
@@ -37,34 +37,29 @@ for row in range(rows):
                 escape = i
                 break
 
-        x_px, y_px = col * 4, row * 4
         if escape == max_iter:
-            scene.place(Rect(x_px, y_px, 4, 4, fill="#0c0c2a"))
+            cell.add_fill(color="#0c0c2a")   # inside the set
             continue
 
         t = escape / max_iter
-        hue = (240 + t * 300) % 360
-        color = hsl(hue, 0.85, 0.35 + 0.3 * t)
-        r = Rect(x_px, y_px, 4, 4, fill=color, opacity=0.0)
-        scene.place(r)
-        by_iter.setdefault(escape, []).append(r)
+        color = hsl((240 + t * 300) % 360, 0.85, 0.35 + 0.3 * t)
+        fill = cell.add_fill(color=color, opacity=0.0)
+        by_iter.setdefault(escape, []).append(fill)
 
-# Compute per-band delays, then animate with bounce
+# Fade each escape-band in turn, then bounce the whole reveal and loop forever
 delay = 0.0
 band_delays = []
 for i in sorted(by_iter):
     band_delays.append((delay, by_iter[i]))
     delay += 0.06
-
 forward_time = delay + 0.5
 
 for appear, fills in band_delays:
     for fill in fills:
         fill.animate_fade(
-            keyframes={0: 0, appear: 0, appear + 0.4: 1.0,
-                       forward_time: 1.0},
+            keyframes={0: 0, appear: 0, appear + 0.4: 1.0, forward_time: 1.0},
+            repeat=True, bounce=True,
         )
-        fill.loop(bounce=True)
 ```
 
 <figure markdown>
@@ -127,35 +122,33 @@ import math
 from pyfreeform import Scene, Polygon, stagger
 from pyfreeform.color import hsl
 
-scene = Scene(440, 440, background="#050510")
-cx, cy = 220, 220
+scene = Scene.with_grid(cols=1, rows=1, cell_size=440, background="#050510")
+cell = scene.grid[0][0]
 golden_angle = 137.508
-max_r = 440 * 0.44
+max_r = 0.44  # relative radius within the cell
 
 stars = []
 for i in range(1, 201):
     angle = math.radians(i * golden_angle)
     t = i / 200
     r = max_r * math.sqrt(t)
-    x = cx + r * math.cos(angle)
-    y = cy + r * math.sin(angle)
+    rx = 0.5 + r * math.cos(angle)
+    ry = 0.5 + r * math.sin(angle)
 
     hue = (40 - t * 220) % 360
-    star_size = 2.0 + 4.0 * (1 - t)
-    dot = Polygon(Polygon.star(size=star_size, center=(x, y)),
-                  fill=hsl(hue, 0.85, 0.55), opacity=0.0)
-    scene.place(dot)
-    stars.append(dot)
+    star_size = 0.015 + 0.025 * (1 - t)  # inner stars larger
+    star = cell.add_polygon(Polygon.star(size=star_size, center=(rx, ry)),
+                            fill=hsl(hue, 0.85, 0.55), opacity=0.0)
+    stars.append(star)
 
 # Stagger: each star fades in with offset timing
 stagger(*stars, offset=0.02,
         each=lambda d: d.animate_fade(to=0.9, duration=0.5, easing="ease-out"))
 
 # Some stars spin for a twinkling effect
-for i, dot in enumerate(stars):
+for i, star in enumerate(stars):
     if i % 5 == 0:
-        dot.animate_spin(360, duration=8.0 + (i % 3) * 2, easing="linear")
-        dot.loop()
+        star.animate_spin(360, duration=8.0 + (i % 3) * 2, easing="linear", repeat=True)
 ```
 
 <figure markdown>
@@ -174,10 +167,10 @@ Concentric rings of dots pulse in and out with phase offsets, creating a hypnoti
 
 ```python
 import math
-from pyfreeform import Scene, Dot
+from pyfreeform import Scene
 
-scene = Scene(420, 420, background="#0a0a1a")
-cx, cy = 210, 210
+scene = Scene.with_grid(cols=1, rows=1, cell_size=420, background="#0a0a1a")
+cell = scene.grid[0][0]
 
 n_rings = 6
 dots_per_ring = [8, 12, 16, 20, 24, 28]
@@ -185,16 +178,15 @@ ring_colors = ["coral", "gold", "#ff6b9d", "skyblue", "mediumpurple", "limegreen
 
 for ring_idx in range(n_rings):
     n = dots_per_ring[ring_idx]
-    r = 30 + ring_idx * 30
+    r = 0.07 + ring_idx * 0.07  # relative radius from center
     color = ring_colors[ring_idx]
     phase_delay = ring_idx * 0.3
 
     for j in range(n):
         angle = 2 * math.pi * j / n + ring_idx * 0.15
-        x = cx + r * math.cos(angle)
-        y = cy + r * math.sin(angle)
-        dot = Dot(x, y, radius=4, color=color)
-        scene.place(dot)
+        rx = 0.5 + r * math.cos(angle)
+        ry = 0.5 + r * math.sin(angle)
+        dot = cell.add_dot(at=(rx, ry), radius=0.01, color=color)
 
         per_dot_delay = phase_delay + j * 0.05
         dot.animate_radius(to=10, duration=2.0, delay=per_dot_delay,
@@ -204,8 +196,7 @@ for ring_idx in range(n_rings):
                              easing="ease-in-out", bounce=True, repeat=True)
 
 # Center jewel
-center = Dot(cx, cy, radius=8, color="white")
-scene.place(center)
+center = cell.add_dot(at=(0.5, 0.5), radius=0.02, color="white")
 center.animate_radius(to=16, duration=1.5, easing="ease-in-out", bounce=True, repeat=True)
 center.animate_spin(360, duration=6.0, easing="linear", bounce=True, repeat=True)
 ```
@@ -222,50 +213,43 @@ center.animate_spin(360, duration=6.0, easing="linear", bounce=True, repeat=True
 A Sierpinski triangle that cuts itself out depth by depth. A solid triangle appears first, then progressively smaller center holes are punched out to reveal the fractal:
 
 ```python
-from pyfreeform import Scene, Polygon
+from pyfreeform import Scene
 
-scene = Scene(420, 420, background="#0a0a1a")
 bg = "#0a0a1a"
+scene = Scene.with_grid(cols=1, rows=1, cell_size=420, background=bg)
+cell = scene.grid[0][0]
 max_depth = 5
 
-margin = 420 * 0.08
-top = (210, margin)
-bl = (margin, 420 - margin)
-br = (420 - margin, 420 - margin)
+margin = 0.08
+top = (0.5, margin)
+bl = (margin, 1.0 - margin)
+br = (1.0 - margin, 1.0 - margin)
 
 def midpoint(a, b):
     return ((a[0] + b[0]) / 2, (a[1] + b[1]) / 2)
 
-# Collect all (entity, appear_time, target_opacity, fade_duration)
-outer = Polygon([top, bl, br], fill="#ff6b6b", stroke="#ff6b6b",
-                stroke_width=0.5, opacity=0.0)
-scene.place(outer)
+# (entity, appear_time, target_opacity, fade_duration)
+outer = cell.add_polygon([top, bl, br], fill="#ff6b6b", stroke="#ff6b6b",
+                         stroke_width=0.5, opacity=0.0)
 elements = [(outer, 0.0, 0.85, 0.6)]
 
-# Build holes depth by depth
+# Punch progressively smaller center holes, depth by depth
 corners = [(top, bl, br)]
-holes_by_depth = {}
+total_delay = 0.8
 for d in range(1, max_depth + 1):
     holes, next_corners = [], []
     for v0, v1, v2 in corners:
         m01, m12, m02 = midpoint(v0, v1), midpoint(v1, v2), midpoint(v0, v2)
         holes.append((m01, m12, m02))
         next_corners.extend([(v0, m01, m02), (m01, v1, m12), (m02, m12, v2)])
-    holes_by_depth[d] = holes
     corners = next_corners
-
-total_delay = 0.8
-for d in range(1, max_depth + 1):
-    holes = holes_by_depth[d]
     per_hole = min(0.04, 1.2 / max(len(holes), 1))
     for k, (h0, h1, h2) in enumerate(holes):
-        hole = Polygon([h0, h1, h2], fill=bg, stroke=bg,
-                       stroke_width=0.3, opacity=0.0)
-        scene.place(hole)
+        hole = cell.add_polygon([h0, h1, h2], fill=bg, stroke=bg, stroke_width=0.3, opacity=0.0)
         elements.append((hole, total_delay + k * per_hole, 1.0, 0.3))
     total_delay += 1.2 + 0.3
 
-# Animate with keyframes so the whole sequence bounces as a unit
+# Build forward, hold, then bounce the whole sequence in reverse — forever
 forward_time = total_delay + 0.5
 for entity, appear, target, dur in elements:
     entity.animate_fade(

@@ -24,27 +24,19 @@ def generate():
         )
     save(scene, "recipes/flow-curve-field.svg")
 
-    # --- 2. Wave visualization (using built-in Path.Wave) ---
+    # --- 2. Wave visualization (built-in Path.Wave, relative coords) ---
     from pyfreeform import Path
 
     colors = Palette.neon()
     scene = Scene.with_grid(cols=1, rows=1, cell_size=360, background=colors.background)
     cell = scene.grid[0][0]
-    cx, cy = cell.center
-    # Multiple overlapping waves
     for i in range(8):
-        phase = i * 0.3
-        amplitude = 20 + i * 12
-        freq = 2 + i * 0.5
         wave = Path.Wave(
-            start=(cell.x + 10, cy + math.sin(phase) * 30),
-            end=(cell.x + cell.width - 10, cy + math.cos(phase) * 30),
-            amplitude=amplitude,
-            frequency=freq,
+            start=(0.05, 0.5), end=(0.95, 0.5),
+            amplitude=0.04 + i * 0.025, frequency=2 + i * 0.5,
         )
-        opacity = 0.8 - i * 0.08
         color = colors.primary if i % 2 == 0 else colors.secondary
-        cell.add_path(wave, segments=48, width=1.5, color=color, opacity=opacity)
+        cell.add_path(wave, relative=True, width=1.5, color=color, opacity=0.8 - i * 0.08)
     save(scene, "recipes/flow-waves.svg")
 
     # --- 3. Spiral paths with varying density (using built-in Path.Spiral) ---

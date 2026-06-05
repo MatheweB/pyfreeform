@@ -7,17 +7,19 @@ Combine multiple techniques — layers, groups, merged regions, and connections 
 Use `z_index` to orchestrate four distinct visual layers:
 
 ```python
-# Layer 0: subtle grid
-cell.add_border(color=colors.grid, width=0.3, opacity=0.15, z_index=0)
-
-# Layer 1: faded hexagons
-cell.add_polygon(Polygon.hexagon(size=0.6), fill=colors.secondary, opacity=0.15, z_index=1)
-
-# Layer 2: diagonal lines
-cell.add_diagonal(width=0.5 + nx * 1.5, color=colors.primary, opacity=0.25, z_index=2)
+# Layers 0–2 in one pass — z_index handles the stacking, so draw order doesn't matter
+for cell in scene.grid:
+    nx, ny = cell.normalized_position
+    cell.add_border(color=colors.grid, width=0.3, opacity=0.15, z_index=0)
+    cell.add_polygon(Polygon.hexagon(size=0.6), fill=colors.secondary,
+                     opacity=0.1 + (nx + ny) / 2 * 0.15, z_index=1)
+    cell.add_diagonal(width=0.5 + nx * 1.5, color=colors.primary,
+                      opacity=0.2 + ny * 0.3, z_index=2)
 
 # Layer 3: accent dots on every 3rd cell
-cell.add_dot(radius=0.2, color=colors.accent, opacity=0.7, z_index=3)
+for cell in scene.grid.every(3):
+    nx, ny = cell.normalized_position
+    cell.add_dot(radius=0.15 + nx * 0.2, color=colors.accent, opacity=0.7, z_index=3)
 ```
 
 <figure markdown>
@@ -35,10 +37,11 @@ def make_crosshair(color1, color2):
     g.add(Dot(0, 0, radius=8, color=color1, opacity=0.6))
     g.add(Line(-12, 0, 12, 0, width=1, color=color2, opacity=0.5))
     g.add(Line(0, -12, 0, 12, width=1, color=color2, opacity=0.5))
-    g.add(Ellipse(0, 0, rx=10, ry=10, fill="none", stroke=color2, stroke_width=0.5))
+    g.add(Ellipse(0, 0, rx=10, ry=10, fill="none", stroke=color2, stroke_width=0.5, opacity=0.3))
     return g
 
 for cell in scene.grid:
+    nx, ny = cell.normalized_position
     group = make_crosshair(colors.primary, colors.secondary)
     cell.add(group)
     group.fit_to_surface(0.8)
@@ -58,8 +61,8 @@ Use `grid.merge()` to create distinct regions with different treatments:
 # Feature area
 feature = scene.grid.merge((2, 3), (7, 8))
 feature.add_fill(color=colors.primary, opacity=0.15)
-feature.add_border(color=colors.accent, width=1.5)
-feature.add_text("FEATURED", at="center", font_size=0.10, color=colors.accent, bold=True)
+feature.add_border(color=colors.accent, width=1.5, opacity=0.6)
+feature.add_text("FEATURED", at="center", font_size=0.10, color=colors.accent, bold=True, fit=True)
 
 # Title bar
 title = scene.grid.merge_row(0)

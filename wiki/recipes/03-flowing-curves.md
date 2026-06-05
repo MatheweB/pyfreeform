@@ -26,22 +26,16 @@ for cell in scene.grid:
 
 ## Wave Visualization
 
-Use a custom `Wave` pathable with `add_path()`:
+Stack the built-in `Path.Wave` with growing amplitude and frequency — `relative=True` lets you place it in 0–1 cell coordinates:
 
 ```python
-class Wave:
-    def __init__(self, x1, y1, x2, y2, amplitude, frequency):
-        self.x1, self.y1, self.x2, self.y2 = x1, y1, x2, y2
-        self.amp, self.freq = amplitude, frequency
-
-    def point_at(self, t):
-        x = self.x1 + t * (self.x2 - self.x1)
-        cy = self.y1 + t * (self.y2 - self.y1)
-        y = cy + self.amp * math.sin(t * self.freq * 2 * math.pi)
-        return Coord(x, y)
+cell = scene.grid[0][0]
+for i in range(8):
+    wave = Path.Wave(start=(0.05, 0.5), end=(0.95, 0.5),
+                     amplitude=0.04 + i * 0.025, frequency=2 + i * 0.5)
+    color = colors.primary if i % 2 == 0 else colors.secondary
+    cell.add_path(wave, relative=True, width=1.5, color=color, opacity=0.8 - i * 0.08)
 ```
-
-Stack multiple waves with different frequencies:
 
 <figure markdown>
 ![Wave visualization](../_images/recipes/flow-waves.svg){ width="400" }
@@ -71,6 +65,7 @@ for cell in scene.grid:
             curvature=curvature,
             width=0.5 + cell.brightness * 2,
             color=cell.color,
+            opacity=0.4 + cell.brightness * 0.5,
         )
 ```
 
