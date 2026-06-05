@@ -16,6 +16,7 @@ if TYPE_CHECKING:
 
     from ..core.connection import Connection
     from ..core.entity import Entity
+    from ..renderers import Renderer
 
 
 class Scene(Surface):
@@ -402,7 +403,7 @@ class Scene(Surface):
         }
         return gradients
 
-    def render(self, renderer=None) -> str:
+    def render(self, renderer: Renderer | None = None) -> str:
         """
         Render the scene using the given renderer.
 
@@ -432,7 +433,7 @@ class Scene(Surface):
         """
         return self.render()
 
-    def save(self, path: str | Path, renderer=None) -> None:
+    def save(self, path: str | Path, renderer: Renderer | None = None) -> None:
         """
         Save the scene to an SVG file.
 
